@@ -1,10 +1,9 @@
 Optimization Of Code Through Hardware Resource Policies
 
 Abstract :
+
 In any model, a method applies a first hardware resource management strategy to a first resource which is associated with a first processor; and then executes the instruction block in the first processor. The same method also applies a second hardware resource management strategy to a second resource (similar to the first one) associated with a second processor; and then executes the instruction block in the second block.
 Then the method selects the substantially optimum hardware resource management strategy amongst the above two, which will be applied to those kind of resources similar to the ones seen above for carrying out the given instruction block execution as ideally as possible.
-
-
 
 Stages :
 
@@ -15,3 +14,11 @@ Stages :
 	-> Execute the instruction block in the second processor and get its context
 -> Get the "ghost page" which is indicative of the selected cache management strategy (that's optimum of the two) and the context of the instruction block execution during the application of this strategy.
 -> End 
+
+Inventors : 
+
+Bran Ferren, W.Daniel Hills, Nathan P, Clarence T, Lowell L Jr.
+
+References :
+
+- U.S Patent Documents 4,484,275 A 11/1984
