@@ -12,7 +12,7 @@ int main()
     int i = 0;
     while(i < 50) // to find number 101
     {
-        if(i == 101)
+        if(a[i] == 101)
         {
           cout << "101 is found at :" << i << '\n';
           return 0;
@@ -27,7 +27,7 @@ int main()
   // sentinel linear search
     int i = 0;
     a[50] = 101;
-    while(i != 101)
+    while(a[i] != 101)
     ++i;
 
     if(i < 50)
