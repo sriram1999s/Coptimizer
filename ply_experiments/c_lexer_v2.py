@@ -1,4 +1,5 @@
 from ply.lex import lex
+import sys
 
 '''
 READ THIS BEFORE ADDING CALLABLES
@@ -19,17 +20,17 @@ P.S: Try to stick to a single convention
 
 datatypes = ['INT', 'FLOAT', 'DOUBLE']
 
-binary_operators = ['PLUS', 'MINUS', 'EQUALS', 'TIMES', 'DIVIDE', 'L_SHIFT', 'R_SHIFT', 'AND', 'OR', 'XOR', 'MOD']
+operators = ['PLUS', 'MINUS', 'EQUALS', 'TIMES', 'DIVIDE', 'L_SHIFT', 'R_SHIFT', 'AND', 'OR', 'XOR', 'MOD','PLUS_PLUS','MINUS_MINUS']
 
 relational_operators = ['LT', 'GT', 'LE', 'GE', 'NE', 'EQ']
 
-delimiters = ['L_PAREN', 'R_PAREN', 'L_FLOWERBRACE', 'R_FLOWERBRACE', 'SEMICOLON']
+delimiters = ['L_PAREN', 'R_PAREN', 'L_FLOWERBRACE', 'R_FLOWERBRACE', 'SEMICOLON','LBRACKET','RBRACKET','COLON','PERIOD']
 
-tokens = datatypes + binary_operators + relational_operators + delimiters + ['VAR_NAME', 'KEY_WORD']
+tokens = datatypes + operators + relational_operators + delimiters + ['VAR_NAME', 'KEY_WORD']
 
-t_ignore = ' \t'
+t_ignore = r' \t'
 
-# binary_operators
+# operators
 
 t_PLUS = r'\+'
 t_MINUS = r'-'
@@ -42,6 +43,8 @@ t_AND = r'&'
 t_OR = r'\|'
 t_XOR = r'\^'
 t_MOD = r'%'
+t_PLUS_PLUS=r'\+\+'
+t_MINUS_MINUS=r'\-\-'
 
 # relational_operators
 
@@ -57,7 +60,12 @@ t_L_PAREN = r'\('
 t_R_PAREN = r'\)'
 t_L_FLOWERBRACE = r'\{'
 t_R_FLOWERBRACE = r'\}'
+t_LBRACKET = r'\['
+t_RBRACKET = r'\]' 
 t_SEMICOLON = r';'
+t_PERIOD = r'\.'
+t_COLON = r'\:'
+
 
 
 def t_KEY_WORD(t):
@@ -87,8 +95,15 @@ def t_error(t):
     t.lexer.skip(1)
 
 
-lexer = lex()
+def tokenize():
+    in_file=sys.argv[1]
+    lines=""
+    for line in open(in_file,"r"):
+        lines+=line.strip('\n')
+    print(lines)
+    lexer = lex()
+    lexer.input(lines)
+    for tok in lexer:
+        print(tok)
 
-lexer.input("for(int i = 0; i <= 10; i++){}")
-for tok in lexer:
-    print(tok)
+tokenize()
