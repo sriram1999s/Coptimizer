@@ -1,52 +1,34 @@
 from ply.lex import lex
+from ply.yacc import yacc
 import sys
 
-'''
-READ THIS BEFORE ADDING CALLABLES
+''' defining tokens '''
 
-def fxn_name(t):
-    'Docstring regex'
-    any conditions if it might clash
-    return t
+datatype = ['INT']
 
-t object has parameters:
-1)value
-2)type(as described in the tokens)
+bin_op = ['PLUS', 'MINUS', 'MULTIPLY', 'DIVIDE', 'ASSIGN']
 
-P.S: Try to stick to a single convention
-'''
+rel_op = ['LT', 'LE', 'GT', 'GE', 'NE', 'EQ']
 
-# Segregate the tokens and define please
+delimiters = ['L_PAREN', 'R_PAREN', 'L_FLOWERBRACE', 'R_FLOWERBRACE', 'SEMICOLON']
 
-datatypes = ['INT', 'FLOAT', 'DOUBLE']
+statements = ['FOR']
 
-operators = ['PLUS', 'MINUS', 'EQUALS', 'TIMES', 'DIVIDE', 'L_SHIFT', 'R_SHIFT', 'AND', 'OR', 'XOR', 'MOD','PLUS_PLUS','MINUS_MINUS']
+tokens = datatype + bin_op + rel_op + delimiters + statements + ['ID', 'TYPE']
 
-relational_operators = ['LT', 'GT', 'LE', 'GE', 'NE', 'EQ']
 
-delimiters = ['L_PAREN', 'R_PAREN', 'L_FLOWERBRACE', 'R_FLOWERBRACE', 'SEMICOLON','LBRACKET','RBRACKET','COLON','PERIOD']
+# --------------------------------lexer------------------------------------ #
 
-tokens = datatypes + operators + relational_operators + delimiters + ['VAR_NAME', 'KEY_WORD']
+''' regular expressions defined here '''
 
-t_ignore = r' \t'
-
-# operators
+# binary operators
 
 t_PLUS = r'\+'
 t_MINUS = r'-'
-t_DIVIDE = r'/'
-t_TIMES = r'\*'
-t_EQUALS = r'='
-t_L_SHIFT = r'<<'
-t_R_SHIFT = r'>>'
-t_AND = r'&'
-t_OR = r'\|'
-t_XOR = r'\^'
-t_MOD = r'%'
-t_PLUS_PLUS=r'\+\+'
-t_MINUS_MINUS=r'\-\-'
+t_MULTIPLY = r'\*'
+t_DIVIDE = r'\\'
 
-# relational_operators
+# relational operators
 
 t_LE = r'<='
 t_LT = r'<'
@@ -55,55 +37,86 @@ t_GT = r'>'
 t_NE = r'!='
 t_EQ = r'=='
 
+# assignment (had to be after relop)
+
+t_ASSIGN = r'='
+
 # delimiters
+
 t_L_PAREN = r'\('
 t_R_PAREN = r'\)'
 t_L_FLOWERBRACE = r'\{'
 t_R_FLOWERBRACE = r'\}'
-t_LBRACKET = r'\['
-t_RBRACKET = r'\]' 
 t_SEMICOLON = r';'
-t_PERIOD = r'\.'
-t_COLON = r'\:'
 
+t_ignore = ' \t'
 
+# for
 
-def t_KEY_WORD(t):
-    r'int|float|double|while|for'
+def t_FOR(t):
+    r'for'
     return t
 
-
-def t_VAR_NAME(t):
-    r'[a-zA-Z_][a-zA-Z0-9_]*'
-    if (t.value == 'printf'):
-        t.type = 'PRINTF'
-    return t
-
-
-def t_FLOAT(t):
-    r'\d+\.\d+'
-    return t
-
+# int
 
 def t_INT(t):
     r'\d+'
+    t.value = int(t.value)
     return t
 
+# types
+
+def t_TYPE(t):
+    r'int'
+    return t
+
+# identifiers
+
+def t_ID(t):
+    r'[a-zA-Z_][a-zA-Z_0-9]*'
+    return t
+
+# error
 
 def t_error(t):
     print(f"Illegal character {t.value[0]!r}")
     t.lexer.skip(1)
 
+# --------------------------------parser------------------------------------ #
+def p_detector(p):
+    '''
+    detector : expression
+             | empty
+    '''
+    print(p[1])
 
-def tokenize():
-    in_file=sys.argv[1]
-    lines=""
-    for line in open(in_file,"r"):
-        lines+=line.strip('\n')
-    print(lines)
-    lexer = lex()
-    lexer.input(lines)
-    for tok in lexer:
-        print(tok)
+def p_empty(p):
+    '''
+    empty :
+    '''
+    p[0] = None
 
-tokenize()
+def p_expression(p):
+    '''
+    expression : expression MULTIPLY expression
+               | expression DIVIDE expression
+               | expression PLUS expression
+               | expression MINUS expression
+    '''
+    p[0] = (p[2], p[1], p[3])
+
+def p_expression_type(p):
+    '''
+    expression : INT
+    '''
+    p[0] = p[1]
+
+lexer = lex()
+parser = yacc()
+
+while True:
+    try:
+        s = input()
+    except EOFError:
+        break
+    parser.parse(s)
