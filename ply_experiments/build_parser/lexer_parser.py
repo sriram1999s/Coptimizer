@@ -29,7 +29,7 @@ relational_operators = ['LT', 'GT', 'LE', 'GE', 'NE', 'EQ']
 
 delimiters = ['L_PAREN', 'R_PAREN', 'L_FLOWERBRACE', 'R_FLOWERBRACE', 'SEMICOLON','LBRACKET','RBRACKET','COLON','PERIOD']
 
-tokens = datatypes + operators + relational_operators + delimiters + ['VAR_NAME', 'KEY_WORD']
+tokens = datatypes + operators + relational_operators + delimiters + ['VAR_NAME', 'INT_KEYWORD','FLOAT_KEYWORD','DOUBLE_KEYWORD','FOR_KEYWORD']
 
 t_ignore = r' \t'
 
@@ -70,16 +70,18 @@ t_PERIOD = r'\.'
 t_COLON = r'\:'
 
 
-
-def t_KEY_WORD(t):
-    r'int|float|double|while|for'
-    return t
-
-
 def t_VAR_NAME(t):
     r'[a-zA-Z_][a-zA-Z0-9_]*'
-    if (t.value == 'printf'):
+    if(t.value == 'printf'):
         t.type = 'PRINTF'
+    if(t.value == r'int'):
+        t.type = 'INT_KEYWORD'
+    if(t.value == r'float'):
+        t.type = 'FLOAT_KEYWORD'
+    if(t.value == r'double'):
+        t.type = 'DOUBLE_KEYWORD'
+    if(t.value == r'for'):
+        t.type = 'FOR_KEYWORD'
     return t
 
 
@@ -117,9 +119,17 @@ def p_single_statements(p):
     
 def p_assignment_statement(p):
     '''
-    statement : VAR_NAME EQUALS expr
+    statement : INT_KEYWORD VAR_NAME EQUALS expr SEMICOLON
+    	      | FLOAT_KEYWORD VAR_NAME EQUALS expr SEMICOLON
+	      | DOUBLE_KEYWORD VAR_NAME EQUALS expr SEMICOLON
     '''
-    p[0]=('assigning',p[1],p[2],p[3])
+    p[0]=('assigning',p[1],p[2],p[3],p[4])
+
+def p_declare_statement(p):
+    '''
+    statement : INT_KEYWORD VAR_NAME SEMICOLON
+    '''
+    p[0]=('declaring',p[1],p[2])
     
 def p_expr_binop(p):
     '''
@@ -134,14 +144,20 @@ def p_expr_binop(p):
          | expr XOR expr
          | expr MOD expr
     '''
-    p[0]=(p[1],p[2],p[3])
+    p[0]=(p[2],p[1],p[3])
+
+def p_for_loop(p):
+    '''
+    statement : FOR_KEYWORD L_PAREN INT_KEYWORD VAR_NAME EQUALS expr SEMICOLON VAR_NAME LT INT SEMICOLON VAR_NAME PLUS_PLUS R_PAREN
+    '''
+    
 
 def p_expr_int(p):
     '''
     expr : INT
     '''
     p[0] = ('integer',p[1])
-    
+
 def p_expr_name(p):
     '''
     expr : VAR_NAME
@@ -155,5 +171,16 @@ precedence = (('left','PLUS','MINUS'),('left','TIMES','DIVIDE'))
 lexer=lex()
 parser=yacc()
 
-print(parser.parse("a = 1*3 - 7"))
+
+while True:
+    try:
+        s = input()
+    except EOFError:
+        break
+    print(parser.parse(s))
+
+'''lexer.input("int")
+for tok in lexer:
+    print(tok)'''
+#print(parser.parse("int a;"))
     
