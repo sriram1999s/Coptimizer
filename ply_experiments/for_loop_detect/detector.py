@@ -78,10 +78,6 @@ t_L_FLOWERBRACE = r'\{'
 t_R_FLOWERBRACE = r'\}'
 t_SEMICOLON = r';'
 
-# new NEWLINE
-
-# t_NEWLINE = '\n'
-
 t_ignore = ' \t'
 
 # while
@@ -112,7 +108,6 @@ def t_INT(t):
 
 def t_TYPE(t):
     r'int|float'
-
     return t
 
 # identifiers
@@ -142,7 +137,8 @@ precedence = (
 
 def p_detector(p):
     '''
-    detector : for_loop
+    detector : while_loop
+             | for_loop
     '''
     print('loop detected')
     print(p[1])
@@ -207,9 +203,11 @@ def p_for_loop(p):
 def p_for_condition(p):
     '''
     for_condition : L_PAREN var_assign SEMICOLON expression relop expression SEMICOLON var_assign R_PAREN
-                  | L_PAREN declaration SEMICOLON expression relop expression SEMICOLON expression R_PAREN
+                  | L_PAREN var_assign SEMICOLON expression relop expression SEMICOLON expression_unary R_PAREN
+                  | L_PAREN declaration SEMICOLON expression relop expression SEMICOLON var_assign R_PAREN
+                  | L_PAREN declaration SEMICOLON expression relop expression SEMICOLON expression_unary R_PAREN
     '''
-    p[0] = (p[2], p[4], p[6])
+    p[0] = (p[2], (p[5], p[4], p[6]), p[8])
 # condition
 
 def p_condition(p):
@@ -300,7 +298,6 @@ def p_expression_type(p):
     expression : INT
                | FLOAT
     '''
-    # print('here2')
     p[0] = p[1]
 
 def p_expression_var(p):
@@ -337,10 +334,3 @@ with open(file) as f:
         lines += line.strip('\n')
     lines.strip('\n')
     print(parser.parse(lines))
-
-# while True:
-#     try:
-#         s = input()
-#     except EOFError:
-#         break
-#     print(parser.parse(s))
