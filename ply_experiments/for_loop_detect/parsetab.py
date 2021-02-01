@@ -6,9 +6,9 @@ _tabversion = '3.10'
 
 _lr_method = 'LALR'
 
-_lr_signature = 'leftPLUSMINUSleftMULTIPLYDIVIDEASSIGN DIVIDE EQ FOR GE GT ID INT LE LT L_FLOWERBRACE L_PAREN MINUS MULTIPLY NE PLUS R_FLOWERBRACE R_PAREN SEMICOLON TYPE WHILE\n    detector : statement\n             | empty\n    \n    statement : var_assign SEMICOLON\n              | expression SEMICOLON\n              | while_loop\n    \n    while_loop : WHILE condition block\n    \n    condition : L_PAREN expression relop expression R_PAREN\n    \n    relop : LE\n          | LT\n          | GE\n          | GT\n          | NE\n          | EQ\n    \n    block : L_FLOWERBRACE statement R_FLOWERBRACE\n    \n    var_assign : ID ASSIGN expression\n    \n    empty :\n    \n    expression : expression MULTIPLY expression\n               | expression DIVIDE expression\n               | expression PLUS expression\n               | expression MINUS expression\n    \n    expression : INT\n    \n    expression : ID\n    '
+_lr_signature = 'leftPLUSMINUSleftMULTIPLYDIVIDEAND ASSIGN DIVIDE EQ FLOAT FOR GE GT ID INT LE LT L_FLOWERBRACE L_PAREN L_SHIFT MINUS MINUS_MINUS MOD MULTIPLY NE NEWLINE OR PLUS PLUS_PLUS R_FLOWERBRACE R_PAREN R_SHIFT SEMICOLON TYPE WHILE XOR\n    statement : var_assign SEMICOLON\n              | expression SEMICOLON\n              | expression_unary SEMICOLON\n              | while_loop\n              | declare_statement\n              | empty\n    \n    statement_multiple : statement\n    \n    while_loop : WHILE condition block\n               | WHILE condition statement\n    \n    condition : L_PAREN expression relop expression R_PAREN\n    \n    relop : LE\n          | LT\n          | GE\n          | GT\n          | NE\n          | EQ\n    \n    block : L_FLOWERBRACE statement_multiple R_FLOWERBRACE\n    \n    statement_multiple : statement_multiple statement\n    \n    declare_statement : TYPE ID SEMICOLON\n                      | TYPE var_assign SEMICOLON\n    \n    var_assign : ID ASSIGN expression\n    \n    empty :\n    \n    expression : expression MULTIPLY expression\n               | expression DIVIDE expression\n               | expression PLUS expression\n               | expression MINUS expression\n               | expression L_SHIFT expression\n               | expression R_SHIFT expression\n               | expression MOD expression\n               | expression XOR expression\n               | expression AND expression\n               | expression OR expression\n    \n    expression_unary : post\n                     | pre\n    \n    post : ID PLUS_PLUS\n         | ID MINUS_MINUS\n    \n    pre : PLUS_PLUS ID\n        | MINUS_MINUS ID\n    \n    expression : INT\n               | FLOAT\n    \n    expression : ID\n    '
     
-_lr_action_items = {'$end':([0,1,2,3,6,10,11,25,36,],[-16,0,-1,-2,-5,-3,-4,-6,-14,]),'ID':([0,12,13,14,15,16,18,26,29,30,31,32,33,34,35,],[7,20,20,20,20,20,20,7,20,-8,-9,-10,-11,-12,-13,]),'INT':([0,12,13,14,15,16,18,26,29,30,31,32,33,34,35,],[8,8,8,8,8,8,8,8,8,-8,-9,-10,-11,-12,-13,]),'WHILE':([0,26,],[9,9,]),'SEMICOLON':([4,5,7,8,19,20,21,22,23,24,],[10,11,-22,-21,-17,-22,-18,-19,-20,-15,]),'MULTIPLY':([5,7,8,19,20,21,22,23,24,27,37,],[12,-22,-21,-17,-22,-18,12,12,12,12,12,]),'DIVIDE':([5,7,8,19,20,21,22,23,24,27,37,],[13,-22,-21,-17,-22,-18,13,13,13,13,13,]),'PLUS':([5,7,8,19,20,21,22,23,24,27,37,],[14,-22,-21,-17,-22,-18,-19,-20,14,14,14,]),'MINUS':([5,7,8,19,20,21,22,23,24,27,37,],[15,-22,-21,-17,-22,-18,-19,-20,15,15,15,]),'R_FLOWERBRACE':([6,10,11,25,28,36,],[-5,-3,-4,-6,36,-14,]),'ASSIGN':([7,],[16,]),'LE':([8,19,20,21,22,23,27,],[-21,-17,-22,-18,-19,-20,30,]),'LT':([8,19,20,21,22,23,27,],[-21,-17,-22,-18,-19,-20,31,]),'GE':([8,19,20,21,22,23,27,],[-21,-17,-22,-18,-19,-20,32,]),'GT':([8,19,20,21,22,23,27,],[-21,-17,-22,-18,-19,-20,33,]),'NE':([8,19,20,21,22,23,27,],[-21,-17,-22,-18,-19,-20,34,]),'EQ':([8,19,20,21,22,23,27,],[-21,-17,-22,-18,-19,-20,35,]),'R_PAREN':([8,19,20,21,22,23,37,],[-21,-17,-22,-18,-19,-20,38,]),'L_PAREN':([9,],[18,]),'L_FLOWERBRACE':([17,38,],[26,-7,]),}
+_lr_action_items = {'ID':([0,5,6,7,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,33,34,51,52,53,55,56,57,58,59,60,61,62,63,64,65,66,67,69,],[8,-4,-5,-6,35,37,38,-1,-2,40,40,40,40,40,40,40,40,40,40,-3,40,8,40,-8,-9,8,-19,-20,8,-7,40,-11,-12,-13,-14,-15,-16,-17,-18,-10,]),'INT':([0,5,6,7,17,18,19,20,21,22,23,24,25,26,27,28,29,30,33,34,51,52,53,55,56,57,58,59,60,61,62,63,64,65,66,67,69,],[9,-4,-5,-6,-1,-2,9,9,9,9,9,9,9,9,9,9,-3,9,9,9,-8,-9,9,-19,-20,9,-7,9,-11,-12,-13,-14,-15,-16,-17,-18,-10,]),'FLOAT':([0,5,6,7,17,18,19,20,21,22,23,24,25,26,27,28,29,30,33,34,51,52,53,55,56,57,58,59,60,61,62,63,64,65,66,67,69,],[10,-4,-5,-6,-1,-2,10,10,10,10,10,10,10,10,10,10,-3,10,10,10,-8,-9,10,-19,-20,10,-7,10,-11,-12,-13,-14,-15,-16,-17,-18,-10,]),'WHILE':([0,5,6,7,17,18,29,33,51,52,53,55,56,57,58,66,67,69,],[13,-4,-5,-6,-1,-2,-3,13,-8,-9,13,-19,-20,13,-7,-17,-18,-10,]),'TYPE':([0,5,6,7,17,18,29,33,51,52,53,55,56,57,58,66,67,69,],[14,-4,-5,-6,-1,-2,-3,14,-8,-9,14,-19,-20,14,-7,-17,-18,-10,]),'$end':([0,1,5,6,7,17,18,29,33,51,52,55,56,66,69,],[-22,0,-4,-5,-6,-1,-2,-3,-22,-8,-9,-19,-20,-17,-10,]),'PLUS_PLUS':([0,5,6,7,8,17,18,29,33,51,52,53,55,56,57,58,66,67,69,],[15,-4,-5,-6,31,-1,-2,-3,15,-8,-9,15,-19,-20,15,-7,-17,-18,-10,]),'MINUS_MINUS':([0,5,6,7,8,17,18,29,33,51,52,53,55,56,57,58,66,67,69,],[16,-4,-5,-6,32,-1,-2,-3,16,-8,-9,16,-19,-20,16,-7,-17,-18,-10,]),'SEMICOLON':([2,3,4,8,9,10,11,12,31,32,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,],[17,18,29,-41,-39,-40,-33,-34,-35,-36,55,56,-37,-38,-23,-41,-24,-25,-26,-27,-28,-29,-30,-31,-32,-21,]),'MULTIPLY':([3,8,9,10,39,40,41,42,43,44,45,46,47,48,49,50,54,68,],[19,-41,-39,-40,-23,-41,-24,19,19,19,19,19,19,19,19,19,19,19,]),'DIVIDE':([3,8,9,10,39,40,41,42,43,44,45,46,47,48,49,50,54,68,],[20,-41,-39,-40,-23,-41,-24,20,20,20,20,20,20,20,20,20,20,20,]),'PLUS':([3,8,9,10,39,40,41,42,43,44,45,46,47,48,49,50,54,68,],[21,-41,-39,-40,-23,-41,-24,-25,-26,21,21,21,21,21,21,21,21,21,]),'MINUS':([3,8,9,10,39,40,41,42,43,44,45,46,47,48,49,50,54,68,],[22,-41,-39,-40,-23,-41,-24,-25,-26,22,22,22,22,22,22,22,22,22,]),'L_SHIFT':([3,8,9,10,39,40,41,42,43,44,45,46,47,48,49,50,54,68,],[23,-41,-39,-40,-23,-41,-24,-25,-26,23,23,23,23,23,23,23,23,23,]),'R_SHIFT':([3,8,9,10,39,40,41,42,43,44,45,46,47,48,49,50,54,68,],[24,-41,-39,-40,-23,-41,-24,-25,-26,24,24,24,24,24,24,24,24,24,]),'MOD':([3,8,9,10,39,40,41,42,43,44,45,46,47,48,49,50,54,68,],[25,-41,-39,-40,-23,-41,-24,-25,-26,25,25,25,25,25,25,25,25,25,]),'XOR':([3,8,9,10,39,40,41,42,43,44,45,46,47,48,49,50,54,68,],[26,-41,-39,-40,-23,-41,-24,-25,-26,26,26,26,26,26,26,26,26,26,]),'AND':([3,8,9,10,39,40,41,42,43,44,45,46,47,48,49,50,54,68,],[27,-41,-39,-40,-23,-41,-24,-25,-26,27,27,27,27,27,27,27,27,27,]),'OR':([3,8,9,10,39,40,41,42,43,44,45,46,47,48,49,50,54,68,],[28,-41,-39,-40,-23,-41,-24,-25,-26,28,28,28,28,28,28,28,28,28,]),'R_FLOWERBRACE':([5,6,7,17,18,29,33,51,52,53,55,56,57,58,66,67,69,],[-4,-5,-6,-1,-2,-3,-22,-8,-9,-22,-19,-20,66,-7,-17,-18,-10,]),'ASSIGN':([8,35,],[30,30,]),'LE':([9,10,39,40,41,42,43,44,45,46,47,48,49,54,],[-39,-40,-23,-41,-24,-25,-26,-27,-28,-29,-30,-31,-32,60,]),'LT':([9,10,39,40,41,42,43,44,45,46,47,48,49,54,],[-39,-40,-23,-41,-24,-25,-26,-27,-28,-29,-30,-31,-32,61,]),'GE':([9,10,39,40,41,42,43,44,45,46,47,48,49,54,],[-39,-40,-23,-41,-24,-25,-26,-27,-28,-29,-30,-31,-32,62,]),'GT':([9,10,39,40,41,42,43,44,45,46,47,48,49,54,],[-39,-40,-23,-41,-24,-25,-26,-27,-28,-29,-30,-31,-32,63,]),'NE':([9,10,39,40,41,42,43,44,45,46,47,48,49,54,],[-39,-40,-23,-41,-24,-25,-26,-27,-28,-29,-30,-31,-32,64,]),'EQ':([9,10,39,40,41,42,43,44,45,46,47,48,49,54,],[-39,-40,-23,-41,-24,-25,-26,-27,-28,-29,-30,-31,-32,65,]),'R_PAREN':([9,10,39,40,41,42,43,44,45,46,47,48,49,68,],[-39,-40,-23,-41,-24,-25,-26,-27,-28,-29,-30,-31,-32,69,]),'L_PAREN':([13,],[34,]),'L_FLOWERBRACE':([33,69,],[53,-10,]),}
 
 _lr_action = {}
 for _k, _v in _lr_action_items.items():
@@ -17,7 +17,7 @@ for _k, _v in _lr_action_items.items():
       _lr_action[_x][_k] = _y
 del _lr_action_items
 
-_lr_goto_items = {'detector':([0,],[1,]),'statement':([0,26,],[2,28,]),'empty':([0,],[3,]),'var_assign':([0,26,],[4,4,]),'expression':([0,12,13,14,15,16,18,26,29,],[5,19,21,22,23,24,27,5,37,]),'while_loop':([0,26,],[6,6,]),'condition':([9,],[17,]),'block':([17,],[25,]),'relop':([27,],[29,]),}
+_lr_goto_items = {'statement':([0,33,53,57,],[1,52,58,67,]),'var_assign':([0,14,33,53,57,],[2,36,2,2,2,]),'expression':([0,19,20,21,22,23,24,25,26,27,28,30,33,34,53,57,59,],[3,39,41,42,43,44,45,46,47,48,49,50,3,54,3,3,68,]),'expression_unary':([0,33,53,57,],[4,4,4,4,]),'while_loop':([0,33,53,57,],[5,5,5,5,]),'declare_statement':([0,33,53,57,],[6,6,6,6,]),'empty':([0,33,53,57,],[7,7,7,7,]),'post':([0,33,53,57,],[11,11,11,11,]),'pre':([0,33,53,57,],[12,12,12,12,]),'condition':([13,],[33,]),'block':([33,],[51,]),'statement_multiple':([53,],[57,]),'relop':([54,],[59,]),}
 
 _lr_goto = {}
 for _k, _v in _lr_goto_items.items():
@@ -26,27 +26,46 @@ for _k, _v in _lr_goto_items.items():
        _lr_goto[_x][_k] = _y
 del _lr_goto_items
 _lr_productions = [
-  ("S' -> detector","S'",1,None,None,None),
-  ('detector -> statement','detector',1,'p_detector','detector.py',102),
-  ('detector -> empty','detector',1,'p_detector','detector.py',103),
-  ('statement -> var_assign SEMICOLON','statement',2,'p_statement','detector.py',110),
-  ('statement -> expression SEMICOLON','statement',2,'p_statement','detector.py',111),
-  ('statement -> while_loop','statement',1,'p_statement','detector.py',112),
-  ('while_loop -> WHILE condition block','while_loop',3,'p_while_loop','detector.py',120),
-  ('condition -> L_PAREN expression relop expression R_PAREN','condition',5,'p_condition','detector.py',128),
-  ('relop -> LE','relop',1,'p_relop','detector.py',136),
-  ('relop -> LT','relop',1,'p_relop','detector.py',137),
-  ('relop -> GE','relop',1,'p_relop','detector.py',138),
-  ('relop -> GT','relop',1,'p_relop','detector.py',139),
-  ('relop -> NE','relop',1,'p_relop','detector.py',140),
-  ('relop -> EQ','relop',1,'p_relop','detector.py',141),
-  ('block -> L_FLOWERBRACE statement R_FLOWERBRACE','block',3,'p_block','detector.py',148),
-  ('var_assign -> ID ASSIGN expression','var_assign',3,'p_var_assign','detector.py',156),
-  ('empty -> <empty>','empty',0,'p_empty','detector.py',164),
-  ('expression -> expression MULTIPLY expression','expression',3,'p_expression','detector.py',172),
-  ('expression -> expression DIVIDE expression','expression',3,'p_expression','detector.py',173),
-  ('expression -> expression PLUS expression','expression',3,'p_expression','detector.py',174),
-  ('expression -> expression MINUS expression','expression',3,'p_expression','detector.py',175),
-  ('expression -> INT','expression',1,'p_expression_type','detector.py',183),
-  ('expression -> ID','expression',1,'p_expression_var','detector.py',189),
+  ("S' -> statement","S'",1,None,None,None),
+  ('statement -> var_assign SEMICOLON','statement',2,'p_statement','detector.py',150),
+  ('statement -> expression SEMICOLON','statement',2,'p_statement','detector.py',151),
+  ('statement -> expression_unary SEMICOLON','statement',2,'p_statement','detector.py',152),
+  ('statement -> while_loop','statement',1,'p_statement','detector.py',153),
+  ('statement -> declare_statement','statement',1,'p_statement','detector.py',154),
+  ('statement -> empty','statement',1,'p_statement','detector.py',155),
+  ('statement_multiple -> statement','statement_multiple',1,'p_statement_single','detector.py',161),
+  ('while_loop -> WHILE condition block','while_loop',3,'p_while_loop','detector.py',168),
+  ('while_loop -> WHILE condition statement','while_loop',3,'p_while_loop','detector.py',169),
+  ('condition -> L_PAREN expression relop expression R_PAREN','condition',5,'p_condition','detector.py',177),
+  ('relop -> LE','relop',1,'p_relop','detector.py',185),
+  ('relop -> LT','relop',1,'p_relop','detector.py',186),
+  ('relop -> GE','relop',1,'p_relop','detector.py',187),
+  ('relop -> GT','relop',1,'p_relop','detector.py',188),
+  ('relop -> NE','relop',1,'p_relop','detector.py',189),
+  ('relop -> EQ','relop',1,'p_relop','detector.py',190),
+  ('block -> L_FLOWERBRACE statement_multiple R_FLOWERBRACE','block',3,'p_block','detector.py',197),
+  ('statement_multiple -> statement_multiple statement','statement_multiple',2,'p_statement_multiple','detector.py',205),
+  ('declare_statement -> TYPE ID SEMICOLON','declare_statement',3,'p_declare_statement','detector.py',213),
+  ('declare_statement -> TYPE var_assign SEMICOLON','declare_statement',3,'p_declare_statement','detector.py',214),
+  ('var_assign -> ID ASSIGN expression','var_assign',3,'p_var_assign','detector.py',222),
+  ('empty -> <empty>','empty',0,'p_empty','detector.py',230),
+  ('expression -> expression MULTIPLY expression','expression',3,'p_expression','detector.py',238),
+  ('expression -> expression DIVIDE expression','expression',3,'p_expression','detector.py',239),
+  ('expression -> expression PLUS expression','expression',3,'p_expression','detector.py',240),
+  ('expression -> expression MINUS expression','expression',3,'p_expression','detector.py',241),
+  ('expression -> expression L_SHIFT expression','expression',3,'p_expression','detector.py',242),
+  ('expression -> expression R_SHIFT expression','expression',3,'p_expression','detector.py',243),
+  ('expression -> expression MOD expression','expression',3,'p_expression','detector.py',244),
+  ('expression -> expression XOR expression','expression',3,'p_expression','detector.py',245),
+  ('expression -> expression AND expression','expression',3,'p_expression','detector.py',246),
+  ('expression -> expression OR expression','expression',3,'p_expression','detector.py',247),
+  ('expression_unary -> post','expression_unary',1,'p_expression_unary','detector.py',255),
+  ('expression_unary -> pre','expression_unary',1,'p_expression_unary','detector.py',256),
+  ('post -> ID PLUS_PLUS','post',2,'p_post','detector.py',263),
+  ('post -> ID MINUS_MINUS','post',2,'p_post','detector.py',264),
+  ('pre -> PLUS_PLUS ID','pre',2,'p_pre','detector.py',271),
+  ('pre -> MINUS_MINUS ID','pre',2,'p_pre','detector.py',272),
+  ('expression -> INT','expression',1,'p_expression_type','detector.py',280),
+  ('expression -> FLOAT','expression',1,'p_expression_type','detector.py',281),
+  ('expression -> ID','expression',1,'p_expression_var','detector.py',287),
 ]

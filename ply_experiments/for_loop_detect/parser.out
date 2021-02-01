@@ -3,604 +3,1858 @@ Created by PLY version 3.11 (http://www.dabeaz.com/ply)
 Unused terminals:
 
     FOR
-    TYPE
+    NEWLINE
 
 Grammar
 
-Rule 0     S' -> detector
-Rule 1     detector -> statement
-Rule 2     detector -> empty
-Rule 3     statement -> var_assign SEMICOLON
-Rule 4     statement -> expression SEMICOLON
-Rule 5     statement -> while_loop
-Rule 6     while_loop -> WHILE condition block
-Rule 7     condition -> L_PAREN expression relop expression R_PAREN
-Rule 8     relop -> LE
-Rule 9     relop -> LT
-Rule 10    relop -> GE
-Rule 11    relop -> GT
-Rule 12    relop -> NE
-Rule 13    relop -> EQ
-Rule 14    block -> L_FLOWERBRACE statement R_FLOWERBRACE
-Rule 15    var_assign -> ID ASSIGN expression
-Rule 16    empty -> <empty>
-Rule 17    expression -> expression MULTIPLY expression
-Rule 18    expression -> expression DIVIDE expression
-Rule 19    expression -> expression PLUS expression
-Rule 20    expression -> expression MINUS expression
-Rule 21    expression -> INT
-Rule 22    expression -> ID
+Rule 0     S' -> statement
+Rule 1     statement -> var_assign SEMICOLON
+Rule 2     statement -> expression SEMICOLON
+Rule 3     statement -> expression_unary SEMICOLON
+Rule 4     statement -> while_loop
+Rule 5     statement -> declare_statement
+Rule 6     statement -> empty
+Rule 7     statement_multiple -> statement
+Rule 8     while_loop -> WHILE condition block
+Rule 9     while_loop -> WHILE condition statement
+Rule 10    condition -> L_PAREN expression relop expression R_PAREN
+Rule 11    relop -> LE
+Rule 12    relop -> LT
+Rule 13    relop -> GE
+Rule 14    relop -> GT
+Rule 15    relop -> NE
+Rule 16    relop -> EQ
+Rule 17    block -> L_FLOWERBRACE statement_multiple R_FLOWERBRACE
+Rule 18    statement_multiple -> statement_multiple statement
+Rule 19    declare_statement -> TYPE ID SEMICOLON
+Rule 20    declare_statement -> TYPE var_assign SEMICOLON
+Rule 21    var_assign -> ID ASSIGN expression
+Rule 22    empty -> <empty>
+Rule 23    expression -> expression MULTIPLY expression
+Rule 24    expression -> expression DIVIDE expression
+Rule 25    expression -> expression PLUS expression
+Rule 26    expression -> expression MINUS expression
+Rule 27    expression -> expression L_SHIFT expression
+Rule 28    expression -> expression R_SHIFT expression
+Rule 29    expression -> expression MOD expression
+Rule 30    expression -> expression XOR expression
+Rule 31    expression -> expression AND expression
+Rule 32    expression -> expression OR expression
+Rule 33    expression_unary -> post
+Rule 34    expression_unary -> pre
+Rule 35    post -> ID PLUS_PLUS
+Rule 36    post -> ID MINUS_MINUS
+Rule 37    pre -> PLUS_PLUS ID
+Rule 38    pre -> MINUS_MINUS ID
+Rule 39    expression -> INT
+Rule 40    expression -> FLOAT
+Rule 41    expression -> ID
 
 Terminals, with rules where they appear
 
-ASSIGN               : 15
-DIVIDE               : 18
-EQ                   : 13
+AND                  : 31
+ASSIGN               : 21
+DIVIDE               : 24
+EQ                   : 16
+FLOAT                : 40
 FOR                  : 
-GE                   : 10
-GT                   : 11
-ID                   : 15 22
-INT                  : 21
-LE                   : 8
-LT                   : 9
-L_FLOWERBRACE        : 14
-L_PAREN              : 7
-MINUS                : 20
-MULTIPLY             : 17
-NE                   : 12
-PLUS                 : 19
-R_FLOWERBRACE        : 14
-R_PAREN              : 7
-SEMICOLON            : 3 4
-TYPE                 : 
-WHILE                : 6
+GE                   : 13
+GT                   : 14
+ID                   : 19 21 35 36 37 38 41
+INT                  : 39
+LE                   : 11
+LT                   : 12
+L_FLOWERBRACE        : 17
+L_PAREN              : 10
+L_SHIFT              : 27
+MINUS                : 26
+MINUS_MINUS          : 36 38
+MOD                  : 29
+MULTIPLY             : 23
+NE                   : 15
+NEWLINE              : 
+OR                   : 32
+PLUS                 : 25
+PLUS_PLUS            : 35 37
+R_FLOWERBRACE        : 17
+R_PAREN              : 10
+R_SHIFT              : 28
+SEMICOLON            : 1 2 3 19 20
+TYPE                 : 19 20
+WHILE                : 8 9
+XOR                  : 30
 error                : 
 
 Nonterminals, with rules where they appear
 
-block                : 6
-condition            : 6
-detector             : 0
-empty                : 2
-expression           : 4 7 7 15 17 17 18 18 19 19 20 20
-relop                : 7
-statement            : 1 14
-var_assign           : 3
-while_loop           : 5
+block                : 8
+condition            : 8 9
+declare_statement    : 5
+empty                : 6
+expression           : 2 10 10 21 23 23 24 24 25 25 26 26 27 27 28 28 29 29 30 30 31 31 32 32
+expression_unary     : 3
+post                 : 33
+pre                  : 34
+relop                : 10
+statement            : 7 9 18 0
+statement_multiple   : 17 18
+var_assign           : 1 20
+while_loop           : 4
 
 Parsing method: LALR
 
 state 0
 
-    (0) S' -> . detector
-    (1) detector -> . statement
-    (2) detector -> . empty
-    (3) statement -> . var_assign SEMICOLON
-    (4) statement -> . expression SEMICOLON
-    (5) statement -> . while_loop
-    (16) empty -> .
-    (15) var_assign -> . ID ASSIGN expression
-    (17) expression -> . expression MULTIPLY expression
-    (18) expression -> . expression DIVIDE expression
-    (19) expression -> . expression PLUS expression
-    (20) expression -> . expression MINUS expression
-    (21) expression -> . INT
-    (22) expression -> . ID
-    (6) while_loop -> . WHILE condition block
+    (0) S' -> . statement
+    (1) statement -> . var_assign SEMICOLON
+    (2) statement -> . expression SEMICOLON
+    (3) statement -> . expression_unary SEMICOLON
+    (4) statement -> . while_loop
+    (5) statement -> . declare_statement
+    (6) statement -> . empty
+    (21) var_assign -> . ID ASSIGN expression
+    (23) expression -> . expression MULTIPLY expression
+    (24) expression -> . expression DIVIDE expression
+    (25) expression -> . expression PLUS expression
+    (26) expression -> . expression MINUS expression
+    (27) expression -> . expression L_SHIFT expression
+    (28) expression -> . expression R_SHIFT expression
+    (29) expression -> . expression MOD expression
+    (30) expression -> . expression XOR expression
+    (31) expression -> . expression AND expression
+    (32) expression -> . expression OR expression
+    (39) expression -> . INT
+    (40) expression -> . FLOAT
+    (41) expression -> . ID
+    (33) expression_unary -> . post
+    (34) expression_unary -> . pre
+    (8) while_loop -> . WHILE condition block
+    (9) while_loop -> . WHILE condition statement
+    (19) declare_statement -> . TYPE ID SEMICOLON
+    (20) declare_statement -> . TYPE var_assign SEMICOLON
+    (22) empty -> .
+    (35) post -> . ID PLUS_PLUS
+    (36) post -> . ID MINUS_MINUS
+    (37) pre -> . PLUS_PLUS ID
+    (38) pre -> . MINUS_MINUS ID
 
-    $end            reduce using rule 16 (empty -> .)
-    ID              shift and go to state 7
-    INT             shift and go to state 8
-    WHILE           shift and go to state 9
+    ID              shift and go to state 8
+    INT             shift and go to state 9
+    FLOAT           shift and go to state 10
+    WHILE           shift and go to state 13
+    TYPE            shift and go to state 14
+    $end            reduce using rule 22 (empty -> .)
+    PLUS_PLUS       shift and go to state 15
+    MINUS_MINUS     shift and go to state 16
 
-    detector                       shift and go to state 1
-    statement                      shift and go to state 2
-    empty                          shift and go to state 3
-    var_assign                     shift and go to state 4
-    expression                     shift and go to state 5
-    while_loop                     shift and go to state 6
+    statement                      shift and go to state 1
+    var_assign                     shift and go to state 2
+    expression                     shift and go to state 3
+    expression_unary               shift and go to state 4
+    while_loop                     shift and go to state 5
+    declare_statement              shift and go to state 6
+    empty                          shift and go to state 7
+    post                           shift and go to state 11
+    pre                            shift and go to state 12
 
 state 1
 
-    (0) S' -> detector .
+    (0) S' -> statement .
 
 
 
 state 2
 
-    (1) detector -> statement .
+    (1) statement -> var_assign . SEMICOLON
 
-    $end            reduce using rule 1 (detector -> statement .)
+    SEMICOLON       shift and go to state 17
 
 
 state 3
 
-    (2) detector -> empty .
+    (2) statement -> expression . SEMICOLON
+    (23) expression -> expression . MULTIPLY expression
+    (24) expression -> expression . DIVIDE expression
+    (25) expression -> expression . PLUS expression
+    (26) expression -> expression . MINUS expression
+    (27) expression -> expression . L_SHIFT expression
+    (28) expression -> expression . R_SHIFT expression
+    (29) expression -> expression . MOD expression
+    (30) expression -> expression . XOR expression
+    (31) expression -> expression . AND expression
+    (32) expression -> expression . OR expression
 
-    $end            reduce using rule 2 (detector -> empty .)
+    SEMICOLON       shift and go to state 18
+    MULTIPLY        shift and go to state 19
+    DIVIDE          shift and go to state 20
+    PLUS            shift and go to state 21
+    MINUS           shift and go to state 22
+    L_SHIFT         shift and go to state 23
+    R_SHIFT         shift and go to state 24
+    MOD             shift and go to state 25
+    XOR             shift and go to state 26
+    AND             shift and go to state 27
+    OR              shift and go to state 28
 
 
 state 4
 
-    (3) statement -> var_assign . SEMICOLON
+    (3) statement -> expression_unary . SEMICOLON
 
-    SEMICOLON       shift and go to state 10
+    SEMICOLON       shift and go to state 29
 
 
 state 5
 
-    (4) statement -> expression . SEMICOLON
-    (17) expression -> expression . MULTIPLY expression
-    (18) expression -> expression . DIVIDE expression
-    (19) expression -> expression . PLUS expression
-    (20) expression -> expression . MINUS expression
+    (4) statement -> while_loop .
 
-    SEMICOLON       shift and go to state 11
-    MULTIPLY        shift and go to state 12
-    DIVIDE          shift and go to state 13
-    PLUS            shift and go to state 14
-    MINUS           shift and go to state 15
+    $end            reduce using rule 4 (statement -> while_loop .)
+    R_FLOWERBRACE   reduce using rule 4 (statement -> while_loop .)
+    ID              reduce using rule 4 (statement -> while_loop .)
+    INT             reduce using rule 4 (statement -> while_loop .)
+    FLOAT           reduce using rule 4 (statement -> while_loop .)
+    WHILE           reduce using rule 4 (statement -> while_loop .)
+    TYPE            reduce using rule 4 (statement -> while_loop .)
+    PLUS_PLUS       reduce using rule 4 (statement -> while_loop .)
+    MINUS_MINUS     reduce using rule 4 (statement -> while_loop .)
 
 
 state 6
 
-    (5) statement -> while_loop .
+    (5) statement -> declare_statement .
 
-    $end            reduce using rule 5 (statement -> while_loop .)
-    R_FLOWERBRACE   reduce using rule 5 (statement -> while_loop .)
+    $end            reduce using rule 5 (statement -> declare_statement .)
+    R_FLOWERBRACE   reduce using rule 5 (statement -> declare_statement .)
+    ID              reduce using rule 5 (statement -> declare_statement .)
+    INT             reduce using rule 5 (statement -> declare_statement .)
+    FLOAT           reduce using rule 5 (statement -> declare_statement .)
+    WHILE           reduce using rule 5 (statement -> declare_statement .)
+    TYPE            reduce using rule 5 (statement -> declare_statement .)
+    PLUS_PLUS       reduce using rule 5 (statement -> declare_statement .)
+    MINUS_MINUS     reduce using rule 5 (statement -> declare_statement .)
 
 
 state 7
 
-    (15) var_assign -> ID . ASSIGN expression
-    (22) expression -> ID .
+    (6) statement -> empty .
 
-    ASSIGN          shift and go to state 16
-    SEMICOLON       reduce using rule 22 (expression -> ID .)
-    MULTIPLY        reduce using rule 22 (expression -> ID .)
-    DIVIDE          reduce using rule 22 (expression -> ID .)
-    PLUS            reduce using rule 22 (expression -> ID .)
-    MINUS           reduce using rule 22 (expression -> ID .)
+    $end            reduce using rule 6 (statement -> empty .)
+    R_FLOWERBRACE   reduce using rule 6 (statement -> empty .)
+    ID              reduce using rule 6 (statement -> empty .)
+    INT             reduce using rule 6 (statement -> empty .)
+    FLOAT           reduce using rule 6 (statement -> empty .)
+    WHILE           reduce using rule 6 (statement -> empty .)
+    TYPE            reduce using rule 6 (statement -> empty .)
+    PLUS_PLUS       reduce using rule 6 (statement -> empty .)
+    MINUS_MINUS     reduce using rule 6 (statement -> empty .)
 
 
 state 8
 
-    (21) expression -> INT .
+    (21) var_assign -> ID . ASSIGN expression
+    (41) expression -> ID .
+    (35) post -> ID . PLUS_PLUS
+    (36) post -> ID . MINUS_MINUS
 
-    SEMICOLON       reduce using rule 21 (expression -> INT .)
-    MULTIPLY        reduce using rule 21 (expression -> INT .)
-    DIVIDE          reduce using rule 21 (expression -> INT .)
-    PLUS            reduce using rule 21 (expression -> INT .)
-    MINUS           reduce using rule 21 (expression -> INT .)
-    LE              reduce using rule 21 (expression -> INT .)
-    LT              reduce using rule 21 (expression -> INT .)
-    GE              reduce using rule 21 (expression -> INT .)
-    GT              reduce using rule 21 (expression -> INT .)
-    NE              reduce using rule 21 (expression -> INT .)
-    EQ              reduce using rule 21 (expression -> INT .)
-    R_PAREN         reduce using rule 21 (expression -> INT .)
+    ASSIGN          shift and go to state 30
+    SEMICOLON       reduce using rule 41 (expression -> ID .)
+    MULTIPLY        reduce using rule 41 (expression -> ID .)
+    DIVIDE          reduce using rule 41 (expression -> ID .)
+    PLUS            reduce using rule 41 (expression -> ID .)
+    MINUS           reduce using rule 41 (expression -> ID .)
+    L_SHIFT         reduce using rule 41 (expression -> ID .)
+    R_SHIFT         reduce using rule 41 (expression -> ID .)
+    MOD             reduce using rule 41 (expression -> ID .)
+    XOR             reduce using rule 41 (expression -> ID .)
+    AND             reduce using rule 41 (expression -> ID .)
+    OR              reduce using rule 41 (expression -> ID .)
+    PLUS_PLUS       shift and go to state 31
+    MINUS_MINUS     shift and go to state 32
 
 
 state 9
 
-    (6) while_loop -> WHILE . condition block
-    (7) condition -> . L_PAREN expression relop expression R_PAREN
+    (39) expression -> INT .
 
-    L_PAREN         shift and go to state 18
+    SEMICOLON       reduce using rule 39 (expression -> INT .)
+    MULTIPLY        reduce using rule 39 (expression -> INT .)
+    DIVIDE          reduce using rule 39 (expression -> INT .)
+    PLUS            reduce using rule 39 (expression -> INT .)
+    MINUS           reduce using rule 39 (expression -> INT .)
+    L_SHIFT         reduce using rule 39 (expression -> INT .)
+    R_SHIFT         reduce using rule 39 (expression -> INT .)
+    MOD             reduce using rule 39 (expression -> INT .)
+    XOR             reduce using rule 39 (expression -> INT .)
+    AND             reduce using rule 39 (expression -> INT .)
+    OR              reduce using rule 39 (expression -> INT .)
+    LE              reduce using rule 39 (expression -> INT .)
+    LT              reduce using rule 39 (expression -> INT .)
+    GE              reduce using rule 39 (expression -> INT .)
+    GT              reduce using rule 39 (expression -> INT .)
+    NE              reduce using rule 39 (expression -> INT .)
+    EQ              reduce using rule 39 (expression -> INT .)
+    R_PAREN         reduce using rule 39 (expression -> INT .)
 
-    condition                      shift and go to state 17
 
 state 10
 
-    (3) statement -> var_assign SEMICOLON .
+    (40) expression -> FLOAT .
 
-    $end            reduce using rule 3 (statement -> var_assign SEMICOLON .)
-    R_FLOWERBRACE   reduce using rule 3 (statement -> var_assign SEMICOLON .)
+    SEMICOLON       reduce using rule 40 (expression -> FLOAT .)
+    MULTIPLY        reduce using rule 40 (expression -> FLOAT .)
+    DIVIDE          reduce using rule 40 (expression -> FLOAT .)
+    PLUS            reduce using rule 40 (expression -> FLOAT .)
+    MINUS           reduce using rule 40 (expression -> FLOAT .)
+    L_SHIFT         reduce using rule 40 (expression -> FLOAT .)
+    R_SHIFT         reduce using rule 40 (expression -> FLOAT .)
+    MOD             reduce using rule 40 (expression -> FLOAT .)
+    XOR             reduce using rule 40 (expression -> FLOAT .)
+    AND             reduce using rule 40 (expression -> FLOAT .)
+    OR              reduce using rule 40 (expression -> FLOAT .)
+    LE              reduce using rule 40 (expression -> FLOAT .)
+    LT              reduce using rule 40 (expression -> FLOAT .)
+    GE              reduce using rule 40 (expression -> FLOAT .)
+    GT              reduce using rule 40 (expression -> FLOAT .)
+    NE              reduce using rule 40 (expression -> FLOAT .)
+    EQ              reduce using rule 40 (expression -> FLOAT .)
+    R_PAREN         reduce using rule 40 (expression -> FLOAT .)
 
 
 state 11
 
-    (4) statement -> expression SEMICOLON .
+    (33) expression_unary -> post .
 
-    $end            reduce using rule 4 (statement -> expression SEMICOLON .)
-    R_FLOWERBRACE   reduce using rule 4 (statement -> expression SEMICOLON .)
+    SEMICOLON       reduce using rule 33 (expression_unary -> post .)
 
 
 state 12
 
-    (17) expression -> expression MULTIPLY . expression
-    (17) expression -> . expression MULTIPLY expression
-    (18) expression -> . expression DIVIDE expression
-    (19) expression -> . expression PLUS expression
-    (20) expression -> . expression MINUS expression
-    (21) expression -> . INT
-    (22) expression -> . ID
+    (34) expression_unary -> pre .
 
-    INT             shift and go to state 8
-    ID              shift and go to state 20
+    SEMICOLON       reduce using rule 34 (expression_unary -> pre .)
 
-    expression                     shift and go to state 19
 
 state 13
 
-    (18) expression -> expression DIVIDE . expression
-    (17) expression -> . expression MULTIPLY expression
-    (18) expression -> . expression DIVIDE expression
-    (19) expression -> . expression PLUS expression
-    (20) expression -> . expression MINUS expression
-    (21) expression -> . INT
-    (22) expression -> . ID
+    (8) while_loop -> WHILE . condition block
+    (9) while_loop -> WHILE . condition statement
+    (10) condition -> . L_PAREN expression relop expression R_PAREN
 
-    INT             shift and go to state 8
-    ID              shift and go to state 20
+    L_PAREN         shift and go to state 34
 
-    expression                     shift and go to state 21
+    condition                      shift and go to state 33
 
 state 14
 
-    (19) expression -> expression PLUS . expression
-    (17) expression -> . expression MULTIPLY expression
-    (18) expression -> . expression DIVIDE expression
-    (19) expression -> . expression PLUS expression
-    (20) expression -> . expression MINUS expression
-    (21) expression -> . INT
-    (22) expression -> . ID
+    (19) declare_statement -> TYPE . ID SEMICOLON
+    (20) declare_statement -> TYPE . var_assign SEMICOLON
+    (21) var_assign -> . ID ASSIGN expression
 
-    INT             shift and go to state 8
-    ID              shift and go to state 20
+    ID              shift and go to state 35
 
-    expression                     shift and go to state 22
+    var_assign                     shift and go to state 36
 
 state 15
 
-    (20) expression -> expression MINUS . expression
-    (17) expression -> . expression MULTIPLY expression
-    (18) expression -> . expression DIVIDE expression
-    (19) expression -> . expression PLUS expression
-    (20) expression -> . expression MINUS expression
-    (21) expression -> . INT
-    (22) expression -> . ID
+    (37) pre -> PLUS_PLUS . ID
 
-    INT             shift and go to state 8
-    ID              shift and go to state 20
+    ID              shift and go to state 37
 
-    expression                     shift and go to state 23
 
 state 16
 
-    (15) var_assign -> ID ASSIGN . expression
-    (17) expression -> . expression MULTIPLY expression
-    (18) expression -> . expression DIVIDE expression
-    (19) expression -> . expression PLUS expression
-    (20) expression -> . expression MINUS expression
-    (21) expression -> . INT
-    (22) expression -> . ID
+    (38) pre -> MINUS_MINUS . ID
 
-    INT             shift and go to state 8
-    ID              shift and go to state 20
+    ID              shift and go to state 38
 
-    expression                     shift and go to state 24
 
 state 17
 
-    (6) while_loop -> WHILE condition . block
-    (14) block -> . L_FLOWERBRACE statement R_FLOWERBRACE
+    (1) statement -> var_assign SEMICOLON .
 
-    L_FLOWERBRACE   shift and go to state 26
+    $end            reduce using rule 1 (statement -> var_assign SEMICOLON .)
+    R_FLOWERBRACE   reduce using rule 1 (statement -> var_assign SEMICOLON .)
+    ID              reduce using rule 1 (statement -> var_assign SEMICOLON .)
+    INT             reduce using rule 1 (statement -> var_assign SEMICOLON .)
+    FLOAT           reduce using rule 1 (statement -> var_assign SEMICOLON .)
+    WHILE           reduce using rule 1 (statement -> var_assign SEMICOLON .)
+    TYPE            reduce using rule 1 (statement -> var_assign SEMICOLON .)
+    PLUS_PLUS       reduce using rule 1 (statement -> var_assign SEMICOLON .)
+    MINUS_MINUS     reduce using rule 1 (statement -> var_assign SEMICOLON .)
 
-    block                          shift and go to state 25
 
 state 18
 
-    (7) condition -> L_PAREN . expression relop expression R_PAREN
-    (17) expression -> . expression MULTIPLY expression
-    (18) expression -> . expression DIVIDE expression
-    (19) expression -> . expression PLUS expression
-    (20) expression -> . expression MINUS expression
-    (21) expression -> . INT
-    (22) expression -> . ID
+    (2) statement -> expression SEMICOLON .
 
-    INT             shift and go to state 8
-    ID              shift and go to state 20
+    $end            reduce using rule 2 (statement -> expression SEMICOLON .)
+    R_FLOWERBRACE   reduce using rule 2 (statement -> expression SEMICOLON .)
+    ID              reduce using rule 2 (statement -> expression SEMICOLON .)
+    INT             reduce using rule 2 (statement -> expression SEMICOLON .)
+    FLOAT           reduce using rule 2 (statement -> expression SEMICOLON .)
+    WHILE           reduce using rule 2 (statement -> expression SEMICOLON .)
+    TYPE            reduce using rule 2 (statement -> expression SEMICOLON .)
+    PLUS_PLUS       reduce using rule 2 (statement -> expression SEMICOLON .)
+    MINUS_MINUS     reduce using rule 2 (statement -> expression SEMICOLON .)
 
-    expression                     shift and go to state 27
 
 state 19
 
-    (17) expression -> expression MULTIPLY expression .
-    (17) expression -> expression . MULTIPLY expression
-    (18) expression -> expression . DIVIDE expression
-    (19) expression -> expression . PLUS expression
-    (20) expression -> expression . MINUS expression
+    (23) expression -> expression MULTIPLY . expression
+    (23) expression -> . expression MULTIPLY expression
+    (24) expression -> . expression DIVIDE expression
+    (25) expression -> . expression PLUS expression
+    (26) expression -> . expression MINUS expression
+    (27) expression -> . expression L_SHIFT expression
+    (28) expression -> . expression R_SHIFT expression
+    (29) expression -> . expression MOD expression
+    (30) expression -> . expression XOR expression
+    (31) expression -> . expression AND expression
+    (32) expression -> . expression OR expression
+    (39) expression -> . INT
+    (40) expression -> . FLOAT
+    (41) expression -> . ID
 
-    SEMICOLON       reduce using rule 17 (expression -> expression MULTIPLY expression .)
-    MULTIPLY        reduce using rule 17 (expression -> expression MULTIPLY expression .)
-    DIVIDE          reduce using rule 17 (expression -> expression MULTIPLY expression .)
-    PLUS            reduce using rule 17 (expression -> expression MULTIPLY expression .)
-    MINUS           reduce using rule 17 (expression -> expression MULTIPLY expression .)
-    LE              reduce using rule 17 (expression -> expression MULTIPLY expression .)
-    LT              reduce using rule 17 (expression -> expression MULTIPLY expression .)
-    GE              reduce using rule 17 (expression -> expression MULTIPLY expression .)
-    GT              reduce using rule 17 (expression -> expression MULTIPLY expression .)
-    NE              reduce using rule 17 (expression -> expression MULTIPLY expression .)
-    EQ              reduce using rule 17 (expression -> expression MULTIPLY expression .)
-    R_PAREN         reduce using rule 17 (expression -> expression MULTIPLY expression .)
+    INT             shift and go to state 9
+    FLOAT           shift and go to state 10
+    ID              shift and go to state 40
 
-  ! MULTIPLY        [ shift and go to state 12 ]
-  ! DIVIDE          [ shift and go to state 13 ]
-  ! PLUS            [ shift and go to state 14 ]
-  ! MINUS           [ shift and go to state 15 ]
-
+    expression                     shift and go to state 39
 
 state 20
 
-    (22) expression -> ID .
+    (24) expression -> expression DIVIDE . expression
+    (23) expression -> . expression MULTIPLY expression
+    (24) expression -> . expression DIVIDE expression
+    (25) expression -> . expression PLUS expression
+    (26) expression -> . expression MINUS expression
+    (27) expression -> . expression L_SHIFT expression
+    (28) expression -> . expression R_SHIFT expression
+    (29) expression -> . expression MOD expression
+    (30) expression -> . expression XOR expression
+    (31) expression -> . expression AND expression
+    (32) expression -> . expression OR expression
+    (39) expression -> . INT
+    (40) expression -> . FLOAT
+    (41) expression -> . ID
 
-    MULTIPLY        reduce using rule 22 (expression -> ID .)
-    DIVIDE          reduce using rule 22 (expression -> ID .)
-    PLUS            reduce using rule 22 (expression -> ID .)
-    MINUS           reduce using rule 22 (expression -> ID .)
-    SEMICOLON       reduce using rule 22 (expression -> ID .)
-    LE              reduce using rule 22 (expression -> ID .)
-    LT              reduce using rule 22 (expression -> ID .)
-    GE              reduce using rule 22 (expression -> ID .)
-    GT              reduce using rule 22 (expression -> ID .)
-    NE              reduce using rule 22 (expression -> ID .)
-    EQ              reduce using rule 22 (expression -> ID .)
-    R_PAREN         reduce using rule 22 (expression -> ID .)
+    INT             shift and go to state 9
+    FLOAT           shift and go to state 10
+    ID              shift and go to state 40
 
+    expression                     shift and go to state 41
 
 state 21
 
-    (18) expression -> expression DIVIDE expression .
-    (17) expression -> expression . MULTIPLY expression
-    (18) expression -> expression . DIVIDE expression
-    (19) expression -> expression . PLUS expression
-    (20) expression -> expression . MINUS expression
+    (25) expression -> expression PLUS . expression
+    (23) expression -> . expression MULTIPLY expression
+    (24) expression -> . expression DIVIDE expression
+    (25) expression -> . expression PLUS expression
+    (26) expression -> . expression MINUS expression
+    (27) expression -> . expression L_SHIFT expression
+    (28) expression -> . expression R_SHIFT expression
+    (29) expression -> . expression MOD expression
+    (30) expression -> . expression XOR expression
+    (31) expression -> . expression AND expression
+    (32) expression -> . expression OR expression
+    (39) expression -> . INT
+    (40) expression -> . FLOAT
+    (41) expression -> . ID
 
-    SEMICOLON       reduce using rule 18 (expression -> expression DIVIDE expression .)
-    MULTIPLY        reduce using rule 18 (expression -> expression DIVIDE expression .)
-    DIVIDE          reduce using rule 18 (expression -> expression DIVIDE expression .)
-    PLUS            reduce using rule 18 (expression -> expression DIVIDE expression .)
-    MINUS           reduce using rule 18 (expression -> expression DIVIDE expression .)
-    LE              reduce using rule 18 (expression -> expression DIVIDE expression .)
-    LT              reduce using rule 18 (expression -> expression DIVIDE expression .)
-    GE              reduce using rule 18 (expression -> expression DIVIDE expression .)
-    GT              reduce using rule 18 (expression -> expression DIVIDE expression .)
-    NE              reduce using rule 18 (expression -> expression DIVIDE expression .)
-    EQ              reduce using rule 18 (expression -> expression DIVIDE expression .)
-    R_PAREN         reduce using rule 18 (expression -> expression DIVIDE expression .)
+    INT             shift and go to state 9
+    FLOAT           shift and go to state 10
+    ID              shift and go to state 40
 
-  ! MULTIPLY        [ shift and go to state 12 ]
-  ! DIVIDE          [ shift and go to state 13 ]
-  ! PLUS            [ shift and go to state 14 ]
-  ! MINUS           [ shift and go to state 15 ]
-
+    expression                     shift and go to state 42
 
 state 22
 
-    (19) expression -> expression PLUS expression .
-    (17) expression -> expression . MULTIPLY expression
-    (18) expression -> expression . DIVIDE expression
-    (19) expression -> expression . PLUS expression
-    (20) expression -> expression . MINUS expression
+    (26) expression -> expression MINUS . expression
+    (23) expression -> . expression MULTIPLY expression
+    (24) expression -> . expression DIVIDE expression
+    (25) expression -> . expression PLUS expression
+    (26) expression -> . expression MINUS expression
+    (27) expression -> . expression L_SHIFT expression
+    (28) expression -> . expression R_SHIFT expression
+    (29) expression -> . expression MOD expression
+    (30) expression -> . expression XOR expression
+    (31) expression -> . expression AND expression
+    (32) expression -> . expression OR expression
+    (39) expression -> . INT
+    (40) expression -> . FLOAT
+    (41) expression -> . ID
 
-    SEMICOLON       reduce using rule 19 (expression -> expression PLUS expression .)
-    PLUS            reduce using rule 19 (expression -> expression PLUS expression .)
-    MINUS           reduce using rule 19 (expression -> expression PLUS expression .)
-    LE              reduce using rule 19 (expression -> expression PLUS expression .)
-    LT              reduce using rule 19 (expression -> expression PLUS expression .)
-    GE              reduce using rule 19 (expression -> expression PLUS expression .)
-    GT              reduce using rule 19 (expression -> expression PLUS expression .)
-    NE              reduce using rule 19 (expression -> expression PLUS expression .)
-    EQ              reduce using rule 19 (expression -> expression PLUS expression .)
-    R_PAREN         reduce using rule 19 (expression -> expression PLUS expression .)
-    MULTIPLY        shift and go to state 12
-    DIVIDE          shift and go to state 13
+    INT             shift and go to state 9
+    FLOAT           shift and go to state 10
+    ID              shift and go to state 40
 
-  ! MULTIPLY        [ reduce using rule 19 (expression -> expression PLUS expression .) ]
-  ! DIVIDE          [ reduce using rule 19 (expression -> expression PLUS expression .) ]
-  ! PLUS            [ shift and go to state 14 ]
-  ! MINUS           [ shift and go to state 15 ]
-
+    expression                     shift and go to state 43
 
 state 23
 
-    (20) expression -> expression MINUS expression .
-    (17) expression -> expression . MULTIPLY expression
-    (18) expression -> expression . DIVIDE expression
-    (19) expression -> expression . PLUS expression
-    (20) expression -> expression . MINUS expression
+    (27) expression -> expression L_SHIFT . expression
+    (23) expression -> . expression MULTIPLY expression
+    (24) expression -> . expression DIVIDE expression
+    (25) expression -> . expression PLUS expression
+    (26) expression -> . expression MINUS expression
+    (27) expression -> . expression L_SHIFT expression
+    (28) expression -> . expression R_SHIFT expression
+    (29) expression -> . expression MOD expression
+    (30) expression -> . expression XOR expression
+    (31) expression -> . expression AND expression
+    (32) expression -> . expression OR expression
+    (39) expression -> . INT
+    (40) expression -> . FLOAT
+    (41) expression -> . ID
 
-    SEMICOLON       reduce using rule 20 (expression -> expression MINUS expression .)
-    PLUS            reduce using rule 20 (expression -> expression MINUS expression .)
-    MINUS           reduce using rule 20 (expression -> expression MINUS expression .)
-    LE              reduce using rule 20 (expression -> expression MINUS expression .)
-    LT              reduce using rule 20 (expression -> expression MINUS expression .)
-    GE              reduce using rule 20 (expression -> expression MINUS expression .)
-    GT              reduce using rule 20 (expression -> expression MINUS expression .)
-    NE              reduce using rule 20 (expression -> expression MINUS expression .)
-    EQ              reduce using rule 20 (expression -> expression MINUS expression .)
-    R_PAREN         reduce using rule 20 (expression -> expression MINUS expression .)
-    MULTIPLY        shift and go to state 12
-    DIVIDE          shift and go to state 13
+    INT             shift and go to state 9
+    FLOAT           shift and go to state 10
+    ID              shift and go to state 40
 
-  ! MULTIPLY        [ reduce using rule 20 (expression -> expression MINUS expression .) ]
-  ! DIVIDE          [ reduce using rule 20 (expression -> expression MINUS expression .) ]
-  ! PLUS            [ shift and go to state 14 ]
-  ! MINUS           [ shift and go to state 15 ]
-
+    expression                     shift and go to state 44
 
 state 24
 
-    (15) var_assign -> ID ASSIGN expression .
-    (17) expression -> expression . MULTIPLY expression
-    (18) expression -> expression . DIVIDE expression
-    (19) expression -> expression . PLUS expression
-    (20) expression -> expression . MINUS expression
+    (28) expression -> expression R_SHIFT . expression
+    (23) expression -> . expression MULTIPLY expression
+    (24) expression -> . expression DIVIDE expression
+    (25) expression -> . expression PLUS expression
+    (26) expression -> . expression MINUS expression
+    (27) expression -> . expression L_SHIFT expression
+    (28) expression -> . expression R_SHIFT expression
+    (29) expression -> . expression MOD expression
+    (30) expression -> . expression XOR expression
+    (31) expression -> . expression AND expression
+    (32) expression -> . expression OR expression
+    (39) expression -> . INT
+    (40) expression -> . FLOAT
+    (41) expression -> . ID
 
-    SEMICOLON       reduce using rule 15 (var_assign -> ID ASSIGN expression .)
-    MULTIPLY        shift and go to state 12
-    DIVIDE          shift and go to state 13
-    PLUS            shift and go to state 14
-    MINUS           shift and go to state 15
+    INT             shift and go to state 9
+    FLOAT           shift and go to state 10
+    ID              shift and go to state 40
 
+    expression                     shift and go to state 45
 
 state 25
 
-    (6) while_loop -> WHILE condition block .
+    (29) expression -> expression MOD . expression
+    (23) expression -> . expression MULTIPLY expression
+    (24) expression -> . expression DIVIDE expression
+    (25) expression -> . expression PLUS expression
+    (26) expression -> . expression MINUS expression
+    (27) expression -> . expression L_SHIFT expression
+    (28) expression -> . expression R_SHIFT expression
+    (29) expression -> . expression MOD expression
+    (30) expression -> . expression XOR expression
+    (31) expression -> . expression AND expression
+    (32) expression -> . expression OR expression
+    (39) expression -> . INT
+    (40) expression -> . FLOAT
+    (41) expression -> . ID
 
-    $end            reduce using rule 6 (while_loop -> WHILE condition block .)
-    R_FLOWERBRACE   reduce using rule 6 (while_loop -> WHILE condition block .)
+    INT             shift and go to state 9
+    FLOAT           shift and go to state 10
+    ID              shift and go to state 40
 
+    expression                     shift and go to state 46
 
 state 26
 
-    (14) block -> L_FLOWERBRACE . statement R_FLOWERBRACE
-    (3) statement -> . var_assign SEMICOLON
-    (4) statement -> . expression SEMICOLON
-    (5) statement -> . while_loop
-    (15) var_assign -> . ID ASSIGN expression
-    (17) expression -> . expression MULTIPLY expression
-    (18) expression -> . expression DIVIDE expression
-    (19) expression -> . expression PLUS expression
-    (20) expression -> . expression MINUS expression
-    (21) expression -> . INT
-    (22) expression -> . ID
-    (6) while_loop -> . WHILE condition block
+    (30) expression -> expression XOR . expression
+    (23) expression -> . expression MULTIPLY expression
+    (24) expression -> . expression DIVIDE expression
+    (25) expression -> . expression PLUS expression
+    (26) expression -> . expression MINUS expression
+    (27) expression -> . expression L_SHIFT expression
+    (28) expression -> . expression R_SHIFT expression
+    (29) expression -> . expression MOD expression
+    (30) expression -> . expression XOR expression
+    (31) expression -> . expression AND expression
+    (32) expression -> . expression OR expression
+    (39) expression -> . INT
+    (40) expression -> . FLOAT
+    (41) expression -> . ID
 
-    ID              shift and go to state 7
-    INT             shift and go to state 8
-    WHILE           shift and go to state 9
+    INT             shift and go to state 9
+    FLOAT           shift and go to state 10
+    ID              shift and go to state 40
 
-    statement                      shift and go to state 28
-    var_assign                     shift and go to state 4
-    expression                     shift and go to state 5
-    while_loop                     shift and go to state 6
+    expression                     shift and go to state 47
 
 state 27
 
-    (7) condition -> L_PAREN expression . relop expression R_PAREN
-    (17) expression -> expression . MULTIPLY expression
-    (18) expression -> expression . DIVIDE expression
-    (19) expression -> expression . PLUS expression
-    (20) expression -> expression . MINUS expression
-    (8) relop -> . LE
-    (9) relop -> . LT
-    (10) relop -> . GE
-    (11) relop -> . GT
-    (12) relop -> . NE
-    (13) relop -> . EQ
+    (31) expression -> expression AND . expression
+    (23) expression -> . expression MULTIPLY expression
+    (24) expression -> . expression DIVIDE expression
+    (25) expression -> . expression PLUS expression
+    (26) expression -> . expression MINUS expression
+    (27) expression -> . expression L_SHIFT expression
+    (28) expression -> . expression R_SHIFT expression
+    (29) expression -> . expression MOD expression
+    (30) expression -> . expression XOR expression
+    (31) expression -> . expression AND expression
+    (32) expression -> . expression OR expression
+    (39) expression -> . INT
+    (40) expression -> . FLOAT
+    (41) expression -> . ID
 
-    MULTIPLY        shift and go to state 12
-    DIVIDE          shift and go to state 13
-    PLUS            shift and go to state 14
-    MINUS           shift and go to state 15
-    LE              shift and go to state 30
-    LT              shift and go to state 31
-    GE              shift and go to state 32
-    GT              shift and go to state 33
-    NE              shift and go to state 34
-    EQ              shift and go to state 35
+    INT             shift and go to state 9
+    FLOAT           shift and go to state 10
+    ID              shift and go to state 40
 
-    relop                          shift and go to state 29
+    expression                     shift and go to state 48
 
 state 28
 
-    (14) block -> L_FLOWERBRACE statement . R_FLOWERBRACE
+    (32) expression -> expression OR . expression
+    (23) expression -> . expression MULTIPLY expression
+    (24) expression -> . expression DIVIDE expression
+    (25) expression -> . expression PLUS expression
+    (26) expression -> . expression MINUS expression
+    (27) expression -> . expression L_SHIFT expression
+    (28) expression -> . expression R_SHIFT expression
+    (29) expression -> . expression MOD expression
+    (30) expression -> . expression XOR expression
+    (31) expression -> . expression AND expression
+    (32) expression -> . expression OR expression
+    (39) expression -> . INT
+    (40) expression -> . FLOAT
+    (41) expression -> . ID
 
-    R_FLOWERBRACE   shift and go to state 36
+    INT             shift and go to state 9
+    FLOAT           shift and go to state 10
+    ID              shift and go to state 40
 
+    expression                     shift and go to state 49
 
 state 29
 
-    (7) condition -> L_PAREN expression relop . expression R_PAREN
-    (17) expression -> . expression MULTIPLY expression
-    (18) expression -> . expression DIVIDE expression
-    (19) expression -> . expression PLUS expression
-    (20) expression -> . expression MINUS expression
-    (21) expression -> . INT
-    (22) expression -> . ID
+    (3) statement -> expression_unary SEMICOLON .
 
-    INT             shift and go to state 8
-    ID              shift and go to state 20
+    $end            reduce using rule 3 (statement -> expression_unary SEMICOLON .)
+    R_FLOWERBRACE   reduce using rule 3 (statement -> expression_unary SEMICOLON .)
+    ID              reduce using rule 3 (statement -> expression_unary SEMICOLON .)
+    INT             reduce using rule 3 (statement -> expression_unary SEMICOLON .)
+    FLOAT           reduce using rule 3 (statement -> expression_unary SEMICOLON .)
+    WHILE           reduce using rule 3 (statement -> expression_unary SEMICOLON .)
+    TYPE            reduce using rule 3 (statement -> expression_unary SEMICOLON .)
+    PLUS_PLUS       reduce using rule 3 (statement -> expression_unary SEMICOLON .)
+    MINUS_MINUS     reduce using rule 3 (statement -> expression_unary SEMICOLON .)
 
-    expression                     shift and go to state 37
 
 state 30
 
-    (8) relop -> LE .
+    (21) var_assign -> ID ASSIGN . expression
+    (23) expression -> . expression MULTIPLY expression
+    (24) expression -> . expression DIVIDE expression
+    (25) expression -> . expression PLUS expression
+    (26) expression -> . expression MINUS expression
+    (27) expression -> . expression L_SHIFT expression
+    (28) expression -> . expression R_SHIFT expression
+    (29) expression -> . expression MOD expression
+    (30) expression -> . expression XOR expression
+    (31) expression -> . expression AND expression
+    (32) expression -> . expression OR expression
+    (39) expression -> . INT
+    (40) expression -> . FLOAT
+    (41) expression -> . ID
 
-    INT             reduce using rule 8 (relop -> LE .)
-    ID              reduce using rule 8 (relop -> LE .)
+    INT             shift and go to state 9
+    FLOAT           shift and go to state 10
+    ID              shift and go to state 40
 
+    expression                     shift and go to state 50
 
 state 31
 
-    (9) relop -> LT .
+    (35) post -> ID PLUS_PLUS .
 
-    INT             reduce using rule 9 (relop -> LT .)
-    ID              reduce using rule 9 (relop -> LT .)
+    SEMICOLON       reduce using rule 35 (post -> ID PLUS_PLUS .)
 
 
 state 32
 
-    (10) relop -> GE .
+    (36) post -> ID MINUS_MINUS .
 
-    INT             reduce using rule 10 (relop -> GE .)
-    ID              reduce using rule 10 (relop -> GE .)
+    SEMICOLON       reduce using rule 36 (post -> ID MINUS_MINUS .)
 
 
 state 33
 
-    (11) relop -> GT .
+    (8) while_loop -> WHILE condition . block
+    (9) while_loop -> WHILE condition . statement
+    (17) block -> . L_FLOWERBRACE statement_multiple R_FLOWERBRACE
+    (1) statement -> . var_assign SEMICOLON
+    (2) statement -> . expression SEMICOLON
+    (3) statement -> . expression_unary SEMICOLON
+    (4) statement -> . while_loop
+    (5) statement -> . declare_statement
+    (6) statement -> . empty
+    (21) var_assign -> . ID ASSIGN expression
+    (23) expression -> . expression MULTIPLY expression
+    (24) expression -> . expression DIVIDE expression
+    (25) expression -> . expression PLUS expression
+    (26) expression -> . expression MINUS expression
+    (27) expression -> . expression L_SHIFT expression
+    (28) expression -> . expression R_SHIFT expression
+    (29) expression -> . expression MOD expression
+    (30) expression -> . expression XOR expression
+    (31) expression -> . expression AND expression
+    (32) expression -> . expression OR expression
+    (39) expression -> . INT
+    (40) expression -> . FLOAT
+    (41) expression -> . ID
+    (33) expression_unary -> . post
+    (34) expression_unary -> . pre
+    (8) while_loop -> . WHILE condition block
+    (9) while_loop -> . WHILE condition statement
+    (19) declare_statement -> . TYPE ID SEMICOLON
+    (20) declare_statement -> . TYPE var_assign SEMICOLON
+    (22) empty -> .
+    (35) post -> . ID PLUS_PLUS
+    (36) post -> . ID MINUS_MINUS
+    (37) pre -> . PLUS_PLUS ID
+    (38) pre -> . MINUS_MINUS ID
 
-    INT             reduce using rule 11 (relop -> GT .)
-    ID              reduce using rule 11 (relop -> GT .)
+  ! shift/reduce conflict for ID resolved as shift
+  ! shift/reduce conflict for INT resolved as shift
+  ! shift/reduce conflict for FLOAT resolved as shift
+  ! shift/reduce conflict for WHILE resolved as shift
+  ! shift/reduce conflict for TYPE resolved as shift
+  ! shift/reduce conflict for PLUS_PLUS resolved as shift
+  ! shift/reduce conflict for MINUS_MINUS resolved as shift
+    L_FLOWERBRACE   shift and go to state 53
+    ID              shift and go to state 8
+    INT             shift and go to state 9
+    FLOAT           shift and go to state 10
+    WHILE           shift and go to state 13
+    TYPE            shift and go to state 14
+    $end            reduce using rule 22 (empty -> .)
+    R_FLOWERBRACE   reduce using rule 22 (empty -> .)
+    PLUS_PLUS       shift and go to state 15
+    MINUS_MINUS     shift and go to state 16
 
+  ! ID              [ reduce using rule 22 (empty -> .) ]
+  ! INT             [ reduce using rule 22 (empty -> .) ]
+  ! FLOAT           [ reduce using rule 22 (empty -> .) ]
+  ! WHILE           [ reduce using rule 22 (empty -> .) ]
+  ! TYPE            [ reduce using rule 22 (empty -> .) ]
+  ! PLUS_PLUS       [ reduce using rule 22 (empty -> .) ]
+  ! MINUS_MINUS     [ reduce using rule 22 (empty -> .) ]
+
+    block                          shift and go to state 51
+    statement                      shift and go to state 52
+    var_assign                     shift and go to state 2
+    expression                     shift and go to state 3
+    expression_unary               shift and go to state 4
+    while_loop                     shift and go to state 5
+    declare_statement              shift and go to state 6
+    empty                          shift and go to state 7
+    post                           shift and go to state 11
+    pre                            shift and go to state 12
 
 state 34
 
-    (12) relop -> NE .
+    (10) condition -> L_PAREN . expression relop expression R_PAREN
+    (23) expression -> . expression MULTIPLY expression
+    (24) expression -> . expression DIVIDE expression
+    (25) expression -> . expression PLUS expression
+    (26) expression -> . expression MINUS expression
+    (27) expression -> . expression L_SHIFT expression
+    (28) expression -> . expression R_SHIFT expression
+    (29) expression -> . expression MOD expression
+    (30) expression -> . expression XOR expression
+    (31) expression -> . expression AND expression
+    (32) expression -> . expression OR expression
+    (39) expression -> . INT
+    (40) expression -> . FLOAT
+    (41) expression -> . ID
 
-    INT             reduce using rule 12 (relop -> NE .)
-    ID              reduce using rule 12 (relop -> NE .)
+    INT             shift and go to state 9
+    FLOAT           shift and go to state 10
+    ID              shift and go to state 40
 
+    expression                     shift and go to state 54
 
 state 35
 
-    (13) relop -> EQ .
+    (19) declare_statement -> TYPE ID . SEMICOLON
+    (21) var_assign -> ID . ASSIGN expression
 
-    INT             reduce using rule 13 (relop -> EQ .)
-    ID              reduce using rule 13 (relop -> EQ .)
+    SEMICOLON       shift and go to state 55
+    ASSIGN          shift and go to state 30
 
 
 state 36
 
-    (14) block -> L_FLOWERBRACE statement R_FLOWERBRACE .
+    (20) declare_statement -> TYPE var_assign . SEMICOLON
 
-    $end            reduce using rule 14 (block -> L_FLOWERBRACE statement R_FLOWERBRACE .)
-    R_FLOWERBRACE   reduce using rule 14 (block -> L_FLOWERBRACE statement R_FLOWERBRACE .)
+    SEMICOLON       shift and go to state 56
 
 
 state 37
 
-    (7) condition -> L_PAREN expression relop expression . R_PAREN
-    (17) expression -> expression . MULTIPLY expression
-    (18) expression -> expression . DIVIDE expression
-    (19) expression -> expression . PLUS expression
-    (20) expression -> expression . MINUS expression
+    (37) pre -> PLUS_PLUS ID .
 
-    R_PAREN         shift and go to state 38
-    MULTIPLY        shift and go to state 12
-    DIVIDE          shift and go to state 13
-    PLUS            shift and go to state 14
-    MINUS           shift and go to state 15
+    SEMICOLON       reduce using rule 37 (pre -> PLUS_PLUS ID .)
 
 
 state 38
 
-    (7) condition -> L_PAREN expression relop expression R_PAREN .
+    (38) pre -> MINUS_MINUS ID .
 
-    L_FLOWERBRACE   reduce using rule 7 (condition -> L_PAREN expression relop expression R_PAREN .)
+    SEMICOLON       reduce using rule 38 (pre -> MINUS_MINUS ID .)
 
+
+state 39
+
+    (23) expression -> expression MULTIPLY expression .
+    (23) expression -> expression . MULTIPLY expression
+    (24) expression -> expression . DIVIDE expression
+    (25) expression -> expression . PLUS expression
+    (26) expression -> expression . MINUS expression
+    (27) expression -> expression . L_SHIFT expression
+    (28) expression -> expression . R_SHIFT expression
+    (29) expression -> expression . MOD expression
+    (30) expression -> expression . XOR expression
+    (31) expression -> expression . AND expression
+    (32) expression -> expression . OR expression
+
+    SEMICOLON       reduce using rule 23 (expression -> expression MULTIPLY expression .)
+    MULTIPLY        reduce using rule 23 (expression -> expression MULTIPLY expression .)
+    DIVIDE          reduce using rule 23 (expression -> expression MULTIPLY expression .)
+    PLUS            reduce using rule 23 (expression -> expression MULTIPLY expression .)
+    MINUS           reduce using rule 23 (expression -> expression MULTIPLY expression .)
+    L_SHIFT         reduce using rule 23 (expression -> expression MULTIPLY expression .)
+    R_SHIFT         reduce using rule 23 (expression -> expression MULTIPLY expression .)
+    MOD             reduce using rule 23 (expression -> expression MULTIPLY expression .)
+    XOR             reduce using rule 23 (expression -> expression MULTIPLY expression .)
+    AND             reduce using rule 23 (expression -> expression MULTIPLY expression .)
+    OR              reduce using rule 23 (expression -> expression MULTIPLY expression .)
+    LE              reduce using rule 23 (expression -> expression MULTIPLY expression .)
+    LT              reduce using rule 23 (expression -> expression MULTIPLY expression .)
+    GE              reduce using rule 23 (expression -> expression MULTIPLY expression .)
+    GT              reduce using rule 23 (expression -> expression MULTIPLY expression .)
+    NE              reduce using rule 23 (expression -> expression MULTIPLY expression .)
+    EQ              reduce using rule 23 (expression -> expression MULTIPLY expression .)
+    R_PAREN         reduce using rule 23 (expression -> expression MULTIPLY expression .)
+
+  ! MULTIPLY        [ shift and go to state 19 ]
+  ! DIVIDE          [ shift and go to state 20 ]
+  ! PLUS            [ shift and go to state 21 ]
+  ! MINUS           [ shift and go to state 22 ]
+  ! L_SHIFT         [ shift and go to state 23 ]
+  ! R_SHIFT         [ shift and go to state 24 ]
+  ! MOD             [ shift and go to state 25 ]
+  ! XOR             [ shift and go to state 26 ]
+  ! AND             [ shift and go to state 27 ]
+  ! OR              [ shift and go to state 28 ]
+
+
+state 40
+
+    (41) expression -> ID .
+
+    MULTIPLY        reduce using rule 41 (expression -> ID .)
+    DIVIDE          reduce using rule 41 (expression -> ID .)
+    PLUS            reduce using rule 41 (expression -> ID .)
+    MINUS           reduce using rule 41 (expression -> ID .)
+    L_SHIFT         reduce using rule 41 (expression -> ID .)
+    R_SHIFT         reduce using rule 41 (expression -> ID .)
+    MOD             reduce using rule 41 (expression -> ID .)
+    XOR             reduce using rule 41 (expression -> ID .)
+    AND             reduce using rule 41 (expression -> ID .)
+    OR              reduce using rule 41 (expression -> ID .)
+    SEMICOLON       reduce using rule 41 (expression -> ID .)
+    LE              reduce using rule 41 (expression -> ID .)
+    LT              reduce using rule 41 (expression -> ID .)
+    GE              reduce using rule 41 (expression -> ID .)
+    GT              reduce using rule 41 (expression -> ID .)
+    NE              reduce using rule 41 (expression -> ID .)
+    EQ              reduce using rule 41 (expression -> ID .)
+    R_PAREN         reduce using rule 41 (expression -> ID .)
+
+
+state 41
+
+    (24) expression -> expression DIVIDE expression .
+    (23) expression -> expression . MULTIPLY expression
+    (24) expression -> expression . DIVIDE expression
+    (25) expression -> expression . PLUS expression
+    (26) expression -> expression . MINUS expression
+    (27) expression -> expression . L_SHIFT expression
+    (28) expression -> expression . R_SHIFT expression
+    (29) expression -> expression . MOD expression
+    (30) expression -> expression . XOR expression
+    (31) expression -> expression . AND expression
+    (32) expression -> expression . OR expression
+
+    SEMICOLON       reduce using rule 24 (expression -> expression DIVIDE expression .)
+    MULTIPLY        reduce using rule 24 (expression -> expression DIVIDE expression .)
+    DIVIDE          reduce using rule 24 (expression -> expression DIVIDE expression .)
+    PLUS            reduce using rule 24 (expression -> expression DIVIDE expression .)
+    MINUS           reduce using rule 24 (expression -> expression DIVIDE expression .)
+    L_SHIFT         reduce using rule 24 (expression -> expression DIVIDE expression .)
+    R_SHIFT         reduce using rule 24 (expression -> expression DIVIDE expression .)
+    MOD             reduce using rule 24 (expression -> expression DIVIDE expression .)
+    XOR             reduce using rule 24 (expression -> expression DIVIDE expression .)
+    AND             reduce using rule 24 (expression -> expression DIVIDE expression .)
+    OR              reduce using rule 24 (expression -> expression DIVIDE expression .)
+    LE              reduce using rule 24 (expression -> expression DIVIDE expression .)
+    LT              reduce using rule 24 (expression -> expression DIVIDE expression .)
+    GE              reduce using rule 24 (expression -> expression DIVIDE expression .)
+    GT              reduce using rule 24 (expression -> expression DIVIDE expression .)
+    NE              reduce using rule 24 (expression -> expression DIVIDE expression .)
+    EQ              reduce using rule 24 (expression -> expression DIVIDE expression .)
+    R_PAREN         reduce using rule 24 (expression -> expression DIVIDE expression .)
+
+  ! MULTIPLY        [ shift and go to state 19 ]
+  ! DIVIDE          [ shift and go to state 20 ]
+  ! PLUS            [ shift and go to state 21 ]
+  ! MINUS           [ shift and go to state 22 ]
+  ! L_SHIFT         [ shift and go to state 23 ]
+  ! R_SHIFT         [ shift and go to state 24 ]
+  ! MOD             [ shift and go to state 25 ]
+  ! XOR             [ shift and go to state 26 ]
+  ! AND             [ shift and go to state 27 ]
+  ! OR              [ shift and go to state 28 ]
+
+
+state 42
+
+    (25) expression -> expression PLUS expression .
+    (23) expression -> expression . MULTIPLY expression
+    (24) expression -> expression . DIVIDE expression
+    (25) expression -> expression . PLUS expression
+    (26) expression -> expression . MINUS expression
+    (27) expression -> expression . L_SHIFT expression
+    (28) expression -> expression . R_SHIFT expression
+    (29) expression -> expression . MOD expression
+    (30) expression -> expression . XOR expression
+    (31) expression -> expression . AND expression
+    (32) expression -> expression . OR expression
+
+    SEMICOLON       reduce using rule 25 (expression -> expression PLUS expression .)
+    PLUS            reduce using rule 25 (expression -> expression PLUS expression .)
+    MINUS           reduce using rule 25 (expression -> expression PLUS expression .)
+    L_SHIFT         reduce using rule 25 (expression -> expression PLUS expression .)
+    R_SHIFT         reduce using rule 25 (expression -> expression PLUS expression .)
+    MOD             reduce using rule 25 (expression -> expression PLUS expression .)
+    XOR             reduce using rule 25 (expression -> expression PLUS expression .)
+    AND             reduce using rule 25 (expression -> expression PLUS expression .)
+    OR              reduce using rule 25 (expression -> expression PLUS expression .)
+    LE              reduce using rule 25 (expression -> expression PLUS expression .)
+    LT              reduce using rule 25 (expression -> expression PLUS expression .)
+    GE              reduce using rule 25 (expression -> expression PLUS expression .)
+    GT              reduce using rule 25 (expression -> expression PLUS expression .)
+    NE              reduce using rule 25 (expression -> expression PLUS expression .)
+    EQ              reduce using rule 25 (expression -> expression PLUS expression .)
+    R_PAREN         reduce using rule 25 (expression -> expression PLUS expression .)
+    MULTIPLY        shift and go to state 19
+    DIVIDE          shift and go to state 20
+
+  ! MULTIPLY        [ reduce using rule 25 (expression -> expression PLUS expression .) ]
+  ! DIVIDE          [ reduce using rule 25 (expression -> expression PLUS expression .) ]
+  ! PLUS            [ shift and go to state 21 ]
+  ! MINUS           [ shift and go to state 22 ]
+  ! L_SHIFT         [ shift and go to state 23 ]
+  ! R_SHIFT         [ shift and go to state 24 ]
+  ! MOD             [ shift and go to state 25 ]
+  ! XOR             [ shift and go to state 26 ]
+  ! AND             [ shift and go to state 27 ]
+  ! OR              [ shift and go to state 28 ]
+
+
+state 43
+
+    (26) expression -> expression MINUS expression .
+    (23) expression -> expression . MULTIPLY expression
+    (24) expression -> expression . DIVIDE expression
+    (25) expression -> expression . PLUS expression
+    (26) expression -> expression . MINUS expression
+    (27) expression -> expression . L_SHIFT expression
+    (28) expression -> expression . R_SHIFT expression
+    (29) expression -> expression . MOD expression
+    (30) expression -> expression . XOR expression
+    (31) expression -> expression . AND expression
+    (32) expression -> expression . OR expression
+
+    SEMICOLON       reduce using rule 26 (expression -> expression MINUS expression .)
+    PLUS            reduce using rule 26 (expression -> expression MINUS expression .)
+    MINUS           reduce using rule 26 (expression -> expression MINUS expression .)
+    L_SHIFT         reduce using rule 26 (expression -> expression MINUS expression .)
+    R_SHIFT         reduce using rule 26 (expression -> expression MINUS expression .)
+    MOD             reduce using rule 26 (expression -> expression MINUS expression .)
+    XOR             reduce using rule 26 (expression -> expression MINUS expression .)
+    AND             reduce using rule 26 (expression -> expression MINUS expression .)
+    OR              reduce using rule 26 (expression -> expression MINUS expression .)
+    LE              reduce using rule 26 (expression -> expression MINUS expression .)
+    LT              reduce using rule 26 (expression -> expression MINUS expression .)
+    GE              reduce using rule 26 (expression -> expression MINUS expression .)
+    GT              reduce using rule 26 (expression -> expression MINUS expression .)
+    NE              reduce using rule 26 (expression -> expression MINUS expression .)
+    EQ              reduce using rule 26 (expression -> expression MINUS expression .)
+    R_PAREN         reduce using rule 26 (expression -> expression MINUS expression .)
+    MULTIPLY        shift and go to state 19
+    DIVIDE          shift and go to state 20
+
+  ! MULTIPLY        [ reduce using rule 26 (expression -> expression MINUS expression .) ]
+  ! DIVIDE          [ reduce using rule 26 (expression -> expression MINUS expression .) ]
+  ! PLUS            [ shift and go to state 21 ]
+  ! MINUS           [ shift and go to state 22 ]
+  ! L_SHIFT         [ shift and go to state 23 ]
+  ! R_SHIFT         [ shift and go to state 24 ]
+  ! MOD             [ shift and go to state 25 ]
+  ! XOR             [ shift and go to state 26 ]
+  ! AND             [ shift and go to state 27 ]
+  ! OR              [ shift and go to state 28 ]
+
+
+state 44
+
+    (27) expression -> expression L_SHIFT expression .
+    (23) expression -> expression . MULTIPLY expression
+    (24) expression -> expression . DIVIDE expression
+    (25) expression -> expression . PLUS expression
+    (26) expression -> expression . MINUS expression
+    (27) expression -> expression . L_SHIFT expression
+    (28) expression -> expression . R_SHIFT expression
+    (29) expression -> expression . MOD expression
+    (30) expression -> expression . XOR expression
+    (31) expression -> expression . AND expression
+    (32) expression -> expression . OR expression
+
+  ! shift/reduce conflict for MULTIPLY resolved as shift
+  ! shift/reduce conflict for DIVIDE resolved as shift
+  ! shift/reduce conflict for PLUS resolved as shift
+  ! shift/reduce conflict for MINUS resolved as shift
+  ! shift/reduce conflict for L_SHIFT resolved as shift
+  ! shift/reduce conflict for R_SHIFT resolved as shift
+  ! shift/reduce conflict for MOD resolved as shift
+  ! shift/reduce conflict for XOR resolved as shift
+  ! shift/reduce conflict for AND resolved as shift
+  ! shift/reduce conflict for OR resolved as shift
+    SEMICOLON       reduce using rule 27 (expression -> expression L_SHIFT expression .)
+    LE              reduce using rule 27 (expression -> expression L_SHIFT expression .)
+    LT              reduce using rule 27 (expression -> expression L_SHIFT expression .)
+    GE              reduce using rule 27 (expression -> expression L_SHIFT expression .)
+    GT              reduce using rule 27 (expression -> expression L_SHIFT expression .)
+    NE              reduce using rule 27 (expression -> expression L_SHIFT expression .)
+    EQ              reduce using rule 27 (expression -> expression L_SHIFT expression .)
+    R_PAREN         reduce using rule 27 (expression -> expression L_SHIFT expression .)
+    MULTIPLY        shift and go to state 19
+    DIVIDE          shift and go to state 20
+    PLUS            shift and go to state 21
+    MINUS           shift and go to state 22
+    L_SHIFT         shift and go to state 23
+    R_SHIFT         shift and go to state 24
+    MOD             shift and go to state 25
+    XOR             shift and go to state 26
+    AND             shift and go to state 27
+    OR              shift and go to state 28
+
+  ! MULTIPLY        [ reduce using rule 27 (expression -> expression L_SHIFT expression .) ]
+  ! DIVIDE          [ reduce using rule 27 (expression -> expression L_SHIFT expression .) ]
+  ! PLUS            [ reduce using rule 27 (expression -> expression L_SHIFT expression .) ]
+  ! MINUS           [ reduce using rule 27 (expression -> expression L_SHIFT expression .) ]
+  ! L_SHIFT         [ reduce using rule 27 (expression -> expression L_SHIFT expression .) ]
+  ! R_SHIFT         [ reduce using rule 27 (expression -> expression L_SHIFT expression .) ]
+  ! MOD             [ reduce using rule 27 (expression -> expression L_SHIFT expression .) ]
+  ! XOR             [ reduce using rule 27 (expression -> expression L_SHIFT expression .) ]
+  ! AND             [ reduce using rule 27 (expression -> expression L_SHIFT expression .) ]
+  ! OR              [ reduce using rule 27 (expression -> expression L_SHIFT expression .) ]
+
+
+state 45
+
+    (28) expression -> expression R_SHIFT expression .
+    (23) expression -> expression . MULTIPLY expression
+    (24) expression -> expression . DIVIDE expression
+    (25) expression -> expression . PLUS expression
+    (26) expression -> expression . MINUS expression
+    (27) expression -> expression . L_SHIFT expression
+    (28) expression -> expression . R_SHIFT expression
+    (29) expression -> expression . MOD expression
+    (30) expression -> expression . XOR expression
+    (31) expression -> expression . AND expression
+    (32) expression -> expression . OR expression
+
+  ! shift/reduce conflict for MULTIPLY resolved as shift
+  ! shift/reduce conflict for DIVIDE resolved as shift
+  ! shift/reduce conflict for PLUS resolved as shift
+  ! shift/reduce conflict for MINUS resolved as shift
+  ! shift/reduce conflict for L_SHIFT resolved as shift
+  ! shift/reduce conflict for R_SHIFT resolved as shift
+  ! shift/reduce conflict for MOD resolved as shift
+  ! shift/reduce conflict for XOR resolved as shift
+  ! shift/reduce conflict for AND resolved as shift
+  ! shift/reduce conflict for OR resolved as shift
+    SEMICOLON       reduce using rule 28 (expression -> expression R_SHIFT expression .)
+    LE              reduce using rule 28 (expression -> expression R_SHIFT expression .)
+    LT              reduce using rule 28 (expression -> expression R_SHIFT expression .)
+    GE              reduce using rule 28 (expression -> expression R_SHIFT expression .)
+    GT              reduce using rule 28 (expression -> expression R_SHIFT expression .)
+    NE              reduce using rule 28 (expression -> expression R_SHIFT expression .)
+    EQ              reduce using rule 28 (expression -> expression R_SHIFT expression .)
+    R_PAREN         reduce using rule 28 (expression -> expression R_SHIFT expression .)
+    MULTIPLY        shift and go to state 19
+    DIVIDE          shift and go to state 20
+    PLUS            shift and go to state 21
+    MINUS           shift and go to state 22
+    L_SHIFT         shift and go to state 23
+    R_SHIFT         shift and go to state 24
+    MOD             shift and go to state 25
+    XOR             shift and go to state 26
+    AND             shift and go to state 27
+    OR              shift and go to state 28
+
+  ! MULTIPLY        [ reduce using rule 28 (expression -> expression R_SHIFT expression .) ]
+  ! DIVIDE          [ reduce using rule 28 (expression -> expression R_SHIFT expression .) ]
+  ! PLUS            [ reduce using rule 28 (expression -> expression R_SHIFT expression .) ]
+  ! MINUS           [ reduce using rule 28 (expression -> expression R_SHIFT expression .) ]
+  ! L_SHIFT         [ reduce using rule 28 (expression -> expression R_SHIFT expression .) ]
+  ! R_SHIFT         [ reduce using rule 28 (expression -> expression R_SHIFT expression .) ]
+  ! MOD             [ reduce using rule 28 (expression -> expression R_SHIFT expression .) ]
+  ! XOR             [ reduce using rule 28 (expression -> expression R_SHIFT expression .) ]
+  ! AND             [ reduce using rule 28 (expression -> expression R_SHIFT expression .) ]
+  ! OR              [ reduce using rule 28 (expression -> expression R_SHIFT expression .) ]
+
+
+state 46
+
+    (29) expression -> expression MOD expression .
+    (23) expression -> expression . MULTIPLY expression
+    (24) expression -> expression . DIVIDE expression
+    (25) expression -> expression . PLUS expression
+    (26) expression -> expression . MINUS expression
+    (27) expression -> expression . L_SHIFT expression
+    (28) expression -> expression . R_SHIFT expression
+    (29) expression -> expression . MOD expression
+    (30) expression -> expression . XOR expression
+    (31) expression -> expression . AND expression
+    (32) expression -> expression . OR expression
+
+  ! shift/reduce conflict for MULTIPLY resolved as shift
+  ! shift/reduce conflict for DIVIDE resolved as shift
+  ! shift/reduce conflict for PLUS resolved as shift
+  ! shift/reduce conflict for MINUS resolved as shift
+  ! shift/reduce conflict for L_SHIFT resolved as shift
+  ! shift/reduce conflict for R_SHIFT resolved as shift
+  ! shift/reduce conflict for MOD resolved as shift
+  ! shift/reduce conflict for XOR resolved as shift
+  ! shift/reduce conflict for AND resolved as shift
+  ! shift/reduce conflict for OR resolved as shift
+    SEMICOLON       reduce using rule 29 (expression -> expression MOD expression .)
+    LE              reduce using rule 29 (expression -> expression MOD expression .)
+    LT              reduce using rule 29 (expression -> expression MOD expression .)
+    GE              reduce using rule 29 (expression -> expression MOD expression .)
+    GT              reduce using rule 29 (expression -> expression MOD expression .)
+    NE              reduce using rule 29 (expression -> expression MOD expression .)
+    EQ              reduce using rule 29 (expression -> expression MOD expression .)
+    R_PAREN         reduce using rule 29 (expression -> expression MOD expression .)
+    MULTIPLY        shift and go to state 19
+    DIVIDE          shift and go to state 20
+    PLUS            shift and go to state 21
+    MINUS           shift and go to state 22
+    L_SHIFT         shift and go to state 23
+    R_SHIFT         shift and go to state 24
+    MOD             shift and go to state 25
+    XOR             shift and go to state 26
+    AND             shift and go to state 27
+    OR              shift and go to state 28
+
+  ! MULTIPLY        [ reduce using rule 29 (expression -> expression MOD expression .) ]
+  ! DIVIDE          [ reduce using rule 29 (expression -> expression MOD expression .) ]
+  ! PLUS            [ reduce using rule 29 (expression -> expression MOD expression .) ]
+  ! MINUS           [ reduce using rule 29 (expression -> expression MOD expression .) ]
+  ! L_SHIFT         [ reduce using rule 29 (expression -> expression MOD expression .) ]
+  ! R_SHIFT         [ reduce using rule 29 (expression -> expression MOD expression .) ]
+  ! MOD             [ reduce using rule 29 (expression -> expression MOD expression .) ]
+  ! XOR             [ reduce using rule 29 (expression -> expression MOD expression .) ]
+  ! AND             [ reduce using rule 29 (expression -> expression MOD expression .) ]
+  ! OR              [ reduce using rule 29 (expression -> expression MOD expression .) ]
+
+
+state 47
+
+    (30) expression -> expression XOR expression .
+    (23) expression -> expression . MULTIPLY expression
+    (24) expression -> expression . DIVIDE expression
+    (25) expression -> expression . PLUS expression
+    (26) expression -> expression . MINUS expression
+    (27) expression -> expression . L_SHIFT expression
+    (28) expression -> expression . R_SHIFT expression
+    (29) expression -> expression . MOD expression
+    (30) expression -> expression . XOR expression
+    (31) expression -> expression . AND expression
+    (32) expression -> expression . OR expression
+
+  ! shift/reduce conflict for MULTIPLY resolved as shift
+  ! shift/reduce conflict for DIVIDE resolved as shift
+  ! shift/reduce conflict for PLUS resolved as shift
+  ! shift/reduce conflict for MINUS resolved as shift
+  ! shift/reduce conflict for L_SHIFT resolved as shift
+  ! shift/reduce conflict for R_SHIFT resolved as shift
+  ! shift/reduce conflict for MOD resolved as shift
+  ! shift/reduce conflict for XOR resolved as shift
+  ! shift/reduce conflict for AND resolved as shift
+  ! shift/reduce conflict for OR resolved as shift
+    SEMICOLON       reduce using rule 30 (expression -> expression XOR expression .)
+    LE              reduce using rule 30 (expression -> expression XOR expression .)
+    LT              reduce using rule 30 (expression -> expression XOR expression .)
+    GE              reduce using rule 30 (expression -> expression XOR expression .)
+    GT              reduce using rule 30 (expression -> expression XOR expression .)
+    NE              reduce using rule 30 (expression -> expression XOR expression .)
+    EQ              reduce using rule 30 (expression -> expression XOR expression .)
+    R_PAREN         reduce using rule 30 (expression -> expression XOR expression .)
+    MULTIPLY        shift and go to state 19
+    DIVIDE          shift and go to state 20
+    PLUS            shift and go to state 21
+    MINUS           shift and go to state 22
+    L_SHIFT         shift and go to state 23
+    R_SHIFT         shift and go to state 24
+    MOD             shift and go to state 25
+    XOR             shift and go to state 26
+    AND             shift and go to state 27
+    OR              shift and go to state 28
+
+  ! MULTIPLY        [ reduce using rule 30 (expression -> expression XOR expression .) ]
+  ! DIVIDE          [ reduce using rule 30 (expression -> expression XOR expression .) ]
+  ! PLUS            [ reduce using rule 30 (expression -> expression XOR expression .) ]
+  ! MINUS           [ reduce using rule 30 (expression -> expression XOR expression .) ]
+  ! L_SHIFT         [ reduce using rule 30 (expression -> expression XOR expression .) ]
+  ! R_SHIFT         [ reduce using rule 30 (expression -> expression XOR expression .) ]
+  ! MOD             [ reduce using rule 30 (expression -> expression XOR expression .) ]
+  ! XOR             [ reduce using rule 30 (expression -> expression XOR expression .) ]
+  ! AND             [ reduce using rule 30 (expression -> expression XOR expression .) ]
+  ! OR              [ reduce using rule 30 (expression -> expression XOR expression .) ]
+
+
+state 48
+
+    (31) expression -> expression AND expression .
+    (23) expression -> expression . MULTIPLY expression
+    (24) expression -> expression . DIVIDE expression
+    (25) expression -> expression . PLUS expression
+    (26) expression -> expression . MINUS expression
+    (27) expression -> expression . L_SHIFT expression
+    (28) expression -> expression . R_SHIFT expression
+    (29) expression -> expression . MOD expression
+    (30) expression -> expression . XOR expression
+    (31) expression -> expression . AND expression
+    (32) expression -> expression . OR expression
+
+  ! shift/reduce conflict for MULTIPLY resolved as shift
+  ! shift/reduce conflict for DIVIDE resolved as shift
+  ! shift/reduce conflict for PLUS resolved as shift
+  ! shift/reduce conflict for MINUS resolved as shift
+  ! shift/reduce conflict for L_SHIFT resolved as shift
+  ! shift/reduce conflict for R_SHIFT resolved as shift
+  ! shift/reduce conflict for MOD resolved as shift
+  ! shift/reduce conflict for XOR resolved as shift
+  ! shift/reduce conflict for AND resolved as shift
+  ! shift/reduce conflict for OR resolved as shift
+    SEMICOLON       reduce using rule 31 (expression -> expression AND expression .)
+    LE              reduce using rule 31 (expression -> expression AND expression .)
+    LT              reduce using rule 31 (expression -> expression AND expression .)
+    GE              reduce using rule 31 (expression -> expression AND expression .)
+    GT              reduce using rule 31 (expression -> expression AND expression .)
+    NE              reduce using rule 31 (expression -> expression AND expression .)
+    EQ              reduce using rule 31 (expression -> expression AND expression .)
+    R_PAREN         reduce using rule 31 (expression -> expression AND expression .)
+    MULTIPLY        shift and go to state 19
+    DIVIDE          shift and go to state 20
+    PLUS            shift and go to state 21
+    MINUS           shift and go to state 22
+    L_SHIFT         shift and go to state 23
+    R_SHIFT         shift and go to state 24
+    MOD             shift and go to state 25
+    XOR             shift and go to state 26
+    AND             shift and go to state 27
+    OR              shift and go to state 28
+
+  ! MULTIPLY        [ reduce using rule 31 (expression -> expression AND expression .) ]
+  ! DIVIDE          [ reduce using rule 31 (expression -> expression AND expression .) ]
+  ! PLUS            [ reduce using rule 31 (expression -> expression AND expression .) ]
+  ! MINUS           [ reduce using rule 31 (expression -> expression AND expression .) ]
+  ! L_SHIFT         [ reduce using rule 31 (expression -> expression AND expression .) ]
+  ! R_SHIFT         [ reduce using rule 31 (expression -> expression AND expression .) ]
+  ! MOD             [ reduce using rule 31 (expression -> expression AND expression .) ]
+  ! XOR             [ reduce using rule 31 (expression -> expression AND expression .) ]
+  ! AND             [ reduce using rule 31 (expression -> expression AND expression .) ]
+  ! OR              [ reduce using rule 31 (expression -> expression AND expression .) ]
+
+
+state 49
+
+    (32) expression -> expression OR expression .
+    (23) expression -> expression . MULTIPLY expression
+    (24) expression -> expression . DIVIDE expression
+    (25) expression -> expression . PLUS expression
+    (26) expression -> expression . MINUS expression
+    (27) expression -> expression . L_SHIFT expression
+    (28) expression -> expression . R_SHIFT expression
+    (29) expression -> expression . MOD expression
+    (30) expression -> expression . XOR expression
+    (31) expression -> expression . AND expression
+    (32) expression -> expression . OR expression
+
+  ! shift/reduce conflict for MULTIPLY resolved as shift
+  ! shift/reduce conflict for DIVIDE resolved as shift
+  ! shift/reduce conflict for PLUS resolved as shift
+  ! shift/reduce conflict for MINUS resolved as shift
+  ! shift/reduce conflict for L_SHIFT resolved as shift
+  ! shift/reduce conflict for R_SHIFT resolved as shift
+  ! shift/reduce conflict for MOD resolved as shift
+  ! shift/reduce conflict for XOR resolved as shift
+  ! shift/reduce conflict for AND resolved as shift
+  ! shift/reduce conflict for OR resolved as shift
+    SEMICOLON       reduce using rule 32 (expression -> expression OR expression .)
+    LE              reduce using rule 32 (expression -> expression OR expression .)
+    LT              reduce using rule 32 (expression -> expression OR expression .)
+    GE              reduce using rule 32 (expression -> expression OR expression .)
+    GT              reduce using rule 32 (expression -> expression OR expression .)
+    NE              reduce using rule 32 (expression -> expression OR expression .)
+    EQ              reduce using rule 32 (expression -> expression OR expression .)
+    R_PAREN         reduce using rule 32 (expression -> expression OR expression .)
+    MULTIPLY        shift and go to state 19
+    DIVIDE          shift and go to state 20
+    PLUS            shift and go to state 21
+    MINUS           shift and go to state 22
+    L_SHIFT         shift and go to state 23
+    R_SHIFT         shift and go to state 24
+    MOD             shift and go to state 25
+    XOR             shift and go to state 26
+    AND             shift and go to state 27
+    OR              shift and go to state 28
+
+  ! MULTIPLY        [ reduce using rule 32 (expression -> expression OR expression .) ]
+  ! DIVIDE          [ reduce using rule 32 (expression -> expression OR expression .) ]
+  ! PLUS            [ reduce using rule 32 (expression -> expression OR expression .) ]
+  ! MINUS           [ reduce using rule 32 (expression -> expression OR expression .) ]
+  ! L_SHIFT         [ reduce using rule 32 (expression -> expression OR expression .) ]
+  ! R_SHIFT         [ reduce using rule 32 (expression -> expression OR expression .) ]
+  ! MOD             [ reduce using rule 32 (expression -> expression OR expression .) ]
+  ! XOR             [ reduce using rule 32 (expression -> expression OR expression .) ]
+  ! AND             [ reduce using rule 32 (expression -> expression OR expression .) ]
+  ! OR              [ reduce using rule 32 (expression -> expression OR expression .) ]
+
+
+state 50
+
+    (21) var_assign -> ID ASSIGN expression .
+    (23) expression -> expression . MULTIPLY expression
+    (24) expression -> expression . DIVIDE expression
+    (25) expression -> expression . PLUS expression
+    (26) expression -> expression . MINUS expression
+    (27) expression -> expression . L_SHIFT expression
+    (28) expression -> expression . R_SHIFT expression
+    (29) expression -> expression . MOD expression
+    (30) expression -> expression . XOR expression
+    (31) expression -> expression . AND expression
+    (32) expression -> expression . OR expression
+
+    SEMICOLON       reduce using rule 21 (var_assign -> ID ASSIGN expression .)
+    MULTIPLY        shift and go to state 19
+    DIVIDE          shift and go to state 20
+    PLUS            shift and go to state 21
+    MINUS           shift and go to state 22
+    L_SHIFT         shift and go to state 23
+    R_SHIFT         shift and go to state 24
+    MOD             shift and go to state 25
+    XOR             shift and go to state 26
+    AND             shift and go to state 27
+    OR              shift and go to state 28
+
+
+state 51
+
+    (8) while_loop -> WHILE condition block .
+
+    $end            reduce using rule 8 (while_loop -> WHILE condition block .)
+    R_FLOWERBRACE   reduce using rule 8 (while_loop -> WHILE condition block .)
+    ID              reduce using rule 8 (while_loop -> WHILE condition block .)
+    INT             reduce using rule 8 (while_loop -> WHILE condition block .)
+    FLOAT           reduce using rule 8 (while_loop -> WHILE condition block .)
+    WHILE           reduce using rule 8 (while_loop -> WHILE condition block .)
+    TYPE            reduce using rule 8 (while_loop -> WHILE condition block .)
+    PLUS_PLUS       reduce using rule 8 (while_loop -> WHILE condition block .)
+    MINUS_MINUS     reduce using rule 8 (while_loop -> WHILE condition block .)
+
+
+state 52
+
+    (9) while_loop -> WHILE condition statement .
+
+    $end            reduce using rule 9 (while_loop -> WHILE condition statement .)
+    R_FLOWERBRACE   reduce using rule 9 (while_loop -> WHILE condition statement .)
+    ID              reduce using rule 9 (while_loop -> WHILE condition statement .)
+    INT             reduce using rule 9 (while_loop -> WHILE condition statement .)
+    FLOAT           reduce using rule 9 (while_loop -> WHILE condition statement .)
+    WHILE           reduce using rule 9 (while_loop -> WHILE condition statement .)
+    TYPE            reduce using rule 9 (while_loop -> WHILE condition statement .)
+    PLUS_PLUS       reduce using rule 9 (while_loop -> WHILE condition statement .)
+    MINUS_MINUS     reduce using rule 9 (while_loop -> WHILE condition statement .)
+
+
+state 53
+
+    (17) block -> L_FLOWERBRACE . statement_multiple R_FLOWERBRACE
+    (7) statement_multiple -> . statement
+    (18) statement_multiple -> . statement_multiple statement
+    (1) statement -> . var_assign SEMICOLON
+    (2) statement -> . expression SEMICOLON
+    (3) statement -> . expression_unary SEMICOLON
+    (4) statement -> . while_loop
+    (5) statement -> . declare_statement
+    (6) statement -> . empty
+    (21) var_assign -> . ID ASSIGN expression
+    (23) expression -> . expression MULTIPLY expression
+    (24) expression -> . expression DIVIDE expression
+    (25) expression -> . expression PLUS expression
+    (26) expression -> . expression MINUS expression
+    (27) expression -> . expression L_SHIFT expression
+    (28) expression -> . expression R_SHIFT expression
+    (29) expression -> . expression MOD expression
+    (30) expression -> . expression XOR expression
+    (31) expression -> . expression AND expression
+    (32) expression -> . expression OR expression
+    (39) expression -> . INT
+    (40) expression -> . FLOAT
+    (41) expression -> . ID
+    (33) expression_unary -> . post
+    (34) expression_unary -> . pre
+    (8) while_loop -> . WHILE condition block
+    (9) while_loop -> . WHILE condition statement
+    (19) declare_statement -> . TYPE ID SEMICOLON
+    (20) declare_statement -> . TYPE var_assign SEMICOLON
+    (22) empty -> .
+    (35) post -> . ID PLUS_PLUS
+    (36) post -> . ID MINUS_MINUS
+    (37) pre -> . PLUS_PLUS ID
+    (38) pre -> . MINUS_MINUS ID
+
+  ! shift/reduce conflict for ID resolved as shift
+  ! shift/reduce conflict for INT resolved as shift
+  ! shift/reduce conflict for FLOAT resolved as shift
+  ! shift/reduce conflict for WHILE resolved as shift
+  ! shift/reduce conflict for TYPE resolved as shift
+  ! shift/reduce conflict for PLUS_PLUS resolved as shift
+  ! shift/reduce conflict for MINUS_MINUS resolved as shift
+    ID              shift and go to state 8
+    INT             shift and go to state 9
+    FLOAT           shift and go to state 10
+    WHILE           shift and go to state 13
+    TYPE            shift and go to state 14
+    R_FLOWERBRACE   reduce using rule 22 (empty -> .)
+    PLUS_PLUS       shift and go to state 15
+    MINUS_MINUS     shift and go to state 16
+
+  ! ID              [ reduce using rule 22 (empty -> .) ]
+  ! INT             [ reduce using rule 22 (empty -> .) ]
+  ! FLOAT           [ reduce using rule 22 (empty -> .) ]
+  ! WHILE           [ reduce using rule 22 (empty -> .) ]
+  ! TYPE            [ reduce using rule 22 (empty -> .) ]
+  ! PLUS_PLUS       [ reduce using rule 22 (empty -> .) ]
+  ! MINUS_MINUS     [ reduce using rule 22 (empty -> .) ]
+
+    statement_multiple             shift and go to state 57
+    statement                      shift and go to state 58
+    var_assign                     shift and go to state 2
+    expression                     shift and go to state 3
+    expression_unary               shift and go to state 4
+    while_loop                     shift and go to state 5
+    declare_statement              shift and go to state 6
+    empty                          shift and go to state 7
+    post                           shift and go to state 11
+    pre                            shift and go to state 12
+
+state 54
+
+    (10) condition -> L_PAREN expression . relop expression R_PAREN
+    (23) expression -> expression . MULTIPLY expression
+    (24) expression -> expression . DIVIDE expression
+    (25) expression -> expression . PLUS expression
+    (26) expression -> expression . MINUS expression
+    (27) expression -> expression . L_SHIFT expression
+    (28) expression -> expression . R_SHIFT expression
+    (29) expression -> expression . MOD expression
+    (30) expression -> expression . XOR expression
+    (31) expression -> expression . AND expression
+    (32) expression -> expression . OR expression
+    (11) relop -> . LE
+    (12) relop -> . LT
+    (13) relop -> . GE
+    (14) relop -> . GT
+    (15) relop -> . NE
+    (16) relop -> . EQ
+
+    MULTIPLY        shift and go to state 19
+    DIVIDE          shift and go to state 20
+    PLUS            shift and go to state 21
+    MINUS           shift and go to state 22
+    L_SHIFT         shift and go to state 23
+    R_SHIFT         shift and go to state 24
+    MOD             shift and go to state 25
+    XOR             shift and go to state 26
+    AND             shift and go to state 27
+    OR              shift and go to state 28
+    LE              shift and go to state 60
+    LT              shift and go to state 61
+    GE              shift and go to state 62
+    GT              shift and go to state 63
+    NE              shift and go to state 64
+    EQ              shift and go to state 65
+
+    relop                          shift and go to state 59
+
+state 55
+
+    (19) declare_statement -> TYPE ID SEMICOLON .
+
+    $end            reduce using rule 19 (declare_statement -> TYPE ID SEMICOLON .)
+    R_FLOWERBRACE   reduce using rule 19 (declare_statement -> TYPE ID SEMICOLON .)
+    ID              reduce using rule 19 (declare_statement -> TYPE ID SEMICOLON .)
+    INT             reduce using rule 19 (declare_statement -> TYPE ID SEMICOLON .)
+    FLOAT           reduce using rule 19 (declare_statement -> TYPE ID SEMICOLON .)
+    WHILE           reduce using rule 19 (declare_statement -> TYPE ID SEMICOLON .)
+    TYPE            reduce using rule 19 (declare_statement -> TYPE ID SEMICOLON .)
+    PLUS_PLUS       reduce using rule 19 (declare_statement -> TYPE ID SEMICOLON .)
+    MINUS_MINUS     reduce using rule 19 (declare_statement -> TYPE ID SEMICOLON .)
+
+
+state 56
+
+    (20) declare_statement -> TYPE var_assign SEMICOLON .
+
+    $end            reduce using rule 20 (declare_statement -> TYPE var_assign SEMICOLON .)
+    R_FLOWERBRACE   reduce using rule 20 (declare_statement -> TYPE var_assign SEMICOLON .)
+    ID              reduce using rule 20 (declare_statement -> TYPE var_assign SEMICOLON .)
+    INT             reduce using rule 20 (declare_statement -> TYPE var_assign SEMICOLON .)
+    FLOAT           reduce using rule 20 (declare_statement -> TYPE var_assign SEMICOLON .)
+    WHILE           reduce using rule 20 (declare_statement -> TYPE var_assign SEMICOLON .)
+    TYPE            reduce using rule 20 (declare_statement -> TYPE var_assign SEMICOLON .)
+    PLUS_PLUS       reduce using rule 20 (declare_statement -> TYPE var_assign SEMICOLON .)
+    MINUS_MINUS     reduce using rule 20 (declare_statement -> TYPE var_assign SEMICOLON .)
+
+
+state 57
+
+    (17) block -> L_FLOWERBRACE statement_multiple . R_FLOWERBRACE
+    (18) statement_multiple -> statement_multiple . statement
+    (1) statement -> . var_assign SEMICOLON
+    (2) statement -> . expression SEMICOLON
+    (3) statement -> . expression_unary SEMICOLON
+    (4) statement -> . while_loop
+    (5) statement -> . declare_statement
+    (6) statement -> . empty
+    (21) var_assign -> . ID ASSIGN expression
+    (23) expression -> . expression MULTIPLY expression
+    (24) expression -> . expression DIVIDE expression
+    (25) expression -> . expression PLUS expression
+    (26) expression -> . expression MINUS expression
+    (27) expression -> . expression L_SHIFT expression
+    (28) expression -> . expression R_SHIFT expression
+    (29) expression -> . expression MOD expression
+    (30) expression -> . expression XOR expression
+    (31) expression -> . expression AND expression
+    (32) expression -> . expression OR expression
+    (39) expression -> . INT
+    (40) expression -> . FLOAT
+    (41) expression -> . ID
+    (33) expression_unary -> . post
+    (34) expression_unary -> . pre
+    (8) while_loop -> . WHILE condition block
+    (9) while_loop -> . WHILE condition statement
+    (19) declare_statement -> . TYPE ID SEMICOLON
+    (20) declare_statement -> . TYPE var_assign SEMICOLON
+    (22) empty -> .
+    (35) post -> . ID PLUS_PLUS
+    (36) post -> . ID MINUS_MINUS
+    (37) pre -> . PLUS_PLUS ID
+    (38) pre -> . MINUS_MINUS ID
+
+  ! shift/reduce conflict for R_FLOWERBRACE resolved as shift
+  ! shift/reduce conflict for ID resolved as shift
+  ! shift/reduce conflict for INT resolved as shift
+  ! shift/reduce conflict for FLOAT resolved as shift
+  ! shift/reduce conflict for WHILE resolved as shift
+  ! shift/reduce conflict for TYPE resolved as shift
+  ! shift/reduce conflict for PLUS_PLUS resolved as shift
+  ! shift/reduce conflict for MINUS_MINUS resolved as shift
+    R_FLOWERBRACE   shift and go to state 66
+    ID              shift and go to state 8
+    INT             shift and go to state 9
+    FLOAT           shift and go to state 10
+    WHILE           shift and go to state 13
+    TYPE            shift and go to state 14
+    PLUS_PLUS       shift and go to state 15
+    MINUS_MINUS     shift and go to state 16
+
+  ! R_FLOWERBRACE   [ reduce using rule 22 (empty -> .) ]
+  ! ID              [ reduce using rule 22 (empty -> .) ]
+  ! INT             [ reduce using rule 22 (empty -> .) ]
+  ! FLOAT           [ reduce using rule 22 (empty -> .) ]
+  ! WHILE           [ reduce using rule 22 (empty -> .) ]
+  ! TYPE            [ reduce using rule 22 (empty -> .) ]
+  ! PLUS_PLUS       [ reduce using rule 22 (empty -> .) ]
+  ! MINUS_MINUS     [ reduce using rule 22 (empty -> .) ]
+
+    statement                      shift and go to state 67
+    var_assign                     shift and go to state 2
+    expression                     shift and go to state 3
+    expression_unary               shift and go to state 4
+    while_loop                     shift and go to state 5
+    declare_statement              shift and go to state 6
+    empty                          shift and go to state 7
+    post                           shift and go to state 11
+    pre                            shift and go to state 12
+
+state 58
+
+    (7) statement_multiple -> statement .
+
+    R_FLOWERBRACE   reduce using rule 7 (statement_multiple -> statement .)
+    ID              reduce using rule 7 (statement_multiple -> statement .)
+    INT             reduce using rule 7 (statement_multiple -> statement .)
+    FLOAT           reduce using rule 7 (statement_multiple -> statement .)
+    WHILE           reduce using rule 7 (statement_multiple -> statement .)
+    TYPE            reduce using rule 7 (statement_multiple -> statement .)
+    PLUS_PLUS       reduce using rule 7 (statement_multiple -> statement .)
+    MINUS_MINUS     reduce using rule 7 (statement_multiple -> statement .)
+
+
+state 59
+
+    (10) condition -> L_PAREN expression relop . expression R_PAREN
+    (23) expression -> . expression MULTIPLY expression
+    (24) expression -> . expression DIVIDE expression
+    (25) expression -> . expression PLUS expression
+    (26) expression -> . expression MINUS expression
+    (27) expression -> . expression L_SHIFT expression
+    (28) expression -> . expression R_SHIFT expression
+    (29) expression -> . expression MOD expression
+    (30) expression -> . expression XOR expression
+    (31) expression -> . expression AND expression
+    (32) expression -> . expression OR expression
+    (39) expression -> . INT
+    (40) expression -> . FLOAT
+    (41) expression -> . ID
+
+    INT             shift and go to state 9
+    FLOAT           shift and go to state 10
+    ID              shift and go to state 40
+
+    expression                     shift and go to state 68
+
+state 60
+
+    (11) relop -> LE .
+
+    INT             reduce using rule 11 (relop -> LE .)
+    FLOAT           reduce using rule 11 (relop -> LE .)
+    ID              reduce using rule 11 (relop -> LE .)
+
+
+state 61
+
+    (12) relop -> LT .
+
+    INT             reduce using rule 12 (relop -> LT .)
+    FLOAT           reduce using rule 12 (relop -> LT .)
+    ID              reduce using rule 12 (relop -> LT .)
+
+
+state 62
+
+    (13) relop -> GE .
+
+    INT             reduce using rule 13 (relop -> GE .)
+    FLOAT           reduce using rule 13 (relop -> GE .)
+    ID              reduce using rule 13 (relop -> GE .)
+
+
+state 63
+
+    (14) relop -> GT .
+
+    INT             reduce using rule 14 (relop -> GT .)
+    FLOAT           reduce using rule 14 (relop -> GT .)
+    ID              reduce using rule 14 (relop -> GT .)
+
+
+state 64
+
+    (15) relop -> NE .
+
+    INT             reduce using rule 15 (relop -> NE .)
+    FLOAT           reduce using rule 15 (relop -> NE .)
+    ID              reduce using rule 15 (relop -> NE .)
+
+
+state 65
+
+    (16) relop -> EQ .
+
+    INT             reduce using rule 16 (relop -> EQ .)
+    FLOAT           reduce using rule 16 (relop -> EQ .)
+    ID              reduce using rule 16 (relop -> EQ .)
+
+
+state 66
+
+    (17) block -> L_FLOWERBRACE statement_multiple R_FLOWERBRACE .
+
+    $end            reduce using rule 17 (block -> L_FLOWERBRACE statement_multiple R_FLOWERBRACE .)
+    R_FLOWERBRACE   reduce using rule 17 (block -> L_FLOWERBRACE statement_multiple R_FLOWERBRACE .)
+    ID              reduce using rule 17 (block -> L_FLOWERBRACE statement_multiple R_FLOWERBRACE .)
+    INT             reduce using rule 17 (block -> L_FLOWERBRACE statement_multiple R_FLOWERBRACE .)
+    FLOAT           reduce using rule 17 (block -> L_FLOWERBRACE statement_multiple R_FLOWERBRACE .)
+    WHILE           reduce using rule 17 (block -> L_FLOWERBRACE statement_multiple R_FLOWERBRACE .)
+    TYPE            reduce using rule 17 (block -> L_FLOWERBRACE statement_multiple R_FLOWERBRACE .)
+    PLUS_PLUS       reduce using rule 17 (block -> L_FLOWERBRACE statement_multiple R_FLOWERBRACE .)
+    MINUS_MINUS     reduce using rule 17 (block -> L_FLOWERBRACE statement_multiple R_FLOWERBRACE .)
+
+
+state 67
+
+    (18) statement_multiple -> statement_multiple statement .
+
+    R_FLOWERBRACE   reduce using rule 18 (statement_multiple -> statement_multiple statement .)
+    ID              reduce using rule 18 (statement_multiple -> statement_multiple statement .)
+    INT             reduce using rule 18 (statement_multiple -> statement_multiple statement .)
+    FLOAT           reduce using rule 18 (statement_multiple -> statement_multiple statement .)
+    WHILE           reduce using rule 18 (statement_multiple -> statement_multiple statement .)
+    TYPE            reduce using rule 18 (statement_multiple -> statement_multiple statement .)
+    PLUS_PLUS       reduce using rule 18 (statement_multiple -> statement_multiple statement .)
+    MINUS_MINUS     reduce using rule 18 (statement_multiple -> statement_multiple statement .)
+
+
+state 68
+
+    (10) condition -> L_PAREN expression relop expression . R_PAREN
+    (23) expression -> expression . MULTIPLY expression
+    (24) expression -> expression . DIVIDE expression
+    (25) expression -> expression . PLUS expression
+    (26) expression -> expression . MINUS expression
+    (27) expression -> expression . L_SHIFT expression
+    (28) expression -> expression . R_SHIFT expression
+    (29) expression -> expression . MOD expression
+    (30) expression -> expression . XOR expression
+    (31) expression -> expression . AND expression
+    (32) expression -> expression . OR expression
+
+    R_PAREN         shift and go to state 69
+    MULTIPLY        shift and go to state 19
+    DIVIDE          shift and go to state 20
+    PLUS            shift and go to state 21
+    MINUS           shift and go to state 22
+    L_SHIFT         shift and go to state 23
+    R_SHIFT         shift and go to state 24
+    MOD             shift and go to state 25
+    XOR             shift and go to state 26
+    AND             shift and go to state 27
+    OR              shift and go to state 28
+
+
+state 69
+
+    (10) condition -> L_PAREN expression relop expression R_PAREN .
+
+    L_FLOWERBRACE   reduce using rule 10 (condition -> L_PAREN expression relop expression R_PAREN .)
+    ID              reduce using rule 10 (condition -> L_PAREN expression relop expression R_PAREN .)
+    INT             reduce using rule 10 (condition -> L_PAREN expression relop expression R_PAREN .)
+    FLOAT           reduce using rule 10 (condition -> L_PAREN expression relop expression R_PAREN .)
+    WHILE           reduce using rule 10 (condition -> L_PAREN expression relop expression R_PAREN .)
+    TYPE            reduce using rule 10 (condition -> L_PAREN expression relop expression R_PAREN .)
+    PLUS_PLUS       reduce using rule 10 (condition -> L_PAREN expression relop expression R_PAREN .)
+    MINUS_MINUS     reduce using rule 10 (condition -> L_PAREN expression relop expression R_PAREN .)
+    $end            reduce using rule 10 (condition -> L_PAREN expression relop expression R_PAREN .)
+    R_FLOWERBRACE   reduce using rule 10 (condition -> L_PAREN expression relop expression R_PAREN .)
+
+WARNING: 
+WARNING: Conflicts:
+WARNING: 
+WARNING: shift/reduce conflict for ID in state 33 resolved as shift
+WARNING: shift/reduce conflict for INT in state 33 resolved as shift
+WARNING: shift/reduce conflict for FLOAT in state 33 resolved as shift
+WARNING: shift/reduce conflict for WHILE in state 33 resolved as shift
+WARNING: shift/reduce conflict for TYPE in state 33 resolved as shift
+WARNING: shift/reduce conflict for PLUS_PLUS in state 33 resolved as shift
+WARNING: shift/reduce conflict for MINUS_MINUS in state 33 resolved as shift
+WARNING: shift/reduce conflict for MULTIPLY in state 44 resolved as shift
+WARNING: shift/reduce conflict for DIVIDE in state 44 resolved as shift
+WARNING: shift/reduce conflict for PLUS in state 44 resolved as shift
+WARNING: shift/reduce conflict for MINUS in state 44 resolved as shift
+WARNING: shift/reduce conflict for L_SHIFT in state 44 resolved as shift
+WARNING: shift/reduce conflict for R_SHIFT in state 44 resolved as shift
+WARNING: shift/reduce conflict for MOD in state 44 resolved as shift
+WARNING: shift/reduce conflict for XOR in state 44 resolved as shift
+WARNING: shift/reduce conflict for AND in state 44 resolved as shift
+WARNING: shift/reduce conflict for OR in state 44 resolved as shift
+WARNING: shift/reduce conflict for MULTIPLY in state 45 resolved as shift
+WARNING: shift/reduce conflict for DIVIDE in state 45 resolved as shift
+WARNING: shift/reduce conflict for PLUS in state 45 resolved as shift
+WARNING: shift/reduce conflict for MINUS in state 45 resolved as shift
+WARNING: shift/reduce conflict for L_SHIFT in state 45 resolved as shift
+WARNING: shift/reduce conflict for R_SHIFT in state 45 resolved as shift
+WARNING: shift/reduce conflict for MOD in state 45 resolved as shift
+WARNING: shift/reduce conflict for XOR in state 45 resolved as shift
+WARNING: shift/reduce conflict for AND in state 45 resolved as shift
+WARNING: shift/reduce conflict for OR in state 45 resolved as shift
+WARNING: shift/reduce conflict for MULTIPLY in state 46 resolved as shift
+WARNING: shift/reduce conflict for DIVIDE in state 46 resolved as shift
+WARNING: shift/reduce conflict for PLUS in state 46 resolved as shift
+WARNING: shift/reduce conflict for MINUS in state 46 resolved as shift
+WARNING: shift/reduce conflict for L_SHIFT in state 46 resolved as shift
+WARNING: shift/reduce conflict for R_SHIFT in state 46 resolved as shift
+WARNING: shift/reduce conflict for MOD in state 46 resolved as shift
+WARNING: shift/reduce conflict for XOR in state 46 resolved as shift
+WARNING: shift/reduce conflict for AND in state 46 resolved as shift
+WARNING: shift/reduce conflict for OR in state 46 resolved as shift
+WARNING: shift/reduce conflict for MULTIPLY in state 47 resolved as shift
+WARNING: shift/reduce conflict for DIVIDE in state 47 resolved as shift
+WARNING: shift/reduce conflict for PLUS in state 47 resolved as shift
+WARNING: shift/reduce conflict for MINUS in state 47 resolved as shift
+WARNING: shift/reduce conflict for L_SHIFT in state 47 resolved as shift
+WARNING: shift/reduce conflict for R_SHIFT in state 47 resolved as shift
+WARNING: shift/reduce conflict for MOD in state 47 resolved as shift
+WARNING: shift/reduce conflict for XOR in state 47 resolved as shift
+WARNING: shift/reduce conflict for AND in state 47 resolved as shift
+WARNING: shift/reduce conflict for OR in state 47 resolved as shift
+WARNING: shift/reduce conflict for MULTIPLY in state 48 resolved as shift
+WARNING: shift/reduce conflict for DIVIDE in state 48 resolved as shift
+WARNING: shift/reduce conflict for PLUS in state 48 resolved as shift
+WARNING: shift/reduce conflict for MINUS in state 48 resolved as shift
+WARNING: shift/reduce conflict for L_SHIFT in state 48 resolved as shift
+WARNING: shift/reduce conflict for R_SHIFT in state 48 resolved as shift
+WARNING: shift/reduce conflict for MOD in state 48 resolved as shift
+WARNING: shift/reduce conflict for XOR in state 48 resolved as shift
+WARNING: shift/reduce conflict for AND in state 48 resolved as shift
+WARNING: shift/reduce conflict for OR in state 48 resolved as shift
+WARNING: shift/reduce conflict for MULTIPLY in state 49 resolved as shift
+WARNING: shift/reduce conflict for DIVIDE in state 49 resolved as shift
+WARNING: shift/reduce conflict for PLUS in state 49 resolved as shift
+WARNING: shift/reduce conflict for MINUS in state 49 resolved as shift
+WARNING: shift/reduce conflict for L_SHIFT in state 49 resolved as shift
+WARNING: shift/reduce conflict for R_SHIFT in state 49 resolved as shift
+WARNING: shift/reduce conflict for MOD in state 49 resolved as shift
+WARNING: shift/reduce conflict for XOR in state 49 resolved as shift
+WARNING: shift/reduce conflict for AND in state 49 resolved as shift
+WARNING: shift/reduce conflict for OR in state 49 resolved as shift
+WARNING: shift/reduce conflict for ID in state 53 resolved as shift
+WARNING: shift/reduce conflict for INT in state 53 resolved as shift
+WARNING: shift/reduce conflict for FLOAT in state 53 resolved as shift
+WARNING: shift/reduce conflict for WHILE in state 53 resolved as shift
+WARNING: shift/reduce conflict for TYPE in state 53 resolved as shift
+WARNING: shift/reduce conflict for PLUS_PLUS in state 53 resolved as shift
+WARNING: shift/reduce conflict for MINUS_MINUS in state 53 resolved as shift
+WARNING: shift/reduce conflict for R_FLOWERBRACE in state 57 resolved as shift
+WARNING: shift/reduce conflict for ID in state 57 resolved as shift
+WARNING: shift/reduce conflict for INT in state 57 resolved as shift
+WARNING: shift/reduce conflict for FLOAT in state 57 resolved as shift
+WARNING: shift/reduce conflict for WHILE in state 57 resolved as shift
+WARNING: shift/reduce conflict for TYPE in state 57 resolved as shift
+WARNING: shift/reduce conflict for PLUS_PLUS in state 57 resolved as shift
+WARNING: shift/reduce conflict for MINUS_MINUS in state 57 resolved as shift

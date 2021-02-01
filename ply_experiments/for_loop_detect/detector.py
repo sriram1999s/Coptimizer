@@ -2,12 +2,32 @@ from ply.lex import lex
 from ply.yacc import yacc
 import sys
 
-# comment
+'''
+READ THIS BEFORE ADDING CALLABLES
+
+def fxn_name(t):
+    'Docstring regex'
+    any conditions if it might clash
+    return t
+
+t object has parameters:
+1)value
+2)type(as described in the tokens)
+
+t -----> lexer object
+p -----> production object
+
+P.S: Try to stick to a single convention
+'''
+
+
+
+
 ''' defining tokens '''
 
-datatype = ['INT']
+datatype = ['INT', 'FLOAT']
 
-bin_op = ['PLUS', 'MINUS', 'MULTIPLY', 'DIVIDE', 'ASSIGN']
+bin_op = ['PLUS', 'MINUS', 'MULTIPLY', 'DIVIDE', 'ASSIGN', 'L_SHIFT', 'R_SHIFT', 'AND', 'OR', 'XOR', 'MOD','PLUS_PLUS','MINUS_MINUS']
 
 rel_op = ['LT', 'LE', 'GT', 'GE', 'NE', 'EQ']
 
@@ -15,7 +35,7 @@ delimiters = ['L_PAREN', 'R_PAREN', 'L_FLOWERBRACE', 'R_FLOWERBRACE', 'SEMICOLON
 
 statements = ['FOR', 'WHILE']
 
-tokens = datatype + bin_op + rel_op + delimiters + statements + ['ID', 'TYPE']
+tokens = datatype + bin_op + rel_op + delimiters + statements + ['ID', 'TYPE', 'NEWLINE']
 
 
 # --------------------------------lexer------------------------------------ #
@@ -28,6 +48,14 @@ t_PLUS = r'\+'
 t_MINUS = r'-'
 t_MULTIPLY = r'\*'
 t_DIVIDE = r'\\'
+t_L_SHIFT = r'<<'
+t_R_SHIFT = r'>>'
+t_AND = r'&'
+t_OR = r'\|'
+t_XOR = r'\^'
+t_MOD = r'%'
+t_PLUS_PLUS=r'\+\+'
+t_MINUS_MINUS=r'\-\-'
 
 # relational operators
 
@@ -50,6 +78,10 @@ t_L_FLOWERBRACE = r'\{'
 t_R_FLOWERBRACE = r'\}'
 t_SEMICOLON = r';'
 
+# new NEWLINE
+
+# t_NEWLINE = '\n'
+
 t_ignore = ' \t'
 
 # while
@@ -63,6 +95,12 @@ def t_FOR(t):
     r'for'
     return t
 
+# float
+
+def t_FLOAT(t):
+    r'\d+\.\d+'
+    return t
+
 # int
 
 def t_INT(t):
@@ -73,7 +111,8 @@ def t_INT(t):
 # types
 
 def t_TYPE(t):
-    r'int'
+    r'int|float'
+
     return t
 
 # identifiers
@@ -96,29 +135,38 @@ precedence = (
     ('left', 'MULTIPLY', 'DIVIDE')
 )
 
-# entire program
+# detector
 
-def p_detector(p):
-    '''
-    detector : statement
-             | empty
-    '''
-    print(p[1])
+# def p_detector(p):
+#     '''
+#     detector : while_loop
+#     '''
+#     print('while loop detected')
+#     print(p[1])
 
 # statement
 def p_statement(p):
     '''
     statement : var_assign SEMICOLON
               | expression SEMICOLON
+              | expression_unary SEMICOLON
               | while_loop
+              | declare_statement
+              | empty
     '''
     p[0] = p[1]
 
+def p_statement_single(p):
+    '''
+    statement_multiple : statement
+    '''
+    p[0] = [p[1]]
 # while
 
 def p_while_loop(p):
     '''
     while_loop : WHILE condition block
+               | WHILE condition statement
     '''
     p[0] = (p[1], p[2], p[3])
 
@@ -146,9 +194,26 @@ def p_relop(p):
 
 def p_block(p):
     '''
-    block : L_FLOWERBRACE statement R_FLOWERBRACE
+    block : L_FLOWERBRACE statement_multiple R_FLOWERBRACE
     '''
     p[0] = p[2]
+
+# multiple statements
+
+def p_statement_multiple(p):
+    '''
+    statement_multiple : statement_multiple statement
+    '''
+    p[0] = p[1] + [p[2]]
+
+# declaration
+
+def p_declare_statement(p):
+    '''
+    declare_statement : TYPE ID SEMICOLON
+                      | TYPE var_assign SEMICOLON
+    '''
+    p[0]=('declaring',p[1],p[2])
 
 # assignment
 
@@ -174,14 +239,46 @@ def p_expression(p):
                | expression DIVIDE expression
                | expression PLUS expression
                | expression MINUS expression
+               | expression L_SHIFT expression
+               | expression R_SHIFT expression
+               | expression MOD expression
+               | expression XOR expression
+               | expression AND expression
+               | expression OR expression
     '''
     p[0] = (p[2], p[1], p[3])
+
+# expression_unary
+
+def p_expression_unary(p):
+    '''
+    expression_unary : post
+                     | pre
+    '''
+    p[0] = p[1]
+
+# post
+def p_post(p):
+    '''
+    post : ID PLUS_PLUS
+         | ID MINUS_MINUS
+    '''
+    p[0] = (p[2], p[1])
+
+# pre
+def p_pre(p):
+    '''
+    pre : PLUS_PLUS ID
+        | MINUS_MINUS ID
+    '''
+    p[0] = (p[1], p[2])
 
 # expressions
 
 def p_expression_type(p):
     '''
     expression : INT
+               | FLOAT
     '''
     p[0] = p[1]
 
@@ -203,4 +300,4 @@ while True:
         s = input()
     except EOFError:
         break
-    parser.parse(s)
+    print(parser.parse(s))
