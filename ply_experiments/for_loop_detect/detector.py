@@ -144,7 +144,7 @@ precedence = (
 #     print('while loop detected')
 #     print(p[1])
 
-
+''' grammer declared here '''
 
 # statement
 def p_statement(p):
