@@ -127,6 +127,9 @@ def t_error(t):
     print(f"Illegal character {t.value[0]!r}")
     t.lexer.skip(1)
 
+# def t_newline(t):
+#     r'\n+'
+#     pass
 # --------------------------------parser------------------------------------ #
 
 # defining precedence of operators
@@ -137,12 +140,12 @@ precedence = (
 
 # detector
 
-# def p_detector(p):
-#     '''
-#     detector : while_loop
-#     '''
-#     print('while loop detected')
-#     print(p[1])
+def p_detector(p):
+    '''
+    detector : for_loop
+    '''
+    print('loop detected')
+    print(p[1])
 
 ''' grammer declared here '''
 
@@ -153,10 +156,17 @@ def p_statement(p):
               | expression SEMICOLON
               | expression_unary SEMICOLON
               | while_loop
-              | declare_statement
-              | empty
+              | for_loop
+              | declaration SEMICOLON
+              | SEMICOLON
     '''
     p[0] = p[1]
+
+def p_statement_multiple(p):
+    '''
+    statement_multiple : statement_multiple statement
+    '''
+    p[0] = p[1] + [p[2]]
 
 def p_statement_single(p):
     '''
@@ -164,11 +174,6 @@ def p_statement_single(p):
     '''
     p[0] = [p[1]]
 
-def p_statement_multiple(p):
-    '''
-    statement_multiple : statement_multiple statement
-    '''
-    p[0] = p[1] + [p[2]]
 
 # block
 
@@ -187,6 +192,24 @@ def p_while_loop(p):
     '''
     p[0] = (p[1], p[2], p[3])
 
+# for
+
+def p_for_loop(p):
+    '''
+    for_loop : FOR for_condition block
+             | FOR for_condition statement
+    '''
+    p[0] = (p[1], p[2], p[3])
+
+
+# for condition
+
+def p_for_condition(p):
+    '''
+    for_condition : L_PAREN var_assign SEMICOLON expression relop expression SEMICOLON var_assign R_PAREN
+                  | L_PAREN declaration SEMICOLON expression relop expression SEMICOLON expression R_PAREN
+    '''
+    p[0] = (p[2], p[4], p[6])
 # condition
 
 def p_condition(p):
@@ -212,10 +235,10 @@ def p_relop(p):
 
 # declaration
 
-def p_declare_statement(p):
+def p_declaration(p):
     '''
-    declare_statement : TYPE ID SEMICOLON
-                      | TYPE var_assign SEMICOLON
+    declaration : TYPE ID
+                | TYPE var_assign
     '''
     p[0]=('declaring',p[1],p[2])
 
@@ -277,6 +300,7 @@ def p_expression_type(p):
     expression : INT
                | FLOAT
     '''
+    # print('here2')
     p[0] = p[1]
 
 def p_expression_var(p):
@@ -295,16 +319,28 @@ def p_empty(p):
 
 # error
 
-def p_error(p):
-    print('ERROR!!')
+# def p_error(p):
+#     print('ERROR!!')
 
 
 lexer = lex()
 parser = yacc()
 
-while True:
-    try:
-        s = input()
-    except EOFError:
-        break
-    print(parser.parse(s))
+try:
+    file = sys.argv[1]
+except :
+    print('No arguments')
+
+lines = ""
+with open(file) as f:
+    for line in f:
+        lines += line.strip('\n')
+    lines.strip('\n')
+    print(parser.parse(lines))
+
+# while True:
+#     try:
+#         s = input()
+#     except EOFError:
+#         break
+#     print(parser.parse(s))
