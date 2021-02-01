@@ -2,6 +2,7 @@ from ply.lex import lex
 from ply.yacc import yacc
 import sys
 
+# comment
 ''' defining tokens '''
 
 datatype = ['INT']
