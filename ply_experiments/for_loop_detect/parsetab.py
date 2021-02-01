@@ -6,9 +6,9 @@ _tabversion = '3.10'
 
 _lr_method = 'LALR'
 
-_lr_signature = 'ASSIGN DIVIDE EQ FOR GE GT ID INT LE LT L_FLOWERBRACE L_PAREN MINUS MULTIPLY NE PLUS R_FLOWERBRACE R_PAREN SEMICOLON TYPE\n    detector : expression\n             | empty\n    \n    empty :\n    \n    expression : expression MULTIPLY expression\n               | expression DIVIDE expression\n               | expression PLUS expression\n               | expression MINUS expression\n    \n    expression : INT\n    '
+_lr_signature = 'leftPLUSMINUSleftMULTIPLYDIVIDEASSIGN DIVIDE EQ FOR GE GT ID INT LE LT L_FLOWERBRACE L_PAREN MINUS MULTIPLY NE PLUS R_FLOWERBRACE R_PAREN SEMICOLON TYPE WHILE\n    detector : statement\n             | empty\n    \n    statement : var_assign SEMICOLON\n              | expression SEMICOLON\n              | while_loop\n    \n    while_loop : WHILE condition block\n    \n    condition : L_PAREN expression relop expression R_PAREN\n    \n    relop : LE\n          | LT\n          | GE\n          | GT\n          | NE\n          | EQ\n    \n    block : L_FLOWERBRACE statement R_FLOWERBRACE\n    \n    var_assign : ID ASSIGN expression\n    \n    empty :\n    \n    expression : expression MULTIPLY expression\n               | expression DIVIDE expression\n               | expression PLUS expression\n               | expression MINUS expression\n    \n    expression : INT\n    \n    expression : ID\n    '
     
-_lr_action_items = {'INT':([0,5,6,7,8,],[4,4,4,4,4,]),'$end':([0,1,2,3,4,9,10,11,12,],[-3,0,-1,-2,-8,-4,-5,-6,-7,]),'MULTIPLY':([2,4,9,10,11,12,],[5,-8,5,5,5,5,]),'DIVIDE':([2,4,9,10,11,12,],[6,-8,6,6,6,6,]),'PLUS':([2,4,9,10,11,12,],[7,-8,7,7,7,7,]),'MINUS':([2,4,9,10,11,12,],[8,-8,8,8,8,8,]),}
+_lr_action_items = {'$end':([0,1,2,3,6,10,11,25,36,],[-16,0,-1,-2,-5,-3,-4,-6,-14,]),'ID':([0,12,13,14,15,16,18,26,29,30,31,32,33,34,35,],[7,20,20,20,20,20,20,7,20,-8,-9,-10,-11,-12,-13,]),'INT':([0,12,13,14,15,16,18,26,29,30,31,32,33,34,35,],[8,8,8,8,8,8,8,8,8,-8,-9,-10,-11,-12,-13,]),'WHILE':([0,26,],[9,9,]),'SEMICOLON':([4,5,7,8,19,20,21,22,23,24,],[10,11,-22,-21,-17,-22,-18,-19,-20,-15,]),'MULTIPLY':([5,7,8,19,20,21,22,23,24,27,37,],[12,-22,-21,-17,-22,-18,12,12,12,12,12,]),'DIVIDE':([5,7,8,19,20,21,22,23,24,27,37,],[13,-22,-21,-17,-22,-18,13,13,13,13,13,]),'PLUS':([5,7,8,19,20,21,22,23,24,27,37,],[14,-22,-21,-17,-22,-18,-19,-20,14,14,14,]),'MINUS':([5,7,8,19,20,21,22,23,24,27,37,],[15,-22,-21,-17,-22,-18,-19,-20,15,15,15,]),'R_FLOWERBRACE':([6,10,11,25,28,36,],[-5,-3,-4,-6,36,-14,]),'ASSIGN':([7,],[16,]),'LE':([8,19,20,21,22,23,27,],[-21,-17,-22,-18,-19,-20,30,]),'LT':([8,19,20,21,22,23,27,],[-21,-17,-22,-18,-19,-20,31,]),'GE':([8,19,20,21,22,23,27,],[-21,-17,-22,-18,-19,-20,32,]),'GT':([8,19,20,21,22,23,27,],[-21,-17,-22,-18,-19,-20,33,]),'NE':([8,19,20,21,22,23,27,],[-21,-17,-22,-18,-19,-20,34,]),'EQ':([8,19,20,21,22,23,27,],[-21,-17,-22,-18,-19,-20,35,]),'R_PAREN':([8,19,20,21,22,23,37,],[-21,-17,-22,-18,-19,-20,38,]),'L_PAREN':([9,],[18,]),'L_FLOWERBRACE':([17,38,],[26,-7,]),}
 
 _lr_action = {}
 for _k, _v in _lr_action_items.items():
@@ -17,7 +17,7 @@ for _k, _v in _lr_action_items.items():
       _lr_action[_x][_k] = _y
 del _lr_action_items
 
-_lr_goto_items = {'detector':([0,],[1,]),'expression':([0,5,6,7,8,],[2,9,10,11,12,]),'empty':([0,],[3,]),}
+_lr_goto_items = {'detector':([0,],[1,]),'statement':([0,26,],[2,28,]),'empty':([0,],[3,]),'var_assign':([0,26,],[4,4,]),'expression':([0,12,13,14,15,16,18,26,29,],[5,19,21,22,23,24,27,5,37,]),'while_loop':([0,26,],[6,6,]),'condition':([9,],[17,]),'block':([17,],[25,]),'relop':([27,],[29,]),}
 
 _lr_goto = {}
 for _k, _v in _lr_goto_items.items():
@@ -27,12 +27,26 @@ for _k, _v in _lr_goto_items.items():
 del _lr_goto_items
 _lr_productions = [
   ("S' -> detector","S'",1,None,None,None),
-  ('detector -> expression','detector',1,'p_detector','detector.py',88),
-  ('detector -> empty','detector',1,'p_detector','detector.py',89),
-  ('empty -> <empty>','empty',0,'p_empty','detector.py',95),
-  ('expression -> expression MULTIPLY expression','expression',3,'p_expression','detector.py',101),
-  ('expression -> expression DIVIDE expression','expression',3,'p_expression','detector.py',102),
-  ('expression -> expression PLUS expression','expression',3,'p_expression','detector.py',103),
-  ('expression -> expression MINUS expression','expression',3,'p_expression','detector.py',104),
-  ('expression -> INT','expression',1,'p_expression_type','detector.py',110),
+  ('detector -> statement','detector',1,'p_detector','detector.py',102),
+  ('detector -> empty','detector',1,'p_detector','detector.py',103),
+  ('statement -> var_assign SEMICOLON','statement',2,'p_statement','detector.py',110),
+  ('statement -> expression SEMICOLON','statement',2,'p_statement','detector.py',111),
+  ('statement -> while_loop','statement',1,'p_statement','detector.py',112),
+  ('while_loop -> WHILE condition block','while_loop',3,'p_while_loop','detector.py',120),
+  ('condition -> L_PAREN expression relop expression R_PAREN','condition',5,'p_condition','detector.py',128),
+  ('relop -> LE','relop',1,'p_relop','detector.py',136),
+  ('relop -> LT','relop',1,'p_relop','detector.py',137),
+  ('relop -> GE','relop',1,'p_relop','detector.py',138),
+  ('relop -> GT','relop',1,'p_relop','detector.py',139),
+  ('relop -> NE','relop',1,'p_relop','detector.py',140),
+  ('relop -> EQ','relop',1,'p_relop','detector.py',141),
+  ('block -> L_FLOWERBRACE statement R_FLOWERBRACE','block',3,'p_block','detector.py',148),
+  ('var_assign -> ID ASSIGN expression','var_assign',3,'p_var_assign','detector.py',156),
+  ('empty -> <empty>','empty',0,'p_empty','detector.py',164),
+  ('expression -> expression MULTIPLY expression','expression',3,'p_expression','detector.py',172),
+  ('expression -> expression DIVIDE expression','expression',3,'p_expression','detector.py',173),
+  ('expression -> expression PLUS expression','expression',3,'p_expression','detector.py',174),
+  ('expression -> expression MINUS expression','expression',3,'p_expression','detector.py',175),
+  ('expression -> INT','expression',1,'p_expression_type','detector.py',183),
+  ('expression -> ID','expression',1,'p_expression_var','detector.py',189),
 ]

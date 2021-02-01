@@ -12,7 +12,7 @@ rel_op = ['LT', 'LE', 'GT', 'GE', 'NE', 'EQ']
 
 delimiters = ['L_PAREN', 'R_PAREN', 'L_FLOWERBRACE', 'R_FLOWERBRACE', 'SEMICOLON']
 
-statements = ['FOR']
+statements = ['FOR', 'WHILE']
 
 tokens = datatype + bin_op + rel_op + delimiters + statements + ['ID', 'TYPE']
 
@@ -51,6 +51,11 @@ t_SEMICOLON = r';'
 
 t_ignore = ' \t'
 
+# while
+def t_WHILE(t):
+    r'while'
+    return t
+
 # for
 
 def t_FOR(t):
@@ -83,18 +88,84 @@ def t_error(t):
     t.lexer.skip(1)
 
 # --------------------------------parser------------------------------------ #
+
+# defining precedence of operators
+precedence = (
+    ('left', 'PLUS', 'MINUS'),
+    ('left', 'MULTIPLY', 'DIVIDE')
+)
+
+# entire program
+
 def p_detector(p):
     '''
-    detector : expression
+    detector : statement
              | empty
     '''
     print(p[1])
+
+# statement
+def p_statement(p):
+    '''
+    statement : var_assign SEMICOLON
+              | expression SEMICOLON
+              | while_loop
+    '''
+    p[0] = p[1]
+
+# while
+
+def p_while_loop(p):
+    '''
+    while_loop : WHILE condition block
+    '''
+    p[0] = (p[1], p[2], p[3])
+
+# condition
+
+def p_condition(p):
+    '''
+    condition : L_PAREN expression relop expression R_PAREN
+    '''
+    p[0] = (p[3], p[2], p[4])
+
+# relop
+
+def p_relop(p):
+    '''
+    relop : LE
+          | LT
+          | GE
+          | GT
+          | NE
+          | EQ
+    '''
+    p[0] = p[1]
+# block
+
+def p_block(p):
+    '''
+    block : L_FLOWERBRACE statement R_FLOWERBRACE
+    '''
+    p[0] = p[2]
+
+# assignment
+
+def p_var_assign(p):
+    '''
+    var_assign : ID ASSIGN expression
+    '''
+    p[0] = (p[2], p[1], p[3])
+
+# lambda
 
 def p_empty(p):
     '''
     empty :
     '''
     p[0] = None
+
+# expression
 
 def p_expression(p):
     '''
@@ -105,11 +176,23 @@ def p_expression(p):
     '''
     p[0] = (p[2], p[1], p[3])
 
+# expressions
+
 def p_expression_type(p):
     '''
     expression : INT
     '''
     p[0] = p[1]
+
+def p_expression_var(p):
+    '''
+    expression : ID
+    '''
+    p[0] = p[1]
+
+def p_error(p):
+    print('ERROR!!')
+
 
 lexer = lex()
 parser = yacc()
