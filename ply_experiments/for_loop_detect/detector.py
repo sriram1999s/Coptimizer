@@ -144,6 +144,8 @@ precedence = (
 #     print('while loop detected')
 #     print(p[1])
 
+
+
 # statement
 def p_statement(p):
     '''
@@ -161,6 +163,21 @@ def p_statement_single(p):
     statement_multiple : statement
     '''
     p[0] = [p[1]]
+
+def p_statement_multiple(p):
+    '''
+    statement_multiple : statement_multiple statement
+    '''
+    p[0] = p[1] + [p[2]]
+
+# block
+
+def p_block(p):
+    '''
+    block : L_FLOWERBRACE statement_multiple R_FLOWERBRACE
+    '''
+    p[0] = p[2]
+
 # while
 
 def p_while_loop(p):
@@ -190,21 +207,8 @@ def p_relop(p):
           | EQ
     '''
     p[0] = p[1]
-# block
 
-def p_block(p):
-    '''
-    block : L_FLOWERBRACE statement_multiple R_FLOWERBRACE
-    '''
-    p[0] = p[2]
 
-# multiple statements
-
-def p_statement_multiple(p):
-    '''
-    statement_multiple : statement_multiple statement
-    '''
-    p[0] = p[1] + [p[2]]
 
 # declaration
 
@@ -223,13 +227,6 @@ def p_var_assign(p):
     '''
     p[0] = (p[2], p[1], p[3])
 
-# lambda
-
-def p_empty(p):
-    '''
-    empty :
-    '''
-    p[0] = None
 
 # expression
 
@@ -287,6 +284,16 @@ def p_expression_var(p):
     expression : ID
     '''
     p[0] = p[1]
+
+# lambda
+
+def p_empty(p):
+    '''
+    empty :
+    '''
+    p[0] = None
+
+# error
 
 def p_error(p):
     print('ERROR!!')
