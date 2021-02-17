@@ -1,0 +1,20 @@
+Bentley's Rules That are not implemented in the GCC compiler:
+
+  A. Data Structures:
+    1. Packing and Encoding
+    2. Augmentation
+    3. Sparsity
+
+  B. Logic:
+    1. Algebraic Identities
+    2. Short Circuiting (In terms of Logic and not operators)
+    3. Ordering Tests
+    4. Combining Tests
+
+  C. Loops :
+    1. Sentinels (Not done by compiler in some situations)
+    2. Eliminating wasted iterations
+
+  D. Functions :
+    1. Tail recursion elimination
+    2. Coarsening recursion
