@@ -25,37 +25,32 @@ P.S: Try to stick to a single convention
 
 ''' defining tokens '''
 
-datatype = ['INT', 'FLOAT']
+numbers = ['INT_NUM', 'FLOAT_NUM']
 
-bin_op = ['PLUS', 'MINUS', 'MULTIPLY', 'DIVIDE', 'ASSIGN', 'L_SHIFT', 'R_SHIFT', 'AND', 'OR', 'XOR', 'MOD','PLUS_PLUS','MINUS_MINUS']
+bin_op = ['PLUS', 'MINUS', 'MULTIPLY', 'DIVIDE', 'L_SHIFT', 'R_SHIFT', 'AND', 'OR', 'MOD','PLUS_PLUS','MINUS_MINUS']
+
+logic = ['BIT_OR', 'BIT_AND', 'BIT_XOR']
 
 rel_op = ['LT', 'LE', 'GT', 'GE', 'NE', 'EQ']
 
-delimiters = ['L_PAREN', 'R_PAREN', 'L_FLOWERBRACE', 'R_FLOWERBRACE', 'SEMICOLON']
+assignment = ['ASSIGN', 'PLUS_ASSIGN', 'MINUS_ASSIGN', 'MUL_ASSIGN', 'DIV_ASSIGN', 'AND_ASSIGN', 'OR_ASSIGN', 'XOR_ASSIGN', 'MOD_ASSIGN', 'L_SHIFT_ASSIGN', 'R_SHIFT_ASSIGN']
 
-statements = ['FOR', 'WHILE']
+delimiters = ['L_PAREN', 'R_PAREN', 'L_FLOWBRACE', 'R_FLOWBRACE', 'SEMICOLON']
 
-tokens = datatype + bin_op + rel_op + delimiters + statements + ['ID', 'TYPE', 'NEWLINE']
+statements = ['FOR', 'WHILE', 'IF', 'ELSE']
+
+unary = ['NOT']
+
+extra = ['ID', 'TYPE']
+
+tokens = numbers + bin_op + logic + rel_op + assignment + delimiters + statements + unary + extra
 
 
 # --------------------------------lexer------------------------------------ #
 
 ''' regular expressions defined here '''
 
-# binary operators
 
-t_PLUS = r'\+'
-t_MINUS = r'-'
-t_MULTIPLY = r'\*'
-t_DIVIDE = r'/'
-t_L_SHIFT = r'<<'
-t_R_SHIFT = r'>>'
-t_AND = r'&'
-t_OR = r'\|'
-t_XOR = r'\^'
-t_MOD = r'%'
-t_PLUS_PLUS=r'\+\+'
-t_MINUS_MINUS=r'\-\-'
 
 # relational operators
 
@@ -68,15 +63,51 @@ t_EQ = r'=='
 
 # assignment (had to be after relop)
 
+t_PLUS_ASSIGN = r'\+='
+t_MINUS_ASSIGN = r'-='
+t_MUL_ASSIGN = r'\*='
+t_DIV_ASSIGN = r'/='
+t_AND_ASSIGN = r'&='
+t_OR_ASSIGN = r'\|='
+t_XOR_ASSIGN = r'\^='
+t_MOD_ASSIGN = r'%='
+t_L_SHIFT_ASSIGN = r'<<='
+t_R_SHIFT_ASSIGN = r'>>='
 t_ASSIGN = r'='
 
 # delimiters
 
 t_L_PAREN = r'\('
 t_R_PAREN = r'\)'
-t_L_FLOWERBRACE = r'\{'
-t_R_FLOWERBRACE = r'\}'
+t_L_FLOWBRACE = r'\{'
+t_R_FLOWBRACE = r'\}'
 t_SEMICOLON = r';'
+
+# unary
+
+t_NOT = r'!'
+
+# binary operators
+
+t_PLUS = r'\+'
+t_MINUS = r'-'
+t_MULTIPLY = r'\*'
+t_DIVIDE = r'/'
+t_L_SHIFT = r'<<'
+t_R_SHIFT = r'>>'
+t_AND = r'&&'
+t_OR = r'\|\|'
+t_MOD = r'%'
+t_PLUS_PLUS=r'\+\+'
+t_MINUS_MINUS=r'\-\-'
+
+# logical operators
+
+t_BIT_AND = r'\&'
+t_BIT_OR = r'\|'
+t_BIT_XOR = r'\^'
+
+# ignore
 
 t_ignore = ' \t'
 
@@ -85,6 +116,14 @@ def t_WHILE(t):
     r'while'
     return t
 
+# if
+def t_IF(t):
+    r'if'
+    return t
+
+def t_ELSE(t):
+    r'else'
+    return t
 # for
 
 def t_FOR(t):
@@ -93,13 +132,13 @@ def t_FOR(t):
 
 # float
 
-def t_FLOAT(t):
+def t_FLOAT_NUM(t):
     r'\d+\.\d+'
     return t
 
 # int
 
-def t_INT(t):
+def t_INT_NUM(t):
     r'\d+'
     t.value = int(t.value)
     return t
@@ -128,194 +167,180 @@ def t_error(t):
 # --------------------------------parser------------------------------------ #
 
 # defining precedence of operators
-precedence = (
-    ('left', 'PLUS', 'MINUS'),
-    ('left', 'MULTIPLY', 'DIVIDE')
-)
-
-# detector
-
-def p_detector(p):
+# precedence = (
+#     ('left', 'PLUS', 'MINUS'),
+#     ('left', 'MULTIPLY', 'DIVIDE')
+# )
+def p_start(p):
     '''
-    detector : while_loop
-             | for_loop
+    start : multiple_statements
     '''
-    print('loop detected')
-    print(p[1])
+    print(p[0])
 
-''' grammer declared here '''
+def p_multiple_statements(p):
+    '''
+    multiple_statements : multiple_statements statement
+                        | statement
+    '''
+    # p[0] = p[1] + [p[2]]
 
-# statement
 def p_statement(p):
     '''
-    statement : var_assign SEMICOLON
-              | expression SEMICOLON
-              | expression_unary SEMICOLON
-              | while_loop
-              | for_loop
-              | declaration SEMICOLON
-              | SEMICOLON
+    statement : open
+              | closed
     '''
-    p[0] = p[1]
+    # p[0] = p[1]
 
-def p_statement_multiple(p):
+def p_open(p):
     '''
-    statement_multiple : statement_multiple statement
+    open : IF condition statement
+         | IF condition closed ELSE open
+         | WHILE condition open
+         | FOR for_condition open
     '''
-    p[0] = p[1] + [p[2]]
+    # p[0] = (p[1], p[2], p[3], p[4], p[5])
 
-def p_statement_single(p):
+def p_closed(p):
     '''
-    statement_multiple : statement
+    closed : simple
+           | block
+           | IF condition closed ELSE closed
+           | WHILE condition closed
+           | FOR for_condition closed
     '''
-    p[0] = [p[1]]
-
-
-# block
-
-def p_block(p):
-    '''
-    block : L_FLOWERBRACE statement_multiple R_FLOWERBRACE
-    '''
-    p[0] = p[2]
-
-# while
-
-def p_while_loop(p):
-    '''
-    while_loop : WHILE condition block
-               | WHILE condition statement
-    '''
-    p[0] = (p[1], p[2], p[3])
-
-# for
-
-def p_for_loop(p):
-    '''
-    for_loop : FOR for_condition block
-             | FOR for_condition statement
-    '''
-    p[0] = (p[1], p[2], p[3])
-
-
-# for condition
-
-def p_for_condition(p):
-    '''
-    for_condition : L_PAREN var_assign SEMICOLON expression relop expression SEMICOLON var_assign R_PAREN
-                  | L_PAREN var_assign SEMICOLON expression relop expression SEMICOLON expression_unary R_PAREN
-                  | L_PAREN declaration SEMICOLON expression relop expression SEMICOLON var_assign R_PAREN
-                  | L_PAREN declaration SEMICOLON expression relop expression SEMICOLON expression_unary R_PAREN
-    '''
-    p[0] = (p[2], (p[5], p[4], p[6]), p[8])
-# condition
+    # p[0] = (p[1], p[2], p[3], p[4], p[5])
 
 def p_condition(p):
     '''
-    condition : L_PAREN expression relop expression R_PAREN
+    condition : L_PAREN expr R_PAREN
     '''
-    p[0] = (p[3], p[2], p[4])
+    # p[0] = p[1]
+def p_for_condition(p):
+    '''
+    for_condition : L_PAREN declaration expr SEMICOLON expr R_PAREN
+    '''
+def p_declaration(p):
+    '''
+    declaration : TYPE ID SEMICOLON
+                | TYPE ID ASSIGN expr SEMICOLON
+    '''
+def p_block(p):
+    '''
+    block : L_FLOWBRACE multiple_statements R_FLOWBRACE
+    '''
+    # p[0] = p[1]
 
-# relop
+def p_simple(p):
+    '''
+    simple : expr SEMICOLON
+           | declaration
+           | SEMICOLON
+    '''
+    # p[0] = p[1]
 
+def p_expr(p):
+    '''
+    expr : expr assignment exprOR
+         | exprOR
+    '''
+    # p[0] = (p[1], p[2], p[3])
+
+def p_assignment(p):
+    '''
+    assignment : ASSIGN
+               | PLUS_ASSIGN
+               | MINUS_ASSIGN
+               | MUL_ASSIGN
+               | DIV_ASSIGN
+               | AND_ASSIGN
+               | OR_ASSIGN
+               | XOR_ASSIGN
+               | MOD_ASSIGN
+               | L_SHIFT_ASSIGN
+               | R_SHIFT_ASSIGN
+    '''
+def p_exprOR(p):
+    '''
+    exprOR : exprOR OR exprAND
+           | exprAND
+    '''
+
+def p_exprAND(p):
+    '''
+    exprAND : exprAND AND exprBITOR
+            | exprBITOR
+    '''
+def p_exprBITOR(p):
+    '''
+    exprBITOR : exprBITOR BIT_OR exprBITXOR
+              | exprBITXOR
+    '''
+def p_exprBITXOR(p):
+    '''
+    exprBITXOR : exprBITXOR BIT_XOR exprBITAND
+               | exprBITAND
+    '''
+def p_exprBITAND(p):
+    '''
+    exprBITAND : exprBITAND BIT_AND exprEQ
+               | exprEQ
+    '''
+def p_exprEQ(p):
+    '''
+    exprEQ : exprEQ EQ exprRELOP
+           | exprEQ NE exprRELOP
+           | exprRELOP
+    '''
+def p_exprRELOP(p):
+    '''
+    exprRELOP : exprRELOP relop exprSHIFT
+              | exprSHIFT
+    '''
 def p_relop(p):
     '''
     relop : LE
           | LT
           | GE
           | GT
-          | NE
-          | EQ
     '''
-    p[0] = p[1]
 
-
-
-# declaration
-
-def p_declaration(p):
+def p_exprSHIFT(p):
     '''
-    declaration : TYPE ID
-                | TYPE var_assign
+    exprSHIFT : exprSHIFT L_SHIFT exprOP
+              | exprSHIFT R_SHIFT exprOP
+              | exprOP
     '''
-    p[0]=('declaring',p[1],p[2])
-
-# assignment
-
-def p_var_assign(p):
+def p_exprOP(p):
     '''
-    var_assign : ID ASSIGN expression
+    exprOP : exprOP PLUS term
+         | exprOP MINUS term
+         | term
     '''
-    p[0] = (p[2], p[1], p[3])
-
-
-# expression
-
-def p_expression(p):
+def p_term(p):
     '''
-    expression : expression MULTIPLY expression
-               | expression DIVIDE expression
-               | expression PLUS expression
-               | expression MINUS expression
-               | expression L_SHIFT expression
-               | expression R_SHIFT expression
-               | expression MOD expression
-               | expression XOR expression
-               | expression AND expression
-               | expression OR expression
+    term : term MULTIPLY factor
+         | term DIVIDE factor
+         | term MOD factor
+         | factor
     '''
-    p[0] = (p[2], p[1], p[3])
-
-# expression_unary
-
-def p_expression_unary(p):
+def p_factor(p):
     '''
-    expression_unary : post
-                     | pre
+    factor : NOT factor
+           | PLUS factor
+           | MINUS factor
+           | PLUS_PLUS factor
+           | MINUS_MINUS factor
+           | brace
     '''
-    p[0] = p[1]
-
-# post
-def p_post(p):
+def p_brace(p):
     '''
-    post : ID PLUS_PLUS
-         | ID MINUS_MINUS
+    brace  : L_PAREN expr R_PAREN
+           | brace PLUS_PLUS
+           | brace MINUS_MINUS
+           | INT_NUM
+           | FLOAT_NUM
+           | ID
     '''
-    p[0] = (p[2], p[1])
-
-# pre
-def p_pre(p):
-    '''
-    pre : PLUS_PLUS ID
-        | MINUS_MINUS ID
-    '''
-    p[0] = (p[1], p[2])
-
-# expressions
-
-def p_expression_type(p):
-    '''
-    expression : INT
-               | FLOAT
-    '''
-    p[0] = p[1]
-
-def p_expression_var(p):
-    '''
-    expression : ID
-    '''
-    p[0] = p[1]
-
-# lambda
-
-def p_empty(p):
-    '''
-    empty :
-    '''
-    p[0] = None
-
-# error
-
 # def p_error(p):
 #     print('ERROR!!')
 
