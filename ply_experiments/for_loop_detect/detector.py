@@ -441,7 +441,10 @@ def solve(i,n,l,output_prg):
     if(i==n):
         return
     elif(type(l[i]) is str):
-        output_prg+=[l[i]]
+        if(l[i] == 'int' or l[i] == 'float'):
+            output_prg+=[l[i],' ']
+        else:
+            output_prg+=[l[i]]
         solve(i+1,n,l,output_prg)
     elif(type(l[i]) is int):
         output_prg+=[str(l[i])]
@@ -452,7 +455,10 @@ def solve(i,n,l,output_prg):
             if(type(l[i][j]) is tuple or type(l[i][j]) is list):
                 solve(0,len(l[i][j]),l[i][j],output_prg)
             else:
-                output_prg+=[str(l[i][j])]
+                if(l[i][j]=='int' or l[i][j]=='float'):
+                    output_prg+=[str(l[i][j]),' ']
+                else:
+                    output_prg+=[str(l[i][j])]
         solve(i+1,n,l,output_prg)
     
 lines = ""
@@ -470,4 +476,4 @@ output_prg=[]
 solve(0,len(z),z,output_prg)
 #print(output_prg)
 print("generated code")
-print(" ".join(output_prg))
+print("".join(output_prg))
