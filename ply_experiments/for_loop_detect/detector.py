@@ -175,21 +175,24 @@ def p_start(p):
     '''
     start : multiple_statements
     '''
-    print(p[0])
+    p[0]=p[1]
 
 def p_multiple_statements(p):
     '''
     multiple_statements : multiple_statements statement
                         | statement
     '''
-    # p[0] = p[1] + [p[2]]
+    if(len(p)==3):
+        p[0] = p[1] + [p[2]]
+    else:
+        p[0]=[p[1]]
 
 def p_statement(p):
     '''
     statement : open
               | closed
     '''
-    # p[0] = p[1]
+    p[0] = p[1]
 
 def p_open(p):
     '''
@@ -198,7 +201,7 @@ def p_open(p):
          | WHILE condition open
          | FOR for_condition open
     '''
-    # p[0] = (p[1], p[2], p[3], p[4], p[5])
+    #p[0] = (p[1], p[2], p[3], p[4], p[5])
 
 def p_closed(p):
     '''
@@ -208,27 +211,41 @@ def p_closed(p):
            | WHILE condition closed
            | FOR for_condition closed
     '''
-    # p[0] = (p[1], p[2], p[3], p[4], p[5])
+    if(len(p)==2):
+        p[0] = (p[1])
+    elif(len(p)==6):
+        p[0] = (p[1],p[2],p[3],p[4],p[5])
+    elif(len(p)==4):
+        p[0] = (p[1],p[2],p[3])
+    #p[0] = (p[1], p[2], p[3], p[4], p[5])
 
 def p_condition(p):
     '''
     condition : L_PAREN expr R_PAREN
     '''
-    # p[0] = p[1]
+    p[0] = (p[1],p[2],p[3])
+    
 def p_for_condition(p):
     '''
     for_condition : L_PAREN declaration expr SEMICOLON expr R_PAREN
     '''
+    p[0] = (p[1],p[2],p[3],p[4],p[5],p[6])
+    
 def p_declaration(p):
     '''
     declaration : TYPE ID SEMICOLON
                 | TYPE ID ASSIGN expr SEMICOLON
     '''
+    if(len(p)==4):
+        p[0] = (p[1],p[2],p[3])
+    else:
+        p[0] = (p[1],p[2],p[3],p[4])
+        
 def p_block(p):
     '''
     block : L_FLOWBRACE multiple_statements R_FLOWBRACE
     '''
-    # p[0] = p[1]
+    p[0] = (p[1],p[2],p[3])
 
 def p_simple(p):
     '''
@@ -236,14 +253,20 @@ def p_simple(p):
            | declaration
            | SEMICOLON
     '''
-    # p[0] = p[1]
+    if(len(p)==3):
+        p[0] = (p[1],p[2])
+    else:
+        p[0] = (p[1])
 
 def p_expr(p):
     '''
     expr : expr assignment exprOR
          | exprOR
     '''
-    # p[0] = (p[1], p[2], p[3])
+    if(len(p)==4):
+        p[0] = (p[1], p[2], p[3])
+    else:
+        p[0] = (p[1])
 
 def p_assignment(p):
     '''
@@ -259,43 +282,78 @@ def p_assignment(p):
                | L_SHIFT_ASSIGN
                | R_SHIFT_ASSIGN
     '''
+    p[0] = (p[1])
 def p_exprOR(p):
     '''
     exprOR : exprOR OR exprAND
            | exprAND
     '''
+    if(len(p)==4):
+        p[0] = (p[1],p[2],p[3])
+    else:
+        p[0] = (p[1]) 
 
 def p_exprAND(p):
     '''
     exprAND : exprAND AND exprBITOR
             | exprBITOR
     '''
+    if(len(p)==4):
+        p[0] = (p[1],p[2],p[3])
+    else:
+        p[0] = (p[1])
+        
 def p_exprBITOR(p):
     '''
     exprBITOR : exprBITOR BIT_OR exprBITXOR
               | exprBITXOR
     '''
+    if(len(p)==4):
+        p[0] = (p[1],p[2],p[3])
+    else:
+        p[0] = (p[1])
+
 def p_exprBITXOR(p):
     '''
     exprBITXOR : exprBITXOR BIT_XOR exprBITAND
                | exprBITAND
     '''
+    if(len(p)==4):
+        p[0] = (p[1],p[2],p[3])
+    else:
+        p[0] = (p[1])
+        
 def p_exprBITAND(p):
     '''
     exprBITAND : exprBITAND BIT_AND exprEQ
                | exprEQ
     '''
+    if(len(p)==4):
+        p[0] = (p[1],p[2],p[3])
+    else:
+        p[0] = (p[1])
+        
 def p_exprEQ(p):
     '''
     exprEQ : exprEQ EQ exprRELOP
            | exprEQ NE exprRELOP
            | exprRELOP
     '''
+    if(len(p)==4):
+        p[0] = (p[1],p[2],p[3])
+    else:
+        p[0] = (p[1])
+        
 def p_exprRELOP(p):
     '''
     exprRELOP : exprRELOP relop exprSHIFT
               | exprSHIFT
     '''
+    if(len(p)==4):
+        p[0] = (p[1],p[2],p[3])
+    else:
+        p[0] = (p[1])
+        
 def p_relop(p):
     '''
     relop : LE
@@ -303,6 +361,7 @@ def p_relop(p):
           | GE
           | GT
     '''
+    p[0] =(p[1])
 
 def p_exprSHIFT(p):
     '''
@@ -310,12 +369,22 @@ def p_exprSHIFT(p):
               | exprSHIFT R_SHIFT exprOP
               | exprOP
     '''
+    if(len(p)==4):
+        p[0] = (p[1],p[2],p[3])
+    else:
+        p[0] = (p[1])
+    
 def p_exprOP(p):
     '''
     exprOP : exprOP PLUS term
          | exprOP MINUS term
          | term
     '''
+    if(len(p)==4):
+        p[0] = (p[1],p[2],p[3])
+    else:
+        p[0] = (p[1])
+        
 def p_term(p):
     '''
     term : term MULTIPLY factor
@@ -323,6 +392,11 @@ def p_term(p):
          | term MOD factor
          | factor
     '''
+    if(len(p)==4):
+        p[0] = (p[1],p[2],p[3])
+    else:
+        p[0] = (p[1])
+        
 def p_factor(p):
     '''
     factor : NOT factor
@@ -332,6 +406,11 @@ def p_factor(p):
            | MINUS_MINUS factor
            | brace
     '''
+    if(len(p)==3):
+        p[0] = (p[1],p[2])
+    else:
+        p[0] = (p[1])
+    
 def p_brace(p):
     '''
     brace  : L_PAREN expr R_PAREN
@@ -341,6 +420,13 @@ def p_brace(p):
            | FLOAT_NUM
            | ID
     '''
+    if(len(p)==4):
+        p[0] = (p[1],p[2],p[3])
+    elif(len(p)==3):
+        p[0] = (p[1],p[2])
+    else:
+        p[0] = (p[1])
+    
 # def p_error(p):
 #     print('ERROR!!')
 
