@@ -462,9 +462,12 @@ with open(file) as f:
     lines.strip('\n')
 z=parser.parse(lines)
 
+print("AST:")
 print(z)
+print()
 print()
 output_prg=[]
 solve(0,len(z),z,output_prg)
-print(output_prg)
+#print(output_prg)
+print("generated code")
 print(" ".join(output_prg))
