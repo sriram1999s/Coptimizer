@@ -237,7 +237,7 @@ def p_declaration(p):
     if(len(p)==4):
         p[0] = (p[1], p[2], p[3])
     else :
-        p[0] = (p[1], p[2], p[3], p[4])
+        p[0] = (p[1], p[2], p[3], p[4], p[5])
 
 def p_block(p):
     '''
@@ -467,4 +467,4 @@ print()
 output_prg=[]
 solve(0,len(z),z,output_prg)
 print(output_prg)
-print("".join(output_prg))
+print(" ".join(output_prg))
