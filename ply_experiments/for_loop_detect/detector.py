@@ -4,19 +4,15 @@ import sys
 
 '''
 READ THIS BEFORE ADDING CALLABLES
-
 def fxn_name(t):
     'Docstring regex'
     any conditions if it might clash
     return t
-
 t object has parameters:
 1)value
 2)type(as described in the tokens)
-
 t -----> lexer object
 p -----> production object
-
 P.S: Try to stick to a single convention
 '''
 
@@ -161,9 +157,6 @@ def t_error(t):
     print(f"Illegal character {t.value[0]!r}")
     t.lexer.skip(1)
 
-# def t_newline(t):
-#     r'\n+'
-#     pass
 # --------------------------------parser------------------------------------ #
 
 # defining precedence of operators
@@ -171,11 +164,14 @@ def t_error(t):
 #     ('left', 'PLUS', 'MINUS'),
 #     ('left', 'MULTIPLY', 'DIVIDE')
 # )
+
+# start = 'start'
 def p_start(p):
     '''
     start : multiple_statements
     '''
-    p[0]=p[1]
+    #print(p[1])
+    p[0] = p[1]
 
 def p_multiple_statements(p):
     '''
@@ -185,7 +181,7 @@ def p_multiple_statements(p):
     if(len(p)==3):
         p[0] = p[1] + [p[2]]
     else:
-        p[0]=[p[1]]
+        p[0] = [p[1]]
 
 def p_statement(p):
     '''
@@ -201,7 +197,10 @@ def p_open(p):
          | WHILE condition open
          | FOR for_condition open
     '''
-    #p[0] = (p[1], p[2], p[3], p[4], p[5])
+    if(len(p)==4):
+        p[0] = (p[1], p[2], p[3])
+    else:
+        p[0] = (p[1], (p[2], p[3]), p[4], p[5])
 
 def p_closed(p):
     '''
@@ -212,40 +211,39 @@ def p_closed(p):
            | FOR for_condition closed
     '''
     if(len(p)==2):
-        p[0] = (p[1])
-    elif(len(p)==6):
-        p[0] = (p[1],p[2],p[3],p[4],p[5])
+        p[0] = p[1]
     elif(len(p)==4):
-        p[0] = (p[1],p[2],p[3])
-    #p[0] = (p[1], p[2], p[3], p[4], p[5])
+        p[0] = (p[1], p[2], p[3])
+    else:
+        p[0] = (p[1], (p[2], p[3]), p[4], p[5])
 
 def p_condition(p):
     '''
     condition : L_PAREN expr R_PAREN
     '''
     p[0] = (p[1],p[2],p[3])
-    
+
 def p_for_condition(p):
     '''
     for_condition : L_PAREN declaration expr SEMICOLON expr R_PAREN
     '''
     p[0] = (p[1],p[2],p[3],p[4],p[5],p[6])
-    
+
 def p_declaration(p):
     '''
     declaration : TYPE ID SEMICOLON
                 | TYPE ID ASSIGN expr SEMICOLON
     '''
     if(len(p)==4):
-        p[0] = (p[1],p[2],p[3])
-    else:
-        p[0] = (p[1],p[2],p[3],p[4])
-        
+        p[0] = (p[1], p[2], p[3])
+    else :
+        p[0] = (p[1], p[2], p[3], p[4])
+
 def p_block(p):
     '''
     block : L_FLOWBRACE multiple_statements R_FLOWBRACE
     '''
-    p[0] = (p[1],p[2],p[3])
+    p[0] = (p[1], p[2], p[3])
 
 def p_simple(p):
     '''
@@ -265,7 +263,7 @@ def p_expr(p):
     '''
     if(len(p)==4):
         p[0] = (p[1], p[2], p[3])
-    else:
+    else :
         p[0] = (p[1])
 
 def p_assignment(p):
@@ -283,15 +281,16 @@ def p_assignment(p):
                | R_SHIFT_ASSIGN
     '''
     p[0] = (p[1])
+
 def p_exprOR(p):
     '''
     exprOR : exprOR OR exprAND
            | exprAND
     '''
     if(len(p)==4):
-        p[0] = (p[1],p[2],p[3])
-    else:
-        p[0] = (p[1]) 
+        p[0] = (p[1], p[2], p[3])
+    else :
+        p[0] = (p[1])
 
 def p_exprAND(p):
     '''
@@ -299,10 +298,10 @@ def p_exprAND(p):
             | exprBITOR
     '''
     if(len(p)==4):
-        p[0] = (p[1],p[2],p[3])
-    else:
+        p[0] = (p[2], p[1], p[3])
+    else :
         p[0] = (p[1])
-        
+
 def p_exprBITOR(p):
     '''
     exprBITOR : exprBITOR BIT_OR exprBITXOR
@@ -310,7 +309,7 @@ def p_exprBITOR(p):
     '''
     if(len(p)==4):
         p[0] = (p[1],p[2],p[3])
-    else:
+    else :
         p[0] = (p[1])
 
 def p_exprBITXOR(p):
@@ -319,10 +318,10 @@ def p_exprBITXOR(p):
                | exprBITAND
     '''
     if(len(p)==4):
-        p[0] = (p[1],p[2],p[3])
-    else:
+        p[0] = (p[1], p[2], p[3])
+    else :
         p[0] = (p[1])
-        
+
 def p_exprBITAND(p):
     '''
     exprBITAND : exprBITAND BIT_AND exprEQ
@@ -330,9 +329,9 @@ def p_exprBITAND(p):
     '''
     if(len(p)==4):
         p[0] = (p[1],p[2],p[3])
-    else:
+    else :
         p[0] = (p[1])
-        
+
 def p_exprEQ(p):
     '''
     exprEQ : exprEQ EQ exprRELOP
@@ -340,8 +339,8 @@ def p_exprEQ(p):
            | exprRELOP
     '''
     if(len(p)==4):
-        p[0] = (p[1],p[2],p[3])
-    else:
+        p[0] = (p[1], p[2], p[3])
+    else :
         p[0] = (p[1])
         
 def p_exprRELOP(p):
@@ -351,7 +350,7 @@ def p_exprRELOP(p):
     '''
     if(len(p)==4):
         p[0] = (p[1],p[2],p[3])
-    else:
+    else :
         p[0] = (p[1])
         
 def p_relop(p):
@@ -361,8 +360,7 @@ def p_relop(p):
           | GE
           | GT
     '''
-    p[0] =(p[1])
-
+    p[0] = (p[1])
 def p_exprSHIFT(p):
     '''
     exprSHIFT : exprSHIFT L_SHIFT exprOP
@@ -371,9 +369,9 @@ def p_exprSHIFT(p):
     '''
     if(len(p)==4):
         p[0] = (p[1],p[2],p[3])
-    else:
+    else :
         p[0] = (p[1])
-    
+
 def p_exprOP(p):
     '''
     exprOP : exprOP PLUS term
@@ -381,10 +379,10 @@ def p_exprOP(p):
          | term
     '''
     if(len(p)==4):
-        p[0] = (p[1],p[2],p[3])
-    else:
-        p[0] = (p[1])
-        
+        p[0] = (p[1], p[2], p[3])
+    else :
+        p[0] = p[1]
+
 def p_term(p):
     '''
     term : term MULTIPLY factor
@@ -394,9 +392,9 @@ def p_term(p):
     '''
     if(len(p)==4):
         p[0] = (p[1],p[2],p[3])
-    else:
+    else :
         p[0] = (p[1])
-        
+
 def p_factor(p):
     '''
     factor : NOT factor
@@ -407,10 +405,10 @@ def p_factor(p):
            | brace
     '''
     if(len(p)==3):
-        p[0] = (p[1],p[2])
-    else:
+        p[0] = (p[1], p[2])
+    else :
         p[0] = (p[1])
-    
+
 def p_brace(p):
     '''
     brace  : L_PAREN expr R_PAREN
@@ -421,14 +419,14 @@ def p_brace(p):
            | ID
     '''
     if(len(p)==4):
-        p[0] = (p[1],p[2],p[3])
+        p[0] = (p[1], p[2], p[3])
     elif(len(p)==3):
-        p[0] = (p[1],p[2])
+        p[0] = (p[1], p[2])
     else:
         p[0] = (p[1])
-    
-# def p_error(p):
-#     print('ERROR!!')
+        
+def p_error(p):
+    print('ERROR!!')
 
 
 lexer = lex()
@@ -439,9 +437,34 @@ try:
 except :
     print('No arguments')
 
+def solve(i,n,l,output_prg):
+    if(i==n):
+        return
+    elif(type(l[i]) is str):
+        output_prg+=[l[i]]
+        solve(i+1,n,l,output_prg)
+    elif(type(l[i]) is int):
+        output_prg+=[str(l[i])]
+        solve(i+1,n,l,output_prg)
+
+    elif(type(l[i]) is tuple or type(l[i]) is list):
+        for j in range(len(l[i])):
+            if(type(l[i][j]) is tuple or type(l[i][j]) is list):
+                solve(0,len(l[i][j]),l[i][j],output_prg)
+            else:
+                output_prg+=[str(l[i][j])]
+        solve(i+1,n,l,output_prg)
+    
 lines = ""
 with open(file) as f:
     for line in f:
         lines += line.strip('\n')
     lines.strip('\n')
-    print(parser.parse(lines))
+z=parser.parse(lines)
+
+print(z)
+print()
+output_prg=[]
+solve(0,len(z),z,output_prg)
+print(output_prg)
+print("".join(output_prg))
