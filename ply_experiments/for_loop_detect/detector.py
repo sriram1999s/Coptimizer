@@ -437,6 +437,10 @@ try:
 except :
     print('No arguments')
 
+#----------------------------------------------code generator ------------------------------------------------------
+
+
+
 def solve(i,n,l,output_prg):
     if(i==n):
         return
@@ -460,6 +464,13 @@ def solve(i,n,l,output_prg):
                 else:
                     output_prg+=[str(l[i][j])]
         solve(i+1,n,l,output_prg)
+
+
+
+#------------------------------------code generator -----------------------------------------------------------------------
+
+
+#------------------------------------IO handling --------------------------------------------------------------------------
     
 lines = ""
 with open(file) as f:
@@ -477,3 +488,5 @@ solve(0,len(z),z,output_prg)
 #print(output_prg)
 print("generated code")
 print("".join(output_prg))
+
+#----------------------------------IO handling -----------------------------------------------------------------------------
