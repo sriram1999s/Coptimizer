@@ -258,7 +258,7 @@ def p_declaration(p):
         #print(type(p[0]),p[0])
         #print(level_str)
         #print('for'+'_'.join(level_str))
-        print(level,level_str)
+        #print(level,level_str)
         graph['for'+'_'.join(level_str)].append(p[0])
 
 def p_block(p):
