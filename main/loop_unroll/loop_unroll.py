@@ -3,6 +3,8 @@ from ply.yacc import yacc
 import sys
 import re
 
+sys.setrecursionlimit(10**9)
+
 '''
 READ THIS BEFORE ADDING CALLABLES
 def fxn_name(t):
@@ -532,7 +534,8 @@ def for_partial_unroll(block, condition):
     factor = 0.5
     unroll_count = int(total*factor)
     condition[2][2] = condition[2][2]//unroll_count
-    return ['{']+block*unroll_count+['}']
+    extra = total%unroll_count
+    return ['{']+block*unroll_count+['}'] + block*extra
 
 
 #----------------------------------------------loop unrolling-------------------------------------------------------

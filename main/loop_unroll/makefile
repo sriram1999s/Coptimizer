@@ -1,5 +1,5 @@
 default:
-	python3 loop_unroll.py ../input_files/inp3
+	python3 loop_unroll.py $(argument)
 clean:
 	rm parser.out parsetab.py
 	rm -r __pycache__
