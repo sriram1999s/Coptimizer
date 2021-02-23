@@ -512,12 +512,25 @@ def for_unroll_validate(tup):
         solve(0,len(tup[2]),tup[2],output)
         unrolled = for_full_unroll(output, condition)
         res = (unrolled)
+    else:
+        solve(0,len(tup[2]),tup[2],output)
+        unrolled = for_partial_unroll(output, condition)
+        res = (tup[0],tup[1],unrolled)
     return res
 
 def for_full_unroll(block, condition):
     block.pop(0)
     block.pop()
     return block * condition[2][2]
+
+def for_partial_unroll(block, condition):
+    block.pop(0)
+    block.pop()
+    total = condition[2][2]
+    factor = 0.5
+    unroll_count = int(total*factor)
+    condition[2][2]-=unroll_count
+    return block * (unroll_count)
 
 
 #----------------------------------------------loop unrolling-------------------------------------------------------
