@@ -2,6 +2,7 @@ from ply.lex import lex
 from ply.yacc import yacc
 import sys
 import re
+import pprint
 
 sys.setrecursionlimit(10**9)
 
@@ -139,7 +140,7 @@ def t_FLOAT_NUM(t):
 # int
 
 def t_INT_NUM(t):
-    r'\d+'
+    r'-?\d+'
     t.value = int(t.value)
     return t
 
@@ -223,7 +224,8 @@ def p_closed(p):
             p[0] = for_unroll_validate([p[1], p[2], p[3]])
         else:
             print("while detected")
-            p[0] = [p[1], p[2], p[3]]
+            #p[0] = [p[1], p[2], p[3]]
+            p[0] = while_unroll_validate([p[1], p[2] ,p[3]])
     else:
         p[0] = [p[1], [p[2], p[3]], p[4], p[5]]
 
@@ -511,7 +513,7 @@ except :
 def for_unroll_validate(tup):
     condition = tup[1]
     output = []
-    print(condition)
+    #print(condition)
     if(type(condition[2][2])==int and condition[2][2] <= 35): # full unrolling
         solve(0,len(tup[2]),tup[2],output)
         unrolled = for_full_unroll(output, condition)
@@ -525,17 +527,41 @@ def for_unroll_validate(tup):
 def for_full_unroll(block, condition):
     block.pop(0)
     block.pop()
-    return block * condition[2][2]
+    res=[]
+    find_int(0,len(condition),condition,res)
+    #print(res)
+    return block * (abs(res[0][0]-res[1][0]))
 
 def for_partial_unroll(block, condition):
     block.pop(0)
     block.pop()
-    total = condition[2][2]
+    res=[]
+    find_int(0,len(condition),condition,res)
+    total = abs(res[0][0]-res[1][0])
     factor = 0.5
     unroll_count = int(total*factor)
-    condition[2][2] = condition[2][2]//unroll_count
+    #print(total,unroll_count)
+    #print(res)
+    #print(condition[2][res[1][-1]])
+    condition[2][res[1][-1]] = total//unroll_count + res[0][0]
+    # = res[1]//unroll_count
     extra = total%unroll_count
     return ['{']+block*unroll_count+['}'] + block*extra
+
+def while_unroll_validate(tup):
+    print(tup)
+    # condition = tup[1]
+    # output = []
+    # print(condition)
+    # if(type(condition[2][2])==int and condition[2][2] <= 35): # full unrolling
+    #     solve(0,len(tup[2]),tup[2],output)
+    #     unrolled = for_full_unroll(output, condition)
+    #     res = (unrolled)
+    # else:
+    #     solve(0,len(tup[2]),tup[2],output)
+    #     unrolled = for_partial_unroll(output, condition)
+    #     res = (tup[0],tup[1],unrolled)
+    return tup
 
 
 #----------------------------------------------loop unrolling-------------------------------------------------------
@@ -570,6 +596,16 @@ def solve(i,n,l,output_prg):
         solve(i+1,n,l,output_prg)
 
 
+def find_int(i,n,l,res=[]):
+    #print(l,i,level)
+    if(i==n):
+        return
+    if(type(l[i]) is int):
+        res.append([l[i],i])
+    elif(type(l[i]) is list):
+        find_int(0,len(l[i]),l[i],res)
+    find_int(i+1,n,l,res)
+    
 
 #------------------------------------code generator -----------------------------------------------------------------------
 
