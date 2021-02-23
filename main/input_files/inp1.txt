@@ -1,6 +1,9 @@
-int foo(int x int y,float z);   
-
 int main()
 {
 	int a = 10;
 } 
+int foo(int x ,int y, float z)
+{
+	int abc = 100;
+	int xyzzy = 20;
+}

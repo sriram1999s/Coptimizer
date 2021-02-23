@@ -286,6 +286,7 @@ def p_block(p):
     block : L_FLOWBRACE multiple_statements R_FLOWBRACE
     '''
     p[0] = [p[1], p[2], p[3]]
+    print("\n\np_block : ",p[0],"\n\n")
 
 def p_simple(p):
     '''
