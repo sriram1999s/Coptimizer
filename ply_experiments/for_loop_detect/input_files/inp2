@@ -1,3 +1,9 @@
+int foo();
+int main() {
+int foo() {
+    int x=5,y=3,z=9;
+    int a=7,b,c=9,d;
+    }
 for(int i=0;i<7;i++) {
 	int x=6;
 	int y=7;
@@ -6,6 +12,9 @@ for(int i=0;i<7;i++) {
 	int b=10;
 	     for(int m=0;m<89;m++) {
 	    int x1=-1;
+	    if(a<7) {
+	    	    int z1=9;
+		    }
 	    int x2=-2;
 	    }
 	}
@@ -19,7 +28,8 @@ for(int i=0;i<7;i++) {
 	}
 }
 
+
 for(int s=1;s<100;s++) {
 int l=0;
 }
-	
+}	

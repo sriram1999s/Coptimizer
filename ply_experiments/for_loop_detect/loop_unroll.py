@@ -31,7 +31,7 @@ rel_op = ['LT', 'LE', 'GT', 'GE', 'NE', 'EQ']
 
 assignment = ['ASSIGN', 'PLUS_ASSIGN', 'MINUS_ASSIGN', 'MUL_ASSIGN', 'DIV_ASSIGN', 'AND_ASSIGN', 'OR_ASSIGN', 'XOR_ASSIGN', 'MOD_ASSIGN', 'L_SHIFT_ASSIGN', 'R_SHIFT_ASSIGN']
 
-delimiters = ['L_PAREN', 'R_PAREN', 'L_FLOWBRACE', 'R_FLOWBRACE', 'SEMICOLON']
+delimiters = ['L_PAREN', 'R_PAREN', 'L_FLOWBRACE', 'R_FLOWBRACE', 'SEMICOLON','COMMA']
 
 statements = ['FOR', 'WHILE', 'IF', 'ELSE']
 
@@ -78,6 +78,7 @@ t_R_PAREN = r'\)'
 t_L_FLOWBRACE = r'\{'
 t_R_FLOWBRACE = r'\}'
 t_SEMICOLON = r';'
+t_COMMA = r','
 
 # unary
 
@@ -166,12 +167,6 @@ def t_error(t):
 # )
 
 # start = 'start'
-
-from collections import defaultdict
-graph = defaultdict(lambda:[])
-level = 0
-level_str = []
-
 def p_start(p):
     '''
     start : multiple_statements
@@ -233,41 +228,51 @@ def p_for_condition(p):
     '''
     for_condition : L_PAREN declaration expr SEMICOLON expr R_PAREN
     '''
-    global level
-    global level_str
-    if(level==0):
-        level+=1
-    if(len(level_str)>0 and level==int(level_str[-1])):
-        level=1
-    level_str.append(str(level))
     p[0] = (p[1],p[2],p[3],p[4],p[5],p[6])
 
+def p_multi_declaration(p):
+    '''
+    multi_declaration : multi_declaration ID COMMA
+    		      | multi_declaration ID ASSIGN expr COMMA
+		      | ID COMMA 
+    		      | ID ASSIGN expr COMMA
+    '''
+    if(len(p)==3):
+        p[0]=[(p[1],p[2])]
+    elif(len(p)==4):
+        p[0]=p[1]+[(p[2],p[3])]
+    elif(len(p)==6):
+        p[0]=p[1]+[(p[2],p[3],p[4],p[5])]
+    else:
+        p[0]=[(p[1],p[2],p[3],p[4])]
+    
+
+def p_stop(p):
+     '''
+     stop : ID SEMICOLON
+	  | ID ASSIGN expr SEMICOLON
+     '''
+     if(len(p)==3):
+         p[0] = (p[1],p[2])
+     else:
+         p[0] = (p[1],p[2],p[3],p[4])
+    
+    
 def p_declaration(p):
     '''
     declaration : TYPE ID SEMICOLON
                 | TYPE ID ASSIGN expr SEMICOLON
+		| TYPE multi_declaration stop
     '''
-    global level
-    global graph
-    global level_str
     if(len(p)==4):
         p[0] = (p[1], p[2], p[3])
     else :
         p[0] = (p[1], p[2], p[3], p[4], p[5])
-    if(level>0 and len(level_str)>0):
-        #print(type(p[0]),p[0])
-        #print(level_str)
-        #print('for'+'_'.join(level_str))
-        #print(level,level_str)
-        graph['for'+'_'.join(level_str)].append(p[0])
 
 def p_block(p):
     '''
     block : L_FLOWBRACE multiple_statements R_FLOWBRACE
     '''
-    global level
-    global level_str
-    level=int(level_str.pop())+1
     p[0] = (p[1], p[2], p[3])
 
 def p_simple(p):
@@ -275,12 +280,42 @@ def p_simple(p):
     simple : expr SEMICOLON
            | declaration
            | SEMICOLON
+	   | function
     '''
     if(len(p)==3):
         p[0] = (p[1],p[2])
     else:
         p[0] = (p[1])
 
+def p_function(p):
+    '''
+    function : TYPE ID L_PAREN R_PAREN function_2
+    '''
+    p[0] = (p[1],p[2],p[3],p[4],p[5])
+
+def p_function_2(p):
+    '''
+    function_2 : SEMICOLON
+    	       | block
+    '''
+    p[0]=(p[1])
+
+# def p_parameters(p):
+#     '''
+#     parameters : parameters TYPE ID COMMA stop
+# 	       | stop
+#     '''
+#     if(len(p)==2):
+#         p[0]=(p[1])
+#     else:
+#         p[0] = ((p[1]),p[2],p[3],p[4],p[5])
+
+# def p_stop(p):
+#     '''
+#     stop : TYPE ID
+#     '''
+#     p[0] = (p[1],p[2])
+    
 def p_expr(p):
     '''
     expr : expr assignment exprOR
@@ -450,8 +485,8 @@ def p_brace(p):
     else:
         p[0] = (p[1])
         
-def p_error(p):
-    print('ERROR!!')
+# def p_error(p):
+#     print('ERROR!!')
 
 
 lexer = lex()
@@ -504,18 +539,14 @@ with open(file) as f:
     lines.strip('\n')
 z=parser.parse(lines)
 
-#print("AST:")
-#print(z)
-#print()
-#print()
+print("AST:")
+print(z)
+print()
+print()
 output_prg=[]
 solve(0,len(z),z,output_prg)
 #print(output_prg)
 print("generated code")
 print("".join(output_prg))
-print()
-print()
-for i in graph:
-    print(f"{i}---->{graph[i]}")
 
 #----------------------------------IO handling -----------------------------------------------------------------------------
