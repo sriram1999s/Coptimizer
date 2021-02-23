@@ -183,7 +183,7 @@ def p_multiple_statements(p):
     if(len(p)==3):
         p[0] = p[1] + [p[2]]
     else:
-        p[0] = [p[1]]
+        p[0] = p[1]
 
 def p_statement(p):
     '''
@@ -200,9 +200,9 @@ def p_open(p):
          | FOR for_condition open
     '''
     if(len(p)==4):
-        p[0] = (p[1], p[2], p[3])
+        p[0] = [p[1], p[2], p[3]]
     else:
-        p[0] = (p[1], (p[2], p[3]), p[4], p[5])
+        p[0] = [p[1], [p[2], p[3]], p[4], p[5]]
 
 def p_closed(p):
     '''
@@ -217,25 +217,26 @@ def p_closed(p):
     elif(len(p)==4):
         if(p[1] == 'for'):
             print("for detected")
-            p[0] = for_unroll_validate((p[1], p[2], p[3]))
+            #p[0] = [p[1],p[2],p[3]]
+            p[0] = for_unroll_validate([p[1], p[2], p[3]])
         else:
             print("while detected")
-            p[0] = (p[1], p[2], p[3])
+            p[0] = [p[1], p[2], p[3]]
     else:
-        p[0] = (p[1], (p[2], p[3]), p[4], p[5])
+        p[0] = [p[1], [p[2], p[3]], p[4], p[5]]
 
 
 def p_condition(p):
     '''
     condition : L_PAREN expr R_PAREN
     '''
-    p[0] = (p[1],p[2],p[3])
+    p[0] = [p[1],p[2],p[3]]
 
 def p_for_condition(p):
     '''
     for_condition : L_PAREN declaration expr SEMICOLON expr R_PAREN
     '''
-    p[0] = (p[1],p[2],p[3],p[4],p[5],p[6])
+    p[0] = [p[1],p[2],p[3],p[4],p[5],p[6]]
 
 def p_multi_declaration(p):
     '''
@@ -245,13 +246,13 @@ def p_multi_declaration(p):
     		      | ID ASSIGN expr COMMA
     '''
     if(len(p)==3):
-        p[0]=[(p[1],p[2])]
+        p[0]=[p[1],p[2]]
     elif(len(p)==4):
-        p[0]=p[1]+[(p[2],p[3])]
+        p[0]=p[1]+[p[2],p[3]]
     elif(len(p)==6):
-        p[0]=p[1]+[(p[2],p[3],p[4],p[5])]
+        p[0]=p[1]+[p[2],p[3],p[4],p[5]]
     else:
-        p[0]=[(p[1],p[2],p[3],p[4])]
+        p[0]=[p[1],p[2],p[3],p[4]]
 
 
 def p_stop(p):
@@ -260,9 +261,9 @@ def p_stop(p):
 	  | ID ASSIGN expr SEMICOLON
      '''
      if(len(p)==3):
-         p[0] = (p[1],p[2])
+         p[0] = [p[1],p[2]]
      else:
-         p[0] = (p[1],p[2],p[3],p[4])
+         p[0] = [p[1],p[2],p[3],p[4]]
 
 
 def p_declaration(p):
@@ -272,15 +273,15 @@ def p_declaration(p):
 		| TYPE multi_declaration stop
     '''
     if(len(p)==4):
-        p[0] = (p[1], p[2], p[3])
+        p[0] = [p[1], p[2], p[3]]
     else :
-        p[0] = (p[1], p[2], p[3], p[4], p[5])
+        p[0] = [p[1], p[2], p[3], p[4], p[5]]
 
 def p_block(p):
     '''
     block : L_FLOWBRACE multiple_statements R_FLOWBRACE
     '''
-    p[0] = (p[1], p[2], p[3])
+    p[0] = [p[1], p[2], p[3]]
 
 def p_simple(p):
     '''
@@ -290,22 +291,22 @@ def p_simple(p):
 	   | function
     '''
     if(len(p)==3):
-        p[0] = (p[1],p[2])
+        p[0] = [p[1],p[2]]
     else:
-        p[0] = (p[1])
+        p[0] = p[1]
 
 def p_function(p):
     '''
     function : TYPE ID L_PAREN R_PAREN function_2
     '''
-    p[0] = (p[1],p[2],p[3],p[4],p[5])
+    p[0] = [p[1],p[2],p[3],p[4],p[5]]
 
 def p_function_2(p):
     '''
     function_2 : SEMICOLON
     	       | block
     '''
-    p[0]=(p[1])
+    p[0]=[p[1]]
 
 # def p_parameters(p):
 #     '''
@@ -329,9 +330,9 @@ def p_expr(p):
          | exprOR
     '''
     if(len(p)==4):
-        p[0] = (p[1], p[2], p[3])
+        p[0] = [p[1], p[2], p[3]]
     else :
-        p[0] = (p[1])
+        p[0] = p[1]
 
 def p_assignment(p):
     '''
@@ -347,7 +348,7 @@ def p_assignment(p):
                | L_SHIFT_ASSIGN
                | R_SHIFT_ASSIGN
     '''
-    p[0] = (p[1])
+    p[0] = p[1]
 
 def p_exprOR(p):
     '''
@@ -355,9 +356,9 @@ def p_exprOR(p):
            | exprAND
     '''
     if(len(p)==4):
-        p[0] = (p[1], p[2], p[3])
+        p[0] = [p[1], p[2], p[3]]
     else :
-        p[0] = (p[1])
+        p[0] = p[1]
 
 def p_exprAND(p):
     '''
@@ -365,9 +366,9 @@ def p_exprAND(p):
             | exprBITOR
     '''
     if(len(p)==4):
-        p[0] = (p[2], p[1], p[3])
+        p[0] = [p[1], p[2], p[3]]
     else :
-        p[0] = (p[1])
+        p[0] = p[1]
 
 def p_exprBITOR(p):
     '''
@@ -375,9 +376,9 @@ def p_exprBITOR(p):
               | exprBITXOR
     '''
     if(len(p)==4):
-        p[0] = (p[1],p[2],p[3])
+        p[0] = [p[1],p[2],p[3]]
     else :
-        p[0] = (p[1])
+        p[0] = p[1]
 
 def p_exprBITXOR(p):
     '''
@@ -385,9 +386,9 @@ def p_exprBITXOR(p):
                | exprBITAND
     '''
     if(len(p)==4):
-        p[0] = (p[1], p[2], p[3])
+        p[0] = [p[1], p[2], p[3]]
     else :
-        p[0] = (p[1])
+        p[0] = p[1]
 
 def p_exprBITAND(p):
     '''
@@ -395,9 +396,9 @@ def p_exprBITAND(p):
                | exprEQ
     '''
     if(len(p)==4):
-        p[0] = (p[1],p[2],p[3])
+        p[0] = [p[1],p[2],p[3]]
     else :
-        p[0] = (p[1])
+        p[0] = p[1]
 
 def p_exprEQ(p):
     '''
@@ -406,9 +407,9 @@ def p_exprEQ(p):
            | exprRELOP
     '''
     if(len(p)==4):
-        p[0] = (p[1], p[2], p[3])
+        p[0] = [p[1], p[2], p[3]]
     else :
-        p[0] = (p[1])
+        p[0] = p[1]
 
 def p_exprRELOP(p):
     '''
@@ -416,9 +417,9 @@ def p_exprRELOP(p):
               | exprSHIFT
     '''
     if(len(p)==4):
-        p[0] = (p[1],p[2],p[3])
+        p[0] = [p[1],p[2],p[3]]
     else :
-        p[0] = (p[1])
+        p[0] = p[1]
 
 def p_relop(p):
     '''
@@ -427,7 +428,7 @@ def p_relop(p):
           | GE
           | GT
     '''
-    p[0] = (p[1])
+    p[0] = p[1]
 def p_exprSHIFT(p):
     '''
     exprSHIFT : exprSHIFT L_SHIFT exprOP
@@ -435,9 +436,9 @@ def p_exprSHIFT(p):
               | exprOP
     '''
     if(len(p)==4):
-        p[0] = (p[1],p[2],p[3])
+        p[0] = [p[1],p[2],p[3]]
     else :
-        p[0] = (p[1])
+        p[0] = p[1]
 
 def p_exprOP(p):
     '''
@@ -446,7 +447,7 @@ def p_exprOP(p):
          | term
     '''
     if(len(p)==4):
-        p[0] = (p[1], p[2], p[3])
+        p[0] = [p[1], p[2], p[3]]
     else :
         p[0] = p[1]
 
@@ -458,9 +459,9 @@ def p_term(p):
          | factor
     '''
     if(len(p)==4):
-        p[0] = (p[1],p[2],p[3])
+        p[0] = [p[1],p[2],p[3]]
     else :
-        p[0] = (p[1])
+        p[0] = p[1]
 
 def p_factor(p):
     '''
@@ -472,10 +473,10 @@ def p_factor(p):
            | brace
     '''
     if(len(p)==3):
-        p[0] = (p[1], p[2])
+        p[0] = [p[1], p[2]]
     else :
-        p[0] = (p[1])
-
+        p[0] = p[1]
+        
 def p_brace(p):
     '''
     brace  : L_PAREN expr R_PAREN
@@ -486,11 +487,11 @@ def p_brace(p):
            | ID
     '''
     if(len(p)==4):
-        p[0] = (p[1], p[2], p[3])
+        p[0] = [p[1], p[2], p[3]]
     elif(len(p)==3):
-        p[0] = (p[1], p[2])
+        p[0] = [p[1], p[2]]
     else:
-        p[0] = (p[1])
+        p[0] = p[1]
 
 def p_error(p):
     print('ERROR!!')
@@ -508,6 +509,7 @@ except :
 def for_unroll_validate(tup):
     condition = tup[1]
     output = []
+    print(condition)
     if(type(condition[2][2])==int and condition[2][2] <= 35): # full unrolling
         solve(0,len(tup[2]),tup[2],output)
         unrolled = for_full_unroll(output, condition)
@@ -529,8 +531,8 @@ def for_partial_unroll(block, condition):
     total = condition[2][2]
     factor = 0.5
     unroll_count = int(total*factor)
-    condition[2][2]-=unroll_count
-    return block * (unroll_count)
+    condition[2][2] = condition[2][2]//unroll_count
+    return ['{']+block*unroll_count+['}']
 
 
 #----------------------------------------------loop unrolling-------------------------------------------------------
