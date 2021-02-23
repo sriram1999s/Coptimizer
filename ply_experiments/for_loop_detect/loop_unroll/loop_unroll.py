@@ -1,6 +1,7 @@
 from ply.lex import lex
 from ply.yacc import yacc
 import sys
+import re
 
 '''
 READ THIS BEFORE ADDING CALLABLES
@@ -214,9 +215,15 @@ def p_closed(p):
     if(len(p)==2):
         p[0] = p[1]
     elif(len(p)==4):
-        p[0] = (p[1], p[2], p[3])
+        if(p[1] == 'for'):
+            print("for detected")
+            p[0] = for_unroll_validate((p[1], p[2], p[3]))
+        else:
+            print("while detected")
+            p[0] = (p[1], p[2], p[3])
     else:
         p[0] = (p[1], (p[2], p[3]), p[4], p[5])
+
 
 def p_condition(p):
     '''
@@ -234,7 +241,7 @@ def p_multi_declaration(p):
     '''
     multi_declaration : multi_declaration ID COMMA
     		      | multi_declaration ID ASSIGN expr COMMA
-		      | ID COMMA 
+		      | ID COMMA
     		      | ID ASSIGN expr COMMA
     '''
     if(len(p)==3):
@@ -245,7 +252,7 @@ def p_multi_declaration(p):
         p[0]=p[1]+[(p[2],p[3],p[4],p[5])]
     else:
         p[0]=[(p[1],p[2],p[3],p[4])]
-    
+
 
 def p_stop(p):
      '''
@@ -256,8 +263,8 @@ def p_stop(p):
          p[0] = (p[1],p[2])
      else:
          p[0] = (p[1],p[2],p[3],p[4])
-    
-    
+
+
 def p_declaration(p):
     '''
     declaration : TYPE ID SEMICOLON
@@ -315,7 +322,7 @@ def p_function_2(p):
 #     stop : TYPE ID
 #     '''
 #     p[0] = (p[1],p[2])
-    
+
 def p_expr(p):
     '''
     expr : expr assignment exprOR
@@ -402,7 +409,7 @@ def p_exprEQ(p):
         p[0] = (p[1], p[2], p[3])
     else :
         p[0] = (p[1])
-        
+
 def p_exprRELOP(p):
     '''
     exprRELOP : exprRELOP relop exprSHIFT
@@ -412,7 +419,7 @@ def p_exprRELOP(p):
         p[0] = (p[1],p[2],p[3])
     else :
         p[0] = (p[1])
-        
+
 def p_relop(p):
     '''
     relop : LE
@@ -484,9 +491,9 @@ def p_brace(p):
         p[0] = (p[1], p[2])
     else:
         p[0] = (p[1])
-        
-# def p_error(p):
-#     print('ERROR!!')
+
+def p_error(p):
+    print('ERROR!!')
 
 
 lexer = lex()
@@ -496,6 +503,25 @@ try:
     file = sys.argv[1]
 except :
     print('No arguments')
+#----------------------------------------------loop unrolling-------------------------------------------------------
+
+def for_unroll_validate(tup):
+    condition = tup[1]
+    output = []
+    if(type(condition[2][2])==int and condition[2][2] <= 35): # full unrolling
+        solve(0,len(tup[2]),tup[2],output)
+        unrolled = for_full_unroll(output, condition)
+        res = (unrolled)
+    return res
+
+def for_full_unroll(block, condition):
+    block.pop(0)
+    block.pop()
+    return block * condition[2][2]
+
+
+#----------------------------------------------loop unrolling-------------------------------------------------------
+
 
 #----------------------------------------------code generator ------------------------------------------------------
 
@@ -531,7 +557,7 @@ def solve(i,n,l,output_prg):
 
 
 #------------------------------------IO handling --------------------------------------------------------------------------
-    
+
 lines = ""
 with open(file) as f:
     for line in f:
