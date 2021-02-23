@@ -299,9 +299,26 @@ def p_simple(p):
     else:
         p[0] = p[1]
 
+def p_empty(p):
+     'empty :'
+     pass
+
+def p_dec_params(p):
+	'''
+	dec_params : dec_params TYPE ID
+				| dec_params COMMA TYPE ID
+				| empty
+	'''
+	if(len(p) == 4):
+		p[0] = p[1] + [p[2],p[3]]
+	elif(len(p) == 5):
+		p[0] = p[1] + [p[2],p[3],p[4]]
+	else:
+		p[0] = []
+
 def p_function(p):
     '''
-    function : TYPE ID L_PAREN R_PAREN function_2
+    function : TYPE ID L_PAREN dec_params R_PAREN function_2
     '''
     p[0] = [p[1],p[2],p[3],p[4],p[5]]
 
@@ -496,9 +513,9 @@ def p_brace(p):
         p[0] = [p[1], p[2]]
     else:
         p[0] = p[1]
-
+'''
 def p_error(p):
-    print('ERROR!!')
+    print('ERROR!!')'''
 
 
 lexer = lex()
