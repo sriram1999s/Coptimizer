@@ -3,4 +3,3 @@ default:
 clean:
 	rm parser.out parsetab.py
 	rm -r __pycache__
- 
