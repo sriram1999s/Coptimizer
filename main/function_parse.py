@@ -307,6 +307,7 @@ def p_simple(p):
            | declaration
            | SEMICOLON
        | function
+       | function_call
     '''
     if (len(p) == 3):
         p[0] = [p[1], p[2]]
@@ -384,6 +385,20 @@ def p_function_2(p):
                | block
     '''
     p[0] = [p[1]]
+
+
+def p_function_call(p):
+    '''
+    function_call : ID L_PAREN dec_args R_PAREN SEMICOLON
+                    | TYPE ID ASSIGN ID L_PAREN dec_args R_PAREN SEMICOLON
+                    | ID ASSIGN ID L_PAREN dec_args R_PAREN SEMICOLON
+    '''
+    if (len(p) == 6):
+        p[0] = [p[1], p[2], p[3], p[4], p[5]]
+    elif (len(p) == 9):
+        p[0] = [p[1], p[2], p[3], p[4], p[5], p[6], p[7], p[8]]
+    else:
+        p[0] = [p[1], p[2], p[3], p[4], p[5], p[6], p[7]]
 
 
 # def p_parameters(p):
@@ -595,8 +610,8 @@ lexer = lex()
 parser = yacc()
 
 try:
-    # file = sys.argv[1]
-    file = "C:/Users/KR/PycharmProjects/Capstone/main/input_files/inp1.txt"
+    file = sys.argv[1]
+    # file = "C:/Users/KR/PycharmProjects/Capstone/main/input_files/inp1.txt"
 
 except:
     print('No arguments')
