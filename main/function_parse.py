@@ -41,7 +41,9 @@ unary = ['NOT']
 
 extra = ['ID', 'TYPE']
 
-tokens = numbers + bin_op + logic + rel_op + assignment + delimiters + statements + unary + extra
+jump = ['RETURN']
+
+tokens = numbers + bin_op + logic + rel_op + assignment + delimiters + statements + unary + extra + jump
 
 # --------------------------------lexer------------------------------------ #
 
@@ -130,6 +132,13 @@ def t_ELSE(t):
 def t_FOR(t):
     r'for'
     return t
+
+
+# return
+#
+# def t_RETURN(t):
+#     r'return'
+#     return t
 
 
 # float
@@ -301,6 +310,15 @@ def p_block(p):
     p[0] = [p[1], p[2], p[3]]
 
 
+# def p_return_statement(p):
+#     '''
+#     return_statement : RETURN ID SEMICOLON
+#                     | RETURN INT_NUM SEMICOLON
+#                     | RETURN FLOAT_NUM SEMICOLON
+#     '''
+#     p[0] = [p[1], p[2], p[3]]
+
+
 def p_simple(p):
     '''
     simple : expr SEMICOLON
@@ -352,7 +370,7 @@ def p_dec_params(p):
         p[0] = []
 
 
-def p_dec_args(p):
+def p_dec_args(p):  # to be changed to include non-int types as well
     '''
 	dec_args : dec_args ID
 				| dec_args COMMA ID
@@ -371,7 +389,6 @@ def p_dec_args(p):
 def p_function(p):
     '''
     function : TYPE ID L_PAREN dec_params R_PAREN function_2
-    		  | ID L_PAREN dec_args R_PAREN SEMICOLON
     '''
     if (len(p) == 7):
         p[0] = [p[1], p[2], p[3], p[4], p[5], p[6]]
@@ -610,8 +627,8 @@ lexer = lex()
 parser = yacc()
 
 try:
-    file = sys.argv[1]
-    # file = "C:/Users/KR/PycharmProjects/Capstone/main/input_files/inp1.txt"
+    # file = sys.argv[1]
+    file = "C:/Users/KR/PycharmProjects/Capstone/main/input_files/inp1.txt"
 
 except:
     print('No arguments')
