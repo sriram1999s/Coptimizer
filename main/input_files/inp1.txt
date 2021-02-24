@@ -2,7 +2,7 @@ int main()
 {
 	int a = 10;
 } 
-int foo(int x ,int y, float z)
+int foo(int a, float c)
 {
 	int abc = 100;
 	int xyzzy = 20;
