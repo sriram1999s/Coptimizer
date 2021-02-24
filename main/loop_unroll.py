@@ -224,8 +224,7 @@ def p_closed(p):
             p[0] = for_unroll_validate([p[1], p[2], p[3]])
         else:
             print("while detected")
-            #p[0] = [p[1], p[2], p[3]]
-            p[0] = while_unroll_validate([p[1], p[2] ,p[3]])
+            p[0] = [p[1], p[2], p[3]]
     else:
         p[0] = [p[1], [p[2], p[3]], p[4], p[5]]
 
@@ -299,11 +298,48 @@ def p_simple(p):
     else:
         p[0] = p[1]
 
+def p_empty(p):
+    'empty :'
+    pass
+
+
+def p_yes_dec_params(p):
+    '''
+    yes_dec_params : yes_dec_params TYPE ID COMMA
+                    | TYPE ID COMMA
+    '''
+    if (len(p) == 5):
+        p[0] = p[1] + [p[2], p[3], p[4]]
+    elif (len(p) == 4):
+        p[0] = [p[1], p[2], p[3]]
+    else:
+        p[0] = []
+
+
+def p_end_dec_params(p):
+    '''
+    end_dec_params : TYPE ID
+    '''
+    p[0] = [p[1], p[2]]
+
+
+def p_dec_params(p):
+    '''
+    dec_params : empty
+	       | yes_dec_params end_dec_params
+	       | end_dec_params
+    '''
+    if (len(p) == 3):
+        p[0] = [p[1] + p[2]]
+    else:
+        p[0] = []
+        
+
 def p_function(p):
     '''
-    function : TYPE ID L_PAREN R_PAREN function_2
+    function : TYPE ID L_PAREN dec_params R_PAREN function_2
     '''
-    p[0] = [p[1],p[2],p[3],p[4],p[5]]
+    p[0] = [p[1],p[2],p[3],p[4],p[5],p[6]]
 
 def p_function_2(p):
     '''

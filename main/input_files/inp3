@@ -5,8 +5,7 @@ int foo() {
     int a=7,b,c=9,d;
     }
 for(int i=1;i<10;i++) {
-	z++;
-	c=a+b;
-	int z=9;
+ z++;
+ a=5;
 }
 }
