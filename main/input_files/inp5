@@ -1,0 +1,6 @@
+foo(2,2,2);
+int foo(int x, int y, int z)
+{
+	int q = 10;
+}
+int foo(int x,int y, int z);    
