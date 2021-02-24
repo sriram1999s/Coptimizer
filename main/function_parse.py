@@ -352,26 +352,42 @@ def p_dec_params(p):
         p[0] = []
 
 
-def p_dec_args(p):
+def p_call_params(p):
     '''
-	dec_args : dec_args ID
-				| dec_args COMMA ID
-				| dec_args COMMA INT_NUM
-				| dec_args INT_NUM
-				| empty
-	'''
-    if (len(p) == 4):
-        p[0] = p[1] + [p[2], p[3]]
-    elif (len(p) == 3):
+    	call_params : empty
+		    | yes_call_params end_call_params
+    '''
+    if(len(p) == 3):
         p[0] = p[1] + [p[2]]
     else:
         p[0] = []
 
+def p_yes_call_params(p):
+    '''
+    yes_call_params : yes_call_params INT_NUM COMMA
+    		    | yes_call_params ID COMMA
+		    | INT_NUM COMMA
+		    | ID COMMA
+	       	    | empty
+    '''
+    if(len(p)==0):
+        p[0] = []
+    elif(len(p)==3):
+        p[0] = [p[1],p[2]]
+    else:
+        p[0] = p[1] + [p[2],p[3]]
 
+def p_end_call_params(p):
+    '''
+    end_call_params : INT_NUM
+		    | ID
+    '''
+    p[0] = p[1]
+        
 def p_function(p):
     '''
     function : TYPE ID L_PAREN dec_params R_PAREN function_2
-    		  | ID L_PAREN dec_args R_PAREN SEMICOLON
+    		  | ID L_PAREN call_params R_PAREN SEMICOLON
     '''
     if (len(p) == 7):
         p[0] = [p[1], p[2], p[3], p[4], p[5], p[6]]
@@ -389,9 +405,9 @@ def p_function_2(p):
 
 def p_function_call(p):
     '''
-    function_call : ID L_PAREN dec_args R_PAREN SEMICOLON
-                    | TYPE ID ASSIGN ID L_PAREN dec_args R_PAREN SEMICOLON
-                    | ID ASSIGN ID L_PAREN dec_args R_PAREN SEMICOLON
+    function_call : ID L_PAREN call_params R_PAREN SEMICOLON
+                    | TYPE ID ASSIGN ID L_PAREN call_params R_PAREN SEMICOLON
+                    | ID ASSIGN ID L_PAREN call_params R_PAREN SEMICOLON
     '''
     if (len(p) == 6):
         p[0] = [p[1], p[2], p[3], p[4], p[5]]
