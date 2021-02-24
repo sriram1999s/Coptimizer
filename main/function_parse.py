@@ -321,7 +321,7 @@ def p_function(p):
     '''
     function : TYPE ID L_PAREN dec_params R_PAREN function_2
     '''
-    p[0] = [p[1],p[2],p[3],p[4],p[5]]
+    p[0] = [p[1],p[2],p[3],p[4],p[5],p[6]]
 
 def p_function_2(p):
     '''
