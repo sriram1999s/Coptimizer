@@ -292,6 +292,7 @@ def p_simple(p):
            | declaration
            | SEMICOLON
 	   | function
+	   | function_call
     '''
     if(len(p)==3):
         p[0] = [p[1],p[2]]
@@ -300,9 +301,53 @@ def p_simple(p):
 
 def p_empty(p):
     'empty :'
-    pass
+    p[0] = []
 
 
+def p_function_call(p):
+    '''
+    function_call : ID L_PAREN call_params R_PAREN SEMICOLON
+    '''
+    if(len(p) == 6):
+        p[0] = [p[1], p[2], p[3], p[4], p[5]]
+    elif (len(p) == 9):
+        p[0] = [p[1], p[2], p[3], p[4], p[5], p[6], p[7], p[8]]
+    else:
+        p[0] = [p[1], p[2], p[3], p[4], p[5], p[6], p[7]]
+
+def p_call_params(p):
+    '''
+    	call_params : empty
+		    | yes_call_params end_call_params
+		    | end_call_params
+    '''
+    if(len(p) == 3):
+        p[0] = p[1] + [p[2]]
+    elif(len(p) == 2):
+        p[0] = p[1]
+
+def p_yes_call_params(p):
+    '''
+    yes_call_params : yes_call_params INT_NUM COMMA
+    		    | yes_call_params ID COMMA
+		    | INT_NUM COMMA
+		    | ID COMMA
+    '''
+    if(len(p)==0):
+        p[0] = []
+    elif(len(p)==3):
+        p[0] = [p[1],p[2]]
+    else:
+        p[0] = p[1] + [p[2],p[3]]
+
+def p_end_call_params(p):
+    '''
+    end_call_params : INT_NUM
+		    | ID
+    '''
+    p[0] = p[1]
+
+        
 def p_yes_dec_params(p):
     '''
     yes_dec_params : yes_dec_params TYPE ID COMMA
@@ -312,8 +357,6 @@ def p_yes_dec_params(p):
         p[0] = p[1] + [p[2], p[3], p[4]]
     elif (len(p) == 4):
         p[0] = [p[1], p[2], p[3]]
-    else:
-        p[0] = []
 
 
 def p_end_dec_params(p):
@@ -330,9 +373,9 @@ def p_dec_params(p):
 	       | end_dec_params
     '''
     if (len(p) == 3):
-        p[0] = [p[1] + p[2]]
-    else:
-        p[0] = []
+        p[0] = [p[1],p[2]]
+    elif(len(p)==2):
+        p[0] = p[1]
         
 
 def p_function(p):
@@ -533,8 +576,8 @@ def p_brace(p):
     else:
         p[0] = p[1]
 
-def p_error(p):
-    print('ERROR!!')
+#def p_error(p):
+ #   print('ERROR!!')
 
 
 lexer = lex()
