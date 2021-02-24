@@ -2,6 +2,7 @@ import sys
 import re
 sys.setrecursionlimit(10**9)
 from parser import *
+from function_inline import *
 
 lexer = lex()
 parser = yacc()
@@ -30,4 +31,5 @@ solve(0,len(z),z,output_prg)
 print("generated code")
 print("".join(output_prg))
 
+dummy_fn()
 #----------------------------------IO handling -----------------------------------------------------------------------------
