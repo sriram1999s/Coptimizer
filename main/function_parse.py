@@ -317,11 +317,30 @@ def p_dec_params(p):
 	else:
 		p[0] = []
 
+def p_dec_args(p):
+	'''
+	dec_args : dec_args ID
+				| dec_args COMMA ID
+				| dec_args COMMA INT_NUM
+				| dec_args INT_NUM
+				| empty
+	'''
+	if(len(p) == 4):
+		p[0] = p[1] + [p[2],p[3]]
+	elif(len(p) == 3):
+		p[0] = p[1] + [p[2]]
+	else:
+		p[0] = []
+
 def p_function(p):
     '''
     function : TYPE ID L_PAREN dec_params R_PAREN function_2
+    		  | ID L_PAREN dec_args R_PAREN SEMICOLON
     '''
-    p[0] = [p[1],p[2],p[3],p[4],p[5],p[6]]
+    if(len(p) == 7):
+    	p[0] = [p[1],p[2],p[3],p[4],p[5],p[6]]
+    else:
+    	p[0] = [p[1],p[2],p[3],p[4],p[5]]
 
 def p_function_2(p):
     '''
@@ -603,14 +622,7 @@ def solve(i,n,l,output_prg):
         solve(i+1,n,l,output_prg)
 
     elif(type(l[i]) is tuple or type(l[i]) is list):
-        for j in range(len(l[i])):
-            if(type(l[i][j]) is tuple or type(l[i][j]) is list):
-                solve(0,len(l[i][j]),l[i][j],output_prg)
-            else:
-                if(l[i][j]=='int' or l[i][j]=='float'):
-                    output_prg+=[str(l[i][j]),' ']
-                else:
-                    output_prg+=[str(l[i][j])]
+        solve(0,len(l[i]),l[i],output_prg)
         solve(i+1,n,l,output_prg)
 
 

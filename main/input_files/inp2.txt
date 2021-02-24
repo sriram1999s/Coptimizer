@@ -1,0 +1,15 @@
+int foo(int a, int b, int c, int d);
+
+int main()
+{
+	int a;
+}  
+
+int foo(int a, int b, int c, int d)
+{
+	int q,w,e,r,t,y,u;
+	return 10;
+}
+
+q = foo(1,1,1,1);
+
