@@ -4,7 +4,9 @@ int foo() {
     int x=5,y=3,z=9;
     int a=7,b,c=9,d;
     }
-for(int i=1;i<51;i++) {
-	int x=6;
+for(int i=1;i<10;i++) {
+	z++;
+	c=a+b;
+	int z=9;
 }
 }
