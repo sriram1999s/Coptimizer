@@ -1,0 +1,2 @@
+#include<stdio.h> 
+int main(){int y = 100;int x = 10;}
