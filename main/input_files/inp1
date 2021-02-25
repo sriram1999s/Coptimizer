@@ -1,8 +1,7 @@
-if(n<5){
-a = 5;
-for(int i=0;i<n;i++) {
-	int c=7;
-	int d=8;
+int main()
+{
+for(int i=0;i+1<2+3;i++) {
+
 	int x=c+d;
 	}
 }

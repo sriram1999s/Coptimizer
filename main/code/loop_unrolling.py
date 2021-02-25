@@ -1,17 +1,24 @@
 from regenerator import *
 
-def for_unroll_validate(tup):
-    condition = tup[1]
+def for_unroll_validate(sub_tree):
+    condition = sub_tree[1]
     output = []
-    #print(condition)
-    if(type(condition[2][2])==int and condition[2][2] <= 35): # full unrolling
-        solve(0,len(tup[2]),tup[2],output) #remove nesting in tup[2]
-        unrolled = for_full_unroll(output, condition)
-        res = [unrolled]
-    else:
-        solve(0,len(tup[2]),tup[2],output)
-        unrolled = for_partial_unroll(output, condition)
-        res = [tup[0],tup[1],unrolled]
+    print(condition)
+    # print(sub_tree)
+    res = []
+    if(type(condition[2][0]) == list or type(condition[2][2]) == list):
+        print("here")
+        return sub_tree
+
+    if(type(condition[2][2])==int ):
+        if(condition[2][2] <= 35): # full unrolling
+            solve(0,len(sub_tree[2]),sub_tree[2],output) #remove nesting in sub_tree[2]
+            unrolled = for_full_unroll(output, condition)
+            res = [unrolled]
+        else:
+            solve(0,len(sub_tree[2]),sub_tree[2],output)
+            unrolled = for_partial_unroll(output, condition)
+            res = [sub_tree[0],sub_tree[1],unrolled]
     return res
 
 def for_full_unroll(block, condition):
@@ -38,20 +45,20 @@ def for_partial_unroll(block, condition):
     extra = total%unroll_count
     return ['{']+block*unroll_count+['}'] + block*extra
 
-def while_unroll_validate(tup):
-    print(tup)
-    # condition = tup[1]
+def while_unroll_validate(sub_tree):
+    print(sub_tree)
+    # condition = sub_tree[1]
     # output = []
     # print(condition)
     # if(type(condition[2][2])==int and condition[2][2] <= 35): # full unrolling
-    #     solve(0,len(tup[2]),tup[2],output)
+    #     solve(0,len(sub_tree[2]),sub_tree[2],output)
     #     unrolled = for_full_unroll(output, condition)
     #     res = (unrolled)
     # else:
-    #     solve(0,len(tup[2]),tup[2],output)
+    #     solve(0,len(sub_tree[2]),sub_tree[2],output)
     #     unrolled = for_partial_unroll(output, condition)
-    #     res = (tup[0],tup[1],unrolled)
-    return tup
+    #     res = (sub_tree[0],sub_tree[1],unrolled)
+    return sub_tree
 
 
 def find_int(i,n,l,res=[]):
