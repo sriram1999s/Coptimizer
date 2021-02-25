@@ -103,7 +103,7 @@ def p_multi_declaration(p):
 def p_stop(p):
      '''
      stop : ID SEMICOLON
-	  | ID ASSIGN expr SEMICOLON
+	      | ID ASSIGN expr SEMICOLON
      '''
      if(len(p)==3):
          p[0] = [p[1],p[2]]
@@ -115,10 +115,13 @@ def p_declaration(p):
     '''
     declaration : TYPE ID SEMICOLON
                 | TYPE ID ASSIGN expr SEMICOLON
-		| TYPE multi_declaration stop
+                | TYPE ID ASSIGN function_call
+		        | TYPE multi_declaration stop
     '''
     if(len(p)==4):
         p[0] = [p[1], p[2], p[3]]
+    elif(len(p)==5):
+        p[0] = [p[1], p[2], p[3], p[4]]
     else :
         p[0] = [p[1], p[2], p[3], p[4], p[5]]
 
@@ -133,8 +136,8 @@ def p_simple(p):
     simple : expr SEMICOLON
            | declaration
            | SEMICOLON
-	   | function
-	   | function_call
+	       | function
+	       | function_call
     '''
     if(len(p)==3):
         p[0] = [p[1],p[2]]
@@ -160,8 +163,8 @@ def p_function_call(p):
 def p_call_params(p):
     '''
     	call_params : empty
-		    | yes_call_params end_call_params
-		    | end_call_params
+		            | yes_call_params end_call_params
+		            | end_call_params
     '''
     if(len(p) == 3):
         p[0] = p[1] + [p[2]]
@@ -189,7 +192,7 @@ def p_end_call_params(p):
     '''
     p[0] = p[1]
 
-        
+
 def p_yes_dec_params(p):
     '''
     yes_dec_params : yes_dec_params TYPE ID COMMA
@@ -218,7 +221,7 @@ def p_dec_params(p):
         p[0] = [p[1],p[2]]
     elif(len(p)==2):
         p[0] = p[1]
-        
+
 
 def p_function(p):
     '''
@@ -401,7 +404,7 @@ def p_factor(p):
         p[0] = [p[1], p[2]]
     else :
         p[0] = p[1]
-        
+
 def p_brace(p):
     '''
     brace  : L_PAREN expr R_PAREN
@@ -418,5 +421,14 @@ def p_brace(p):
     else:
         p[0] = p[1]
 
+# def p_ident(p):
+#     '''
+#         ident : ID
+#               | ID ASSIGN function_call
+#     '''
+#     if(len(p)==2):
+#         p[0] = p[1]
+#     else :
+#         p[0] = [p[1], p[2], p[3]]
 #def p_error(p):
  #   print('ERROR!!')
