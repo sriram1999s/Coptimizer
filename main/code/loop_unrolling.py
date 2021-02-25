@@ -7,11 +7,11 @@ def for_unroll_validate(tup):
     if(type(condition[2][2])==int and condition[2][2] <= 35): # full unrolling
         solve(0,len(tup[2]),tup[2],output) #remove nesting in tup[2]
         unrolled = for_full_unroll(output, condition)
-        res = (unrolled)
+        res = [unrolled]
     else:
         solve(0,len(tup[2]),tup[2],output)
         unrolled = for_partial_unroll(output, condition)
-        res = (tup[0],tup[1],unrolled)
+        res = [tup[0],tup[1],unrolled]
     return res
 
 def for_full_unroll(block, condition):
