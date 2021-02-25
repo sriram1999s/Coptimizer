@@ -1,5 +1,5 @@
 default:
-	python3 detector.py $(argument)
+	python3 code/detector.py $(argument)
 clean:
-	rm parser.out parsetab.py
-	rm -r __pycache__
+	rm code/parser.out code/parsetab.py
+	rm -r code/__pycache__
