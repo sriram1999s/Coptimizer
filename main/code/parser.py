@@ -255,6 +255,7 @@ def p_function_2(p):
 def p_expr(p):
     '''
     expr : expr assignment exprOR
+         | expr assignment ID L_PAREN call_params R_PAREN
          | exprOR
     '''
     if(len(p)==4):
