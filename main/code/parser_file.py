@@ -3,6 +3,7 @@ from ply.yacc import yacc
 
 from regenerator import *
 from loop_unrolling import *
+from function_inline import *
 
 
 # --------------------------------parser------------------------------------ #
@@ -244,6 +245,8 @@ def p_function(p):
     function : TYPE ID L_PAREN dec_params R_PAREN function_2
     '''
     p[0] = [p[1], p[2], p[3], p[4], p[5], p[6]]
+    if p[2] != 'main':
+        inline_defn_helper(p[0])
 
 
 def p_function_2(p):
