@@ -26,7 +26,9 @@ print()
 print()
 output_prg=[]
 solve(0,len(z),z,output_prg)
-#print(output_prg)
+# print(output_prg)
+with open("temp.c","w+") as f :
+    f.write("".join(output_prg))
 print("generated code")
 print("".join(output_prg))
 
