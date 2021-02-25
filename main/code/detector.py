@@ -1,7 +1,7 @@
 import sys
 import re
 sys.setrecursionlimit(10**9)
-from parser import *
+from parser_file import *
 from function_inline import *
 
 lexer = lex()

@@ -1,6 +1,17 @@
-foo(2,2,2);
-int foo(int x, int y, int z)
+int foo(int a, int b)
 {
-	int q = 10;
+    r = 0;
+    return r;
 }
-int foo(int x,int y, int z);    
+
+int main()
+{
+    foo();
+    a = foo(3,4);
+    r = foo(a, b);
+    r = foo(2, a);
+    r = foo(a, 2);
+    r = foo(3, 2);
+    int r = foo();
+    int r = foo(a, b);
+}
