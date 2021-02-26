@@ -6,21 +6,27 @@ def for_unroll_validate(sub_tree):
     print("Printing condition : ", condition)
     # print(sub_tree)
     res = []
-    if(type(condition[2][0]) == list or type(condition[2][2]) == list):
-        # print("here")
-        return sub_tree
 
     if(condition[1][0] == 'int' or condition[1][0] == 'float'):
         if(type(condition[1][3]) == str or type(condition[1][3]) == list ):
-            print("Here1-----")
+            # print("Here1-----")
             return sub_tree
     else:
         if(type(condition[1][2]) == str or type(condition[1][2]) == list ):
             print("Here2-----")
             return sub_tree
 
-    if(type(condition[2][2])==int ):
-        if(condition[2][2] <= 35): # full unrolling
+    if(type(condition[2]) == list):
+        ind = 2
+    else:
+        ind = 3
+
+    if(type(condition[ind][0]) == list or type(condition[ind][2]) == list):
+        # print("here")
+        return sub_tree
+
+    if(type(condition[ind][2])==int ):
+        if(condition[ind][2] <= 35): # full unrolling
             solve(0,len(sub_tree[2]),sub_tree[2],output) #remove nesting in sub_tree[2]
             unrolled = for_full_unroll(output, condition)
             res = [unrolled]
