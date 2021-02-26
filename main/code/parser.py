@@ -437,5 +437,5 @@ def p_brace(p):
 #         p[0] = p[1]
 #     else :
 #         p[0] = [p[1], p[2], p[3]]
-#def p_error(p):
- #   print('ERROR!!')
+def p_error(p):
+   print('ERROR!!')

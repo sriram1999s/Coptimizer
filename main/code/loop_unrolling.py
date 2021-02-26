@@ -7,25 +7,25 @@ def for_unroll_validate(sub_tree):
     # print(sub_tree)
     res = []
 
-    if(condition[1][0] == 'int' or condition[1][0] == 'float'):
-        if(type(condition[1][3]) == str or type(condition[1][3]) == list ):
+    if(condition[1][0] == 'int' or condition[1][0] == 'float'): # checking for declaration
+        if(type(condition[1][3]) == str or type(condition[1][3]) == list ): # LHS is variable / expression
             # print("Here1-----")
             return sub_tree
     else:
-        if(type(condition[1][2]) == str or type(condition[1][2]) == list ):
-            print("Here2-----")
+        if(type(condition[1][2]) == str or type(condition[1][2]) == list ): # LHS is variable / expression
+            # print("Here2-----")
             return sub_tree
 
-    if(type(condition[2]) == list):
+    if(type(condition[2]) == list): # checking for declaration
         ind = 2
     else:
         ind = 3
 
-    if(type(condition[ind][0]) == list or type(condition[ind][2]) == list):
+    if(type(condition[ind][0]) == list or type(condition[ind][2]) == list): # LHS or RHS of bounds check is not an expression
         # print("here")
         return sub_tree
 
-    if(type(condition[ind][2])==int ):
+    if(type(condition[ind][2])==int ): # LHS of bounds check is an integer
         if(condition[ind][2] <= 35): # full unrolling
             solve(0,len(sub_tree[2]),sub_tree[2],output) #remove nesting in sub_tree[2]
             unrolled = for_full_unroll(output, condition)
@@ -59,21 +59,6 @@ def for_partial_unroll(block, condition):
     # = res[1]//unroll_count
     extra = total%unroll_count
     return ['{']+block*unroll_count+['}'] + block*extra
-
-def while_unroll_validate(sub_tree):
-    print(sub_tree)
-    # condition = sub_tree[1]
-    # output = []
-    # print(condition)
-    # if(type(condition[2][2])==int and condition[2][2] <= 35): # full unrolling
-    #     solve(0,len(sub_tree[2]),sub_tree[2],output)
-    #     unrolled = for_full_unroll(output, condition)
-    #     res = (unrolled)
-    # else:
-    #     solve(0,len(sub_tree[2]),sub_tree[2],output)
-    #     unrolled = for_partial_unroll(output, condition)
-    #     res = (sub_tree[0],sub_tree[1],unrolled)
-    return sub_tree
 
 
 def find_int(i,n,l,res=[]):
