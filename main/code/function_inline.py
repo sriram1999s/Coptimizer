@@ -19,6 +19,15 @@ def create_defn_obj(parsed_list):
     fn_defn_obj_list.append(obj)
 
 
+def call_helper(parsed_list):
+    fn_call_list.append((parsed_list, "call"))
+    create_call_obj(parsed_list)
+
+
+def create_call_obj(parsed_list):
+    obj1 = fn_call_class(parsed_list[0], parsed_list[2])
+    fn_call_obj_list.append(obj1)
+
 class fn_defn_class:
     def __init__(self, name, param_list, body):
         self.name = name
