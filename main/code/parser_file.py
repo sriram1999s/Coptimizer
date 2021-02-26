@@ -174,6 +174,7 @@ def p_function_call(p):
     if (len(p) == 6):
         p[0] = [p[1], p[2], p[3], p[4], p[5]]
         call_helper(p[0])
+        p[0] = (p[0], 'call')
 
 
 def p_call_params(p):
@@ -247,7 +248,13 @@ def p_function(p):
     '''
     p[0] = [p[1], p[2], p[3], p[4], p[5], p[6]]
     if p[2] != 'main':
-        inline_defn_helper(p[0])
+        temp = inline_defn_helper(p[0])
+        # print('temp', temp, p[2])
+        if type(temp) is tuple:
+            p[0] = temp
+        else:   # check
+            p[0] = []
+
 
 
 def p_function_2(p):
