@@ -1,7 +1,7 @@
 int foo(int a, int b, int c, int d)
 {
     int c = a+b;
-    foo(a, b, c, d);
+    r = foo(a, b, c, d);
     return 5;
     return c;
 }

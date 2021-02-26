@@ -175,7 +175,8 @@ def p_function_call(p):
     if (len(p) == 6):
         p[0] = [p[1], p[2], p[3], p[4], p[5]]
         call_helper(p[0])
-        p[0] = (p[0], 'call')
+        p[0] = [(p[0], 'call')]
+        #print("\nFn call\n")
 
 
 def p_call_params(p):
@@ -256,9 +257,6 @@ def p_function(p):
                 p[0] = [temp]
             else:   # check
                 p[0] = []
-    '''else:
-                    print("\n\np_function : main :",p[0],"\n\n")'''
-
 
 def p_function_2(p):
     '''
