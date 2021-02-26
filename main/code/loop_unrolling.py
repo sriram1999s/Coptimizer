@@ -3,12 +3,21 @@ from regenerator import *
 def for_unroll_validate(sub_tree):
     condition = sub_tree[1]
     output = []
-    print(condition)
+    print("Printing condition : ", condition)
     # print(sub_tree)
     res = []
     if(type(condition[2][0]) == list or type(condition[2][2]) == list):
-        print("here")
+        # print("here")
         return sub_tree
+
+    if(condition[1][0] == 'int' or condition[1][0] == 'float'):
+        if(type(condition[1][3]) == str or type(condition[1][3]) == list ):
+            print("Here1-----")
+            return sub_tree
+    else:
+        if(type(condition[1][2]) == str or type(condition[1][2]) == list ):
+            print("Here2-----")
+            return sub_tree
 
     if(type(condition[2][2])==int ):
         if(condition[2][2] <= 35): # full unrolling
