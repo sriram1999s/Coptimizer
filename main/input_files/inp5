@@ -1,17 +1,12 @@
 int foo(int a, int b)
 {
-    r = 0;
-    return r;
+    int c = a+b;
+    foo(a, b);
+    return c;
 }
 
 int main()
 {
-    foo();
-    a = foo(3,4);
-    r = foo(a, b);
-    r = foo(2, a);
-    r = foo(a, 2);
-    r = foo(3, 2);
-    int r = foo();
+    int a = 3, b = 4;
     int r = foo(a, b);
 }

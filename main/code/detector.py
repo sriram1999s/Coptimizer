@@ -33,7 +33,11 @@ with open("temp.c","w+") as f :
 print("generated code")
 print("".join(output_prg))
 
-print(fn_call_list[0])
-print('name', fn_call_obj_list[0].name)
-print('param list', fn_call_obj_list[0].arg_list)
+print('Func defn list:')
+for i in range(len(fn_defn_list)):
+    print(i, fn_defn_list[i])
+
+print('\nFunc call list:')
+for i in range(len(fn_call_list)):
+    print(i, fn_call_list[i])
 #----------------------------------IO handling -----------------------------------------------------------------------------

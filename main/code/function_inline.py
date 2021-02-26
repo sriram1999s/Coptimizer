@@ -14,8 +14,24 @@ def inline_defn_helper(parsed_list):
     create_defn_obj(parsed_list)
 
 
+def check_recursive(l1, start, length, fn_name):
+    if start >= length:
+        return 1
+    if type(l1[start]) == str and l1[start] == fn_name:
+        return 0
+    elif type(l1[start]) == list:
+        for i in l1[start]:
+            if type(i) == list and check_recursive(i, 0, len(i), fn_name) == 0:
+                return 0
+    start += 1
+    return check_recursive(l1, start, length, fn_name)
+
+
 def create_defn_obj(parsed_list):
-    obj = fn_defn_class(parsed_list[1], parsed_list[3], parsed_list[5])
+    # print('Body', parsed_list[5][0])
+    inline_flag = check_recursive(parsed_list[5][0], 0, len(parsed_list[5][0]), parsed_list[1])
+    print('rec flag', inline_flag)
+    obj = fn_defn_class(parsed_list[1], parsed_list[3], parsed_list[5], inline_flag)
     fn_defn_obj_list.append(obj)
 
 
@@ -30,11 +46,11 @@ def create_call_obj(parsed_list):
 
 
 class fn_defn_class:
-    def __init__(self, name, param_list, body):
+    def __init__(self, name, param_list, body, inline_flag):
         self.name = name
         self.param_list = param_list
         self.body = body
-        self.inline_flag = 0
+        self.inline_flag = inline_flag  # 0 => don't inline, 1 => inline
         self.return_id_or_val = None
 
 
