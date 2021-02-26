@@ -132,7 +132,6 @@ def t_FOR(t):
 
 def t_RETURN(t):
     r'return'
-    print('in lexer return')
     return t
 
 
