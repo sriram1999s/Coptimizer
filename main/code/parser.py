@@ -80,8 +80,12 @@ def p_condition(p):
 def p_for_condition(p):
     '''
     for_condition : L_PAREN declaration expr SEMICOLON expr R_PAREN
+                  | L_PAREN expr SEMICOLON expr SEMICOLON expr R_PAREN
     '''
-    p[0] = [p[1],p[2],p[3],p[4],p[5],p[6]]
+    if(len(p) == 7):
+        p[0] = [p[1],p[2],p[3],p[4],p[5],p[6]]
+    else :
+        p[0] = [p[1],p[2],p[3],p[4],p[5],p[6],p[7]]
 
 def p_multi_declaration(p):
     '''
@@ -260,6 +264,8 @@ def p_expr(p):
     '''
     if(len(p)==4):
         p[0] = [p[1], p[2], p[3]]
+    elif(len(p)==7):
+        p[0] = [p[1], p[2], p[3], p[4], p[5], p[6]]
     else :
         p[0] = p[1]
 
@@ -431,5 +437,5 @@ def p_brace(p):
 #         p[0] = p[1]
 #     else :
 #         p[0] = [p[1], p[2], p[3]]
-#def p_error(p):
- #   print('ERROR!!')
+def p_error(p):
+   print('ERROR!!')

@@ -1,0 +1,37 @@
+FOR LOOP UNROLLING TEST CASES :
+
+test 1 : declaration with constant, constant bounds check
+input file : for1.c
+expected output : YES unrolling
+
+test 2 : no declaration,  assignment to constant, constant bounds check
+input file : for2.c
+expected output : YES unrolling
+
+
+
+
+test 3 : declaration with variable, constant bounds check
+input file : for3.c
+expected output : NO unrolling
+
+test 4 : declaration with expression, constant bounds check
+input file : for4.c
+expected output : NO unrolling
+
+
+
+test 5 : declaration with constant, variable bounds check
+input file : for5.c
+expected output : NO unrolling ==> NOT WORKING
+
+test 6 : declaration with constant, expression bounds check
+input file : for6.c
+expected output : NO unrolling
+
+
+
+
+test 7 : complex program
+input file : for7.c
+expected output : YES unrolling
