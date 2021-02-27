@@ -17,20 +17,6 @@ def inline_defn_helper(parsed_list):
     else:   #inlinable
         return None
 
-'''
-def check_inline(l1, start, length, fn_name):
-    print('l1', l1)
-    if start >= length:
-        return 1
-    if type(l1[start]) == str and l1[start] == fn_name:
-        return 0
-    elif type(l1[start]) == list:
-        for i in l1[start]:
-            if type(i) == list and check_inline(i, 0, len(i), fn_name) == 0:
-                return 0
-    start += 1
-    return check_inline(l1, start, length, fn_name)
-'''
 # new
 def check_inline(l1, start, length, fn_name,l2):
     if start >= length:
@@ -58,19 +44,6 @@ def check_return(l1, start, length):
     start += 1
     return check_return(l1, start, length)
 
-
-#new
-# def check_return(l1, start, length, l2):
-#     if start >= length:
-#         return
-#     elif type(l1[start]) == str and l1[start] == 'return':
-#         l2[0] = l1[start + 1]
-#         return
-#     elif type(l1[start]) == list:
-#         check_return(l1[start], 0, len(l1[start]), l2)
-#     check_return(l1, start + 1, length, l2)
-
-
 def change_to_string(l1):
     ret_list = []
     if len(l1) > 1:
@@ -88,25 +61,20 @@ def change_to_string(l1):
 # ["int a","int b"]
 
 def create_defn_obj(parsed_list):
-    '''print('body', parsed_list[5][0], 'len', len(parsed_list[5][0]), 'name', parsed_list[1])
-    inline_flag = check_inline(parsed_list[5][0], 0, len(parsed_list[5][0]), parsed_list[1])
-    '''
 
     l3 = [1]
     check_inline(parsed_list[5][0], 0, len(parsed_list[5][0]), parsed_list[1], l3)
     inline_flag = l3[0]
     print('#inline flag', inline_flag, parsed_list[1])
+    
+    # needs change
     return_id_or_val = check_return(parsed_list[5][0], 0, len(parsed_list[5][0]))
 
-    # l2 = [None]
-    # check_return(parsed_list[5][0], 0, len(parsed_list[5][0]), l2)
-    # return_id_or_val = l2[0]
-
-    # print('return_id_or_val', return_id_or_val)
     str_params_list = change_to_string(parsed_list[3])
-    # print('str_params_list', str_params_list)
+
     obj = fn_defn_class(parsed_list[1], str_params_list, parsed_list[5], inline_flag, return_id_or_val)
     fn_defn_obj_list.append(obj)
+    print("Fn defn obj",obj.name,obj.param_list,obj.body,obj.inline_flag,obj.return_id_or_val,sep="\n")
 
 
 def call_helper(parsed_list):
@@ -119,9 +87,9 @@ def create_call_obj(parsed_list):
     for i in parsed_list[2]:
         if i != ',':
             temp.append(str(i))
-    # print('temp', temp)
     obj1 = fn_call_class(parsed_list[0], temp)
     fn_call_obj_list.append(obj1)
+    #print("Fn call obj : \n",obj1.name,"\n",obj1.arg_list,"\n")
 
 
 class fn_defn_class:

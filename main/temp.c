@@ -1,1 +1,1 @@
-if(k<v)++a;if(k<v)++a;if(k<v)++a;if(k<v)++a;if(k<v)++a;
+int foo(int a,int b,int c,int d){int c=a+b;r=foo(a,b,c,d);return 5;return c;}definitionint main(){int a=3,b=4;int r=foo(a,b,c,d);callbar(a1,2);call}
