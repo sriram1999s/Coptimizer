@@ -122,6 +122,6 @@ test 35 : partial unrolling '*'
 input file : for35.c
 expected output: YES unrolling
 
-test 30 : partial unrolling '/'
+test 36 : partial unrolling '/'
 input file : for36.c
 expected output: YES unrolling

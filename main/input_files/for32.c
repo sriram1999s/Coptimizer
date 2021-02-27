@@ -1,7 +1,11 @@
 int main()
 {
   int a = 5;
-  for( int i = 40; i> 0; i-=2)
+  for( int i = 65; i> 25; i-=2)
+  {
+    ++a;
+  }
+  for( int i = 65; i> 24; i-=2)
   {
     ++a;
   }

@@ -76,7 +76,7 @@ def for_partial_unroll(block, condition, operator):
     res=[]
     increment_val = 1
     find_int(0,len(condition),condition,res)
-    print(res)
+    #print(res)
     total = abs(res[0][0]-res[1][0])
     if(len(res)==3):
         increment_val =  res[-1][0]
@@ -85,9 +85,19 @@ def for_partial_unroll(block, condition, operator):
     else:
         count_unrolls = int(my_log(res[0][0], res[1][0], increment_val))
     factor = 0.2
+    rel_operator=[]
+    find_rel_operator(0,len(condition[2]),condition[2],rel_operator)
     unroll_count = int(count_unrolls*factor)
-    condition[2][res[1][-1]] = total//unroll_count + res[0][0] #readjusting the end value of loop after partial unrolling
-    extra = total%unroll_count
+    print(f"unroll_count : {unroll_count}")
+    print(f"count_unrolls : {count_unrolls}")
+    print(f"total : {total}")
+    print(f"res[0][0] : {res[0][0]}")
+    if(rel_operator[0][0]=='<'):
+        condition[2][res[1][-1]] = res[0][0] + count_unrolls*increment_val//unroll_count #readjusting the end value of loop after partial unrolling
+    else:
+        condition[2][res[1][-1]] = res[0][0] - count_unrolls*increment_val//unroll_count #readjusting the end value of loop after partial unrolling
+    extra = count_unrolls%unroll_count
+    
     return ['{']+block*unroll_count+['}'] + block*extra
 
 
@@ -109,7 +119,16 @@ def find_operator(ind,end,lis, res=[]):
         find_operator(0,len(lis[ind]),lis[ind],res)
     find_operator(ind+1,end,lis,res)
 
+def find_rel_operator(ind,end,lis, res=[]):
+    if(ind==end):
+        return
+    if(type(lis[ind])==str and re.search('[<>]', lis[ind])):
+        res.append([lis[ind],ind])
+    elif(type(lis[ind]) is list):
+        find_rel_operator(0,len(lis[ind]),lis[ind],res)
+    find_rel_operator(ind+1,end,lis,res)
 
+    
 
 def find_id(ind,end,lis, res=set()):
     if(ind==end):
