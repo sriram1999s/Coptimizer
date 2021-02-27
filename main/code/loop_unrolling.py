@@ -21,7 +21,8 @@ def for_unroll_validate(sub_tree, operators, ids):
         # print("here")
         return sub_tree
 
-    if(condition[1][0] == 'int' or condition[1][0] == 'float'): # checking for declaration
+    type_list = ['int', 'float', 'void']
+    if(condition[1][0] in type_list): # checking for declaration
         if(type(condition[1][3]) == str or type(condition[1][3]) == list ): # LHS is variable / expression
             # print("Here1-----")
             return sub_tree
