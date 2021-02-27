@@ -141,7 +141,7 @@ def t_INT_NUM(t):
 # types
 
 def t_TYPE(t):
-    r'int|float'
+    r'int|float|void'
     return t
 
 # identifiers
