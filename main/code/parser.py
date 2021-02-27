@@ -62,8 +62,11 @@ def p_closed(p):
     elif(len(p)==4):
         if(p[1] == 'for'):
             print("for detected")
-            #p[0] = [p[1],p[2],p[3]]
-            p[0] = for_unroll_validate([p[1], p[2], p[3]])
+            operators = []
+            find_operator(0, len(p[2][-2]), p[2][-2], operators)
+            ids = []
+            find_id(0, len(p[2][-2]), p[2][-2], ids)
+            p[0] = for_unroll_validate([p[1], p[2], p[3]], operators, ids)
         else:
             print("while detected")
             p[0] = [p[1], p[2], p[3]]

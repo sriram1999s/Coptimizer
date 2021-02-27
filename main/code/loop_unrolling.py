@@ -1,11 +1,25 @@
 from regenerator import *
+from math import ceil
+import re
 
-def for_unroll_validate(sub_tree):
+def for_unroll_validate(sub_tree, operators, ids):
+
+    print("operators : ", operators)
+    print("ids : ", ids)
+
     condition = sub_tree[1]
     output = []
     print("Printing condition : ", condition)
     # print(sub_tree)
     res = []
+
+    if(len(ids)>1):
+        return sub_tree
+
+    operator_list = ['++', '--', '+', '-', '+=', '-=']
+    if(operators[0][0] not in operator_list):
+        # print("here")
+        return sub_tree
 
     if(condition[1][0] == 'int' or condition[1][0] == 'float'): # checking for declaration
         if(type(condition[1][3]) == str or type(condition[1][3]) == list ): # LHS is variable / expression
@@ -21,7 +35,7 @@ def for_unroll_validate(sub_tree):
     else:
         ind = 3
 
-    if(type(condition[ind][0]) == list or type(condition[ind][2]) == list): # LHS or RHS of bounds check is not an expression
+    if(type(condition[ind][0]) == list or type(condition[ind][2]) == list or type(condition[ind][2]) == str): # LHS or RHS of bounds check is not an expression
         # print("here")
         return sub_tree
 
@@ -41,8 +55,12 @@ def for_full_unroll(block, condition):
     block.pop()
     res=[]
     find_int(0,len(condition),condition,res) # to get start and end value of loop by scanning for integer
-    #print(res)
-    return block * (abs(res[0][0]-res[1][0]))
+    print(res)
+    increment_val = 1
+
+    if(len(res) == 3):
+        increment_val = res[-1][0]
+    return block * int(ceil(abs(res[0][0]-res[1][0])/increment_val ))
 
 def for_partial_unroll(block, condition):
     block.pop(0)
@@ -61,12 +79,30 @@ def for_partial_unroll(block, condition):
     return ['{']+block*unroll_count+['}'] + block*extra
 
 
-def find_int(i,n,l,res=[]):
-    #print(l,i,level)
-    if(i==n):
+def find_int(ind,end,lis,res=[]):
+    #print(lis,ind,level)
+    if(ind==end):
         return
-    if(type(l[i]) is int):
-        res.append([l[i],i])
-    elif(type(l[i]) is list):
-        find_int(0,len(l[i]),l[i],res)
-    find_int(i+1,n,l,res)
+    if(type(lis[ind]) is int):
+        res.append([lis[ind],ind])
+    elif(type(lis[ind]) is list):
+        find_int(0,len(lis[ind]),lis[ind],res)
+    find_int(ind+1,end,lis,res)
+
+def find_operator(ind,end,lis, res=[]):
+    if(ind==end):
+        return
+    if(type(lis[ind])==str and re.search('[-+*/]', lis[ind])):
+        res.append([lis[ind],ind])
+    elif(type(lis[ind]) is list):
+        find_operator(0,len(lis[ind]),lis[ind],res)
+    find_operator(ind+1,end,lis,res)
+
+def find_id(ind,end,lis, res=[]):
+    if(ind==end):
+        return
+    if(type(lis[ind])==str and re.search('[A-Za-z_][A-Za-z_0-9]*', lis[ind])):
+        res.append([lis[ind],ind])
+    elif(type(lis[ind]) is list):
+        find_id(0,len(lis[ind]),lis[ind],res)
+    find_id(ind+1,end,lis,res)
