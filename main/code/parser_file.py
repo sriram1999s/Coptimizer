@@ -5,7 +5,6 @@ from regenerator import *
 from loop_unrolling import *
 from function_inline import *
 
-
 # --------------------------------parser------------------------------------ #
 
 # defining precedence of operators
@@ -28,7 +27,6 @@ def p_multiple_statements(p):
                         | statement
     '''
     if (len(p) == 3):
-        #print("\nerr",p[1],"\n\n")
         p[0] = p[1] + [p[2]]
     else:
         p[0] = p[1]
@@ -172,10 +170,20 @@ def p_function_call(p):
     '''
     function_call : ID L_PAREN call_params R_PAREN SEMICOLON
     '''
+    # global pass_no
     if (len(p) == 6):
         p[0] = [p[1], p[2], p[3], p[4], p[5]]
-        call_helper(p[0])
-        p[0] = (p[0], 'call')
+
+    f0 = open("parse_track", 'r')
+    pass_no = f0.read()
+    f0.close()
+    pass_no = int(pass_no)
+    if pass_no == 1:
+        create_call_obj(p[1], p[3], None)
+    if pass_no == 2:
+        call = fn_call_obj_dict[p[1]].pop(0)
+        if fn_defn_obj_dict[p[1]].inline_flag == 1:
+            p[0] = inline("p_function_call", p[1], call.actual_arguments, None)
 
 
 def p_call_params(p):
@@ -247,18 +255,17 @@ def p_function(p):
     '''
     function : TYPE ID L_PAREN dec_params R_PAREN function_2
     '''
+    # global pass_no
     p[0] = [p[1], p[2], p[3], p[4], p[5], p[6]]
-    if p[2] != 'main':
-        if(p[6][0] != ';'):
-            temp = inline_defn_helper(p[0])
-            print('temp', temp, p[2])
-            if type(temp) is tuple:
-                p[0] = [temp]
-            else:   # check
-                p[0] = []
-    '''else:
-                    print("\n\np_function : main :",p[0],"\n\n")'''
-
+    f0 = open("parse_track", 'r')
+    pass_no = f0.read()
+    pass_no = int(pass_no)
+    if pass_no == 1 and p[2]!='main':
+        create_defn_obj(p[1], p[2], p[4], p[6])
+    elif pass_no == 2 and p[2]!='main':
+        if fn_defn_obj_dict[p[2]].inline_flag == 1:
+            p[0] = []
+    f0.close()
 
 def p_function_2(p):
     '''
@@ -290,11 +297,21 @@ def p_expr(p):
          | expr assignment ID L_PAREN call_params R_PAREN
          | exprOR
     '''
+    # global pass_no
     if (len(p) == 4):
         p[0] = [p[1], p[2], p[3]]
     elif(len(p) == 7):
         p[0] = [p[1], p[2], p[3], p[4], p[5], p[6]]
-        call_helper(p[0])
+        f0 = open("parse_track", 'r')
+        pass_no = f0.read()
+        f0.close()
+        pass_no = int(pass_no)
+        if pass_no == 1:
+            create_call_obj(p[1], p[3], p[1][0])
+        if pass_no == 2:
+            call = fn_call_obj_dict[p[3]].pop(0)
+            if call.inline_flag == 1:
+                p[0] = inline("p_expr", p[3], p[5], p[1][0])
     else:
         p[0] = p[1]
 

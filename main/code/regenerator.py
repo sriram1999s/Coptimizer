@@ -19,7 +19,7 @@ def solve(i,n,l,output_prg):
             if(type(l[i][j]) is tuple or type(l[i][j]) is list):
                 solve(0,len(l[i][j]),l[i][j],output_prg)
             else:
-                if(l[i][j]=='int' or l[i][j]=='float'):
+                if(l[i][j]=='int' or l[i][j]=='float' or l[i][j]=='return'):
                     output_prg+=[str(l[i][j]),' ']
                 else:
                     output_prg+=[str(l[i][j])]

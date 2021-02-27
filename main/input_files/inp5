@@ -1,19 +1,25 @@
-int foo(int a, int b, int c, int d)
+int foo(int a, int b, int c)
 {
-    int c = a+b;
-    r = foo(a, b, c, d);
-    return 5;
-    return c;
+    a = 5;
+    b = b+a;
+    int m = c+b;
+    return m;
 }
 
-int bar(int a1, int b1)
-{
-a=0;
-}
+int bar(int a1);
 
 int main()
 {
-    int a = 3, b = 4;
-    int r = foo(a, b, c, d);
-    bar(a1, 2);
+    foo(1, 2, 3);
+    bar(10);
+}
+
+int bar(int a)
+{
+    if(a<10)
+    {
+        return 1;
+    }
+    int r = bar(a);
+    return r;
 }

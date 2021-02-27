@@ -1,0 +1,19 @@
+int foo(int a, int b, int c, int d)
+{
+    int c = a+b;
+    r = foo(a, b, c, d);
+    return 5;
+    return c;
+}
+
+int bar(int a1, int b1)
+{
+a=0;
+}
+
+int main()
+{
+    int a = 3, b = 4;
+    int r = foo(a, b, c, d);
+    bar(a1, 2);
+}
