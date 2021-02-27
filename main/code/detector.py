@@ -1,5 +1,5 @@
 import sys
-import re
+from preprocessing import *
 sys.setrecursionlimit(10**9)
 from parser import *
 
@@ -18,6 +18,7 @@ with open(file) as f:
     for line in f:
         lines += line.strip('\n')
     lines.strip('\n')
+lines = remove_rel_assign(lines)
 z=parser.parse(lines)
 
 print("AST:")
