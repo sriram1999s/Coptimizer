@@ -11,8 +11,6 @@ def for_unroll_validate(sub_tree, operators, ids):
     output = []
     print("Printing condition : ", condition)
     # print(sub_tree)
-    res = []
-
     if(len(ids)>1):
         return sub_tree
 
@@ -40,8 +38,12 @@ def for_unroll_validate(sub_tree, operators, ids):
         # print("here")
         return sub_tree
 
+    res=[]
+    find_int(0,len(condition),condition,res)
+    total = abs(res[1][0]-res[0][0])
+    
     if(type(condition[ind][2])==int ): # LHS of bounds check is an integer
-        if(condition[ind][2] <= 35): # full unrolling
+        if(total <= 35): # full unrolling
             solve(0,len(sub_tree[2]),sub_tree[2],output) #remove nesting in sub_tree[2]
             unrolled = for_full_unroll(output, condition, operators[0][0])
             res = [unrolled]
@@ -62,19 +64,28 @@ def for_full_unroll(block, condition, operator):
     if(len(res) == 3):
         increment_val = res[-1][0]
     if(re.search('[+-]',operator)):
-        factor = int(ceil(abs(res[0][0]-res[1][0])/increment_val ))
+        count_unrolls = int(ceil(abs(res[0][0]-res[1][0])/increment_val))
     else:
-        factor = int(my_log(res[0][0], res[1][0], increment_val))
-    return block * factor
+        count_unrolls = int(my_log(res[0][0], res[1][0], increment_val))
+    return block * count_unrolls
 
 def for_partial_unroll(block, condition, operator):
     block.pop(0)
     block.pop()
+    print(f"operator : {operator}")
     res=[]
+    increment_val = 1
     find_int(0,len(condition),condition,res)
+    print(res)
     total = abs(res[0][0]-res[1][0])
-    factor = 0.5
-    unroll_count = int(total*factor)
+    if(len(res)==3):
+        increment_val =  res[-1][0]
+    if(re.search('[+-]',operator)):
+        count_unrolls = int(ceil(total/increment_val))
+    else:
+        count_unrolls = int(my_log(res[0][0], res[1][0], increment_val))
+    factor = 0.2
+    unroll_count = int(count_unrolls*factor)
     condition[2][res[1][-1]] = total//unroll_count + res[0][0] #readjusting the end value of loop after partial unrolling
     extra = total%unroll_count
     return ['{']+block*unroll_count+['}'] + block*extra
@@ -97,6 +108,8 @@ def find_operator(ind,end,lis, res=[]):
     elif(type(lis[ind]) is list):
         find_operator(0,len(lis[ind]),lis[ind],res)
     find_operator(ind+1,end,lis,res)
+
+
 
 def find_id(ind,end,lis, res=set()):
     if(ind==end):

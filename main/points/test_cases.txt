@@ -1,5 +1,8 @@
 FOR LOOP UNROLLING TEST CASES :
 
+1-29 : FULL UNROLLING
+30-# : PARTIAL UNROLLING
+
 test 1 : declaration with constant, constant bounds check
 input file : for1.c
 expected output : YES unrolling
@@ -59,3 +62,66 @@ expected output : YES unrolling
 test 15 : prev conditions + 'i = i * 2' increment
 input file : for15.c
 expected output : YES unrolling
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+test 30 : partial unrolling base
+input file : for30.c
+expected output: YES unrolling
+
+test 31 : partial unrolling '+='
+input file : for31.c
+expected output: YES unrolling
+
+
+test 32 : partial unrolling '-='
+input file : for32.c
+expected output: YES unrolling
+
+
+test 33 : partial unrolling '*='
+input file : for33.c
+expected output: YES unrolling
+
+test 34 : partial unrolling '/='
+input file : for34.c
+expected output: YES unrolling
+
+test 35 : partial unrolling '*'
+input file : for35.c
+expected output: YES unrolling
+
+test 30 : partial unrolling '/'
+input file : for36.c
+expected output: YES unrolling
