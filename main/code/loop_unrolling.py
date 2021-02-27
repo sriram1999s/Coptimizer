@@ -17,7 +17,7 @@ def for_unroll_validate(sub_tree, operators, ids):
         return sub_tree
 
     operator_list = ['++', '--', '+', '-', '+=', '-=']
-    if(operators[0][0] not in operator_list):
+    if(operators[0][0] not in operator_list): # checking for operators
         # print("here")
         return sub_tree
 

@@ -40,6 +40,10 @@ test 10 : prev conditions + non-singular increment
 input file : for10.c
 expected output : YES unrolling
 
-test 10 : prev conditions + multi variable increment
+test 11 : prev conditions + multi variable increment
 input file : for11.c
 expected output : NO unrolling
+
+test 12 : prev conditions + partial for condition
+input file : for12.c
+expected output : NO unrolling ==> NO GRAMMAR YET
