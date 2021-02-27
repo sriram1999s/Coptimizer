@@ -179,6 +179,8 @@ def p_function_call(p):
     f0.close()
     pass_no = int(pass_no)
     if pass_no == 1:
+        if type(p[3]) is not list:
+            p[3] = [p[3]]
         create_call_obj(p[1], p[3], None)
     if pass_no == 2:
         call = fn_call_obj_dict[p[1]].pop(0)
@@ -275,22 +277,6 @@ def p_function_2(p):
     p[0] = [p[1]]
 
 
-# def p_parameters(p):
-#     '''
-#     parameters : parameters TYPE ID COMMA stop
-# 	       | stop
-#     '''
-#     if(len(p)==2):
-#         p[0]=(p[1])
-#     else:
-#         p[0] = ((p[1]),p[2],p[3],p[4],p[5])
-
-# def p_stop(p):
-#     '''
-#     stop : TYPE ID
-#     '''
-#     p[0] = (p[1],p[2])
-
 def p_expr(p):
     '''
     expr : expr assignment exprOR
@@ -312,6 +298,18 @@ def p_expr(p):
             call = fn_call_obj_dict[p[3]].pop(0)
             if call.inline_flag == 1:
                 p[0] = inline("p_expr", p[3], p[5], p[1][0])
+    # elif (len(p) == 8):
+    #     p[0] = [p[1], p[2], p[3], p[4], p[5], p[6], p[7]]
+    #     f0 = open("parse_track", 'r')
+    #     pass_no = f0.read()
+    #     f0.close()
+    #     pass_no = int(pass_no)
+    #     if pass_no == 1:
+    #         create_call_obj(p[1], p[3], p[1][0])
+    #     if pass_no == 2:
+    #         call = fn_call_obj_dict[p[3]].pop(0)
+    #         if call.inline_flag == 1:
+    #             p[0] = inline("p_expr", p[3], p[5], p[1][0])
     else:
         p[0] = p[1]
 

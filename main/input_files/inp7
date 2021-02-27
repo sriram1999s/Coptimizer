@@ -1,0 +1,22 @@
+int bar(int a);
+int bar(int a)
+{
+    if(a<10)
+    {
+        return 1;
+    }
+    bar(a);
+    return r;
+}
+
+int main()
+{
+    int c = 2;
+    bar(10);
+}
+int foo(int a1, int b1)
+{
+    int a = 5;
+    int b = b+a;
+    int m = b+b;
+}

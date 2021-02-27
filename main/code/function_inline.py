@@ -1,6 +1,7 @@
 def dummy_fn():
     print("YO")
 
+
 fn_defn_obj_dict = dict()
 fn_call_obj_dict = dict()
 
@@ -11,8 +12,12 @@ class fn_defn_class:
         self.fn_name = fn_name
         self.formal_parameters = change_to_string(formal_parameters)
         self.body = body
-        self.inline_flag = body is not None and check_inline(self.body[0], 0, len(self.body[0]), self.fn_name)
-        self.return_id_or_val = check_return(self.body[0], 0, len(self.body[0]))
+        self.inline_flag = 0
+        if body is not None:
+            self.inline_flag = check_inline(self.body[0], 0, len(self.body[0]), self.fn_name)
+        self.return_id_or_val = None
+        if body is not None:
+            self.return_id_or_val = check_return(self.body[0], 0, len(self.body[0]))
 
 
 class fn_call_class:
@@ -26,7 +31,7 @@ def process_args(p):
     processed = []
     if type(p) is list:
         for i in p:
-            if i !=',':
+            if i != ',':
                 processed.append(str(i))
     return processed
 
@@ -44,6 +49,7 @@ def check_inline(l1, start, length, fn_name):
     start += 1
     return check_inline(l1, start, length, fn_name)
 
+
 def check_return(l1, start, length):
     if start >= length:
         return None
@@ -58,31 +64,31 @@ def check_return(l1, start, length):
     start += 1
     return check_return(l1, start, length)
 
+
 def change_to_string(l1):
     ret_list = []
-    if len(l1) > 1:
-        i = 0
-        while i < len(l1[0]):
-            str_temp = l1[0][i] + ' ' + l1[0][i + 1]
-            i += 3
-            ret_list.append(str_temp)
-        ret_list.append(l1[1][0] + ' ' + l1[1][1])
-    elif len(l1) == 1:
-        str_temp = l1[0][0] + ' ' + l1[0][1]
-        ret_list.append(str_temp)
-
+    flattened = list(flatten(l1))
+    i = 0
+    while i<len(flattened)-1:
+        if flattened[i]!=',':
+            ret_list.append(flattened[i]+' '+flattened[i+1])
+            i+=2
+        else:
+            i+=1
     return ret_list
+
 
 def create_defn_obj(ret_type, fn_name, formal_parameters, body):
     if fn_name not in fn_defn_obj_dict:
-        if body == ';': # prototype
+        if body == [';']:  # prototype
             body = None
         obj = fn_defn_class(ret_type, fn_name, formal_parameters, body)
         fn_defn_obj_dict[fn_name] = obj
     else:
-        fn_defn_obj_dict[fn_name].formal_parameters = formal_parameters
+        fn_defn_obj_dict[fn_name].formal_parameters = change_to_string(formal_parameters)
         fn_defn_obj_dict[fn_name].body = body
         fn_defn_obj_dict[fn_name].inline_flag = check_inline(body, 0, len(body), fn_name)
+        print('check inline', fn_name, fn_defn_obj_dict[fn_name].inline_flag)
 
 
 def create_call_obj(fn_name, actual_arguments, return_into):
@@ -94,26 +100,27 @@ def create_call_obj(fn_name, actual_arguments, return_into):
 
 def inline(from_func, fn_name, actual_args, ret_into):
     send = []
-    print('from func', from_func, actual_args)
+    print('from func', from_func, fn_name, actual_args)
     if from_func == 'p_function_call':
         size = len(fn_defn_obj_dict[fn_name].formal_parameters)
         s = []
         for i in range(size):
             s.append(fn_defn_obj_dict[fn_name].formal_parameters[i] + "=" + str(actual_args[i]) + ";")
         send.append(s)
+        print('send', send)
         flattened = list(flatten(fn_defn_obj_dict[fn_name].body))
         s = []
         i = 0
         while i < len(flattened):
             if flattened[i] != 'return':
                 s.append(flattened[i])
-                i+=1
-            elif flattened[i]=='return' and i+1<len(flattened) and flattened[i+1]!=';':
-                s_str = str(fn_defn_obj_dict[fn_name].ret_type) + ' temp=' + str(flattened[i+1])
-                if i+2>=len(flattened):
-                    s_str+=';'
+                i += 1
+            elif flattened[i] == 'return' and i + 1 < len(flattened) and flattened[i + 1] != ';':
+                s_str = str(fn_defn_obj_dict[fn_name].ret_type) + ' temp=' + str(flattened[i + 1])
+                if i + 2 >= len(flattened):
+                    s_str += ';'
                 s.append(s_str)
-                i+=2
+                i += 2
         send.append(s)
 
     elif from_func == 'p_expr':
@@ -138,7 +145,9 @@ def inline(from_func, fn_name, actual_args, ret_into):
         send.append(s)
     return send
 
+
 from collections.abc import Iterable
+
 
 def flatten(l):
     for el in l:

@@ -14,6 +14,6 @@ a=0;
 int main()
 {
     int a = 3, b = 4;
-    int r = foo(a, b, c, d);
+    foo(a, b, c, d);
     bar(a1, 2);
 }

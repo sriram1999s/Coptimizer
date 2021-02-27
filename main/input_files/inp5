@@ -3,6 +3,7 @@ int foo(int a, int b, int c)
     a = 5;
     b = b+a;
     int m = c+b;
+    foo(a, b, c);
     return m;
 }
 
@@ -20,6 +21,6 @@ int bar(int a)
     {
         return 1;
     }
-    int r = bar(a);
+    bar(a);
     return r;
 }
