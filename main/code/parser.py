@@ -64,7 +64,7 @@ def p_closed(p):
             print("for detected")
             operators = []
             find_operator(0, len(p[2][-2]), p[2][-2], operators)
-            ids = []
+            ids = set()
             find_id(0, len(p[2][-2]), p[2][-2], ids)
             p[0] = for_unroll_validate([p[1], p[2], p[3]], operators, ids)
         else:
