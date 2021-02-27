@@ -3,13 +3,9 @@ from math import *
 import re
 
 def for_unroll_validate(sub_tree, operators, ids):
-
-    print("operators : ", operators)
-    print("ids : ", ids)
-
     condition = sub_tree[1]
     output = []
-    print("Printing condition : ", condition)
+    # print("Printing condition : ", condition)
     # print(sub_tree)
     if(len(ids)>1):
         return sub_tree
@@ -41,7 +37,7 @@ def for_unroll_validate(sub_tree, operators, ids):
     res=[]
     find_int(0,len(condition),condition,res)
     total = abs(res[1][0]-res[0][0])
-    
+
     if(type(condition[ind][2])==int ): # LHS of bounds check is an integer
         if(total <= 35): # full unrolling
             solve(0,len(sub_tree[2]),sub_tree[2],output) #remove nesting in sub_tree[2]
@@ -54,12 +50,12 @@ def for_unroll_validate(sub_tree, operators, ids):
     return res
 
 def for_full_unroll(block, condition, operator):
+    print("Unrolling full...")
     block.pop(0)
     block.pop()
     # print('operator : ', operator)
     res=[]
     find_int(0,len(condition),condition,res) # to get start and end value of loop by scanning for integer
-    print(res)
     increment_val = 1
     if(len(res) == 3):
         increment_val = res[-1][0]
@@ -70,9 +66,10 @@ def for_full_unroll(block, condition, operator):
     return block * count_unrolls
 
 def for_partial_unroll(block, condition, operator):
+    print("Unrolling partial...")
     block.pop(0)
     block.pop()
-    print(f"operator : {operator}")
+    # print(f"operator : {operator}")
     res=[]
     increment_val = 1
     find_int(0,len(condition),condition,res)
@@ -88,16 +85,19 @@ def for_partial_unroll(block, condition, operator):
     rel_operator=[]
     find_rel_operator(0,len(condition[2]),condition[2],rel_operator)
     unroll_count = int(count_unrolls*factor)
-    print(f"unroll_count : {unroll_count}")
-    print(f"count_unrolls : {count_unrolls}")
-    print(f"total : {total}")
-    print(f"res[0][0] : {res[0][0]}")
-    if(rel_operator[0][0]=='<'):
-        condition[2][res[1][-1]] = res[0][0] + count_unrolls*increment_val//unroll_count #readjusting the end value of loop after partial unrolling
+    if(rel_operator[0][0]=='<'): #readjusting the end value of loop after partial unrolling
+        if(re.search('[+-]', operator)):
+            condition[2][res[1][-1]] = res[0][0] + (count_unrolls//unroll_count)*increment_val
+        else :
+            condition[2][res[1][-1]] = res[0][0] + (count_unrolls//unroll_count)**increment_val
+
     else:
-        condition[2][res[1][-1]] = res[0][0] - count_unrolls*increment_val//unroll_count #readjusting the end value of loop after partial unrolling
+        if(re.search('[+-]', operator)):
+            condition[2][res[1][-1]] = res[0][0] - (count_unrolls//unroll_count)*increment_val
+        else :
+            condition[2][res[1][-1]] = res[0][0] - (count_unrolls//unroll_count)**increment_val
     extra = count_unrolls%unroll_count
-    
+
     return ['{']+block*unroll_count+['}'] + block*extra
 
 
@@ -128,7 +128,7 @@ def find_rel_operator(ind,end,lis, res=[]):
         find_rel_operator(0,len(lis[ind]),lis[ind],res)
     find_rel_operator(ind+1,end,lis,res)
 
-    
+
 
 def find_id(ind,end,lis, res=set()):
     if(ind==end):
@@ -140,7 +140,6 @@ def find_id(ind,end,lis, res=set()):
     find_id(ind+1,end,lis,res)
 
 def my_log(start,end,factor):
-
     mi = min(start, end)
     mx = max(start, end)
     start = mi

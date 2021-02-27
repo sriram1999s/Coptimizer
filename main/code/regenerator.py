@@ -4,12 +4,10 @@
 
 
 def solve(start_index, end_index, parse_tree, output_prg):
-    space_list = ['int','float','void','return']
     if(start_index == end_index):
         return
     elif(type(parse_tree[start_index]) is str):
         if(parse_tree[start_index]=='int' or parse_tree[start_index]=='float' or parse_tree[start_index]=='void' or parse_tree[start_index]=='return'):
-            print("here",parse_tree[start_index])
             output_prg += [parse_tree[start_index], ' ']
         else:
             output_prg += [parse_tree[start_index]]
