@@ -1,5 +1,5 @@
 from regenerator import *
-from math import ceil
+from math import *
 import re
 
 def for_unroll_validate(sub_tree, operators, ids):
@@ -16,7 +16,7 @@ def for_unroll_validate(sub_tree, operators, ids):
     if(len(ids)>1):
         return sub_tree
 
-    operator_list = ['++', '--', '+', '-', '+=', '-=']
+    operator_list = ['++', '--','/' ,'*' ,'+' , '-', '+=', '-=', '*=', '/=']
     if(operators[0][0] not in operator_list): # checking for operators
         # print("here")
         return sub_tree
@@ -43,27 +43,31 @@ def for_unroll_validate(sub_tree, operators, ids):
     if(type(condition[ind][2])==int ): # LHS of bounds check is an integer
         if(condition[ind][2] <= 35): # full unrolling
             solve(0,len(sub_tree[2]),sub_tree[2],output) #remove nesting in sub_tree[2]
-            unrolled = for_full_unroll(output, condition)
+            unrolled = for_full_unroll(output, condition, operators[0][0])
             res = [unrolled]
         else:
             solve(0,len(sub_tree[2]),sub_tree[2],output)
-            unrolled = for_partial_unroll(output, condition)
+            unrolled = for_partial_unroll(output, condition, operators[0][0])
             res = [sub_tree[0],sub_tree[1],unrolled]
     return res
 
-def for_full_unroll(block, condition):
+def for_full_unroll(block, condition, operator):
     block.pop(0)
     block.pop()
+    # print('operator : ', operator)
     res=[]
     find_int(0,len(condition),condition,res) # to get start and end value of loop by scanning for integer
     print(res)
     increment_val = 1
-
     if(len(res) == 3):
         increment_val = res[-1][0]
-    return block * int(ceil(abs(res[0][0]-res[1][0])/increment_val ))
+    if(re.search('[+-]',operator)):
+        factor = int(ceil(abs(res[0][0]-res[1][0])/increment_val ))
+    else:
+        factor = int(my_log(res[0][0], res[1][0], increment_val))
+    return block * factor
 
-def for_partial_unroll(block, condition):
+def for_partial_unroll(block, condition, operator):
     block.pop(0)
     block.pop()
     res=[]
@@ -71,17 +75,12 @@ def for_partial_unroll(block, condition):
     total = abs(res[0][0]-res[1][0])
     factor = 0.5
     unroll_count = int(total*factor)
-    #print(total,unroll_count)
-    #print(res)
-    #print(condition[2][res[1][-1]])
     condition[2][res[1][-1]] = total//unroll_count + res[0][0] #readjusting the end value of loop after partial unrolling
-    # = res[1]//unroll_count
     extra = total%unroll_count
     return ['{']+block*unroll_count+['}'] + block*extra
 
 
 def find_int(ind,end,lis,res=[]):
-    #print(lis,ind,level)
     if(ind==end):
         return
     if(type(lis[ind]) is int):
@@ -99,11 +98,23 @@ def find_operator(ind,end,lis, res=[]):
         find_operator(0,len(lis[ind]),lis[ind],res)
     find_operator(ind+1,end,lis,res)
 
-def find_id(ind,end,lis, res=[]):
+def find_id(ind,end,lis, res=set()):
     if(ind==end):
         return
     if(type(lis[ind])==str and re.search('[A-Za-z_][A-Za-z_0-9]*', lis[ind])):
-        res.append([lis[ind],ind])
+        res.add(lis[ind])
     elif(type(lis[ind]) is list):
         find_id(0,len(lis[ind]),lis[ind],res)
     find_id(ind+1,end,lis,res)
+
+def my_log(start,end,factor):
+
+    mi = min(start, end)
+    mx = max(start, end)
+    start = mi
+    end = mx
+    count = 0
+    while(start<end):
+        count+=1
+        start*=factor
+    return count
