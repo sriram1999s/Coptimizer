@@ -145,9 +145,14 @@ def p_simple(p):
            | SEMICOLON
 	       | function
 	       | function_call
+	       | RETURN ID SEMICOLON
+       	       | RETURN INT_NUM SEMICOLON
+	       | RETURN function_call
     '''
     if(len(p)==3):
         p[0] = [p[1],p[2]]
+    elif(len(p)==4):
+        p[0] = [p[1],p[2],p[3]]
     else:
         p[0] = p[1]
 

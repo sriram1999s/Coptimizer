@@ -37,7 +37,9 @@ unary = ['NOT']
 
 extra = ['ID', 'TYPE']
 
-tokens = numbers + bin_op + logic + rel_op + assignment + delimiters + statements + unary + extra
+jump = ['RETURN']
+
+tokens = numbers + bin_op + logic + rel_op + assignment + delimiters + statements + unary + extra + jump
 
 
 # --------------------------------lexer------------------------------------ #
@@ -101,6 +103,12 @@ t_MINUS_MINUS=r'\-\-'
 t_BIT_AND = r'\&'
 t_BIT_OR = r'\|'
 t_BIT_XOR = r'\^'
+
+# return
+
+def t_RETURN(t):
+    r'return'
+    return t
 
 # ignore
 
