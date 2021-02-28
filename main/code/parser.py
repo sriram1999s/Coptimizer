@@ -185,22 +185,17 @@ def p_call_params(p):
 
 def p_yes_call_params(p):
     '''
-    yes_call_params : yes_call_params INT_NUM COMMA
-    		    | yes_call_params ID COMMA
-		    | INT_NUM COMMA
-		    | ID COMMA
+    yes_call_params : yes_call_params expr COMMA
+		            | expr COMMA
     '''
-    if(len(p)==0):
-        p[0] = []
-    elif(len(p)==3):
+    if(len(p)==3):
         p[0] = [p[1],p[2]]
     else:
         p[0] = p[1] + [p[2],p[3]]
 
 def p_end_call_params(p):
     '''
-    end_call_params : INT_NUM
-		    | ID
+    end_call_params : expr
     '''
     p[0] = p[1]
 

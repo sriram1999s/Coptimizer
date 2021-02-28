@@ -18,7 +18,7 @@ with open(file) as f:
     for line in f:
         lines += line.strip('\n')
     lines.strip('\n')
-lines = remove_rel_assign(lines)
+lines = pre_process(lines)
 z=parser.parse(lines)
 
 # print("AST:")

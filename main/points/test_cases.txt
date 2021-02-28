@@ -63,9 +63,13 @@ test 15 : prev conditions + 'i = i * 2' increment
 input file : for15.c
 expected output : YES unrolling
 
+test 16 : for without flowbraces
+input file : for16.c
+expected output : YES unrolling
 
-
-
+test 17 : for without flowbraces 2
+input file : for17.c
+expected output : YES unrolling
 
 
 
@@ -125,3 +129,7 @@ expected output: YES unrolling
 test 36 : partial unrolling '/'
 input file : for36.c
 expected output: YES unrolling
+
+test 37 : for loop in block
+input file : for37.c
+expected output : YES unrolling
