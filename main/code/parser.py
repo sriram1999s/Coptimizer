@@ -3,7 +3,9 @@ from ply.yacc import yacc
 
 from regenerator import *
 from loop_unrolling import *
+from collections import defaultdict
 
+symbol_table = defaultdict(lambda:'galeej')
 # --------------------------------parser------------------------------------ #
 
 # defining precedence of operators
@@ -17,7 +19,8 @@ def p_start(p):
     '''
     start : multiple_statements
     '''
-    #print(p[1])
+    for i in symbol_table:
+        print(f"{i}------->{symbol_table[i]}")
     p[0] = p[1]
 
 def p_multiple_statements(p):
@@ -125,6 +128,11 @@ def p_declaration(p):
                 | TYPE ID ASSIGN function_call
 		        | TYPE multi_declaration stop
     '''
+    if(type(p[2])==str and p[3] == '='):
+        global level
+        global level_str
+        global symbol_table
+        symbol_table[p[2] + '_'.join(level_str)] = p[4]
     if(len(p)==4):
         p[0] = [p[1], p[2], p[3]]
     elif(len(p)==5):

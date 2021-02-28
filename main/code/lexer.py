@@ -1,5 +1,7 @@
 from ply.lex import lex
 
+level = 0
+level_str = []
 '''
 READ THIS BEFORE ADDING CALLABLES
 def fxn_name(t):
@@ -75,8 +77,8 @@ t_ASSIGN = r'='
 
 t_L_PAREN = r'\('
 t_R_PAREN = r'\)'
-t_L_FLOWBRACE = r'\{'
-t_R_FLOWBRACE = r'\}'
+# t_L_FLOWBRACE = r'\{'
+# t_R_FLOWBRACE = r'\}' # defined later
 t_SEMICOLON = r';'
 t_COMMA = r','
 
@@ -104,6 +106,22 @@ t_BIT_AND = r'\&'
 t_BIT_OR = r'\|'
 t_BIT_XOR = r'\^'
 
+# flow brace
+
+def t_L_FLOWBRACE(t):
+    r'{'
+    global level
+    global level_str
+    level = 0
+    level_str.append(str(level))
+    return t
+
+def t_R_FLOWBRACE(t):
+    r'}'
+    global level
+    global level_str
+    level = int(level_str.pop())+1
+    return t
 # return
 
 def t_RETURN(t):
