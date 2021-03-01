@@ -4,10 +4,11 @@
 
 
 def solve(start_index, end_index, parse_tree, output_prg):
+    space_list = ['int','float','void','double','bool','char','return']
     if(start_index == end_index):
         return
     elif(type(parse_tree[start_index]) is str):
-        if(parse_tree[start_index]=='int' or parse_tree[start_index]=='float' or parse_tree[start_index]=='void' or parse_tree[start_index]=='return'):
+        if(parse_tree[start_index] in space_list):
             output_prg += [parse_tree[start_index], ' ']
         else:
             output_prg += [parse_tree[start_index]]
@@ -21,7 +22,7 @@ def solve(start_index, end_index, parse_tree, output_prg):
             if(type(parse_tree[start_index][trav]) is tuple or type(parse_tree[start_index][trav]) is list):
                 solve(0, len(parse_tree[start_index][trav]), parse_tree[start_index][trav], output_prg)
             else:
-                if(parse_tree[start_index][trav]=='int' or parse_tree[start_index][trav]=='float' or parse_tree[start_index][trav]=='void' or parse_tree[start_index][trav]=='return'):
+                if(parse_tree[start_index][trav] in space_list):
                     output_prg += [parse_tree[start_index][trav], ' ']
                 else:
                     output_prg += [str(parse_tree[start_index][trav])]

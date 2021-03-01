@@ -4,7 +4,7 @@ def pre_process(text):
     text = re.sub(pat1 ,remove_rel_assign ,text)
     pat2 = '(for\(.*?\))([^{].*?;)'
     text = re.sub(pat2 ,add_brace ,text)
-    # print(text)
+    #print(text)
     return text
 
 def remove_rel_assign(m):

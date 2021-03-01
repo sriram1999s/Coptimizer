@@ -114,13 +114,15 @@ def t_L_FLOWBRACE(t):
     global level_str
     level = 0
     level_str.append(str(level))
+    print("left flower brace {",level,level_str)
     return t
 
 def t_R_FLOWBRACE(t):
     r'}'
     global level
     global level_str
-    level = int(level_str.pop())+1
+    level = int(level_str.pop()) + 1
+    print("right flower brace } ",level,level_str)
     return t
 # return
 
@@ -167,7 +169,7 @@ def t_INT_NUM(t):
 # types
 
 def t_TYPE(t):
-    r'int|float|void'
+    r'int|float|void|double|bool|char'
     return t
 
 # identifiers

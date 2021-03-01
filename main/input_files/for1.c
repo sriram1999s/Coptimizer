@@ -1,13 +1,13 @@
-
+int foo(int,int,int);
+int bar(float,int,float);
 int main()
 {
-  int a = 5;
-  for( int i = 0; i< 5;i++)
-  {
-    ++a;
-    int a = 0;
-    {
-      int a = 3;
-    }
-  }
+    c=a+b;
+    bool a;
+    double b;
+    char c;
+}
+
+int foo(int a, float b=7, float c=5) {
+    a++;
 }

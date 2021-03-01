@@ -125,19 +125,19 @@ def p_declaration(p):
     '''
     declaration : TYPE ID SEMICOLON
                 | TYPE ID ASSIGN expr SEMICOLON
-                | TYPE ID ASSIGN function_call
 		        | TYPE multi_declaration stop
     '''
     if(type(p[2])==str and p[3] == '='):
         global level
         global level_str
         global symbol_table
+        print(p[2],p[4])
         symbol_table[p[2] + '_'.join(level_str)] = p[4]
     if(len(p)==4):
         p[0] = [p[1], p[2], p[3]]
-    elif(len(p)==5):
+    if(len(p)==5):
         p[0] = [p[1], p[2], p[3], p[4]]
-    else :
+    if(len(p)==6):
         p[0] = [p[1], p[2], p[3], p[4], p[5]]
 
 def p_block(p):
@@ -145,6 +145,7 @@ def p_block(p):
     block : L_FLOWBRACE multiple_statements R_FLOWBRACE
     '''
     p[0] = [p[1], p[2], p[3]]
+    print(p[0])
 
 def p_simple(p):
     '''
@@ -175,10 +176,6 @@ def p_function_call(p):
     '''
     if(len(p) == 6):
         p[0] = [p[1], p[2], p[3], p[4], p[5]]
-    elif (len(p) == 9):
-        p[0] = [p[1], p[2], p[3], p[4], p[5], p[6], p[7], p[8]]
-    else:
-        p[0] = [p[1], p[2], p[3], p[4], p[5], p[6], p[7]]
 
 def p_call_params(p):
     '''
@@ -211,19 +208,36 @@ def p_end_call_params(p):
 def p_yes_dec_params(p):
     '''
     yes_dec_params : yes_dec_params TYPE ID COMMA
-                    | TYPE ID COMMA
+    		   | yes_dec_params TYPE COMMA
+		   | yes_dec_params TYPE ID ASSIGN NUM COMMA
+                   | TYPE ID COMMA
+   		   | TYPE COMMA
+		   | TYPE ID ASSIGN NUM COMMA
     '''
     if (len(p) == 5):
         p[0] = p[1] + [p[2], p[3], p[4]]
     elif (len(p) == 4):
-        p[0] = [p[1], p[2], p[3]]
+        p[0] = [p[1], p[2],p[3]]
+    elif (len(p) == 7):
+        p[0] = [p[1],p[2],p[3],p[4],p[5],p[6]]
+    elif(len(p)==3):
+        p[0] = [p[1],p[2]]
+    else:
+        p[0] = [p[1],p[2],p[3],p[4],p[5]]
 
 
 def p_end_dec_params(p):
     '''
     end_dec_params : TYPE ID
+		   | TYPE ID ASSIGN NUM
+		   | TYPE
     '''
-    p[0] = [p[1], p[2]]
+    if(len(p)==3):
+        p[0] = [p[1], p[2]]
+    elif(len(p)==5):
+        p[0] = [p[1],p[2],p[3],p[4]]
+    else:
+        p[0] = p[1]
 
 
 def p_dec_params(p):
@@ -428,16 +442,24 @@ def p_brace(p):
     brace  : L_PAREN expr R_PAREN
            | brace PLUS_PLUS
            | brace MINUS_MINUS
-           | INT_NUM
-           | FLOAT_NUM
+           | NUM
            | ID
     '''
     if(len(p)==4):
         p[0] = [p[1], p[2], p[3]]
     elif(len(p)==3):
         p[0] = [p[1], p[2]]
+        print("brace",p[1],p[2])
     else:
         p[0] = p[1]
+
+
+def p_NUM(p):
+    '''
+    NUM : INT_NUM
+	| FLOAT_NUM
+    '''
+    p[0] = p[1]
 
 # def p_ident(p):
 #     '''
@@ -448,5 +470,5 @@ def p_brace(p):
 #         p[0] = p[1]
 #     else :
 #         p[0] = [p[1], p[2], p[3]]
-def p_error(p):
-   print('ERROR!!')
+#def p_error(p):
+  # print('ERROR!!')

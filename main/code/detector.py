@@ -21,8 +21,8 @@ with open(file) as f:
 lines = pre_process(lines)
 z=parser.parse(lines)
 
-# print("AST:")
-# print(z)
+#print("AST:")
+#print(z)
 print()
 print()
 output_prg=[]
