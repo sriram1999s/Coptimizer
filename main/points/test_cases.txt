@@ -1,6 +1,7 @@
 FOR LOOP UNROLLING TEST CASES :
 
-1-29 : FULL UNROLLING
+1-19 : FULL UNROLLING
+20-25 : SYMBOL TABLE TEST CASES
 30-# : PARTIAL UNROLLING
 
 test 1 : declaration with constant, constant bounds check
@@ -74,29 +75,9 @@ expected output : YES unrolling
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+test 20 - 24 : symbol tab test cases
+input file : symbol20.c - symbol24.c
+expected output : correct updation
 
 
 
