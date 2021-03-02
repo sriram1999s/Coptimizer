@@ -22,7 +22,8 @@ def p_start(p):
     start : multiple_statements
     '''
     for i in symbol_table:
-        print(f"{i}------->{symbol_table[i]}")
+        if(symbol_table[i] != 'garbage'):
+            print(f"{i}------->{symbol_table[i]}")
     p[0] = p[1]
 
 def p_multiple_statements(p):
@@ -130,11 +131,16 @@ def p_declaration(p):
                 | TYPE ID ASSIGN function_call
 		        | TYPE multi_declaration stop
     '''
+    global level
+    global level_str
+    global symbol_table
+    
     if(type(p[2])==str and p[3] == '='):
-        global level
-        global level_str
-        global symbol_table
         symbol_table[p[2] + '_'.join(level_str)] = p[4]
+
+    if(type(p[2])==str and p[3] == ';'):
+        symbol_table[p[2] + '_'.join(level_str)] = 'declared'
+
     if(len(p)==4):
         p[0] = [p[1], p[2], p[3]]
     if(len(p)==5):
@@ -292,6 +298,17 @@ def p_expr(p):
          | expr assignment ID L_PAREN call_params R_PAREN
          | exprOR
     '''
+    if(len(p) > 2 and type(p[1])==str):
+        search_string = p[1] + "_".join(level_str)
+        print("search_string : ", search_string)
+        if(len(level_str) != 0):
+            copy_level_str = level_str.copy()
+            while(symbol_table[search_string] == 'garbage' and len(copy_level_str)>1):
+                copy_level_str.pop()
+                search_string = p[1] + "_".join(copy_level_str)
+                print("search_string : ", search_string)
+        symbol_table[search_string] = p[3]
+
     if(len(p)==4):
         p[0] = [p[1], p[2], p[3]]
     elif(len(p)==7):
