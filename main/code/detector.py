@@ -19,6 +19,7 @@ with open(file) as f:
         lines += line.strip('\n')
     lines.strip('\n')
 lines = pre_process(lines)
+# log = logging.getLogger()
 z=parser.parse(lines)
 
 #print("AST:")

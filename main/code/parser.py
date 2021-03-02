@@ -5,7 +5,9 @@ from regenerator import *
 from loop_unrolling import *
 from collections import defaultdict
 
-symbol_table = defaultdict(lambda:'galeej')
+level = 0
+level_str = []
+symbol_table = defaultdict(lambda:'garbage')
 # --------------------------------parser------------------------------------ #
 
 # defining precedence of operators
@@ -125,13 +127,13 @@ def p_declaration(p):
     '''
     declaration : TYPE ID SEMICOLON
                 | TYPE ID ASSIGN expr SEMICOLON
+                | TYPE ID ASSIGN function_call
 		        | TYPE multi_declaration stop
     '''
     if(type(p[2])==str and p[3] == '='):
         global level
         global level_str
         global symbol_table
-        print(p[2],p[4])
         symbol_table[p[2] + '_'.join(level_str)] = p[4]
     if(len(p)==4):
         p[0] = [p[1], p[2], p[3]]
@@ -142,10 +144,28 @@ def p_declaration(p):
 
 def p_block(p):
     '''
-    block : L_FLOWBRACE multiple_statements R_FLOWBRACE
+    block : left_flower multiple_statements right_flower
     '''
     p[0] = [p[1], p[2], p[3]]
-    print(p[0])
+
+def p_left_flower(p):
+    '''
+    left_flower : L_FLOWBRACE
+    '''
+    global level
+    global level_str
+    level = 0
+    level_str.append(str(level))
+    p[0] = p[1]
+
+def p_right_flower(p):
+    '''
+    right_flower : R_FLOWBRACE
+    '''
+    global level
+    global level_str
+    level = int(level_str.pop()) + 1
+    p[0] = p[1]
 
 def p_simple(p):
     '''
@@ -155,7 +175,7 @@ def p_simple(p):
 	       | function
 	       | function_call
 	       | RETURN ID SEMICOLON
-       	       | RETURN INT_NUM SEMICOLON
+       	   | RETURN INT_NUM SEMICOLON
 	       | RETURN function_call
     '''
     if(len(p)==3):
@@ -174,8 +194,7 @@ def p_function_call(p):
     '''
     function_call : ID L_PAREN call_params R_PAREN SEMICOLON
     '''
-    if(len(p) == 6):
-        p[0] = [p[1], p[2], p[3], p[4], p[5]]
+    p[0] = [p[1], p[2], p[3], p[4], p[5]]
 
 def p_call_params(p):
     '''
@@ -203,6 +222,7 @@ def p_end_call_params(p):
     end_call_params : expr
     '''
     p[0] = p[1]
+
 
 
 def p_yes_dec_params(p):
@@ -265,21 +285,6 @@ def p_function_2(p):
     '''
     p[0]=[p[1]]
 
-# def p_parameters(p):
-#     '''
-#     parameters : parameters TYPE ID COMMA stop
-# 	       | stop
-#     '''
-#     if(len(p)==2):
-#         p[0]=(p[1])
-#     else:
-#         p[0] = ((p[1]),p[2],p[3],p[4],p[5])
-
-# def p_stop(p):
-#     '''
-#     stop : TYPE ID
-#     '''
-#     p[0] = (p[1],p[2])
 
 def p_expr(p):
     '''
@@ -449,7 +454,6 @@ def p_brace(p):
         p[0] = [p[1], p[2], p[3]]
     elif(len(p)==3):
         p[0] = [p[1], p[2]]
-        print("brace",p[1],p[2])
     else:
         p[0] = p[1]
 
@@ -461,14 +465,12 @@ def p_NUM(p):
     '''
     p[0] = p[1]
 
-# def p_ident(p):
-#     '''
-#         ident : ID
-#               | ID ASSIGN function_call
-#     '''
-#     if(len(p)==2):
-#         p[0] = p[1]
-#     else :
-#         p[0] = [p[1], p[2], p[3]]
-#def p_error(p):
-  # print('ERROR!!')
+# def p_error(p):
+#
+#     # get formatted representation of stack
+#     stack_state_str = ' '.join([symbol.type for symbol in parser.symstack][1:])
+#
+#     print('Syntax error in input! Parser State:{} {} . {}'
+#           .format(parser.state,
+#                   stack_state_str,
+#                   p))
