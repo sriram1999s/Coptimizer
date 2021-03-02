@@ -2,43 +2,54 @@ from regenerator import *
 from math import *
 import re
 
-def for_unroll_validate(sub_tree, operators, ids):
+def for_unroll_validate(sub_tree):
+
     condition = sub_tree[1]
-    output = []
-    # print("Printing condition : ", condition)
-    # print(sub_tree)
-    if(len(ids)>1):
+    operators = []
+    find_operator(0, len(condition[-2]), condition[-2], operators)
+    ids = set()
+    find_id(0, len(condition), condition, ids)
+
+    # print("operators : ", operators)
+    # print("ids : ", ids)
+
+    if(len(ids)>1): # more than 1 loop variable in condition, short circuit return
         return sub_tree
 
     operator_list = ['++', '--','/' ,'*' ,'+' , '-', '+=', '-=', '*=', '/=']
-    if(operators[0][0] not in operator_list): # checking for operators
-        # print("here")
+    if(len(operators) > 0 and operators[0][0] not in operator_list): # checking for operators
         return sub_tree
 
-    type_list = ['int', 'float', 'void']
-    if(condition[1][0] in type_list): # checking for declaration
+    print(condition)
+    if(condition[1]!=';' and condition[2]!=';' and len(condition) == 5): # full for condition
+        return for_full_condition(sub_tree, operators, ids)
+    else:
+        return sub_tree
+
+def for_full_condition(sub_tree, operators, ids):
+    condition = sub_tree[1]
+    output = []
+    type_list = ['int', 'float', 'void', 'double', 'char']
+
+    if(type(condition[1][0]) != list): # checking for declaration
         if(type(condition[1][3]) == str or type(condition[1][3]) == list ): # LHS is variable / expression
             # print("Here1-----")
             return sub_tree
     else:
-        if(type(condition[1][2]) == str or type(condition[1][2]) == list ): # LHS is variable / expression
+        if(type(condition[1][0][2]) == str or type(condition[1][0][2]) == list ): # LHS is variable / expression
             # print("Here2-----")
             return sub_tree
 
-    if(type(condition[2]) == list): # checking for declaration
-        ind = 2
-    else:
-        ind = 3
 
-    if(type(condition[ind][0]) == list or type(condition[ind][2]) == list or type(condition[ind][2]) == str): # LHS or RHS of bounds check is not an expression
-        # print("here")
+    if(type(condition[2][0][0]) == list or type(condition[2][0][2]) == list or type(condition[2][0][2]) == str): # LHS or RHS of bounds check is not an expression
+        # print("Here3-----")
         return sub_tree
 
     res=[]
     find_int(0,len(condition),condition,res)
     total = abs(res[1][0]-res[0][0])
-
-    if(type(condition[ind][2])==int ): # LHS of bounds check is an integer
+    print(res)
+    if(type(condition[2][0][2])==int ): # LHS of bounds check is an integer
         if(total <= 35): # full unrolling
             solve(0,len(sub_tree[2]),sub_tree[2],output) #remove nesting in sub_tree[2]
             unrolled = for_full_unroll(output, condition, operators[0][0])
@@ -87,15 +98,15 @@ def for_partial_unroll(block, condition, operator):
     unroll_count = int(count_unrolls*factor)
     if(rel_operator[0][0]=='<'): #readjusting the end value of loop after partial unrolling
         if(re.search('[+-]', operator)):
-            condition[2][res[1][-1]] = res[0][0] + (count_unrolls//unroll_count)*increment_val
+            condition[2][0][res[1][-1]] = res[0][0] + (count_unrolls//unroll_count)*increment_val
         else :
-            condition[2][res[1][-1]] = res[0][0] + (count_unrolls//unroll_count)**increment_val
+            condition[2][0][res[1][-1]] = res[0][0] + (count_unrolls//unroll_count)**increment_val
 
     else:
         if(re.search('[+-]', operator)):
-            condition[2][res[1][-1]] = res[0][0] - (count_unrolls//unroll_count)*increment_val
+            condition[2][0][res[1][-1]] = res[0][0] - (count_unrolls//unroll_count)*increment_val
         else :
-            condition[2][res[1][-1]] = res[0][0] - (count_unrolls//unroll_count)**increment_val
+            condition[2][0][res[1][-1]] = res[0][0] - (count_unrolls//unroll_count)**increment_val
     extra = count_unrolls%unroll_count
 
     return ['{']+block*unroll_count+['}'] + block*extra
@@ -133,7 +144,8 @@ def find_rel_operator(ind,end,lis, res=[]):
 def find_id(ind,end,lis, res=set()):
     if(ind==end):
         return
-    if(type(lis[ind])==str and re.search('[A-Za-z_][A-Za-z_0-9]*', lis[ind])):
+    type_list = ['int', 'float', 'void', 'double', 'char']
+    if(type(lis[ind])==str and re.search('[A-Za-z_][A-Za-z_0-9]*', lis[ind]) and lis[ind] not in type_list):
         res.add(lis[ind])
     elif(type(lis[ind]) is list):
         find_id(0,len(lis[ind]),lis[ind],res)

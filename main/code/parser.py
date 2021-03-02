@@ -69,11 +69,7 @@ def p_closed(p):
     elif(len(p)==4):
         if(p[1] == 'for'):
             print("for detected")
-            operators = []
-            find_operator(0, len(p[2][-2]), p[2][-2], operators)
-            ids = set()
-            find_id(0, len(p[2][-2]), p[2][-2], ids)
-            p[0] = for_unroll_validate([p[1], p[2], p[3]], operators, ids)
+            p[0] = for_unroll_validate([p[1], p[2], p[3]])
         else:
             print("while detected")
             p[0] = [p[1], p[2], p[3]]
@@ -89,13 +85,17 @@ def p_condition(p):
 
 def p_for_condition(p):
     '''
-    for_condition : L_PAREN declaration expr SEMICOLON expr R_PAREN
-                  | L_PAREN expr SEMICOLON expr SEMICOLON expr R_PAREN
+    for_condition : L_PAREN simple simple expr R_PAREN
+                  | L_PAREN simple simple R_PAREN
     '''
-    if(len(p) == 7):
-        p[0] = [p[1],p[2],p[3],p[4],p[5],p[6]]
-    else :
-        p[0] = [p[1],p[2],p[3],p[4],p[5],p[6],p[7]]
+    # if(len(p) == 7):
+    #     p[0] = [p[1],p[2],p[3],p[4],p[5],p[6]]
+    # else :
+    #     p[0] = [p[1],p[2],p[3],p[4],p[5],p[6],p[7]]
+    if(len(p) == 6):
+        p[0] = [p[1], p[2], p[3], p[4], p[5]]
+    else:
+        p[0] = [p[1], p[2], p[3], p[4]]
 
 def p_multi_declaration(p):
     '''

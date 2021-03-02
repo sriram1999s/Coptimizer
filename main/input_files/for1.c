@@ -1,7 +1,8 @@
 int main()
 {
   int a = 5;
-  for(int i = 0; i < 5;i++)
+  int i = 0;
+  for( i = 0;i<5;++i)
   {
     ++a;
   }
