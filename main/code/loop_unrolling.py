@@ -20,7 +20,7 @@ def for_unroll_validate(sub_tree):
     if(len(operators) > 0 and operators[0][0] not in operator_list): # checking for operators
         return sub_tree
 
-    print(condition)
+    # print(condition)
     if(condition[1]!=';' and condition[2]!=';' and len(condition) == 5): # full for condition
         return for_full_condition(sub_tree, operators, ids)
     else:
@@ -48,7 +48,7 @@ def for_full_condition(sub_tree, operators, ids):
     res=[]
     find_int(0,len(condition),condition,res)
     total = abs(res[1][0]-res[0][0])
-    print(res)
+    # print(res)
     if(type(condition[2][0][2])==int ): # LHS of bounds check is an integer
         if(total <= 35): # full unrolling
             solve(0,len(sub_tree[2]),sub_tree[2],output) #remove nesting in sub_tree[2]
