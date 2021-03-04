@@ -159,23 +159,23 @@ def for_full_condition(sub_tree, operators, ids):
         if(total <= 35):  # full unrolling
             # remove nesting in sub_tree[2]
             solve(0, len(sub_tree[2]), sub_tree[2], output)
-            unrolled = for_full_unroll(output, condition, operators[0][0])
+            unrolled = for_full_unroll(output, condition, operators[0][0],res)
             res = [unrolled]
         else:
             solve(0, len(sub_tree[2]), sub_tree[2], output)
-            unrolled = for_partial_unroll(output, condition, operators[0][0])
+            unrolled = for_partial_unroll(output, condition, operators[0][0],res)
             res = [sub_tree[0], sub_tree[1], unrolled]
     return res
 
 
-def for_full_unroll(block, condition, operator):
+def for_full_unroll(block, condition, operator, res):
     print("Unrolling full...\n")
     block.pop(0)
     block.pop()
     # print('operator : ', operator)
-    res = []
+    #res = []
     # to get start and end value of loop by scanning for integer
-    find_int(0, len(condition), condition, res)
+    #find_int(0, len(condition), condition, res)
     increment_val = 1
     if(len(res) == 3):
         increment_val = res[-1][0]
@@ -186,14 +186,14 @@ def for_full_unroll(block, condition, operator):
     return block * count_unrolls
 
 
-def for_partial_unroll(block, condition, operator):
+def for_partial_unroll(block, condition, operator,res):
     print("Unrolling partial...\n")
     block.pop(0)
     block.pop()
     # print(f"operator : {operator}")
-    res = []
+    #res = []
     increment_val = 1
-    find_int(0, len(condition), condition, res)
+    #find_int(0, len(condition), condition, res)
     # print(res)
     total = abs(res[0][0]-res[1][0])
     if(len(res) == 3):
