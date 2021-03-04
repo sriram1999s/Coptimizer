@@ -3,11 +3,8 @@ from ply.yacc import yacc
 
 from regenerator import *
 from loop_unrolling import *
+from symboltable import *   
 from collections import defaultdict
-
-level = '%'
-level_str = []
-symbol_table = defaultdict(lambda:'garbage')
 # --------------------------------parser------------------------------------ #
 
 # defining precedence of operators
