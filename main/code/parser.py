@@ -3,7 +3,7 @@ from ply.yacc import yacc
 
 from regenerator import *
 from loop_unrolling import *
-from symboltable import *   
+from symboltable import *
 from collections import defaultdict
 # --------------------------------parser------------------------------------ #
 
@@ -481,12 +481,5 @@ def p_NUM(p):
     '''
     p[0] = p[1]
 
-# def p_error(p):
-#
-#     # get formatted representation of stack
-#     stack_state_str = ' '.join([symbol.type for symbol in parser.symstack][1:])
-#
-#     print('Syntax error in input! Parser State:{} {} . {}'
-#           .format(parser.state,
-#                   stack_state_str,
-#                   p))
+def p_error(p):
+    print(f"an error occurred ::: token {p} , char {p.value}")
