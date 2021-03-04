@@ -65,10 +65,10 @@ def p_closed(p):
         p[0] = p[1]
     elif(len(p)==4):
         if(p[1] == 'for'):
-            print("for detected")
+            print("for detected\n")
             p[0] = for_unroll_validate([p[1], p[2], p[3]])
         else:
-            print("while detected")
+            print("while detected\n")
             p[0] = [p[1], p[2], p[3]]
     else:
         p[0] = [p[1], [p[2], p[3]], p[4], p[5]]

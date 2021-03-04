@@ -9,13 +9,19 @@ def for_unroll_validate(sub_tree):
     condition = sub_tree[1]
     operators = []
     find_operator(0, len(condition[-2]), condition[-2], operators)
-    ids = set()
+    ids = dict()
     find_id(0, len(condition), condition, ids)
-
+    loop_var = list(ids.keys())[0]
     # print("operators : ", operators)
-    # print("ids : ", ids)
-
-    if(len(ids) > 2):  # more than 1 loop variable in condition, short circuit return ;;jugaad;;
+    solve_substi_id(0,len(condition[1]),condition[1],loop_var)
+    solve_expr(0,len(condition),condition)
+    
+    print("condition: ", condition,"\n")
+    
+    ids=dict()
+    find_id(0, len(condition), condition, ids)
+    #print("ids : ",ids)
+    if(len(ids) > 1):  # more than 1 loop variable in condition, short circuit return ;;jugaad;;
         return sub_tree
 
     operator_list = ['++', '--', '/', '*', '+', '-', '+=', '-=', '*=', '/=']
@@ -23,7 +29,6 @@ def for_unroll_validate(sub_tree):
     if(len(operators) > 0 and operators[0][0] not in operator_list):
         return sub_tree
 
-    print(condition)
     if(condition[1] != ';' and condition[2] != ';' and len(condition) == 5):  # full for condition
         return for_full_condition(sub_tree, operators, ids)
     elif(condition[2] == ';'):  # bounds check missing
@@ -33,13 +38,78 @@ def for_unroll_validate(sub_tree):
         return sub_tree
 
 
-def substi_id(var):
-    global level_str
-    global symbol_table
-    search_str = var + '_'.join(level_str)
-    if(type(symbol_table[search_str]) == int):
-        return symbol_table[search_str]
-    return 'garbage'
+# def substi_id(var):
+#     global level_str
+#     global symbol_table
+#     search_str = var + '_'.join(level_str)
+#     if(type(symbol_table[search_str]) == int):
+#         return symbol_table[search_str]
+#     return 'garbage'
+
+def check_type(l):
+    for i in l:
+        if(type(i) == list):
+            return 0
+    return 1
+    
+
+def solve_substi_id(i,n,l,loop_var):
+    if(i==n):
+        return
+    if(type(l)==list and (len(l)==3 or len(l)==5) and check_type(l)):
+        walk = [0,2]
+        if(len(l)==5):
+            walk = [1,3] 
+        for j in walk:
+            if(type(l[j])==str and l[j]!=loop_var):
+                search_str = l[j] + '_'.join(level_str)
+                if(type(symbol_table[search_str]) == int):
+                    l[j] = symbol_table[search_str]	
+        
+    if(type(l[i])==list and (len(l[i])==3 or len(l[i])==5) and check_type(l[i])):
+        walk = [0,2]
+        if(len(l[i])==5):
+            walk = [1,3] 
+        for j in walk:
+            if(type(l[i][j])==str and l[i][j]!=loop_var):
+                search_str = l[i][j] + '_'.join(level_str)
+                if(type(symbol_table[search_str]) == int):
+                    l[i][j] = symbol_table[search_str]	
+    if(type(l[i])==list):
+        for j in l:
+            if(type(j)==list):
+                solve_substi_id(0,len(j),j,loop_var)
+    solve_substi_id(i+1,n,l,loop_var)
+
+def solve_expr(i,n,l):
+    if(i==n):
+        return
+    if(type(l[i])==list and len(l[i])==3 and type(l[i][0])==int and type(l[i][1])==str and type(l[i][2])==int):
+        if(l[i][1]=='+'):
+            l[i] = l[i][0] + l[i][2]
+        elif(l[i][1]=='-'):
+            l[i] = l[i][0] - l[i][2]
+        elif(l[i][1]=='*'):
+            l[i] = l[i][0] * l[i][2]
+        elif(l[i][1]=='/'):
+            l[i] = l[i][0] / l[i][2]
+        elif(l[i][1]=='&'):
+            l[i] = l[i][0] & l[i][2]
+        elif(l[i][1]=='|'):
+            l[i] = l[i][0] | l[i][2]
+        elif(l[i][1]=='^'):
+            l[i] = l[i][0] ^ l[i][2]
+        elif(l[i][1]=='<<'):
+            l[i] = l[i][0] << l[i][2]
+        elif(l[i][1]=='>>'):
+            l[i] = l[i][0] >> l[i][2]
+            
+    if(type(l[i])==list):
+        for j in l:
+            if(type(j)==list):
+                solve_expr(0,len(j),j)
+    solve_expr(i+1,n,l)
+
 
 
 def for_full_condition(sub_tree, operators, ids):
@@ -47,26 +117,26 @@ def for_full_condition(sub_tree, operators, ids):
     output = []
     type_list = ['int', 'float', 'void', 'double', 'char']
 
-    if(type(condition[1][0]) != list):  # checking for declaration
-        if(type(condition[1][3]) == str):  # LHS is variable / expression
-            # print("Here1-----")
-            temp = substi_id(condition[1][3])
-            if(temp != 'garbage'):
-                condition[1][3] = temp
-            else:
-                return sub_tree
-        elif(type(condition[1][3]) == list):
-            return sub_tree
-    else:
-        if(type(condition[1][0][2]) == str):  # LHS is variable / expression
-            # print("Here2-----")
-            temp = substi_id(condition[1][0][2])
-            if(temp != 'garbage'):
-                condition[1][0][2] = temp
-            else:
-                return sub_tree
-        elif(type(condition[1][0][2]) == list):
-            return sub_tree
+    # if(type(condition[1][0]) != list):  # checking for declaration
+    #     if(type(condition[1][3]) == str):  # LHS is variable / expression
+    #         # print("Here1-----")
+    #         temp = substi_id(condition[1][3])
+    #         if(temp != 'garbage'):
+    #             condition[1][3] = temp
+    #         else:
+    #             return sub_tree
+    #     elif(type(condition[1][3]) == list):
+    #         return sub_tree
+    # else:
+    #     if(type(condition[1][0][2]) == str):  # LHS is variable / expression
+    #         # print("Here2-----")
+    #         temp = substi_id(condition[1][0][2])
+    #         if(temp != 'garbage'):
+    #             condition[1][0][2] = temp
+    #         else:
+    #             return sub_tree
+    #     elif(type(condition[1][0][2]) == list):
+    #         return sub_tree
 
     # LHS or RHS of bounds check is not an expression
     if(type(condition[2][0][0]) == list or type(condition[2][0][2]) == list):
@@ -84,7 +154,7 @@ def for_full_condition(sub_tree, operators, ids):
     res = []
     find_int(0, len(condition), condition, res)
     total = abs(res[1][0]-res[0][0])
-    # print(res)
+    #print(res)
     if(type(condition[2][0][2]) == int):  # LHS of bounds check is an integer
         if(total <= 35):  # full unrolling
             # remove nesting in sub_tree[2]
@@ -99,7 +169,7 @@ def for_full_condition(sub_tree, operators, ids):
 
 
 def for_full_unroll(block, condition, operator):
-    print("Unrolling full...")
+    print("Unrolling full...\n")
     block.pop(0)
     block.pop()
     # print('operator : ', operator)
@@ -117,7 +187,7 @@ def for_full_unroll(block, condition, operator):
 
 
 def for_partial_unroll(block, condition, operator):
-    print("Unrolling partial...")
+    print("Unrolling partial...\n")
     block.pop(0)
     block.pop()
     # print(f"operator : {operator}")
@@ -186,12 +256,12 @@ def find_rel_operator(ind, end, lis, res=[]):
     find_rel_operator(ind+1, end, lis, res)
 
 
-def find_id(ind, end, lis, res=set()):
+def find_id(ind, end, lis, res=dict()):
     if(ind == end):
         return
     type_list = ['int', 'float', 'void', 'double', 'char']
     if(type(lis[ind]) == str and re.search('[A-Za-z_][A-Za-z_0-9]*', lis[ind]) and lis[ind] not in type_list):
-        res.add(lis[ind])
+        res[lis[ind]]=0
     elif(type(lis[ind]) is list):
         find_id(0, len(lis[ind]), lis[ind], res)
     find_id(ind+1, end, lis, res)
