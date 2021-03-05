@@ -35,7 +35,7 @@ statements = ['FOR', 'WHILE', 'IF', 'ELSE']
 
 unary = ['NOT']
 
-extra = ['ID', 'TYPE']
+extra = ['ID', 'TYPE', 'STRING']
 
 jump = ['RETURN']
 
@@ -145,6 +145,12 @@ def t_FLOAT_NUM(t):
 def t_INT_NUM(t):
     r'-?\d+'
     t.value = int(t.value)
+    return t
+
+# string
+
+def t_STRING(t):
+    r'\".*?\"'
     return t
 
 # types

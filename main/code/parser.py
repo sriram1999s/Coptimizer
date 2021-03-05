@@ -85,10 +85,6 @@ def p_for_condition(p):
     for_condition : L_PAREN simple simple expr R_PAREN
                   | L_PAREN simple simple R_PAREN
     '''
-    # if(len(p) == 7):
-    #     p[0] = [p[1],p[2],p[3],p[4],p[5],p[6]]
-    # else :
-    #     p[0] = [p[1],p[2],p[3],p[4],p[5],p[6],p[7]]
     if(len(p) == 6):
         p[0] = [p[1], p[2], p[3], p[4], p[5]]
     else:
@@ -97,16 +93,30 @@ def p_for_condition(p):
 def p_multi_declaration(p):
     '''
     multi_declaration : multi_declaration ID COMMA
-    		      | multi_declaration ID ASSIGN expr COMMA
-		      | ID COMMA
-    		      | ID ASSIGN expr COMMA
+                      | multi_declaration MULTIPLY ID COMMA
+    		          | multi_declaration ID ASSIGN expr COMMA
+                      | multi_declaration MULTIPLY ID ASSIGN expr COMMA
+		              | ID COMMA
+    		          | ID ASSIGN expr COMMA
+                      | MULTIPLY ID COMMA
+                      | MULTIPLY ID ASSIGN expr COMMA
     '''
     if(len(p)==3):
         p[0]=[p[1],p[2]]
     elif(len(p)==4):
-        p[0]=p[1]+[p[2],p[3]]
+        if(p[1] == '*'):
+            p[0]=[p[1],p[2],p[3]]
+        else:
+            p[0]=p[1]+[p[2],p[3]]
+    elif(len(p)==5):
+        p[0]=p[1]+[p[2],p[3],p[4]]
     elif(len(p)==6):
-        p[0]=p[1]+[p[2],p[3],p[4],p[5]]
+        if(p[1] == '*'):
+            p[0] = [p[1],p[2],p[3],p[4],p[5]]
+        else:
+            p[0]=p[1]+[p[2],p[3],p[4],p[5]]
+    elif(len(p)==7):
+        p[0]=p[1]+[p[2],p[3],p[4],p[5],p[6]]
     else:
         p[0]=[p[1],p[2],p[3],p[4]]
 
@@ -114,18 +124,25 @@ def p_multi_declaration(p):
 def p_stop(p):
      '''
      stop : ID SEMICOLON
+          | MULTIPLY ID SEMICOLON
 	      | ID ASSIGN expr SEMICOLON
+          | MULTIPLY ID ASSIGN expr SEMICOLON
      '''
      if(len(p)==3):
          p[0] = [p[1],p[2]]
-     else:
+     elif(len(p)==4):
+         p[0] = [p[1], p[2], p[3]]
+     elif(len(p)==5):
          p[0] = [p[1],p[2],p[3],p[4]]
-
+     else:
+         p[0] = [p[1],p[2],p[3],p[4],p[5]]
 
 def p_declaration(p):
     '''
     declaration : TYPE ID SEMICOLON
+                | TYPE MULTIPLY ID SEMICOLON
                 | TYPE ID ASSIGN expr SEMICOLON
+                | TYPE MULTIPLY ID ASSIGN expr SEMICOLON
                 | TYPE ID ASSIGN function_call
 		        | TYPE multi_declaration stop
     '''
@@ -145,6 +162,8 @@ def p_declaration(p):
         p[0] = [p[1], p[2], p[3], p[4]]
     if(len(p)==6):
         p[0] = [p[1], p[2], p[3], p[4], p[5]]
+    if(len(p)==7):
+        p[0] = [p[1], p[2], p[3], p[4], p[5], p[6]]
 
 def p_block(p):
     '''
@@ -168,7 +187,6 @@ def p_right_flower(p):
     '''
     global level
     global level_str
-    # level = int(level_str.pop()) + 1
     level_str.pop()
     p[0] = p[1]
 
@@ -233,14 +251,23 @@ def p_end_call_params(p):
 def p_yes_dec_params(p):
     '''
     yes_dec_params : yes_dec_params TYPE ID COMMA
-    		   | yes_dec_params TYPE COMMA
-		   | yes_dec_params TYPE ID ASSIGN NUM COMMA
+                   | yes_dec_params TYPE MULTIPLY ID COMMA
+    		       | yes_dec_params TYPE COMMA
+                   | yes_dec_params TYPE MULTIPLY COMMA
+		           | yes_dec_params TYPE ID ASSIGN NUM COMMA
                    | TYPE ID COMMA
-   		   | TYPE COMMA
-		   | TYPE ID ASSIGN NUM COMMA
+                   | TYPE MULTIPLY ID COMMA
+   		           | TYPE COMMA
+                   | TYPE MULTIPLY COMMA
+		           | TYPE ID ASSIGN NUM COMMA
     '''
     if (len(p) == 5):
-        p[0] = p[1] + [p[2], p[3], p[4]]
+        if(type(p[1])==str):
+            p[0] = [p[1],p[2],p[3],p[4]]
+        else:
+            p[0] = p[1] + [p[2], p[3], p[4]]
+    elif(len(p) == 6):
+        p[0] = p[1] + [p[2], p[3], p[4], p[5]]
     elif (len(p) == 4):
         p[0] = [p[1], p[2],p[3]]
     elif (len(p) == 7):
@@ -254,11 +281,15 @@ def p_yes_dec_params(p):
 def p_end_dec_params(p):
     '''
     end_dec_params : TYPE ID
-		   | TYPE ID ASSIGN NUM
-		   | TYPE
+		           | TYPE ID ASSIGN NUM
+		           | TYPE
+                   | TYPE MULTIPLY ID
+                   | TYPE MULTIPLY
     '''
     if(len(p)==3):
         p[0] = [p[1], p[2]]
+    elif(len(p) == 4):
+        p[0] = [p[1], p[2], p[3]]
     elif(len(p)==5):
         p[0] = [p[1],p[2],p[3],p[4]]
     else:
@@ -268,8 +299,8 @@ def p_end_dec_params(p):
 def p_dec_params(p):
     '''
     dec_params : empty
-	       | yes_dec_params end_dec_params
-	       | end_dec_params
+	           | yes_dec_params end_dec_params
+	           | end_dec_params
     '''
     if (len(p) == 3):
         p[0] = [p[1],p[2]]
@@ -464,6 +495,9 @@ def p_brace(p):
            | brace PLUS_PLUS
            | brace MINUS_MINUS
            | NUM
+           | STRING
+           | MULTIPLY ID
+           | BIT_AND ID
            | ID
     '''
     if(len(p)==4):
@@ -477,7 +511,7 @@ def p_brace(p):
 def p_NUM(p):
     '''
     NUM : INT_NUM
-	| FLOAT_NUM
+	    | FLOAT_NUM
     '''
     p[0] = p[1]
 

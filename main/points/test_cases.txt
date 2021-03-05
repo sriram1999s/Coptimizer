@@ -79,7 +79,9 @@ test 20 - 24 : symbol tab test cases
 input file : symbol20.c - symbol24.c
 expected output : correct updation
 
+pointer1-4.c : pointer grammar test cases
 
+string1-4.c : string grammar test cases
 
 test 30 : partial unrolling base
 input file : for30.c
@@ -113,4 +115,12 @@ expected output: YES unrolling
 
 test 37 : for loop in block
 input file : for37.c
+expected output : YES unrolling
+
+test 38 : declaration with variable, bounds check with constant expression
+input file : for38.c
+expected output : YES unrolling
+
+test 39 : declaration with variable expression, bounds check with constant expression
+input file : for39.c
 expected output : YES unrolling
