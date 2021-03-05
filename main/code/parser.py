@@ -151,7 +151,22 @@ def p_declaration(p):
     global symbol_table
 
     if(type(p[2])==str and p[3] == '='):
-        symbol_table[p[2] + '_'.join(level_str)] = p[4]
+        search_string = p[2] + '_'.join(level_str) 
+        if(type(p[4])==int):
+            symbol_table[search_string] = p[4]
+        elif(type(p[4])==str and re.search(r'[A-Za-z_][A-Za-z_0-9]*',p[4])):
+            dynamic_string = p[4] + '_'.join(level_str)
+            copy_level_str = level_str.copy()
+            while(symbol_table[dynamic_string] == 'garbage' and len(copy_level_str)>1):
+                copy_level_str.pop()
+                dynamic_string = p[4] + '_'.join(copy_level_str)
+            if(symbol_table[dynamic_string]!='garbage'):
+                symbol_table[search_string] = symbol_table[dynamic_string]
+            else:
+                symbol_table[search_string] = p[4]
+        else:
+            symbol_table[search_string] = p[4]
+
 
     if(type(p[2])==str and p[3] == ';'):
         symbol_table[p[2] + '_'.join(level_str)] = 'declared'
@@ -337,7 +352,18 @@ def p_expr(p):
                 copy_level_str.pop()
                 search_string = p[1] + "_".join(copy_level_str)
                 # print("search_string : ", search_string)
-        symbol_table[search_string] = p[3]
+        if(type(p[3])==str and re.search(r'[A-Za-z_][A-Za-z_0-9]*',p[3])):
+            dynamic_string = p[3] + '_'.join(level_str)
+            copy_level_str = level_str.copy()
+            while(symbol_table[dynamic_string] == 'garbage' and len(copy_level_str)>1):
+                copy_level_str.pop()
+                dynamic_string = p[3] + '_'.join(copy_level_str)
+            if(symbol_table[dynamic_string]!='garbage'):
+                symbol_table[search_string] = symbol_table[dynamic_string]
+            else:
+                symbol_table[search_string] = p[3]
+        else:
+            symbol_table[search_string] = p[3]
 
     if(len(p)==4):
         p[0] = [p[1], p[2], p[3]]
