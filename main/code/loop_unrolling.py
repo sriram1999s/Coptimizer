@@ -10,7 +10,7 @@ def for_unroll_validate(sub_tree):
 
     condition = sub_tree[1]
     #print("condition[2:]: ", condition[2:])
-    print("sub_tree[2]",sub_tree[2])
+    #print("sub_tree[2]",sub_tree[2])
     operators = []
     find_operator(0, len(condition[-2]), condition[-2], operators)
     ids = dict()
@@ -21,10 +21,10 @@ def for_unroll_validate(sub_tree):
     find_id(0,len(sub_tree[2]),sub_tree[2],loop_var_dict)
     loop_var_list = list(loop_var_dict.keys())+[loop_var]
 
-    print("loop_var_list: ",loop_var_list)
-    print("ids.keys(): ",list(ids.keys()))
+    #print("loop_var_list: ",loop_var_list)
+    #print("ids.keys(): ",list(ids.keys()))
     intersection = list(set(list(ids.keys()))&set(loop_var_list))
-    print("intersection: ",intersection)
+    #print("intersection: ",intersection)
 
     if(len(intersection)>1):
         return sub_tree
@@ -272,9 +272,7 @@ def for_variable_unroll(sub_tree,operator,ids):
     upper_limit = m1.group(2)
     if(re.search('^[0-9]*$',upper_limit)):
         upper_limit = int(upper_limit)
-    #print("lower_limit: ",lower_limit,type(lower_limit))
-    #print("upper_limit: ",upper_limit,type(upper_limit))
-    
+        
     increment_val = '1'
     #print(''.join(increment_str))
     m2 = re.search('=(.*)',''.join(increment_str))
@@ -282,43 +280,36 @@ def for_variable_unroll(sub_tree,operator,ids):
         print(m2.groups())
         increment_val=m2.group(1)
 
-    #print("increment val:",increment_val)
-        
-    total = '('+str(upper_limit)+ '-' + str(lower_limit) +')'
-    total = '('+total +'/' + str(increment_val) + '+' + total + '%' +str(increment_val) + ')'
-    range = total
-    if(m1.group(1) == '>'):
-        total =  '('+str(lower_limit)+ '-' + str(upper_limit) +')' 
-        total = total + '/' + str(increment_val) + '+'
-        total = '(' + total + '('+str(lower_limit)+ '-' + str(upper_limit) +')' + '%' + str(increment_val) + ')'
+    print("increment val:",increment_val)
 
-    total_by_2 = '(' + total + ')' + '/' + '2'
+    if(m1.group(1)=='>'):
+        lower_limit,upper_limit = upper_limit,lower_limit
 
-    total_by_2_by_2 = '(' + total_by_2 + ')' + '/' + '2'
+    print("lower_limit: ",lower_limit,type(lower_limit))
+    print("upper_limit: ",upper_limit,type(upper_limit))
 
-    total_minus_total_by_2 ='(' + total + '-' + '(' + total_by_2_by_2 + ')' + '*2' + ')'
-
-        
-    #print("total: ",total)
-    #print("total_by_2: ",total_by_2)
-
-    if(m1.group(1) == '>'):
-        modified_upper_limit = str(lower_limit) + '-' + total_minus_total_by_2 + '*' + str(increment_val)
-        replace_string(0,len(condition[2]),condition[2],upper_limit,modified_upper_limit)
-    elif(m1.group(1) == '<'):
-        modified_upper_limit = str(lower_limit) + '+' + total_minus_total_by_2 + '*' + str(increment_val)
-        replace_string(0,len(condition[2]),condition[2],upper_limit,modified_upper_limit)
-
-    #print("modified upper limit: ",modified_upper_limit)
-    #print("modified condition : ",condition)
-
-    block = []
-    solve(0, len(sub_tree[2]), sub_tree[2], block)
-
-    extra_for_loop = ['for(int i=0;i<',total_by_2_by_2,';i++)','{',block*2,'}']
+    lower_limit = '(' + str(lower_limit) + ')'
     
-    return extra_for_loop+sub_tree
+    modified_upper_limit_1 = '('+'(' + str(upper_limit) + '-' + str(lower_limit) + ')' + '/' + str(increment_val) + ')'
+    modified_upper_limit_2 = '(' + '('+'(' + str(upper_limit) + '-' + str(lower_limit) + ')' + '%' + str(increment_val) + ')' + '!=0' +')'
+    modified_upper_limit = '(' + modified_upper_limit_1 + '+' + modified_upper_limit_2 + ')'
+    print("modified_upper_limit: ",modified_upper_limit)
 
+    sub_from_upper = '(' + modified_upper_limit + '%' + '2' + ')'
+
+    effective_upper_limit  = '(' + modified_upper_limit + '-' + sub_from_upper + ')'+ '/' +'2'
+    print("effective_upper_limit",effective_upper_limit)
+
+    body = []
+    solve(0,len(sub_tree[2]),sub_tree[2],body)
+
+    body  = ''.join(body)
+    print("body: ",body)
+
+    new_for_loop = f'for(int i = 0 ; i < {effective_upper_limit} ;  i++)' + '{' + body*2 + '}'
+    remaining = f'if({sub_from_upper})' + '{' + body + '}'
+    return new_for_loop + remaining
+    
 
 '''replace_string() ------> given a pat and target substi for target whenever pat is matched in nested iterables'''
 def replace_string(i,n,l,pat,target):
