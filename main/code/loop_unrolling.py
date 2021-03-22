@@ -4,25 +4,45 @@ from symboltable import *
 import re
 
 
+'''checks whether unrolling is possible and calls appropriate fxn'''
+
 def for_unroll_validate(sub_tree):
 
     condition = sub_tree[1]
+    #print("condition[2:]: ", condition[2:])
+    print("sub_tree[2]",sub_tree[2])
     operators = []
     find_operator(0, len(condition[-2]), condition[-2], operators)
     ids = dict()
-    find_id(0, len(condition), condition, ids)
+    find_id(0, len(condition[2:]), condition[2:], ids)
     loop_var = list(ids.keys())[0]
+
+    loop_var_dict = dict()
+    find_id(0,len(sub_tree[2]),sub_tree[2],loop_var_dict)
+    loop_var_list = list(loop_var_dict.keys())+[loop_var]
+
+    print("loop_var_list: ",loop_var_list)
+    print("ids.keys(): ",list(ids.keys()))
+    intersection = list(set(list(ids.keys()))&set(loop_var_list))
+    print("intersection: ",intersection)
+
+    if(len(intersection)>1):
+        return sub_tree
+
+    res = []
+    find_int(0, len(condition), condition, res)
     # print("operators : ", operators)
-    solve_substi_id(0,len(condition[1]),condition[1],loop_var)
+    solve_substi_id(0,len(condition),condition,intersection)
     solve_expr(0,len(condition),condition)
     
     print("condition: ", condition,"\n")
-    
+
     ids=dict()
     find_id(0, len(condition), condition, ids)
     #print("ids : ",ids)
-    if(len(ids) > 1):  # more than 1 loop variable in condition, short circuit return ;;jugaad;;
-        return sub_tree
+    if(len(ids) > 1):# more than 1 loop variable in condition, short circuit return
+        return for_variable_unroll(sub_tree,operators,ids)
+        #return sub_tree
 
     operator_list = ['++', '--', '/', '*', '+', '-', '+=', '-=', '*=', '/=']
     # checking for operators
@@ -46,13 +66,14 @@ def for_unroll_validate(sub_tree):
 #         return symbol_table[search_str]
 #     return 'garbage'
 
+'''check whether type of variable is list (helper fxn)''' 
 def check_type(l):
     for i in l:
         if(type(i) == list):
             return 0
     return 1
     
-
+''' substi values for variables from symbl table '''
 def solve_substi_id(i,n,l,loop_var):
     if(i==n):
         return
@@ -61,7 +82,7 @@ def solve_substi_id(i,n,l,loop_var):
         if(len(l)==5):
             walk = [1,3] 
         for j in walk:
-            if(type(l[j])==str and l[j]!=loop_var):
+            if(type(l[j])==str and l[j] not in loop_var):
                 search_str = l[j] + '_'.join(level_str)
                 if(type(symbol_table[search_str]) == int):
                     l[j] = symbol_table[search_str]	
@@ -71,7 +92,7 @@ def solve_substi_id(i,n,l,loop_var):
         if(len(l[i])==5):
             walk = [1,3] 
         for j in walk:
-            if(type(l[i][j])==str and l[i][j]!=loop_var):
+            if(type(l[i][j])==str and l[i][j] not in loop_var):
                 search_str = l[i][j] + '_'.join(level_str)
                 if(type(symbol_table[search_str]) == int):
                     l[i][j] = symbol_table[search_str]	
@@ -81,6 +102,7 @@ def solve_substi_id(i,n,l,loop_var):
                 solve_substi_id(0,len(j),j,loop_var)
     solve_substi_id(i+1,n,l,loop_var)
 
+''' solves arithmetic expressions if values available at compile time '''
 def solve_expr(i,n,l):
     if(i==n):
         return
@@ -111,7 +133,7 @@ def solve_expr(i,n,l):
     solve_expr(i+1,n,l)
 
 
-
+''' checking for full_unrolling() '''
 def for_full_condition(sub_tree, operators, ids):
     condition = sub_tree[1]
     output = []
@@ -167,7 +189,7 @@ def for_full_condition(sub_tree, operators, ids):
             res = [sub_tree[0], sub_tree[1], unrolled]
     return res
 
-
+''' full unrolling '''
 def for_full_unroll(block, condition, operator, res):
     print("Unrolling full...\n")
     block.pop(0)
@@ -186,6 +208,7 @@ def for_full_unroll(block, condition, operator, res):
     return block * count_unrolls
 
 
+''' partial unrolling'''
 def for_partial_unroll(block, condition, operator,res):
     print("Unrolling partial...\n")
     block.pop(0)
@@ -226,6 +249,89 @@ def for_partial_unroll(block, condition, operator,res):
     return ['{']+block*unroll_count+['}'] + block*extra
 
 
+# to be changed
+# loop : 0 -> (n-(n%2))
+# if(n%2):
+#     unroll remaining
+'''for_variable_unroll() ------> when the limits are decided at runtime'''
+def for_variable_unroll(sub_tree,operator,ids):
+    if(operator[0][0] in ['/=','*=','*','/']):
+        return sub_tree
+    condition = sub_tree[1]
+    lower_limit_str = []
+    upper_limit_str = []
+    increment_str = []
+    solve(0,len(condition[1]),condition[1],lower_limit_str)
+    solve(0,len(condition[2]),condition[2],upper_limit_str)
+    solve(0,len(condition[3]),condition[3],increment_str)
+    m = re.search('=(.*?);',''.join(lower_limit_str))
+    lower_limit = m.group(1)
+    if(re.search('^[0-9]*$',lower_limit)):
+        lower_limit = int(lower_limit)
+    m1 = re.search('([<>])(.*?);',''.join(upper_limit_str))
+    upper_limit = m1.group(2)
+    if(re.search('^[0-9]*$',upper_limit)):
+        upper_limit = int(upper_limit)
+    #print("lower_limit: ",lower_limit,type(lower_limit))
+    #print("upper_limit: ",upper_limit,type(upper_limit))
+    
+    increment_val = '1'
+    #print(''.join(increment_str))
+    m2 = re.search('=(.*)',''.join(increment_str))
+    if(m2):
+        print(m2.groups())
+        increment_val=m2.group(1)
+
+    #print("increment val:",increment_val)
+        
+    total = '('+str(upper_limit)+ '-' + str(lower_limit) +')'
+    total = '('+total +'/' + str(increment_val) + '+' + total + '%' +str(increment_val) + ')'
+    range = total
+    if(m1.group(1) == '>'):
+        total =  '('+str(lower_limit)+ '-' + str(upper_limit) +')' 
+        total = total + '/' + str(increment_val) + '+'
+        total = '(' + total + '('+str(lower_limit)+ '-' + str(upper_limit) +')' + '%' + str(increment_val) + ')'
+
+    total_by_2 = '(' + total + ')' + '/' + '2'
+
+    total_by_2_by_2 = '(' + total_by_2 + ')' + '/' + '2'
+
+    total_minus_total_by_2 ='(' + total + '-' + '(' + total_by_2_by_2 + ')' + '*2' + ')'
+
+        
+    #print("total: ",total)
+    #print("total_by_2: ",total_by_2)
+
+    if(m1.group(1) == '>'):
+        modified_upper_limit = str(lower_limit) + '-' + total_minus_total_by_2 + '*' + str(increment_val)
+        replace_string(0,len(condition[2]),condition[2],upper_limit,modified_upper_limit)
+    elif(m1.group(1) == '<'):
+        modified_upper_limit = str(lower_limit) + '+' + total_minus_total_by_2 + '*' + str(increment_val)
+        replace_string(0,len(condition[2]),condition[2],upper_limit,modified_upper_limit)
+
+    #print("modified upper limit: ",modified_upper_limit)
+    #print("modified condition : ",condition)
+
+    block = []
+    solve(0, len(sub_tree[2]), sub_tree[2], block)
+
+    extra_for_loop = ['for(int i=0;i<',total_by_2_by_2,';i++)','{',block*2,'}']
+    
+    return extra_for_loop+sub_tree
+
+
+'''replace_string() ------> given a pat and target substi for target whenever pat is matched in nested iterables'''
+def replace_string(i,n,l,pat,target):
+    if(i==n):
+        return
+    if(l[i]==pat):
+        l[i]=target
+    if(type(l[i])==list):
+        replace_string(0,len(l[i]),l[i],pat,target)
+    replace_string(i+1,n,l,pat,target)
+    
+
+'''find_int()-----> scans for Integers in loop condition'''
 def find_int(ind, end, lis, res=[]):
     if(ind == end):
         return
@@ -236,6 +342,8 @@ def find_int(ind, end, lis, res=[]):
     find_int(ind+1, end, lis, res)
 
 
+
+'''find_operator()-----> scans for binary operators in loop condition'''     
 def find_operator(ind, end, lis, res=[]):
     if(ind == end):
         return
@@ -245,7 +353,7 @@ def find_operator(ind, end, lis, res=[]):
         find_operator(0, len(lis[ind]), lis[ind], res)
     find_operator(ind+1, end, lis, res)
 
-
+'''find_rel_operator()-----> scans for rel operator in loop condition'''
 def find_rel_operator(ind, end, lis, res=[]):
     if(ind == end):
         return
@@ -255,7 +363,7 @@ def find_rel_operator(ind, end, lis, res=[]):
         find_rel_operator(0, len(lis[ind]), lis[ind], res)
     find_rel_operator(ind+1, end, lis, res)
 
-
+'''find_id()-----> scans for variables in loop condition'''
 def find_id(ind, end, lis, res=dict()):
     if(ind == end):
         return
@@ -267,6 +375,7 @@ def find_id(ind, end, lis, res=dict()):
     find_id(ind+1, end, lis, res)
 
 
+'''custom log fxn'''
 def my_log(start, end, factor):
     mi = min(start, end)
     mx = max(start, end)

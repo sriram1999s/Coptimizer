@@ -208,6 +208,7 @@ def p_right_flower(p):
 def p_simple(p):
     '''
     simple : expr SEMICOLON
+	   | header
            | declaration
            | SEMICOLON
 	       | function
@@ -222,6 +223,13 @@ def p_simple(p):
         p[0] = [p[1],p[2],p[3]]
     else:
         p[0] = p[1]
+
+def p_header(p):
+    '''
+    header : HASH INCLUDE STRING
+	   | HASH INCLUDE HEADER_FILE
+    '''
+    p[0] = [p[1],p[2],p[3]+'\n']
 
 def p_empty(p):
     'empty :'

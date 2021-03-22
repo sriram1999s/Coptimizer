@@ -35,7 +35,7 @@ statements = ['FOR', 'WHILE', 'IF', 'ELSE']
 
 unary = ['NOT']
 
-extra = ['ID', 'TYPE', 'STRING']
+extra = ['ID', 'TYPE', 'STRING' , 'HASH' , 'DOT','INCLUDE','HEADER_FILE']
 
 jump = ['RETURN']
 
@@ -79,6 +79,8 @@ t_L_FLOWBRACE = r'\{'
 t_R_FLOWBRACE = r'\}' # defined later
 t_SEMICOLON = r';'
 t_COMMA = r','
+t_HASH = r'\#'
+t_DOT = r'\.'
 
 # unary
 
@@ -159,10 +161,22 @@ def t_TYPE(t):
     r'int|float|void|double|bool|char'
     return t
 
+#include
+
+def t_INCLUDE(t):
+    r'include'
+    return t
+
 # identifiers
 
 def t_ID(t):
     r'[a-zA-Z_][a-zA-Z_0-9]*'
+    return t
+
+# HEADER_FILE
+
+def t_HEADER_FILE(t):
+    r'<.+?\..>'
     return t
 
 # error
