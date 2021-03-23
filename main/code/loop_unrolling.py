@@ -8,6 +8,9 @@ import re
 
 def for_unroll_validate(sub_tree):
 
+    global level_str
+    global symbol_table
+
     condition = sub_tree[1]
     #print("condition[2:]: ", condition[2:])
     #print("sub_tree[2]",sub_tree[2])
@@ -21,6 +24,18 @@ def for_unroll_validate(sub_tree):
     find_id(0,len(sub_tree[2]),sub_tree[2],loop_var_dict)
     loop_var_list = list(loop_var_dict.keys())+[loop_var]
 
+    #checking for pointers in loop body and adding what they refer to before taking intersection
+    pointers = []
+    for i in loop_var_list:
+        search_string = '*' + i + ''.join(level_str)
+        copy_level_str = level_str.copy()
+        while(symbol_table[search_string]=='garbage' and len(copy_level_str)>1):
+            copy_level_str.pop()
+            search_string = '*' + i + ''.join(copy_level_str)
+        if(symbol_table[search_string]!='garbage'):
+            pointers.append(symbol_table[search_string])
+                                 
+    loop_var_list+=pointers
     #print("loop_var_list: ",loop_var_list)
     #print("ids.keys(): ",list(ids.keys()))
     intersection = list(set(list(ids.keys()))&set(loop_var_list))
