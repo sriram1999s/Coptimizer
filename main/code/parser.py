@@ -50,8 +50,11 @@ def p_open(p):
     '''
     if(len(p)==4):
         p[0] = [p[1], p[2], p[3]]
+        lookahead(0, len(p[3]), p[3])
     else:
         p[0] = [p[1], [p[2], p[3]], p[4], p[5]]
+        lookahead(0, len(p[3]), p[3])
+        lookahead(0, len(p[5]), p[5])
 
 def p_closed(p):
     '''
@@ -67,11 +70,15 @@ def p_closed(p):
         if(p[1] == 'for'):
             print("for detected\n")
             p[0] = for_unroll_validate([p[1], p[2], p[3]])
+            lookahead(0, len(p[3]), p[3])
         else:
             print("while detected\n")
             p[0] = [p[1], p[2], p[3]]
+            lookahead(0, len(p[3]), p[3])
     else:
         p[0] = [p[1], [p[2], p[3]], p[4], p[5]]
+        lookahead(0, len(p[3]), p[3])
+        lookahead(0, len(p[5]), p[5])
 
 
 def p_condition(p):
@@ -377,11 +384,11 @@ def p_expr(p):
             copy_level_str = level_str.copy()
             while( (symbol_table[search_string] == 'garbage' and symbol_table['*' + search_string] == 'garbage') and len(copy_level_str)>1):
                 copy_level_str.pop()
-                print("copy_level_str", copy_level_str)
+                # print("copy_level_str", copy_level_str)
                 search_string = p[1] + "_".join(copy_level_str)
                 # print("search_string : ", search_string)
-        print("* search", '*' + search_string , symbol_table['*' + search_string ])
-        print("search",search_string , symbol_table[ search_string ])
+        # print("* search", '*' + search_string , symbol_table['*' + search_string ])
+        # print("search",search_string , symbol_table[ search_string ])
         # print("p[3]", p[3])
         if(type(p[3])==str and re.search(r'[A-Za-z_][A-Za-z_0-9]*',p[3])):
             if(symbol_table['*' + search_string ] == "garbage" ):

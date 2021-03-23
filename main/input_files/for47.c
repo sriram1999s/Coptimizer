@@ -3,9 +3,10 @@ int main()
 {
   int a =5 ;
   int k = 0;
-  if(k)
+  int *p = &a;
+  for(int i = 0;i < 10; ++i)
   {
-    ++a;
+    *p++;
   }
   for(int i = 0;i < a; ++i)
   {
