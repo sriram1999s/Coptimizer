@@ -303,20 +303,20 @@ def for_variable_unroll(sub_tree,operator,ids):
     if(m1.group(1)=='>'):
         lower_limit,upper_limit = upper_limit,lower_limit
 
-    # print("lower_limit: ",lower_limit,type(lower_limit))
-    # print("upper_limit: ",upper_limit,type(upper_limit))
+    print("lower_limit: ",lower_limit,type(lower_limit))
+    print("upper_limit: ",upper_limit,type(upper_limit))
 
     lower_limit = '(' + str(lower_limit) + ')'
 
     modified_upper_limit_1 = '('+'(' + str(upper_limit) + '-' + str(lower_limit) + ')' + '/' + str(increment_val) + ')'
     modified_upper_limit_2 = '(' + '('+'(' + str(upper_limit) + '-' + str(lower_limit) + ')' + '%' + str(increment_val) + ')' + '!=0' +')'
     modified_upper_limit = '(' + modified_upper_limit_1 + '+' + modified_upper_limit_2 + ')'
-    # print("modified_upper_limit: ",modified_upper_limit)
+    print("modified_upper_limit: ",modified_upper_limit)
 
-    sub_from_upper = '(' + modified_upper_limit + '%' + '2' + ')'
+    sub_from_upper = '(' + 'temp_8a69d4bf3c2b6818b9acf919a70d6c62' + '%' + '2' + ')'
 
-    effective_upper_limit  = '(' + modified_upper_limit + '-' + sub_from_upper + ')'+ '/' +'2'
-    # print("effective_upper_limit",effective_upper_limit)
+    effective_upper_limit  = '(' + 'temp_8a69d4bf3c2b6818b9acf919a70d6c62' + '-' + sub_from_upper + ')'+ '/' +'2'
+    print("effective_upper_limit",effective_upper_limit)
 
     body = []
     solve(0,len(sub_tree[2]),sub_tree[2],body)
@@ -324,9 +324,10 @@ def for_variable_unroll(sub_tree,operator,ids):
     body  = ''.join(body)
     print("body: ",body)
 
+    declarations = f'int temp_8a69d4bf3c2b6818b9acf919a70d6c62 = {modified_upper_limit};'
     new_for_loop = f'for(int i = 0 ; i < {effective_upper_limit} ;  i++)' + '{' + body*2 + '}'
     remaining = f'if({sub_from_upper})' + '{' + body + '}'
-    return new_for_loop + remaining
+    return declarations + new_for_loop + remaining
 
 
 '''replace_string() ------> given a pat and target substi for target whenever pat is matched in nested iterables'''
