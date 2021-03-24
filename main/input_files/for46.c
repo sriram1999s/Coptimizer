@@ -8,10 +8,10 @@ int main() {
     int *q;
     q=&a;
     {
-      p=q;
+      p=&b;
     }
     for(int i=0;i<a;i++) {
-    *p++;
+    (*p)++;
     }
     printf("\na: %d\n",a);
 }
