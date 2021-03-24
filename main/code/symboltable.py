@@ -37,6 +37,22 @@ def lookahead(i,n,l):
                         f = True
             if(change):
                 search_str = id + '_'.join(level_str)
+                pointer_search_str = '*' + search_str
+                
+                copy_level_str = level_str.copy()
+                while(symbol_table[pointer_search_str] == 'garbage' and len(copy_level_str) > 1):
+                    copy_level_str.pop()
+                    pointer_search_str = id + '_'.join(copy_level_str)
+
+                if(symbol_table[pointer_search_str]!='garbage' and type(symbol_table[pointer_search_str])==str):
+                    rhs_search_str = symbol_table[pointer_search_str] +  '_'.join(level_str)
+                    copy_level_str = level_str.copy()
+                    while(symbol_table[rhs_search_str] == 'garbage' and len(copy_level_str) > 1):
+                        copy_level_str.pop()
+                        rhs_search_str = id + '_'.join(copy_level_str)
+                    if(symbol_table[rhs_search_str]!= 'garbage'):
+                        symbol_table[rhs_search_str] = 'declared'
+               
                 copy_level_str = level_str.copy()
                 while(symbol_table[search_str] == 'garbage' and len(copy_level_str) > 1):
                     copy_level_str.pop()
