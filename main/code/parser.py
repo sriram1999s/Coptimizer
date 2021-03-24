@@ -150,7 +150,6 @@ def p_declaration(p):
                 | TYPE MULTIPLY ID SEMICOLON
                 | TYPE ID ASSIGN expr SEMICOLON
                 | TYPE MULTIPLY ID ASSIGN expr SEMICOLON
-                | TYPE ID ASSIGN function_call
 		        | TYPE multi_declaration stop
     '''
     global level
@@ -238,10 +237,7 @@ def p_simple(p):
            | declaration
            | SEMICOLON
 	       | function
-	       | function_call
-	       | RETURN ID SEMICOLON
-       	   | RETURN INT_NUM SEMICOLON
-	       | RETURN function_call
+	       | RETURN expr SEMICOLON
     '''
     if(len(p)==3):
         p[0] = [p[1],p[2]]
@@ -264,9 +260,9 @@ def p_empty(p):
 
 def p_function_call(p):
     '''
-    function_call : ID L_PAREN call_params R_PAREN SEMICOLON
+    function_call : ID L_PAREN call_params R_PAREN
     '''
-    p[0] = [p[1], p[2], p[3], p[4], p[5]]
+    p[0] = [p[1], p[2], p[3], p[4]]
 
 def p_call_params(p):
     '''
@@ -374,7 +370,6 @@ def p_function_2(p):
 def p_expr(p):
     '''
     expr : expr assignment exprOR
-         | expr assignment ID L_PAREN call_params R_PAREN
          | exprOR
     '''
     if(len(p) > 2 and type(p[1])==str):
@@ -576,6 +571,7 @@ def p_brace(p):
            | MULTIPLY ID
            | BIT_AND ID
            | ID
+           | function_call
     '''
     if(len(p)==4):
         p[0] = [p[1], p[2], p[3]]
