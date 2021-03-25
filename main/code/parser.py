@@ -41,6 +41,8 @@ def p_statement(p):
     '''
     p[0] = p[1]
 
+
+
 def p_open(p):
     '''
     open : IF condition statement
@@ -151,6 +153,9 @@ def p_declaration(p):
                 | TYPE ID ASSIGN expr SEMICOLON
                 | TYPE MULTIPLY ID ASSIGN expr SEMICOLON
 		        | TYPE multi_declaration stop
+    			| TYPE ID L_SQBRACE index R_SQBRACE SEMICOLON
+    			| TYPE ID L_SQBRACE index R_SQBRACE ASSIGN L_FLOWBRACE init_list R_FLOWBRACE SEMICOLON
+		    
     '''
     global level
     global level_str
@@ -230,6 +235,26 @@ def p_declaration(p):
         p[0] = [p[1], p[2], p[3], p[4], p[5]]
     if(len(p)==7):
         p[0] = [p[1], p[2], p[3], p[4], p[5], p[6]]
+    if(len(p)==11):
+        p[0] = [p[1], p[2], p[3], p[4], p[5], p[6] , p[7] , p[8] , p[9] , p[10]]
+
+def p_init_list(p):
+    '''
+    init_list : expr COMMA init_list
+    	      | expr
+    '''
+    if(len(p)==4):
+        p[0] = [p[1],p[2],p[3]]
+    if(len(p)==2):
+        p[0] = [p[1]]
+
+def p_index(p):
+    '''
+    index : NUM
+    	    | empty
+    '''
+    if(p[1]!=None):
+        p[0] = p[1]
 
 def p_block(p):
     '''
@@ -618,6 +643,7 @@ def p_factor(p):
     else :
         p[0] = p[1]
 
+    
 def p_brace(p):
     '''
     brace  : L_PAREN expr R_PAREN
@@ -629,9 +655,12 @@ def p_brace(p):
            | BIT_AND ID
            | ID
            | function_call
+    	   | ID L_SQBRACE index R_SQBRACE
     '''
     if(len(p)==4):
         p[0] = [p[1], p[2], p[3]]
+    elif(len(p)==5):
+        p[0] = [p[1], p[2], p[3],p[4]]
     elif(len(p)==3):
         p[0] = [p[1], p[2]]
     else:

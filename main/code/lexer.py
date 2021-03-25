@@ -29,7 +29,7 @@ rel_op = ['LT', 'LE', 'GT', 'GE', 'NE', 'EQ']
 
 assignment = ['ASSIGN', 'PLUS_ASSIGN', 'MINUS_ASSIGN', 'MUL_ASSIGN', 'DIV_ASSIGN', 'AND_ASSIGN', 'OR_ASSIGN', 'XOR_ASSIGN', 'MOD_ASSIGN', 'L_SHIFT_ASSIGN', 'R_SHIFT_ASSIGN']
 
-delimiters = ['L_PAREN', 'R_PAREN', 'L_FLOWBRACE', 'R_FLOWBRACE', 'SEMICOLON','COMMA']
+delimiters = ['L_PAREN', 'R_PAREN', 'L_FLOWBRACE', 'R_FLOWBRACE', 'SEMICOLON','COMMA','L_SQBRACE','R_SQBRACE']
 
 statements = ['FOR', 'WHILE', 'IF', 'ELSE']
 
@@ -77,6 +77,8 @@ t_L_PAREN = r'\('
 t_R_PAREN = r'\)'
 t_L_FLOWBRACE = r'\{'
 t_R_FLOWBRACE = r'\}' # defined later
+t_L_SQBRACE = r'\['
+t_R_SQBRACE = r'\]'
 t_SEMICOLON = r';'
 t_COMMA = r','
 t_HASH = r'\#'
