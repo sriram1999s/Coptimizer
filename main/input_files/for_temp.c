@@ -10,7 +10,7 @@ int main()
   {
     ++*p;
   }
-  for(int i = 0;i < *p; ++i)
+  for(int i = 0;i < a; ++i)
   {
     ++k;
   }
