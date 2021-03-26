@@ -7,7 +7,7 @@ import sys
 
 sys.setrecursionlimit(10 ** 9)
 from parser_file import *
-from function_inline import *
+from stack_match import *
 
 lexer = lex()
 parser = yacc()
@@ -26,17 +26,18 @@ with open(file) as f:
     lines.strip('\n')
 z = parser.parse(lines)
 
-print("AST:")
-print(z)
-print()
-print()
+# print("AST:")
+# print(z)
+# print()
+# print()
 
 output_prg = []
 solve(0, len(z), z, output_prg)
 print("\n\noutput_prg : \n", output_prg, "\n\n")
 
-with open("temp.c", "w+") as f:
-    f.write("".join(output_prg))
-print("".join(output_prg))
+# with open("temp.c", "w+") as f:
+#     f.write("".join(output_prg))
+# print("".join(output_prg))
 
+make_chains(output_prg)
 # ----------------------------------IO handling -----------------------------------------------------------------------------

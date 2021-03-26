@@ -1,4 +1,3 @@
-@@ -0,0 +1,493 @@
 from lexer_file import *
 from ply.yacc import yacc
 
@@ -51,11 +50,9 @@ def p_open(p):
     '''
     if (len(p) == 4):
         p[0] = [' ', p[1], p[2], '{', p[3], '}']
-        print('open if', p[0])
 
     else:
         p[0] = [' ', p[1], [p[2], '{', p[3], '}'], p[4], ' ', '{', p[5], '}']
-        print('open else', p[0])
 
 
 def p_closed(p):
@@ -79,7 +76,6 @@ def p_closed(p):
 
     else:
         p[0] = [' ', p[1], [p[2], '{', p[3], '}'], p[4], ' ', '{', p[5], '}']
-        print('closed len 6', p[0])
 
 
 def p_condition(p):
