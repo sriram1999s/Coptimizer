@@ -1,0 +1,19 @@
+void main()
+{
+    if(0)
+    {
+        int a;
+    }
+    else if(1)
+    {
+        int b;
+    }
+    else if(2)
+    {
+        int c;
+    }
+    else
+    {
+        int d;
+    }
+}
