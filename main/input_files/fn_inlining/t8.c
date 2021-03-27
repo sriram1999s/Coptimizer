@@ -18,9 +18,11 @@ float goo(int g1, float g2, float g3)
 
 int main()
 {
-    foo(g22/((g22+g33)*g33));
+
     int g11=10;
-    float g22=0.5, g33=1.0;
+    float g22=0.5;
+    float g33=1.0;
+    foo(g22/((g22+g33)*g33));
     int res_bar = bar(1, 2);
     float res_goo = goo(g11, g22+g33, g33);
     return 0;
