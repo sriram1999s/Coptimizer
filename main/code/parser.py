@@ -31,6 +31,9 @@ def p_multiple_statements(p):
                         | statement
     '''
     if(len(p)==3):
+        print("p_multiple_statements :")
+        print("p[1] :",p[1])
+        print("p[2] :",p[2])
         p[0] = p[1] + [p[2]]
     else:
         p[0] = p[1]
