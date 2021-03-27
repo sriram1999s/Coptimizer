@@ -4,6 +4,7 @@ from ply.yacc import yacc
 from regenerator import *
 from loop_unrolling import *
 from symboltable import *
+from function_inline import *
 from collections import defaultdict
 # --------------------------------parser------------------------------------ #
 
@@ -155,7 +156,7 @@ def p_declaration(p):
 		        | TYPE multi_declaration stop
     			| TYPE ID L_SQBRACE index R_SQBRACE SEMICOLON
     			| TYPE ID L_SQBRACE index R_SQBRACE ASSIGN L_FLOWBRACE init_list R_FLOWBRACE SEMICOLON
-		    
+
     '''
     global level
     global level_str
@@ -190,7 +191,7 @@ def p_declaration(p):
                         symbol_table[search_string] = symbol_table[dynamic_string]
                 else:
                     symbol_table[search_string] =  rhs
-                    
+
         elif(p[4] == ';'):
             symbol_table[search_string] = 'declared'
 
@@ -232,7 +233,16 @@ def p_declaration(p):
     if(len(p)==5):
         p[0] = [p[1], p[2], p[3], p[4]]
     if(len(p)==6):
-        p[0] = [p[1], p[2], p[3], p[4], p[5]]
+        ''' deals with fn calls in declaration '''
+        if(type(p[4]) is list and type(p[4][0]) is tuple):
+            t = p[4][0]
+            p[0] = [p[1],p[2],p[3],t[0],'(',t[1][2],')',p[5]]
+            call_helper(p[0],t[0])
+            p[0] = [(t[0], p[0][3:], "call", p[1], p[2])]
+        else:
+            p[0] = [p[1], p[2], p[3], p[4], p[5]]
+        # print("p_declaration : ",p[0])
+
     if(len(p)==7):
         p[0] = [p[1], p[2], p[3], p[4], p[5], p[6]]
     if(len(p)==11):
@@ -284,16 +294,29 @@ def p_right_flower(p):
 def p_simple(p):
     '''
     simple : expr SEMICOLON
-	   | header
+	       | header
            | declaration
            | SEMICOLON
 	       | function
 	       | RETURN expr SEMICOLON
+           | RETURN SEMICOLON
     '''
     if(len(p)==3):
-        p[0] = [p[1],p[2]]
+        if(p[1] != "return"):
+            # print("Before err : ",list(p))
+            p[1].append(';') # FLAG
+            p[0] = [p[1]]
+        else:
+            p[0] = [p[1],p[2]]
     elif(len(p)==4):
-        p[0] = [p[1],p[2],p[3]]
+        # print("p_simpleI :",p[2])
+        if(type(p[2]) is list and type(p[2][0]) is tuple):
+            t = p[2][0]
+            p[0] = [p[1], t[0], '(',t[1][2], ')',';']
+            call_helper(p[0], t[0])
+            p[0] = [(t[0] , p[0][1:] , "call" , "ret" , "ret" ,"return")]
+        else:
+            p[0] = [p[1], p[2], p[3]]
     else:
         p[0] = p[1]
 
@@ -313,7 +336,10 @@ def p_function_call(p):
     '''
     function_call : ID L_PAREN call_params R_PAREN
     '''
-    p[0] = [p[1], p[2], p[3], p[4]]
+    # print("function_call : ",list(p))
+    p[0] = [p[1], p[2], p[3], p[4],';']
+    call_helper(p[0],p[1])
+    p[0] = [(p[1],p[0][0 : -1], 'call')]
 
 def p_call_params(p):
     '''
@@ -409,7 +435,15 @@ def p_function(p):
     function : TYPE ID L_PAREN dec_params R_PAREN function_2
     '''
     p[0] = [p[1],p[2],p[3],p[4],p[5],p[6]]
-
+    if p[2] != 'main':
+        if(p[6][0] != ';'):
+            temp = inline_defn_helper(p[0],p[2])
+            p[0] = [temp]
+            print('fn_temp', temp, p[2])
+            '''if type(temp) is tuple:
+                p[0] = [temp]
+            else:   # check
+                p[0] = []'''
 def p_function_2(p):
     '''
     function_2 : SEMICOLON
@@ -458,7 +492,7 @@ def p_expr(p):
                     symbol_table['*' + search_string ] = symbol_table[dynamic_string]
                 else:
                     symbol_table['*' + search_string] = p[3]
-                    
+
         elif(symbol_table['*' + search_string ] != "garbage" and type(p[3])==list):
             temp = []
             solve(0, len(p[3]), p[3], temp)
@@ -494,9 +528,14 @@ def p_expr(p):
                     symbol_table[var] = symbol_table['*'+search_string]
 
     if(len(p)==4):
-        p[0] = [p[1], p[2], p[3]]
-    elif(len(p)==7):
-        p[0] = [p[1], p[2], p[3], p[4], p[5], p[6]]
+        print("p_expr : ",p[3])
+        if(type(p[3]) is list and type(p[3][0]) is tuple):
+            t = p[3][0]
+            p[0] = [p[1],p[2],t[0],'(',t[1][2],')']
+            call_helper(p[0],t[0])
+            p[0] = [ ( t[0] , p[0][2:] , "call" , p[1])]
+        else:
+            p[0] = [p[1], p[2], p[3]]
     else :
         p[0] = p[1]
 
@@ -643,7 +682,7 @@ def p_factor(p):
     else :
         p[0] = p[1]
 
-    
+
 def p_brace(p):
     '''
     brace  : L_PAREN expr R_PAREN

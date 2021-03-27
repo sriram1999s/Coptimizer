@@ -1,9 +1,122 @@
-from function_inline import *
+import sys
+import re
 import copy
 import secrets
 import uuid
 import sys
-# ----------------------------------------------fn inliner -----------------------------------------------------------
+sys.setrecursionlimit(10**9)
+from parser_file import *
+from function_inline import *
+
+lexer = lex()
+parser = yacc()
+
+try:
+    file = sys.argv[1]
+except :
+    print('No arguments')
+
+def get_defn_t_ix(fn_name):
+    for ix in range(len(fn_defn_list)):
+        if(fn_defn_list[ix][0] == fn_name):
+            return ix
+
+def remove_return(i,n,fn_body, hash_val):
+    if(i == n):
+        return
+    elif(type(fn_body[i]) is list):
+        remove_return(0,len(fn_body[i]),fn_body[i],hash_val)
+    elif(type(fn_body[i]) is tuple):
+        if(len(fn_body[i]) == 6 and fn_body[i][-1] == "return"):
+            t = fn_body[i]
+            t = list(t)
+            t[-1] = "temp_" + hash_val + " = "
+            t = tuple(t)
+            call_t_ix1 = fn_call_list.index(fn_body[i])
+            t1 = fn_call_list[call_t_ix1]
+            t1 = list(t1)
+            t1[-1] = "temp_" + hash_val + " = "
+            t1 = tuple(t1)
+            fn_call_list.insert(call_t_ix1,t1)
+            temp_obj = copy.deepcopy(fn_call_obj_list[call_t_ix1])
+            fn_call_obj_list.insert(call_t_ix1,temp_obj)
+            #fn_call_list.pop(call_t_ix1 + 1)
+            fn_body.insert(i,t)
+            fn_body.pop(i + 1)
+        else :
+            remove_return(0,len(fn_body[i]),fn_body[i],hash_val)
+    elif(type(fn_body[i]) is str and fn_body[i] == "return"):
+        fn_body[i] = "temp_" + hash_val + " = "
+
+    remove_return(i+1,len(fn_body),fn_body, hash_val)
+
+def remove_return1(i,n,fn_body, hash_val,goto_flag):
+    if(i == n):
+        return
+    elif(type(fn_body[i]) is list):
+        remove_return1(0,len(fn_body[i]),fn_body[i], hash_val,goto_flag)
+    elif(fn_body[i] == "return"):
+        fn_body[i] = " goto label_" + hash_val
+        goto_flag[0] = 1
+
+    remove_return1(i+1,len(fn_body),fn_body,hash_val,goto_flag)
+
+def add_param_hash(hash_val,parameter_list1):
+    length = len(parameter_list1)
+    for ix in range(length):
+        parameter_list1[ix] += "_" + hash_val
+
+def get_param_vars(parameter_list1):
+    var_list = []
+    length = len(parameter_list1)
+    for ix in range(length):
+        var = parameter_list1[ix].split(" ")[-1]
+        var_list.append(var)
+
+    return var_list
+
+def replace_param(i,n,fn_body,parameter_list2,hash_val):
+    if(i == n):
+        return
+    elif(type(fn_body[i]) is list):
+        replace_param(0 , len(fn_body[i]) , fn_body[i] , parameter_list2 , hash_val)
+    elif(fn_body[i] in parameter_list2):
+        fn_body[i] += "_" + hash_val
+
+    replace_param(i+1,n,fn_body,parameter_list2,hash_val)
+
+def retrieve_defn(i,n,fn_body):
+    if(i == n):
+        return
+    elif(type(fn_body[i]) is list):
+        retrieve_defn(0,len(fn_body[i]),fn_body[i])
+    elif(type(fn_body[i]) is tuple):
+        fn_call1 = []
+        if(len(fn_body[i]) == 5):
+            ret_dec = " " + fn_body[i][3] + " " + fn_body[i][4] + " = "
+            fn_call1.append(ret_dec)
+            fn_call1.append(fn_body[i][1])
+            #fn_call1.append(';')
+        elif(len(fn_body[i]) == 4):
+            ret_dec = " " + fn_body[i][3] + " = "
+            fn_call1.append(ret_dec)
+            fn_call1.append(fn_body[i][1])
+            #fn_call1.append(';')
+        elif(len(fn_body[i]) == 6):
+            if(fn_body[i][-1] == "return"):
+                fn_call1 = fn_body[i][1]
+                fn_call1.insert(0," return ")
+            else :
+                fn_call1 = fn_body[i][1]
+                fn_call1.insert(0," " + fn_body[i][-1] + " ")
+        else:
+            fn_call1 = fn_body[i][1]
+
+        fn_body.insert(i,fn_call1)
+        fn_body.pop(i + 1)
+
+    retrieve_defn(i+1,len(fn_body),fn_body)
+
 def fn_inline_solve(i,n,z,cyc_chk,non_in_fn):
     #print("cyc_chk1 :",cyc_chk)
     if(i == n):
@@ -152,33 +265,87 @@ def fn_inline_solve(i,n,z,cyc_chk,non_in_fn):
         fn_inline_solve(0,len(z[i]),z[i],cyc_chk,non_in_fn)
 
     fn_inline_solve(i+1,len(z),z,cyc_chk,non_in_fn)
-# ----------------------------------------------code generator ------------------------------------------------------
 
-
-
-def solve(start_index, end_index, parse_tree, output_prg):
-    space_list = ['int','float','void','double','bool','char','return']
-    if(start_index == end_index):
+def transform_tuples(i,n,defn_list):
+    if(i == n):
         return
-    elif(type(parse_tree[start_index]) is str):
-        if(parse_tree[start_index] in space_list):
-            output_prg += [parse_tree[start_index], ' ']
+    elif(type(defn_list[i]) is list):
+        transform_tuples(0,len(defn_list[i]),defn_list[i])
+    elif(type(defn_list[i]) is tuple):
+        fn_call1 = []
+        if(len(defn_list[i]) == 5):
+            ret_dec = " " + defn_list[i][3] + " " + defn_list[i][4] + " = "
+            fn_call1.append(ret_dec)
+            fn_call1.append(defn_list[i][1])
+            fn_call1.append(';')
+        elif(len(defn_list[i]) == 4):
+            ret_dec = " " + defn_list[i][3] + " = "
+            fn_call1.append(ret_dec)
+            fn_call1.append(defn_list[i][1])
+            fn_call1.append(';')
+        elif(len(defn_list[i]) == 6):
+            if(defn_list[i][-1] == "return"):
+                fn_call1 = defn_list[i][1]
+                fn_call1.insert(0," return ")
+            else :
+                fn_call1 = defn_list[i][1]
+                fn_call1.insert(0," " + defn_list[i][-1] + " ")
         else:
-            output_prg += [parse_tree[start_index]]
-        solve(start_index+1, end_index, parse_tree, output_prg)
-    elif(type(parse_tree[start_index]) is int):
-        output_prg += [str(parse_tree[start_index])]
-        solve(start_index+1, end_index, parse_tree, output_prg)
+            fn_call1 = defn_list[i][1]
+        defn_list.insert(i,fn_call1)
+        defn_list.pop(i+1)
 
-    elif(type(parse_tree[start_index]) is tuple or type(parse_tree[start_index]) is list):
-        for trav in range(len(parse_tree[start_index])):
-            if(type(parse_tree[start_index][trav]) is tuple or type(parse_tree[start_index][trav]) is list):
-                solve(0, len(parse_tree[start_index][trav]), parse_tree[start_index][trav], output_prg)
-            else:
-                if(parse_tree[start_index][trav] in space_list):
-                    output_prg += [parse_tree[start_index][trav], ' ']
-                else:
-                    output_prg += [str(parse_tree[start_index][trav])]
-        solve(start_index+1, end_index, parse_tree, output_prg)
+    transform_tuples(i + 1,len(defn_list),defn_list)
 
-# -----------------------------------------------------------------------------------------------------------------------
+def remove_unwanted_defns(i,n,z,non_in_fn):
+    if(i == n):
+        return
+    elif(type(z[i]) is list):
+        remove_unwanted_defns(0,len(z[i]),z[i],non_in_fn)
+    elif(type(z[i]) is tuple):
+        if(z[i][0] not in non_in_fn):
+            z.insert(i,"")
+            z.pop(i + 1)
+        else:
+            defn_list = z[i][1]
+            transform_tuples(0,len(defn_list),defn_list)
+            z.insert(i,defn_list)
+            z.pop(i + 1)
+    remove_unwanted_defns(i + 1,len(z),z,non_in_fn)
+
+#------------------------------------IO handling --------------------------------------------------------------------------
+
+lines = ""
+with open(file) as f:
+    for line in f:
+        lines += line.strip('\n')
+    lines.strip('\n')
+z=parser.parse(lines)
+
+#print("AST:")
+#print(z)
+print()
+print()
+
+fn_defn_list.sort(key = lambda x:x[0])
+fn_defn_obj_list.sort(key = lambda x:x.name)
+#fn_call_list.sort(key = lambda x:x[0])
+#fn_call_obj_list.sort(key = lambda x:x.name)
+cyc_chk = []
+non_in_fn = []
+print("\nz before : \n",z)
+fn_inline_solve(0,len(z),z,cyc_chk,non_in_fn);
+#remove_unwanted_defns(0,len(z),z,non_in_fn)
+print("\nz after : \n",z)
+output_prg=[]
+solve(0,len(z),z,output_prg)
+print("\n\nnon_in_fn : ",non_in_fn,"\n\n")
+print("\n\nz :",z,"\n\n")
+print("\n\noutput_prg : \n",output_prg,"\n\n")
+
+with open("temp.c","w+") as f :
+    f.write("".join(output_prg))
+#print("generated code")
+print("".join(output_prg))
+
+#----------------------------------IO handling -----------------------------------------------------------------------------
