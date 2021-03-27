@@ -443,6 +443,7 @@ def p_function(p):
     function : TYPE ID L_PAREN dec_params R_PAREN function_2
     '''
     p[0] = [p[1],p[2],p[3],p[4],p[5],p[6]]
+    print("\n\np_functionnnn :",p[6],"\n\n")
     if p[2] != 'main':
         if(p[6][0] != ';'):
             temp = inline_defn_helper(p[0],p[2])
