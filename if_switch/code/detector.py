@@ -33,11 +33,11 @@ z = parser.parse(lines)
 
 output_prg = []
 solve(0, len(z), z, output_prg)
-print("\n\noutput_prg : \n", output_prg, "\n\n")
+print("output_prg :\n", output_prg, "\n\n")
 
-with open("temp.c", "w+") as f:
-    f.write("".join(output_prg))
-print("".join(output_prg))
+# with open("temp.c", "w+") as f:
+#     f.write("".join(output_prg))
+# print("".join(output_prg))
 
 identify_chains(output_prg)
 print('Dict num list of chains')
@@ -47,4 +47,13 @@ for i in dict_num_list_of_chains:
         for k in j:
             print(k.type1, k.condition_vars, '->', end=' ')
         print()
+
+from switch import *
+make_switch(output_prg)
+print('z2', z_new)
+# output_prg1 = []
+# with open("temp.c", "w+") as f:
+#     f.write("".join(output_prg1))
+# print("".join(output_prg1))
+
 # ----------------------------------IO handling -----------------------------------------------------------------------------

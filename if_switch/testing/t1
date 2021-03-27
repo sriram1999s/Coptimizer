@@ -1,7 +1,7 @@
 void main()
 {
     int choice = 1;
-    if(choice==0 )
+    if(choice==0)
     {
         int option=10;
         if(option<=10)
