@@ -9,6 +9,7 @@ int rec_func(int a)
 int rec_func2(int q,int *p,double *r)
 {
     int z;
+    return z;
 }
 int main()
 {

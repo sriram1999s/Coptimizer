@@ -1,27 +1,21 @@
-int rec_func(int a)
+#include<stdio.h>
+int ack(int m, int n)
 {
-	if (a < 1) {
-		return 0;
+	if (m == 0) {
+		return n + 1;
 	}
-	return rec_func(a);
+	elseif((m > 0) && (n == 0)) {
+		return ack(m - 1, 1);
+	}
+	elseif((m > 0) && (n > 0)) {
+		return ack(m - 1, ack(m, n - 1));
+	}
 }
 
-int rec_func2(int q, int *p, double *r)
+int main()
 {
-	int z;
-} int main()
-{
-	int a = 10;
-	int b = 100;
-	a = a - 1;
-	int res = rec_func(10);
-	int a1[3] = { 1, 2, 3 };
-	int a2[10];
-	double a3[10]; {	// rec_func2 inlined 
-		int q_237d6bc2fdf34b9993fc6cffb6f1c4a0 = a1[2];
-		int *p_237d6bc2fdf34b9993fc6cffb6f1c4a0 = a1 + 3;
-		double *r_237d6bc2fdf34b9993fc6cffb6f1c4a0 = a3;
-		int z;
-	}
-	;
+	int A;
+	A = ack(1, 2);
+	printf("%d", A);
+	return 0;
 }

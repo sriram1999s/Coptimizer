@@ -12,7 +12,7 @@ def fn_inline_solve(i,n,z,cyc_chk,non_in_fn):
         if(z[i][2] == 'call'):
             call_t_ix = fn_call_list.index(z[i])
             defn_t_ix = get_defn_t_ix(z[i][0])
-            if(fn_defn_obj_list[defn_t_ix].inline_flag == 1 and (z[i][0] not in cyc_chk)):
+            if(defn_t_ix != None and fn_defn_obj_list[defn_t_ix].inline_flag == 1 and (z[i][0] not in cyc_chk)):
                 name_fn = z[i][0]
                 #---------------par_to_arg_match-----------------------------
                 fn_body = copy.deepcopy(fn_defn_obj_list[defn_t_ix].body)

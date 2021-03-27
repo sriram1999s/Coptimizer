@@ -156,21 +156,7 @@ def create_call_obj(parsed_list,fn_name):
             str_temp += str(i) + ' '
         if(str_temp != ""):
             temp.append(str_temp.strip())
-
         print("\n\ntemp :",temp,"\n\n")
-        '''if(',' in parsed_list[2]):
-            for i in parsed_list[2]:
-                if(type(i) is list):
-                    arg = [""]
-                    get_arg_expr(0,len(i),i,arg)
-                    #print("arggggg :",arg[0])
-                    temp.append(arg[0])
-                elif(i != ','):
-                    temp.append(str(i))
-        else:
-            arg1 = [""]
-            get_arg_expr(0,len(parsed_list[2]),parsed_list[2],arg1)
-            temp.append(arg1[0])'''
     else:
         temp.append(str(parsed_list[2]))
 
@@ -211,6 +197,20 @@ def get_defn_t_ix(fn_name):
     for ix in range(len(fn_defn_list)):
         if(fn_defn_list[ix][0] == fn_name):
             return ix
+    return None
+
+def remove_nested_calls(i,n,z):
+    if(i == n):
+        return;
+    elif(type(z[i]) is list):
+        remove_nested_calls(0,len(z[i]),z[i])
+    elif(type(z[i]) is tuple):
+        l = copy.deepcopy(z[i][1])
+        z.insert(i,l)
+        z.pop(i+1)
+        remove_nested_calls(0,len(z[i]),z[i])
+
+    remove_nested_calls(i + 1,len(z),z)
 
 def remove_return(i,n,fn_body, hash_val):
     if(i == n):

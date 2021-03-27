@@ -711,6 +711,12 @@ def p_brace(p):
     elif(len(p)==3):
         p[0] = [p[1], p[2]]
     else:
+        if(type(p[1]) is list and type(p[1][0]) is tuple):
+            t = copy.deepcopy(p[1][0])
+            t = list(flatten(t))
+            if(t.count("call") > 1):
+                remove_nested_calls(0,len(p[1]),p[1])
+            del(t)
         p[0] = p[1]
 
 
