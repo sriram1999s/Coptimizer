@@ -472,7 +472,7 @@ def p_expr(p):
         # print("p[3]", p[3])
         if(type(p[3])==str and re.search(r'[A-Za-z_][A-Za-z_0-9]*',p[3])):
             if(symbol_table['*' + search_string ] == "garbage" ):
-                print("here")
+                # print("here")
                 dynamic_string = p[3] + '_'.join(level_str)
                 copy_level_str = level_str.copy()
                 while(symbol_table[dynamic_string] == 'garbage' and len(copy_level_str)>1):
@@ -528,7 +528,7 @@ def p_expr(p):
                     symbol_table[var] = symbol_table['*'+search_string]
 
     if(len(p)==4):
-        print("p_expr : ",p[3])
+        # print("p_expr : ",p[3])
         if(type(p[3]) is list and type(p[3][0]) is tuple):
             t = p[3][0]
             p[0] = [p[1],p[2],t[0],'(',t[1][2],')']
