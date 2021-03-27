@@ -27,7 +27,14 @@ def p_start(p):
     for i in array_hashmap:
         if(array_hashmap[i]!=-1):
             print(f'\t{i}-------->{array_hashmap[i]}')
+
+    print('printing array values....')
+    for i in array_value:
+        if(array_value[i]!=-1):
+            print(f'\t{i}-------->{array_value[i]}')
     p[0] = p[1]
+
+
 
 def p_multiple_statements(p):
     '''
@@ -76,6 +83,7 @@ def p_closed(p):
     elif(len(p)==4):
         if(p[1] == 'for'):
             print("for detected\n")
+            compile_init_validate([p[1], p[2], p[3]])
             p[0] = for_unroll_validate([p[1], p[2], p[3]])
             lookahead(0, len(p[3]), p[3])
         else:
@@ -160,7 +168,7 @@ def p_declaration(p):
 		        | TYPE multi_declaration stop
     			| TYPE ID L_SQBRACE index R_SQBRACE SEMICOLON
     			| TYPE ID L_SQBRACE index R_SQBRACE ASSIGN L_FLOWBRACE init_list R_FLOWBRACE SEMICOLON
-		    
+
     '''
     global level
     global level_str
@@ -195,7 +203,7 @@ def p_declaration(p):
                         symbol_table[search_string] = symbol_table[dynamic_string]
                 else:
                     symbol_table[search_string] =  rhs
-                    
+
         elif(p[4] == ';'):
             symbol_table[search_string] = 'declared'
 
@@ -257,7 +265,7 @@ def p_init_list(p):
 
 def p_index(p):
     '''
-    index : NUM
+    index : expr
     	    | empty
     '''
     if(p[1]!=None):
@@ -465,7 +473,7 @@ def p_expr(p):
                     symbol_table['*' + search_string ] = symbol_table[dynamic_string]
                 else:
                     symbol_table['*' + search_string] = p[3]
-                    
+
         elif(symbol_table['*' + search_string ] != "garbage" and type(p[3])==list):
             temp = []
             solve(0, len(p[3]), p[3], temp)
@@ -650,7 +658,7 @@ def p_factor(p):
     else :
         p[0] = p[1]
 
-    
+
 def p_brace(p):
     '''
     brace  : L_PAREN expr R_PAREN

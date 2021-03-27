@@ -29,9 +29,13 @@ print()
 output_prg=[]
 solve(0,len(z),z,output_prg)
 # print(output_prg)
+
+output_prg = "".join(output_prg)
+output_prg = make_compile_inits(output_prg)
+
 with open("temp.c","w+") as f :
-    f.write("".join(output_prg))
+    f.write(output_prg)
 print("generated code")
-print("".join(output_prg))
+print(output_prg)
 
 #----------------------------------IO handling -----------------------------------------------------------------------------

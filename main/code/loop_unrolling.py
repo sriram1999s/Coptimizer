@@ -11,7 +11,7 @@ def for_unroll_validate(sub_tree):
     global level_str
     global symbol_table
 
-    print(sub_tree)
+    # print(sub_tree)
     condition = sub_tree[1]
     #print("condition[2:]: ", condition[2:])
     #print("sub_tree[2]",sub_tree[2])
@@ -37,12 +37,14 @@ def for_unroll_validate(sub_tree):
             pointers.append(symbol_table[search_string])
 
     loop_var_list+=pointers
-    #print("loop_var_list: ",loop_var_list)
-    #print("ids.keys(): ",list(ids.keys()))
+    # print("loop_var_list: ",loop_var_list)
+    # print("ids.keys(): ",list(ids.keys()))
     intersection = list(set(list(ids.keys()))&set(loop_var_list))
-    #print("intersection: ",intersection)
+    # print("intersection: ",intersection)
 
     if(len(intersection)>1):
+        return sub_tree
+    if(len(intersection)==1 and loop_var_list.count(loop_var) > 1):
         return sub_tree
 
     res = []
@@ -70,7 +72,7 @@ def for_unroll_validate(sub_tree):
     elif(condition[2] == ';'):  # bounds check missing
         return sub_tree
     else:
-        print("Here2")
+        # print("Here2")
         reconstruct_for(sub_tree, loop_var)
         if(sub_tree[1][3] == ')'):
             return sub_tree
