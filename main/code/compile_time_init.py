@@ -4,8 +4,12 @@ from symboltable import *
 import re
 from collections import defaultdict
 
-array_hashmap = defaultdict(lambda:[])
+array_hashmap = defaultdict(lambda:-1)
 
+def add_array(subtree):
+    print("subtree: ",subtree)
+    if(type(subtree[3])==int):
+        array_hashmap[subtree[1]] = subtree[3]
 
 
 '''replace_string() ------> given a pat and target substi for target whenever pat is matched in nested iterables'''

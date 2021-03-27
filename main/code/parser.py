@@ -4,6 +4,7 @@ from ply.yacc import yacc
 from regenerator import *
 from loop_unrolling import *
 from symboltable import *
+from compile_time_init import *
 from collections import defaultdict
 # --------------------------------parser------------------------------------ #
 
@@ -22,6 +23,10 @@ def p_start(p):
     for i in symbol_table:
         if(symbol_table[i] != 'garbage'):
             print(f"\t{i}------->{symbol_table[i]}")
+    print('printing array hashmap....')
+    for i in array_hashmap:
+        if(array_hashmap[i]!=-1):
+            print(f'\t{i}-------->{array_hashmap[i]}')
     p[0] = p[1]
 
 def p_multiple_statements(p):
@@ -235,6 +240,8 @@ def p_declaration(p):
         p[0] = [p[1], p[2], p[3], p[4], p[5]]
     if(len(p)==7):
         p[0] = [p[1], p[2], p[3], p[4], p[5], p[6]]
+        if(p[3]=='['):
+            add_array(p[0])
     if(len(p)==11):
         p[0] = [p[1], p[2], p[3], p[4], p[5], p[6] , p[7] , p[8] , p[9] , p[10]]
 
