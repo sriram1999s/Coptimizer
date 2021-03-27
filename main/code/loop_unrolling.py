@@ -20,11 +20,12 @@ def for_unroll_validate(sub_tree):
     ids = dict()
     find_id(0, len(condition[2:]), condition[2:], ids)
     loop_var = list(ids.keys())[0]
+    print("loop_var", loop_var)
 
     loop_var_dict = dict()
     find_id(0,len(sub_tree[2]),sub_tree[2],loop_var_dict)
     loop_var_list = list(loop_var_dict.keys())+[loop_var]
-
+    print("loop_var_list", loop_var_list)
     #checking for pointers in loop body and adding what they refer to before taking intersection
     pointers = []
     for i in loop_var_list:
@@ -40,6 +41,7 @@ def for_unroll_validate(sub_tree):
     #print("loop_var_list: ",loop_var_list)
     #print("ids.keys(): ",list(ids.keys()))
     intersection = list(set(list(ids.keys()))&set(loop_var_list))
+    print("intersection", intersection)
     #print("intersection: ",intersection)
 
     if(len(intersection)>1):
@@ -48,8 +50,13 @@ def for_unroll_validate(sub_tree):
     res = []
     find_int(0, len(condition), condition, res)
     # print("operators : ", operators)
+    print('2printing symbol table....')
+    for i in symbol_table:
+        if(symbol_table[i] != 'garbage'):
+            print(f"\t{i}------->{symbol_table[i]}")
     solve_substi_id(0,len(condition),condition,intersection)
     solve_expr(0,len(condition),condition)
+    print("condition", condition)
 
     # print("condition: ", condition,"\n")
 

@@ -302,12 +302,13 @@ def p_simple(p):
            | RETURN SEMICOLON
     '''
     if(len(p)==3):
-        if(p[1] != "return"):
-            # print("Before err : ",list(p))
-            p[1].append(';') # FLAG
-            p[0] = [p[1]]
-        else:
-            p[0] = [p[1],p[2]]
+        # if(p[1] != "return"):
+        #     # print("Before err : ",list(p))
+        #     # p[1].append(';') # FLAG
+        #     p[0] = [p[1]]
+        # else:
+        #     p[0] = [p[1],p[2]]
+        p[0] = [p[1],p[2]]
     elif(len(p)==4):
         # print("p_simpleI :",p[2])
         if(type(p[2]) is list and type(p[2][0]) is tuple):
