@@ -147,7 +147,7 @@ def t_FLOAT_NUM(t):
 # int
 
 def t_INT_NUM(t):
-    r'-?\d+'
+    r'\d+'
     t.value = int(t.value)
     return t
 

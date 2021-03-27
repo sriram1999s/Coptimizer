@@ -35,6 +35,10 @@ def p_multiple_statements(p):
         print("p[1] :",p[1])
         print("p[2] :",p[2])
         p[0] = p[1] + [p[2]]
+        '''if(type(p[1]) is list):
+            p[0] = p[1] + [p[2]]
+        else:
+            p[0] = [p[1],p[2]]'''
     else:
         p[0] = p[1]
 

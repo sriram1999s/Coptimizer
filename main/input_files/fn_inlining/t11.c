@@ -6,16 +6,17 @@ int rec_func(int a)
     return rec_func(a);
 }
 
-int rec_func2(int a)
+int rec_func2(int *q,int *p,int *r)
 {
-    if(a<=0) {
-        return 0;
+    int z;
 }
-    return rec_func(a);
-}
-
 int main()
 {
+    int a = 10;
+    int b = 100;
+    a = a-1;
     int res = rec_func(10);
-    res = rec_func2(10);
+    int a1[10];
+    int a2[10];
+    res = rec_func2(a1 + 2,a1 + 3,a1 + 4);
 }

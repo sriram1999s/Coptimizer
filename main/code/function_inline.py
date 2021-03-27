@@ -1,4 +1,5 @@
 import copy
+from collections.abc import Iterable
 
 def dummy_fn():
     print("YO")
@@ -60,21 +61,30 @@ def check_return(l1, start, length,l2):
 
 def change_to_string(l1):
     ret_list = []
+    print("\n\nchange_to_string2 :",l1,"\n\n")
     #print("\nchange_to_str : ",l1,"\n\n")
     if len(l1) > 1:
         if(type(l1[0]) is list):
             i = 0
+            str_temp = ""
             while i < len(l1[0]):
-                str_temp = l1[0][i] + ' ' + l1[0][i + 1]
-                i += 3
-                ret_list.append(str_temp)
-            ret_list.append(l1[1][0] + ' ' + l1[1][1])
+                if(l1[0][i] == ','):
+                    ret_list.append(str_temp.strip())
+                    str_temp = ""
+                    i += 1;
+                    continue;
+                str_temp += l1[0][i] + ' '
+                i += 1;
+            str_temp = ' '.join(l1[1])
+            ret_list.append(str_temp)
         else:
-            ret_list.append(l1[0]+' '+l1[1])
+            str_temp = ' '.join(l1)
+            ret_list.append(str_temp)
     elif len(l1) == 1:
         str_temp = l1[0][0] + ' ' + l1[0][1]
         ret_list.append(str_temp)
 
+    print("\n\nchange_to_string :",ret_list,"\n\n")
     return ret_list
 
 def create_defn_obj(parsed_list):
@@ -134,9 +144,21 @@ def get_arg_expr(i,n,arg_list,arg):
 
 def create_call_obj(parsed_list,fn_name):
     temp = []
-    print("\n\nparsed_list :",fn_name," :",parsed_list[2])
     if(type(parsed_list[2]) is list):
-        if(',' in parsed_list[2]):
+        temp1 = list(flatten(parsed_list[2]))
+        print("\n\nparsed_list :",temp1,"\n\n")
+        str_temp = ""
+        for i in temp1:
+            if(i == ','):
+                temp.append(str_temp.strip())
+                str_temp = ""
+                continue
+            str_temp += str(i) + ' '
+        if(str_temp != ""):
+            temp.append(str_temp.strip())
+
+        print("\n\ntemp :",temp,"\n\n")
+        '''if(',' in parsed_list[2]):
             for i in parsed_list[2]:
                 if(type(i) is list):
                     arg = [""]
@@ -148,7 +170,7 @@ def create_call_obj(parsed_list,fn_name):
         else:
             arg1 = [""]
             get_arg_expr(0,len(parsed_list[2]),parsed_list[2],arg1)
-            temp.append(arg1[0])
+            temp.append(arg1[0])'''
     else:
         temp.append(str(parsed_list[2]))
 
@@ -156,7 +178,7 @@ def create_call_obj(parsed_list,fn_name):
     fn_call_obj_list.append(obj1)
     #print("Fn call obj : \n",obj1.name,"\n",obj1.arg_list,"\n")
 
-
+#a*(a-1/(a+2)
 class fn_defn_class:
     def __init__(self, name, param_list, body, inline_flag, return_id_or_val, return_type):
         self.name = name
@@ -175,7 +197,6 @@ class fn_call_class:
         self.name = name
         self.arg_list = arg_list
 
-from collections.abc import Iterable
 def flatten(l):
     for el in l:
         if isinstance(el, Iterable) and not isinstance(el, (str, bytes)):
