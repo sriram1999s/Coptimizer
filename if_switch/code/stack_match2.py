@@ -1,6 +1,3 @@
-import re
-
-
 class if_elif_else:
     def __init__(self, type1, condition_vars):
         self.type1 = type1
@@ -8,6 +5,21 @@ class if_elif_else:
 
 
 dict_num_list_of_chains = dict()
+
+
+def is_int(s):
+    try:
+        int(s)
+        return True
+    except ValueError:
+        return False
+
+
+def is_char(s):
+    if len(s) == 1 and s.isalpha():
+        return True
+    else:
+        return False
 
 
 def identify_chains(z):
@@ -59,9 +71,9 @@ def create_obj(type1, pos, z):
         l = []
         while i < len(z) and z[i] != ')':
             if i + 2 < len(z) and z[i + 1] == '==':
-                if int(i) and re.match(r'^([\s\d]+)$', z[i + 2]) is None:
+                if (is_int(z[i]) or is_char(z[i])) and not is_int(z[i+2]):
                     l.append((z[i+2], z[i]))
-                elif int(i + 2) and re.match(r'^([\s\d]+)$', z[i]) is None:
+                elif (is_int(z[i+2]) or is_char(z[i+2])) and not is_int(z[i]):
                     l.append((z[i], z[i + 2]))
                 i += 3
             else:
@@ -74,9 +86,9 @@ def create_obj(type1, pos, z):
         l = []
         while i < len(z) and z[i] != ')':
             if i + 2 < len(z) and z[i + 1] == '==':
-                if int(i) and re.match(r'^([\s\d]+)$', z[i + 2]) is None:
+                if (is_int(z[i]) or is_char(z[i])) and not is_int(z[i+2]):
                     l.append((z[i + 2], z[i]))
-                elif int(i + 2) and re.match(r'^([\s\d]+)$', z[i]) is None:
+                elif (is_int(z[i+2]) or is_char(z[i+2])) and not is_int(z[i]):
                     l.append((z[i], z[i + 2]))
                 i += 3
             else:
