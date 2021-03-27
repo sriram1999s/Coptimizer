@@ -6,7 +6,7 @@ int rec_func(int a)
 	return rec_func(a);
 }
 
-int rec_func2(int *q, int *p, int *r)
+int rec_func2(int *q, int *p, double *r)
 {
 	int z;
 } int main()
@@ -16,10 +16,11 @@ int rec_func2(int *q, int *p, int *r)
 	a = a - 1;
 	int res = rec_func(10);
 	int a1[10];
-	int a2[10]; {		// rec_func2 inlined 
-		int *q_d018e66ce6c74349a0443caa5b8d9624 = a1 + 2;
-		int *p_d018e66ce6c74349a0443caa5b8d9624 = a1 + 3;
-		int *r_d018e66ce6c74349a0443caa5b8d9624 = a1 + 4;
+	int a2[10];
+	double a3[10]; {	// rec_func2 inlined 
+		int *q_a53b9779e0d541119604b8a76a462e77 = a1 + 2;
+		int *p_a53b9779e0d541119604b8a76a462e77 = a1 + 3;
+		double *r_a53b9779e0d541119604b8a76a462e77 = a3;
 		int z;
 	}
 	;
