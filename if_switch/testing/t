@@ -1,4 +1,18 @@
 void main()
 {
-    int a;
+    int a=0, b=1;
+    if(a==1 && b==1)
+    {
+        a=1;
+        if(0)
+        int d;
+        else
+        {int e;}
+        if(1==a && b<1)
+        int f;
+    }
+    if(b==2)
+    {a=b;}
+    else if(a==3)
+    {int c;}
 }
