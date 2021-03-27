@@ -7,7 +7,7 @@ import sys
 
 sys.setrecursionlimit(10 ** 9)
 from parser_file import *
-from stack_match import *
+from stack_match2 import *
 
 lexer = lex()
 parser = yacc()
@@ -35,9 +35,16 @@ output_prg = []
 solve(0, len(z), z, output_prg)
 print("\n\noutput_prg : \n", output_prg, "\n\n")
 
-# with open("temp.c", "w+") as f:
-#     f.write("".join(output_prg))
-# print("".join(output_prg))
+with open("temp.c", "w+") as f:
+    f.write("".join(output_prg))
+print("".join(output_prg))
 
-make_chains(output_prg)
+identify_chains(output_prg)
+print('Dict num list of chains')
+for i in dict_num_list_of_chains:
+    print(i, ':')
+    for j in dict_num_list_of_chains[i]:
+        for k in j:
+            print(k.type1, k.condition_vars, '->', end=' ')
+        print()
 # ----------------------------------IO handling -----------------------------------------------------------------------------
