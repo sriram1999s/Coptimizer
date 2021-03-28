@@ -4,15 +4,31 @@ net_open = 0
 begin_net_open = 0
 dict_num_chain_pos = stack_match2.dict_num_list_of_chains.fromkeys(stack_match2.dict_num_list_of_chains.keys(), [0, 0])
 z_new = []
+dict_num_list_common_vars = dict()
+# switched_window = -1
 
 
 def make_switch(z):
     global net_open
     global dict_num_chain_pos
     global begin_net_open
+    global z_new
+    global switched_window
+    global dict_num_list_common_vars
+
     i = 0
     while i < len(z):
-        # print('in while', z[i])
+        print('in while', z[i], z_new)
+        # if switched_window!=-1 and switched_window==net_open:
+        #     i = skip_extra_brackets(i, z)
+        #     switched_window = -1
+        #     try:
+        #         if stack_match2.dict_num_list_of_chains[net_open][dict_num_chain_pos[net_open][0]][-1].type1 == 'elif':
+        #             print('in elif append')
+        #             z_new.append('}')
+        #     except:
+        #         print('chain pos not yet encountered')
+
         if z[i] == '{':
             net_open += 1
             z_new.append(z[i])
@@ -28,6 +44,7 @@ def make_switch(z):
             dict_num_chain_pos[net_open][1] += 1  # incremented object by one
             chosen_var = check_change_to_switch(net_open)
             if chosen_var is not None:
+                # switched_window = net_open
                 main_list = stack_match2.dict_num_list_of_chains[net_open]
                 chain_pos = dict_num_chain_pos[net_open][0]
                 if_obj = main_list[chain_pos][0]
@@ -73,6 +90,7 @@ def make_switch(z):
                             break
                         i += 1
                     z_new.append('break;}')
+                    i = skip_extra_brackets(i, z)
                 dict_num_chain_pos[begin_net_open][1] += 1
 
             else:
@@ -85,9 +103,29 @@ def make_switch(z):
 
 
 def check_change_to_switch(num):
+    global dict_num_list_common_vars
+    # print('dict num list common vars')
+    # for i in dict_num_list_common_vars:
+    #     print(i, ':')
+    #     for j in dict_num_list_common_vars[i]:  # list of list of tuples
+    #         for k in j:
+    #             print(k, ', ', end='')
+    #         print()
+
+    if num in dict_num_list_common_vars.keys():
+        try:
+            return dict_num_list_common_vars[num][dict_num_chain_pos[num][0]][0]
+
+        # not calculated for chain
+        except:
+            dict_num_list_common_vars[num][dict_num_chain_pos[num][0]] = []
+
+    # not calculated for any chain of num
+    dict_num_list_common_vars[num] = []
+    dict_num_list_common_vars[num].append([])
     main_list = stack_match2.dict_num_list_of_chains[num]
     chain_pos = dict_num_chain_pos[num][0]
-    l = main_list[chain_pos].copy()
+    l = main_list[chain_pos].copy()  # l is a chain
     if len(l) == 1:
         return None
     if l[-1].type1 == 'else':
@@ -101,7 +139,9 @@ def check_change_to_switch(num):
                     count += 1
                     break
         if count == len(l):
-            return i[0]
+            dict_num_list_common_vars[num][dict_num_chain_pos[num][0]].append(i[0])
+            return dict_num_list_common_vars[num][dict_num_chain_pos[num][0]][0]
+            # return i[0]
         count = 1
     return None
 
@@ -148,3 +188,9 @@ def get_new_prebody(pos, z, var, cmp_with):
                 return ret, end_here
     return ret, end_here
 
+
+def skip_extra_brackets(pos, z):
+    i = pos
+    while i<len(z) and z[i]=='}':
+        i+=1
+    return i

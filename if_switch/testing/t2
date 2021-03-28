@@ -43,7 +43,7 @@ void main()
     }
     if(var2==0)
         int a1;
-    else if(var2==var1)
+    else if(var2==1 && var1==2)
         int b1;
     else
         int c1;
