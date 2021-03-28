@@ -5,7 +5,7 @@ begin_net_open = 0
 dict_num_chain_pos = stack_match2.dict_num_list_of_chains.fromkeys(stack_match2.dict_num_list_of_chains.keys(), [0, 0])
 z_new = []
 dict_num_list_common_vars = dict()
-# switched_window = -1
+switched_window = -1
 
 
 def make_switch(z):
@@ -44,7 +44,7 @@ def make_switch(z):
             dict_num_chain_pos[net_open][1] += 1  # incremented object by one
             chosen_var = check_change_to_switch(net_open)
             if chosen_var is not None:
-                # switched_window = net_open
+                switched_window = net_open
                 main_list = stack_match2.dict_num_list_of_chains[net_open]
                 chain_pos = dict_num_chain_pos[net_open][0]
                 if_obj = main_list[chain_pos][0]
@@ -74,12 +74,29 @@ def make_switch(z):
                     pre_body, new_pos = get_new_prebody(i + 4, z, chosen_var, l[0][1])
                     z_new.append(pre_body)
                     i = new_pos
+                    begin_net_open1 = net_open
+                    while i < len(z):
+                        if z[i] == '{':
+                            net_open += 1
+                        elif z[i] == '}':
+                            net_open -= 1
+                        z_new.append(z[i])
+                        if net_open == begin_net_open1:
+                            break
+                        i += 1
+
+                    # can put the following 5 lines except i = skip_extra_brackets(i, z, net_open) line to the if condition in skip_extra_brackets where switched_window is being reset but it there is commonality in structure of elif and else case this way
+                    switched_window_before_reset = switched_window
+                    i_before_reset = i
+                    i = skip_extra_brackets(i, z, net_open)
+                    if i == i_before_reset - switched_window_before_reset:
+                        z_new.append('break;}')
 
                 else:
                     z_new.append('break;')
                     z_new.append('default:')
-                    begin_net_open1 = net_open
                     i += 2
+                    begin_net_open1 = net_open
                     while i < len(z):
                         if z[i] == '{':
                             net_open += 1
@@ -90,7 +107,7 @@ def make_switch(z):
                             break
                         i += 1
                     z_new.append('break;}')
-                    i = skip_extra_brackets(i, z)
+                    i = skip_extra_brackets(i, z, net_open)
                 dict_num_chain_pos[begin_net_open][1] += 1
 
             else:
@@ -189,8 +206,21 @@ def get_new_prebody(pos, z, var, cmp_with):
     return ret, end_here
 
 
-def skip_extra_brackets(pos, z):
+def skip_extra_brackets(pos, z, num):
+    global switched_window
+    global dict_num_chain_pos
     i = pos
-    while i<len(z) and z[i]=='}':
-        i+=1
+    print('before', z[i])
+    while i < len(z) and z[i] == '}':
+        i += 1
+
+    # check logic to retain correct number of } after switched if
+    if i == pos + 1:
+        return i
+    if switched_window != -1:
+        temp = switched_window
+        switched_window = -1
+        dict_num_chain_pos[num][0] += 1
+        print('temp', temp, z[i - temp])
+        return i - temp
     return i
