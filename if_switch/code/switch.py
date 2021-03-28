@@ -5,6 +5,7 @@ begin_net_open = 0
 dict_num_chain_pos = stack_match2.dict_num_list_of_chains.fromkeys(stack_match2.dict_num_list_of_chains.keys(), [0, 0])
 z_new = []
 dict_num_list_common_vars = dict()
+seen_at_num = []
 
 
 def make_switch(z):
@@ -13,6 +14,7 @@ def make_switch(z):
     global begin_net_open
     global z_new
     global dict_num_list_common_vars
+    global seen_at_num
 
     i = 0
     while i < len(z):
@@ -29,6 +31,12 @@ def make_switch(z):
             i += 1
 
         elif z[i] == 'if':
+            if net_open not in seen_at_num:
+                seen_at_num.append(net_open)
+            else:
+                dict_num_chain_pos[net_open][0] += 1
+                dict_num_chain_pos[net_open][1] = 0
+
             begin_net_open = net_open
 
             # print('obj type', dict_num_chain_pos[net_open][1], stack_match2.dict_num_list_of_chains[net_open][dict_num_chain_pos[net_open][0]])
@@ -112,12 +120,13 @@ def check_change_to_switch(num):
     if num not in dict_num_list_common_vars.keys():
         dict_num_list_common_vars[num] = []
 
-    elif num in dict_num_list_common_vars.keys():
+    elif num in dict_num_list_common_vars.keys():   # calculated for some chain at num earlier
         try:
-            return dict_num_list_common_vars[num][dict_num_chain_pos[num][0]][0]
+            return dict_num_list_common_vars[num][dict_num_chain_pos[num][0]][0]    # calculated for same chain already
         # not calculated for chain
-        except:
-            dict_num_list_common_vars[num][dict_num_chain_pos[num][0]] = []
+        except IndexError:
+            # dict_num_list_common_vars[num].append([])
+            print('index error')
 
     # not calculated for chain
     dict_num_list_common_vars[num].append([])

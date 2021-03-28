@@ -1,50 +1,20 @@
 void main()
-{
+{{
     int var1=1, var2;
     if(var1==0)
     {
-        int a;
+        if(var1==10)
+            int a;
+        else
+            int b;
+        if(1==0)
+            int c;
     }
-    else if(var2==1 && var1==1)
-    {
-        int b;
-    }
-    else if(var1==2 || var2==2)
-    {
-        int c;
-    }
-    else if(var1==3 && var2==3)
-    {
+    else
         int d;
-    }
-    else if(var2==4 || var1==4)
-    {
+     int h;
+    if(var2==1)
         int e;
-    }
-    else if(!(var1==5))
-    {
+    else
         int f;
-    }
-    else if(var2==6 && var1==6 || var1==5)
-    {
-        int g;
-    }
-    else if(var2==6 || var1==7 && var1==5)
-    {
-        int h;
-    }
-    else if(var2==6 && var1==8 && var1==5 || var1==var2)
-    {
-        int i;
-    }
-    else
-    {
-        int d;
-    }
-    if(var2==0)
-        int a1;
-    else if(var2==1 && var1==2)
-        int b1;
-    else
-        int c1;
-}
+}}
