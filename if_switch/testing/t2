@@ -33,8 +33,18 @@ void main()
     {
         int h;
     }
+    else if(var2==6 && var1==8 && var1==5 || var1==var2)
+    {
+        int i;
+    }
     else
     {
         int d;
     }
+    if(var2==0)
+        int a1;
+    else if(var2==var1)
+        int b1;
+    else
+        int c1;
 }

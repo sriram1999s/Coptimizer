@@ -51,9 +51,7 @@ for i in dict_num_list_of_chains:
 from switch import *
 make_switch(output_prg)
 print('z2', z_new)
-# output_prg1 = []
-# with open("temp.c", "w+") as f:
-#     f.write("".join(output_prg1))
-# print("".join(output_prg1))
-
+with open("temp.c", "w+") as f:
+    f.write("".join(z_new))
+print("".join(z_new))
 # ----------------------------------IO handling -----------------------------------------------------------------------------
