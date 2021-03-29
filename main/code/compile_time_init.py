@@ -72,15 +72,18 @@ def initialize(sub_tree):
     # print("upper_limit: ",upper_limit,type(upper_limit))
     if(lower_limit != 0):
         return
+    
 
     ids = dict()
     find_id(0, len(condition[2:]), condition[2:], ids)
     loop_var = list(ids.keys())[0]
     # print("loop_var", loop_var)
-    find_array(0, len(sub_tree[2]), sub_tree, loop_var, upper_limit)
+    find_array(0, len(sub_tree[2]), sub_tree[2], loop_var, upper_limit)
+    print(sub_tree[2])
 
 ''' to find array in body'''
 # [['b', '[', 'i', ']'], '=', 0]
+# [[['c', '[', 'i', ']'], '=', 1], ';']
 def find_array(i, n, l, loop_var, upper):
     if(i == n):
         return
@@ -88,6 +91,7 @@ def find_array(i, n, l, loop_var, upper):
         if(type(l[i][2]) == int):
             array_value[l[i][0][0]]['value'] = l[i][2]
             array_value[l[i][0][0]]['upper'] = upper
+            l[i].clear()
     if(type(l[i]) == list):
         find_array(0, len(l[i]), l[i], loop_var, upper)
     find_array(i+1, n, l,loop_var, upper)

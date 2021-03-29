@@ -6,12 +6,9 @@ int main()
   int *q;
   int *p=q;
   q=&a;
-  if(k)
-  {
-    ++*p;
-  }
   for(int i = 0;i < a; ++i)
   {
+    (*p)++;
     ++k;
   }
 }

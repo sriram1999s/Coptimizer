@@ -1,5 +1,6 @@
 import sys
 from preprocessing import *
+from postprocessing import *
 sys.setrecursionlimit(10**9)
 from parser import *
 
@@ -32,6 +33,8 @@ solve(0,len(z),z,output_prg)
 
 output_prg = "".join(output_prg)
 output_prg = make_compile_inits(output_prg)
+
+output_prg = post_process(output_prg)
 
 with open("temp.c","w+") as f :
     f.write(output_prg)

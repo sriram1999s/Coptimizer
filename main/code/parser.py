@@ -108,6 +108,11 @@ def p_for_condition(p):
                   | L_PAREN simple simple R_PAREN
     '''
     if(len(p) == 6):
+        if(p[2]!=';' and p[3]!=';'):
+            ids = dict()
+            find_id(0,len(p[3]), p[3] , ids)
+            loop_var = list(ids.keys())[0] 
+            solve_substi_id(0,len(p[2]),p[2],[loop_var])
         p[0] = [p[1], p[2], p[3], p[4], p[5]]
     else:
         p[0] = [p[1], p[2], p[3], p[4]]
@@ -643,7 +648,7 @@ def p_term(p):
         p[0] = [p[1],p[2],p[3]]
     else :
         p[0] = p[1]
-
+        
 def p_factor(p):
     '''
     factor : NOT factor
@@ -654,7 +659,19 @@ def p_factor(p):
            | brace
     '''
     if(len(p)==3):
-        p[0] = [p[1], p[2]]
+        if(p[1]=='++' or p[1]=='--'):
+            if(type(p[2])==str):
+                symbol_table[make_level_string(p[2])] = 'declared'
+                p[0] = [p[1], p[2]]
+            else:
+                var_dict = {}
+                find_id(0,len(p[2]),p[2],var_dict)
+                var =list(var_dict.keys())[0]
+                print("rhs: ",p[2],p[2][-1],symbol_table[make_level_string('*'+var)])
+                symbol_table[make_level_string(symbol_table[make_level_string('*'+var)])] = 'declared'
+                p[0] = [p[1], p[2]]
+        elif(p[1] == '-' and type(p[2])!=list and type(p[2])!=str):
+            p[0] = -1*p[2]
     else :
         p[0] = p[1]
 
@@ -669,6 +686,7 @@ def p_brace(p):
            | MULTIPLY ID
            | BIT_AND ID
            | ID
+    	   | CHAR
            | function_call
     	   | ID L_SQBRACE index R_SQBRACE
     '''
@@ -677,6 +695,17 @@ def p_brace(p):
     elif(len(p)==5):
         p[0] = [p[1], p[2], p[3],p[4]]
     elif(len(p)==3):
+        if(p[2]=='++' or p[2] =='--'):
+            if(type(p[1])==str):
+                symbol_table[make_level_string(p[1])] = 'declared'
+            else:
+                if(p[1][0]=='*'):
+                    symbol_table[make_level_string('*'+p[1][-1])] = 'declared'
+                else:
+                    var_dict = {}
+                    find_id(0,len(p[1]),p[1],var_dict)
+                    var =list(var_dict.keys())[0]
+                    symbol_table[make_level_string(symbol_table[make_level_string('*'+var)])] = 'declared'
         p[0] = [p[1], p[2]]
     else:
         p[0] = p[1]
