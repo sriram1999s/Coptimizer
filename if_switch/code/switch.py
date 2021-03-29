@@ -28,7 +28,7 @@ def make_switch(z):
 
     i = 0
     while i < len(z):
-        print('in while', z[i], seen_at_num)
+        print('in while', z[i], z_new)
 
         if seen_at_num and net_open < seen_at_num[-1]:
             seen_at_num.pop()
@@ -40,6 +40,8 @@ def make_switch(z):
 
         elif z[i] == '}':
             net_open -= 1
+            if net_open < 0:
+                break
             z_new.append(z[i])
 
             print('in }', net_open)
@@ -95,8 +97,7 @@ def make_switch(z):
 
             # chain not switched
             else:
-                z_new.append(z[i])
-                i += 1
+                i = add_as_is(i, z)
 
         elif z[i] == 'else':
             chosen_var = check_change_to_switch(seen_at_num[-1])
@@ -132,8 +133,7 @@ def make_switch(z):
                     order.append(('else', beg_net_open_else, i))
 
             else:
-                z_new.append(z[i])
-                i += 1
+                i = add_as_is(i, z)
 
         else:
             z_new.append(z[i])
@@ -164,11 +164,16 @@ def check_change_to_switch(num):
             # dict_num_list_common_vars[num].append([])
             print('index error')
 
-    # not calculated for chain
-    dict_num_list_common_vars[num].append([])
-    main_list = stack_match2.dict_num_list_of_chains[num]
-    chain_pos = dict_num_chain_pos[num][0]
-    l = main_list[chain_pos].copy()  # l is a chain
+    try:
+        # not calculated for chain
+        dict_num_list_common_vars[num].append([])
+        main_list = stack_match2.dict_num_list_of_chains[num]
+        chain_pos = dict_num_chain_pos[num][0]
+        l = main_list[chain_pos].copy()  # l is a chain
+
+    # when control reaches here through non-switched if of else if
+    except:
+        return None
 
     # don't switch single if
     if len(l) == 1:
@@ -221,6 +226,7 @@ def skip_extra_brackets(pos, z):
     global net_open
     global order
     global seen_at_num
+    global z_new
 
     if order[-1][0] == 'else':
         if net_open == seen_at_num[-1]:
@@ -236,3 +242,24 @@ def skip_extra_brackets(pos, z):
         if z[pos] == 'else':
             z_new.append('break;')
         return pos
+
+
+def add_as_is(pos, z):
+    global net_open
+    net_open_copy = net_open
+    i = pos
+    while i<len(z) and z[i] != '{':
+        z_new.append(z[i])
+        i+=1
+    net_open += 1
+    z_new.append(z[i])
+    i+=1
+    while i<len(z) and net_open_copy != net_open:
+        z_new.append(z[i])
+        if z[i] == '{':
+            net_open += 1
+        elif z[i] == '}':
+            net_open -= 1
+        i+=1
+
+    return i
