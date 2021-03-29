@@ -2,7 +2,9 @@ import stack_match2
 
 net_open = 0
 begin_net_open = 0
-dict_num_chain_pos = stack_match2.dict_num_list_of_chains.fromkeys(stack_match2.dict_num_list_of_chains.keys(), [0, 0])
+dict_num_chain_pos = dict()
+for i in stack_match2.dict_num_list_of_chains.keys():
+    dict_num_chain_pos[i] = [0, 0]
 z_new = []
 dict_num_list_common_vars = dict()
 seen_at_num = []
@@ -18,7 +20,7 @@ def make_switch(z):
 
     i = 0
     while i < len(z):
-        print('in while', z[i], z_new)
+        print('in while', z[i], dict_num_chain_pos)
 
         if z[i] == '{':
             net_open += 1
@@ -61,7 +63,9 @@ def make_switch(z):
                 z_new.append(pre_body)
                 i = util(new_pos, z, begin_net_open)
 
+                print('before', dict_num_chain_pos)
                 dict_num_chain_pos[net_open][1] += 1  # incremented object by one
+                print('after', dict_num_chain_pos)
 
 
             # chain not switched
@@ -108,6 +112,7 @@ def make_switch(z):
 # needs to include a way to check for || and other cases where switch should not be done
 def check_change_to_switch(num):
     global dict_num_list_common_vars  # list of common variables for a chain
+    global dict_num_chain_pos
     # print('dict num list common vars')
     # for i in dict_num_list_common_vars:
     #     print(i, ':')
@@ -156,8 +161,6 @@ def check_change_to_switch(num):
 
 
 def get_new_prebody(pos, z, var, cmp_with):
-    global net_open
-    global begin_net_open
     indices = [i for i, x in enumerate(z) if x == '{']  # list of positions of { in z
     end_here = -1
     # find first position of { after the curr pos
