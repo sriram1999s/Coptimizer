@@ -1,14 +1,18 @@
 import stack_match2
 
 net_open = 0
-begin_net_open = 0
+begin_net_open = -1
+# dict_num_chain_pos = stack_match2.dict_num_list_of_chains.fromkeys(stack_match2.dict_num_list_of_chains.keys(), [0, 0])
 dict_num_chain_pos = dict()
-for i in stack_match2.dict_num_list_of_chains.keys():
-    dict_num_chain_pos[i] = [0, 0]
+for i1 in stack_match2.dict_num_list_of_chains:
+    dict_num_chain_pos[i1] = [0, 0]
 z_new = []
 dict_num_list_common_vars = dict()
 seen_at_num = []
-
+beg_net_open_if = -1
+beg_net_open_elif = -1
+beg_net_open_else = -1
+order = []
 
 def make_switch(z):
     global net_open
@@ -17,10 +21,14 @@ def make_switch(z):
     global z_new
     global dict_num_list_common_vars
     global seen_at_num
+    global beg_net_open_if
+    global beg_net_open_elif
+    global beg_net_open_else
+    global order
 
     i = 0
     while i < len(z):
-        print('in while', z[i], dict_num_chain_pos)
+        print('in while', z[i], order)
 
         if z[i] == '{':
             net_open += 1
@@ -30,7 +38,21 @@ def make_switch(z):
         elif z[i] == '}':
             net_open -= 1
             z_new.append(z[i])
-            i += 1
+
+            print('in }', net_open)
+
+            if order and order[-1][1] == net_open:
+                i = skip_extra_brackets(i+1, z)
+                if order[-1][0] == 'if':
+                    beg_net_open_if = -1
+                elif order[-1][0] == 'elif':
+                    beg_net_open_elif = -1
+                else:
+                    beg_net_open_else = -1
+                order.pop()
+
+            else:
+                i += 1
 
         elif z[i] == 'if':
             if net_open not in seen_at_num:
@@ -40,6 +62,7 @@ def make_switch(z):
                 dict_num_chain_pos[net_open][1] = 0
 
             begin_net_open = net_open
+            beg_net_open_if = net_open
 
             # print('obj type', dict_num_chain_pos[net_open][1], stack_match2.dict_num_list_of_chains[net_open][dict_num_chain_pos[net_open][0]])
             chosen_var = check_change_to_switch(net_open)
@@ -61,12 +84,11 @@ def make_switch(z):
                 pre_body, new_pos = get_new_prebody(i, z, chosen_var, l[0][1])
 
                 z_new.append(pre_body)
-                i = util(new_pos, z, begin_net_open)
+                # i = util(new_pos, z, begin_net_open)
+                i = new_pos
+                order.append(('if', beg_net_open_if, i))
 
-                print('before', dict_num_chain_pos)
                 dict_num_chain_pos[net_open][1] += 1  # incremented object by one
-                print('after', dict_num_chain_pos)
-
 
             # chain not switched
             else:
@@ -74,31 +96,38 @@ def make_switch(z):
                 i += 1
 
         elif z[i] == 'else':
-            chosen_var = check_change_to_switch(begin_net_open)
+            # chosen_var = check_change_to_switch(begin_net_open)
+            chosen_var = check_change_to_switch(net_open)
 
             # to be switched
             if chosen_var is not None:
                 main_list = stack_match2.dict_num_list_of_chains[begin_net_open]
                 chain_pos = dict_num_chain_pos[begin_net_open][0]
                 obj_no = dict_num_chain_pos[begin_net_open][1]
-                # print('obj no', obj_no)
                 chosen_chain = main_list[chain_pos]
                 obj = chosen_chain[obj_no]
                 if obj.type1 == 'elif':
                     dict_num_chain_pos[begin_net_open][1] += 1
 
+                    beg_net_open_elif = begin_net_open
+
                     l = list(filter(lambda x: chosen_var in x, obj.condition_vars))
                     z_new.append('case ' + l[0][1] + ':')
                     pre_body, new_pos = get_new_prebody(i + 4, z, chosen_var, l[0][1])
                     z_new.append(pre_body)
-                    i = util(new_pos, z, net_open)
+                    # i = util(new_pos, z, net_open)
+                    i = new_pos
+                    order.append(('elif', beg_net_open_elif, i))
 
                 else:
                     dict_num_chain_pos[begin_net_open][1] += 1
 
+                    beg_net_open_else = begin_net_open
+
                     z_new.append('default:')
                     i += 2
-                    i = util(i, z, net_open)
+                    # i = util(i, z, net_open)
+                    order.append(('else', beg_net_open_else, i))
 
             else:
                 z_new.append(z[i])
@@ -187,25 +216,53 @@ def get_new_prebody(pos, z, var, cmp_with):
 
 
 def skip_extra_brackets(pos, z):
-    global begin_net_open
+    # global begin_net_open
+    global net_open
+    global order
     i = pos
     while i < len(z) and z[i] == '}':
         i += 1
+        net_open -= 1
+
+    print('net open after while skip', net_open)
 
     if i < len(z):
         if z[i] == 'else':
+        # if z[i] == 'else' and check_change_to_switch(net_open) is not None:
             z_new.append('break;')
             return i
         z_new.append('break;}')
         return i
 
     z_new.append('break;}')
-    for j in range(begin_net_open):
+
+    last_beg_net_open = order[-1][1]
+    print('las beg net open', last_beg_net_open)
+    for j in range(last_beg_net_open):
+    # for j in range(begin_net_open):
         z_new.append('}')
     return i
 
 
-def util(pos, z, begin_net_open1):
+# def util(pos, z, begin_net_open1):
+#     global net_open
+#     i = pos
+#     while i < len(z):
+#         if z[i] == '{':
+#             net_open += 1
+#         elif z[i] == '}':
+#             net_open -= 1
+#         # append no matter which character
+#         z_new.append(z[i])
+#         if net_open == begin_net_open1:
+#             i += 1
+#             break
+#         i += 1
+#
+#     i = skip_extra_brackets(i, z)
+#     return i
+
+def util(pos, z, end):
     global net_open
     i = pos
     while i < len(z):
@@ -215,7 +272,7 @@ def util(pos, z, begin_net_open1):
             net_open -= 1
         # append no matter which character
         z_new.append(z[i])
-        if net_open == begin_net_open1:
+        if net_open == end:
             i += 1
             break
         i += 1

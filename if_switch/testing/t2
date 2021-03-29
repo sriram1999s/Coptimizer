@@ -1,5 +1,5 @@
 void main()
-{{
+{
     int var1=1, var2;
     if(var1==0)
     {
@@ -8,7 +8,7 @@ void main()
         else
             int b;
         if(1==0)
-            int c;
+            {int c;}
     }
     else
         int d;
@@ -17,4 +17,4 @@ void main()
         int e;
     else
         int f;
-}}
+}
