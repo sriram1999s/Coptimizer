@@ -7,14 +7,16 @@ void main()
             int a;
         else
             int b;
-        if(1==0)
-            {int c;}
+        if(var1==0)
+            int c;
+        else
+            int d;
     }
     else
-        int d;
+        int e;
      int h;
     if(var2==1)
-        int e;
-    else
         int f;
+    else
+        int g;
 }

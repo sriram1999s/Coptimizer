@@ -2,7 +2,6 @@ import stack_match2
 
 net_open = 0
 begin_net_open = -1
-# dict_num_chain_pos = stack_match2.dict_num_list_of_chains.fromkeys(stack_match2.dict_num_list_of_chains.keys(), [0, 0])
 dict_num_chain_pos = dict()
 for i1 in stack_match2.dict_num_list_of_chains:
     dict_num_chain_pos[i1] = [0, 0]
@@ -29,6 +28,9 @@ def make_switch(z):
     i = 0
     while i < len(z):
         print('in while', z[i], order)
+
+        if seen_at_num and net_open < seen_at_num[-1]:
+            seen_at_num.pop()
 
         if z[i] == '{':
             net_open += 1
@@ -96,37 +98,36 @@ def make_switch(z):
                 i += 1
 
         elif z[i] == 'else':
-            # chosen_var = check_change_to_switch(begin_net_open)
-            chosen_var = check_change_to_switch(net_open)
+            chosen_var = check_change_to_switch(seen_at_num[-1])
 
             # to be switched
             if chosen_var is not None:
-                main_list = stack_match2.dict_num_list_of_chains[begin_net_open]
-                chain_pos = dict_num_chain_pos[begin_net_open][0]
-                obj_no = dict_num_chain_pos[begin_net_open][1]
+                main_list = stack_match2.dict_num_list_of_chains[seen_at_num[-1]]
+                chain_pos = dict_num_chain_pos[seen_at_num[-1]][0]
+                obj_no = dict_num_chain_pos[seen_at_num[-1]][1]
                 chosen_chain = main_list[chain_pos]
                 obj = chosen_chain[obj_no]
                 if obj.type1 == 'elif':
-                    dict_num_chain_pos[begin_net_open][1] += 1
+                    dict_num_chain_pos[seen_at_num[-1]][1] += 1
 
-                    beg_net_open_elif = begin_net_open
+                    beg_net_open_elif = seen_at_num[-1]
 
                     l = list(filter(lambda x: chosen_var in x, obj.condition_vars))
                     z_new.append('case ' + l[0][1] + ':')
                     pre_body, new_pos = get_new_prebody(i + 4, z, chosen_var, l[0][1])
                     z_new.append(pre_body)
-                    # i = util(new_pos, z, net_open)
                     i = new_pos
+
                     order.append(('elif', beg_net_open_elif, i))
 
                 else:
-                    dict_num_chain_pos[begin_net_open][1] += 1
+                    dict_num_chain_pos[seen_at_num[-1]][1] += 1
 
-                    beg_net_open_else = begin_net_open
+                    beg_net_open_else = seen_at_num[-1]
 
                     z_new.append('default:')
                     i += 2
-                    # i = util(i, z, net_open)
+
                     order.append(('else', beg_net_open_else, i))
 
             else:
@@ -216,9 +217,9 @@ def get_new_prebody(pos, z, var, cmp_with):
 
 
 def skip_extra_brackets(pos, z):
-    # global begin_net_open
     global net_open
     global order
+    global seen_at_num
     i = pos
     while i < len(z) and z[i] == '}':
         i += 1
@@ -228,7 +229,12 @@ def skip_extra_brackets(pos, z):
 
     if i < len(z):
         if z[i] == 'else':
-        # if z[i] == 'else' and check_change_to_switch(net_open) is not None:
+
+            # prev = seen_at_num[seen_at_num.index(net_open)-1]
+            # if 0 <= prev and prev == net_open:
+            #     z_new.append('break;}')
+            #     return i
+
             z_new.append('break;')
             return i
         z_new.append('break;}')
@@ -239,12 +245,11 @@ def skip_extra_brackets(pos, z):
     last_beg_net_open = order[-1][1]
     print('las beg net open', last_beg_net_open)
     for j in range(last_beg_net_open):
-    # for j in range(begin_net_open):
         z_new.append('}')
     return i
 
 
-# def util(pos, z, begin_net_open1):
+# def util(pos, z, end):
 #     global net_open
 #     i = pos
 #     while i < len(z):
@@ -254,28 +259,10 @@ def skip_extra_brackets(pos, z):
 #             net_open -= 1
 #         # append no matter which character
 #         z_new.append(z[i])
-#         if net_open == begin_net_open1:
+#         if net_open == end:
 #             i += 1
 #             break
 #         i += 1
 #
 #     i = skip_extra_brackets(i, z)
 #     return i
-
-def util(pos, z, end):
-    global net_open
-    i = pos
-    while i < len(z):
-        if z[i] == '{':
-            net_open += 1
-        elif z[i] == '}':
-            net_open -= 1
-        # append no matter which character
-        z_new.append(z[i])
-        if net_open == end:
-            i += 1
-            break
-        i += 1
-
-    i = skip_extra_brackets(i, z)
-    return i
