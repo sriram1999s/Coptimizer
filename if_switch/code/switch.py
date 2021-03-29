@@ -13,6 +13,7 @@ beg_net_open_elif = -1
 beg_net_open_else = -1
 order = []
 
+
 def make_switch(z):
     global net_open
     global dict_num_chain_pos
@@ -27,7 +28,7 @@ def make_switch(z):
 
     i = 0
     while i < len(z):
-        print('in while', z[i], order)
+        print('in while', z[i], seen_at_num)
 
         if seen_at_num and net_open < seen_at_num[-1]:
             seen_at_num.pop()
@@ -44,7 +45,7 @@ def make_switch(z):
             print('in }', net_open)
 
             if order and order[-1][1] == net_open:
-                i = skip_extra_brackets(i+1, z)
+                i = skip_extra_brackets(i + 1, z)
                 if order[-1][0] == 'if':
                     beg_net_open_if = -1
                 elif order[-1][0] == 'elif':
@@ -155,9 +156,9 @@ def check_change_to_switch(num):
     if num not in dict_num_list_common_vars.keys():
         dict_num_list_common_vars[num] = []
 
-    elif num in dict_num_list_common_vars.keys():   # calculated for some chain at num earlier
+    elif num in dict_num_list_common_vars.keys():  # calculated for some chain at num earlier
         try:
-            return dict_num_list_common_vars[num][dict_num_chain_pos[num][0]][0]    # calculated for same chain already
+            return dict_num_list_common_vars[num][dict_num_chain_pos[num][0]][0]  # calculated for same chain already
         # not calculated for chain
         except IndexError:
             # dict_num_list_common_vars[num].append([])
@@ -220,49 +221,18 @@ def skip_extra_brackets(pos, z):
     global net_open
     global order
     global seen_at_num
-    i = pos
-    while i < len(z) and z[i] == '}':
-        i += 1
-        net_open -= 1
 
-    print('net open after while skip', net_open)
+    if order[-1][0] == 'else':
+        if net_open == seen_at_num[-1]:
+            z_new.append('break;}')
+            return pos
 
-    if i < len(z):
-        if z[i] == 'else':
-
-            # prev = seen_at_num[seen_at_num.index(net_open)-1]
-            # if 0 <= prev and prev == net_open:
-            #     z_new.append('break;}')
-            #     return i
-
+    if order[-1][0] == 'if':
+        if net_open == seen_at_num[-1]: # will always be?
             z_new.append('break;')
-            return i
-        z_new.append('break;}')
-        return i
+            return pos
 
-    z_new.append('break;}')
-
-    last_beg_net_open = order[-1][1]
-    print('las beg net open', last_beg_net_open)
-    for j in range(last_beg_net_open):
-        z_new.append('}')
-    return i
-
-
-# def util(pos, z, end):
-#     global net_open
-#     i = pos
-#     while i < len(z):
-#         if z[i] == '{':
-#             net_open += 1
-#         elif z[i] == '}':
-#             net_open -= 1
-#         # append no matter which character
-#         z_new.append(z[i])
-#         if net_open == end:
-#             i += 1
-#             break
-#         i += 1
-#
-#     i = skip_extra_brackets(i, z)
-#     return i
+    if order[-1][0] == 'elif':  # redundant
+        if z[pos] == 'else':
+            z_new.append('break;')
+        return pos
