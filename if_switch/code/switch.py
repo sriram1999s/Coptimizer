@@ -26,9 +26,7 @@ def make_switch(z):
 
     i = 0
     while i < len(z):
-        print('in while', z[i], net_open)
-        if order:
-            print('order', order[-1])
+        print('in while', z[i])
 
         # check placement
         if seen_at_num and net_open < seen_at_num[-1]:
@@ -61,7 +59,6 @@ def make_switch(z):
 
         elif z[i] == 'if':
             if net_open not in seen_at_num:
-                print('in if append')
                 seen_at_num.append(net_open)
             else:
                 dict_num_chain_pos[net_open][0] += 1
@@ -70,6 +67,7 @@ def make_switch(z):
             beg_net_open_if = net_open
 
             chosen_var = check_change_to_switch(net_open)
+            print('chosen var', chosen_var)
 
             # chain to be switched
             # chosen var is the switch var
@@ -163,10 +161,9 @@ def check_change_to_switch(num):
 
     elif num in dict_num_list_common_vars.keys():  # calculated for some chain at num earlier
         try:
-            print('should come here', num)
             return dict_num_list_common_vars[num][dict_num_chain_pos[num][0]][0]  # calculated for same chain already
         # not calculated for chain
-        except IndexError:
+        except:
             # dict_num_list_common_vars[num].append([])
             print('index error')
 
