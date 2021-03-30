@@ -1,35 +1,34 @@
 import stack_match2
 
 net_open = 0
-begin_net_open = -1
 dict_num_chain_pos = dict()
 for i1 in stack_match2.dict_num_list_of_chains:
     dict_num_chain_pos[i1] = [0, 0]
 z_new = []
 dict_num_list_common_vars = dict()
 seen_at_num = []
-beg_net_open_if = -1
-beg_net_open_elif = -1
-beg_net_open_else = -1
+# beg_net_open_if = -1
+# beg_net_open_elif = -1
+# beg_net_open_else = -1
 order = []
 
 
 def make_switch(z):
     global net_open
     global dict_num_chain_pos
-    global begin_net_open
     global z_new
     global dict_num_list_common_vars
     global seen_at_num
-    global beg_net_open_if
-    global beg_net_open_elif
-    global beg_net_open_else
+    # global beg_net_open_if
+    # global beg_net_open_elif
+    # global beg_net_open_else
     global order
 
     i = 0
     while i < len(z):
-        print('in while', z[i], z_new)
+        print('in while', z[i])
 
+        # check placement
         if seen_at_num and net_open < seen_at_num[-1]:
             seen_at_num.pop()
 
@@ -40,36 +39,43 @@ def make_switch(z):
 
         elif z[i] == '}':
             net_open -= 1
-            if net_open < 0:
-                break
+            # if net_open < 0:
+            #     break
             z_new.append(z[i])
 
-            print('in }', net_open)
+            # print('in }', net_open)
 
             if order and order[-1][1] == net_open:
+                # print('order', order)
                 i = skip_extra_brackets(i + 1, z)
-                if order[-1][0] == 'if':
-                    beg_net_open_if = -1
-                elif order[-1][0] == 'elif':
-                    beg_net_open_elif = -1
-                else:
-                    beg_net_open_else = -1
-                order.pop()
-
+                # if order[-1][0] == 'if':
+                #     beg_net_open_if = -1
+                # elif order[-1][0] == 'elif':
+                #     beg_net_open_elif = -1
+                # else:
+                #     beg_net_open_else = -1
+            #     order.pop()
+            #
             else:
                 i += 1
 
+            # if order:
+            #     if order[-1][0] == 'if' and order[-1][1] == net_open:
+            #         i = skip_extra_brackets(i+1, z)
+            #     elif order[-1][0] == 'elif' and order[-1][1] == net_open+1:
+            #         i = skip_extra_brackets(i+1, z)
+
+
         elif z[i] == 'if':
             if net_open not in seen_at_num:
+                print('in if append')
                 seen_at_num.append(net_open)
             else:
                 dict_num_chain_pos[net_open][0] += 1
                 dict_num_chain_pos[net_open][1] = 0
 
-            begin_net_open = net_open
             beg_net_open_if = net_open
 
-            # print('obj type', dict_num_chain_pos[net_open][1], stack_match2.dict_num_list_of_chains[net_open][dict_num_chain_pos[net_open][0]])
             chosen_var = check_change_to_switch(net_open)
 
             # chain to be switched
@@ -89,9 +95,10 @@ def make_switch(z):
                 pre_body, new_pos = get_new_prebody(i, z, chosen_var, l[0][1])
 
                 z_new.append(pre_body)
-                # i = util(new_pos, z, begin_net_open)
                 i = new_pos
-                order.append(('if', beg_net_open_if, i))
+                # order.append(('if', beg_net_open_if, i))
+
+                order.append(('if', beg_net_open_if))
 
                 dict_num_chain_pos[net_open][1] += 1  # incremented object by one
 
@@ -100,6 +107,7 @@ def make_switch(z):
                 i = add_as_is(i, z)
 
         elif z[i] == 'else':
+            print('seen at num', seen_at_num)
             chosen_var = check_change_to_switch(seen_at_num[-1])
 
             # to be switched
@@ -112,7 +120,10 @@ def make_switch(z):
                 if obj.type1 == 'elif':
                     dict_num_chain_pos[seen_at_num[-1]][1] += 1
 
-                    beg_net_open_elif = seen_at_num[-1]
+                    # beg_net_open_elif = seen_at_num[-1]
+                    beg_net_open_elif = net_open
+
+                    net_open += 1
 
                     l = list(filter(lambda x: chosen_var in x, obj.condition_vars))
                     z_new.append('case ' + l[0][1] + ':')
@@ -120,17 +131,22 @@ def make_switch(z):
                     z_new.append(pre_body)
                     i = new_pos
 
-                    order.append(('elif', beg_net_open_elif, i))
+                    # order.append(('elif', beg_net_open_elif, i))
+
+                    order.append(('elif', beg_net_open_elif))
 
                 else:
                     dict_num_chain_pos[seen_at_num[-1]][1] += 1
 
-                    beg_net_open_else = seen_at_num[-1]
+                    # beg_net_open_else = seen_at_num[-1]
+                    beg_net_open_else = net_open
 
                     z_new.append('default:')
                     i += 2
 
-                    order.append(('else', beg_net_open_else, i))
+                    # order.append(('else', beg_net_open_else, i))
+
+                    order.append(('else', beg_net_open_else))
 
             else:
                 i = add_as_is(i, z)
@@ -144,13 +160,6 @@ def make_switch(z):
 def check_change_to_switch(num):
     global dict_num_list_common_vars  # list of common variables for a chain
     global dict_num_chain_pos
-    # print('dict num list common vars')
-    # for i in dict_num_list_common_vars:
-    #     print(i, ':')
-    #     for j in dict_num_list_common_vars[i]:  # list of list of tuples
-    #         for k in j:
-    #             print(k, ', ', end='')
-    #         print()
 
     # switch based on first common var in all if elif else objects of a chain
     if num not in dict_num_list_common_vars.keys():
@@ -158,6 +167,7 @@ def check_change_to_switch(num):
 
     elif num in dict_num_list_common_vars.keys():  # calculated for some chain at num earlier
         try:
+            print('should come here', num)
             return dict_num_list_common_vars[num][dict_num_chain_pos[num][0]][0]  # calculated for same chain already
         # not calculated for chain
         except IndexError:
@@ -169,6 +179,7 @@ def check_change_to_switch(num):
         dict_num_list_common_vars[num].append([])
         main_list = stack_match2.dict_num_list_of_chains[num]
         chain_pos = dict_num_chain_pos[num][0]
+        print('len', num, len(stack_match2.dict_num_list_of_chains[num]))
         l = main_list[chain_pos].copy()  # l is a chain
 
     # when control reaches here through non-switched if of else if
@@ -177,6 +188,7 @@ def check_change_to_switch(num):
 
     # don't switch single if
     if len(l) == 1:
+        # print('len is 1')
         return None
     # else has no condition vars, so don't compare with that
     if l[-1].type1 == 'else':
@@ -191,6 +203,7 @@ def check_change_to_switch(num):
                     break
         if count == len(l):
             dict_num_list_common_vars[num][dict_num_chain_pos[num][0]].append(i[0])
+            # print('returning', dict_num_list_common_vars[num][dict_num_chain_pos[num][0]][0])
             return dict_num_list_common_vars[num][dict_num_chain_pos[num][0]][0]
         count = 1
     return None
@@ -227,21 +240,35 @@ def skip_extra_brackets(pos, z):
     global order
     global seen_at_num
     global z_new
+    # global beg_net_open_if
+    # global beg_net_open_else
 
     if order[-1][0] == 'else':
-        if net_open == seen_at_num[-1]:
-            z_new.append('break;}')
-            return pos
+    #     # if net_open == seen_at_num[-1]:
+    #     if net_open == beg_net_open_else:
+        z_new.append('break;}')
+
+        while pos<len(z) and z[pos] == '}' and net_open!=seen_at_num[-1]:
+            net_open -=1
+            pos +=1
+        return pos
 
     if order[-1][0] == 'if':
-        if net_open == seen_at_num[-1]: # will always be?
-            z_new.append('break;')
-            return pos
+        z_new.append('break;')
+        return pos
 
     if order[-1][0] == 'elif':  # redundant
         if z[pos] == 'else':
             z_new.append('break;')
-        return pos
+            return pos
+
+        else:   # has to be a }
+            z_new.append('break;}')
+            while pos < len(z) and z[pos] == '}' and net_open != seen_at_num[-1]:
+                net_open -= 1
+                pos += 1
+            return pos + 1
+
 
 
 def add_as_is(pos, z):
