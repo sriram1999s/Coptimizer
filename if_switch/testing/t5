@@ -1,0 +1,19 @@
+void main()
+{
+    int a;
+    if(a==0)
+        int b;
+    else if(a==1)
+        int c;
+    else if(a==2)
+        int c1;
+    else
+        int d;
+
+     if(a==0)
+        int b;
+    else if(a==1)
+        int c;
+    else if(a==2)
+        int c1;
+}

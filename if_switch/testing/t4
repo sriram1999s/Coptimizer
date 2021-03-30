@@ -31,6 +31,4 @@ void main()
             int k;
         int l;
     }
-    else
-        int m;
 }

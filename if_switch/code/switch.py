@@ -97,7 +97,8 @@ def make_switch(z):
 
             # chain not switched
             else:
-                i = add_as_is(i, z)
+                z_new.append(z[i])
+                i += 1
 
         elif z[i] == 'else':
             chosen_var = check_change_to_switch(seen_at_num[-1])
@@ -143,7 +144,8 @@ def make_switch(z):
                     order.append(('else', beg_net_open_else))
 
             else:
-                i = add_as_is(i, z)
+                z_new.append(z[i])
+                i += 1
 
         else:
             z_new.append(z[i])
@@ -176,7 +178,6 @@ def check_change_to_switch(num):
         print('len', num, len(stack_match2.dict_num_list_of_chains[num]))
         l = main_list[chain_pos].copy()  # l is a chain
 
-    # when control reaches here through non-switched if of else if
     except:
         return None
 
@@ -251,7 +252,7 @@ def skip_extra_brackets(pos, z):
         z_new.append('break;')
         return pos
 
-    if order[-1][0] == 'elif':  # redundant
+    if order[-1][0] == 'elif':
         if z[pos] == 'else':
             z_new.append('break;')
             return pos
@@ -262,25 +263,3 @@ def skip_extra_brackets(pos, z):
                 net_open -= 1
                 pos += 1
             return pos
-
-
-
-def add_as_is(pos, z):
-    global net_open
-    net_open_copy = net_open
-    i = pos
-    while i<len(z) and z[i] != '{':
-        z_new.append(z[i])
-        i+=1
-    net_open += 1
-    z_new.append(z[i])
-    i+=1
-    while i<len(z) and net_open_copy != net_open:
-        z_new.append(z[i])
-        if z[i] == '{':
-            net_open += 1
-        elif z[i] == '}':
-            net_open -= 1
-        i+=1
-
-    return i
