@@ -26,7 +26,9 @@ def make_switch(z):
 
     i = 0
     while i < len(z):
-        print('in while', z[i])
+        print('in while', z[i], net_open)
+        if order:
+            print('order', order[-1])
 
         # check placement
         if seen_at_num and net_open < seen_at_num[-1]:
@@ -39,8 +41,6 @@ def make_switch(z):
 
         elif z[i] == '}':
             net_open -= 1
-            # if net_open < 0:
-            #     break
             z_new.append(z[i])
 
             # print('in }', net_open)
@@ -58,13 +58,6 @@ def make_switch(z):
             #
             else:
                 i += 1
-
-            # if order:
-            #     if order[-1][0] == 'if' and order[-1][1] == net_open:
-            #         i = skip_extra_brackets(i+1, z)
-            #     elif order[-1][0] == 'elif' and order[-1][1] == net_open+1:
-            #         i = skip_extra_brackets(i+1, z)
-
 
         elif z[i] == 'if':
             if net_open not in seen_at_num:
@@ -107,7 +100,6 @@ def make_switch(z):
                 i = add_as_is(i, z)
 
         elif z[i] == 'else':
-            print('seen at num', seen_at_num)
             chosen_var = check_change_to_switch(seen_at_num[-1])
 
             # to be switched
@@ -121,9 +113,11 @@ def make_switch(z):
                     dict_num_chain_pos[seen_at_num[-1]][1] += 1
 
                     # beg_net_open_elif = seen_at_num[-1]
-                    beg_net_open_elif = net_open
+                    # beg_net_open_elif = net_open
 
                     net_open += 1
+
+                    beg_net_open_elif = net_open
 
                     l = list(filter(lambda x: chosen_var in x, obj.condition_vars))
                     z_new.append('case ' + l[0][1] + ':')
@@ -267,7 +261,7 @@ def skip_extra_brackets(pos, z):
             while pos < len(z) and z[pos] == '}' and net_open != seen_at_num[-1]:
                 net_open -= 1
                 pos += 1
-            return pos + 1
+            return pos
 
 
 
