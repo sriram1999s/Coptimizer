@@ -7,10 +7,7 @@ for i1 in stack_match2.dict_num_list_of_chains:
 z_new = []
 dict_num_list_common_vars = dict()
 seen_at_num = []
-# beg_net_open_if = -1
-# beg_net_open_elif = -1
-# beg_net_open_else = -1
-order = []
+order = []  # need not actually be a list, can just be a var
 
 
 def make_switch(z):
@@ -19,9 +16,6 @@ def make_switch(z):
     global z_new
     global dict_num_list_common_vars
     global seen_at_num
-    # global beg_net_open_if
-    # global beg_net_open_elif
-    # global beg_net_open_else
     global order
 
     i = 0
@@ -41,19 +35,9 @@ def make_switch(z):
             net_open -= 1
             z_new.append(z[i])
 
-            # print('in }', net_open)
-
             if order and order[-1][1] == net_open:
                 # print('order', order)
                 i = skip_extra_brackets(i + 1, z)
-                # if order[-1][0] == 'if':
-                #     beg_net_open_if = -1
-                # elif order[-1][0] == 'elif':
-                #     beg_net_open_elif = -1
-                # else:
-                #     beg_net_open_else = -1
-            #     order.pop()
-            #
             else:
                 i += 1
 
@@ -67,7 +51,6 @@ def make_switch(z):
             beg_net_open_if = net_open
 
             chosen_var = check_change_to_switch(net_open)
-            print('chosen var', chosen_var)
 
             # chain to be switched
             # chosen var is the switch var
@@ -111,9 +94,6 @@ def make_switch(z):
                 if obj.type1 == 'elif':
                     dict_num_chain_pos[seen_at_num[-1]][1] += 1
 
-                    # beg_net_open_elif = seen_at_num[-1]
-                    # beg_net_open_elif = net_open
-
                     net_open += 1
 
                     beg_net_open_elif = net_open
@@ -124,20 +104,15 @@ def make_switch(z):
                     z_new.append(pre_body)
                     i = new_pos
 
-                    # order.append(('elif', beg_net_open_elif, i))
-
                     order.append(('elif', beg_net_open_elif))
 
                 else:
                     dict_num_chain_pos[seen_at_num[-1]][1] += 1
 
-                    # beg_net_open_else = seen_at_num[-1]
                     beg_net_open_else = net_open
 
                     z_new.append('default:')
                     i += 2
-
-                    # order.append(('else', beg_net_open_else, i))
 
                     order.append(('else', beg_net_open_else))
 
@@ -164,15 +139,14 @@ def check_change_to_switch(num):
             return dict_num_list_common_vars[num][dict_num_chain_pos[num][0]][0]  # calculated for same chain already
         # not calculated for chain
         except:
-            # dict_num_list_common_vars[num].append([])
-            print('index error')
+            print('error')
 
     try:
         # not calculated for chain
         dict_num_list_common_vars[num].append([])
         main_list = stack_match2.dict_num_list_of_chains[num]
         chain_pos = dict_num_chain_pos[num][0]
-        print('len', num, len(stack_match2.dict_num_list_of_chains[num]))
+        # print('len', num, len(stack_match2.dict_num_list_of_chains[num]))
         l = main_list[chain_pos].copy()  # l is a chain
 
     except:
@@ -219,6 +193,7 @@ def get_new_prebody(pos, z, var, cmp_with):
             if i - 1 >= 0 and z[i - 1] == '&&':  # && before var
                 ret += 'if' + ''.join(z[:i - 1]) + ')'
 
+            # not actually guaranteed
             if i - 1 >= 0 and z[i - 1] == '(' and z[i + 3] == ')':  # condition is just var==cmp_with
                 return ret, end_here
 
@@ -229,6 +204,7 @@ def get_new_prebody(pos, z, var, cmp_with):
             if i - 3 >= 0 and z[i - 3] == '&&':  # && before cmp_with
                 ret += 'if' + ''.join(z[:i - 3]) + ')'
 
+            # not actually guaranteed
             if i - 3 >= 0 and z[i - 3] == '(' and z[i + 1] == ')':  # condition is just cmp_with == var
                 return ret, end_here
 
@@ -242,17 +218,13 @@ def skip_extra_brackets(pos, z):
     global order
     global seen_at_num
     global z_new
-    # global beg_net_open_if
-    # global beg_net_open_else
 
     if order[-1][0] == 'else':
-    #     # if net_open == seen_at_num[-1]:
-    #     if net_open == beg_net_open_else:
         z_new.append('break;}')
 
-        while pos<len(z) and z[pos] == '}' and net_open!=seen_at_num[-1]:
-            net_open -=1
-            pos +=1
+        while pos < len(z) and z[pos] == '}' and net_open != seen_at_num[-1]:
+            net_open -= 1
+            pos += 1
         return pos
 
     if order[-1][0] == 'if':
@@ -264,7 +236,7 @@ def skip_extra_brackets(pos, z):
             z_new.append('break;')
             return pos
 
-        else:   # has to be a }
+        else:  # has to be a }
             z_new.append('break;}')
             while pos < len(z) and z[pos] == '}' and net_open != seen_at_num[-1]:
                 net_open -= 1
