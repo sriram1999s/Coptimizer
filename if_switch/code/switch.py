@@ -162,11 +162,18 @@ def check_change_to_switch(num):
 
     count = 1
     for i in l[0].condition_vars:  # tuple
+        go_to_next_tuple = False
         for j in l[1:]:  # obj
             for k in j.condition_vars:  # tuple
                 if k[0] == i[0]:
+                    if k[1] == i[1]:    # const is the same
+                        go_to_next_tuple = True
+                        break
                     count += 1
                     break
+            if go_to_next_tuple:
+                break
+
         if count == len(l):
             dict_num_list_common_vars[num][dict_num_chain_pos[num][0]].append(i[0])
             # print('returning', dict_num_list_common_vars[num][dict_num_chain_pos[num][0]][0])
