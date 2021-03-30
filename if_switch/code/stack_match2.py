@@ -78,11 +78,13 @@ def create_obj(type1, pos, z):
                 if (is_int(z[i]) or is_char(z[i])) and not is_int(z[i+2]):
                     # if before or after are || don't add var to list because should not switch
                     if z[i-1] != '||' and z[i+3] != '||':
-                        l.append((z[i+2], z[i]))
+                        if z[i-2] != '!':
+                            l.append((z[i+2], z[i]))
                 elif (is_int(z[i+2]) or is_char(z[i+2])) and not is_int(z[i]):
                     # if before or after are || don't add var to list because should not switch
-                    if z[i - 1] != '||' and z[i+3] != '||':
-                        l.append((z[i], z[i + 2]))
+                    if z[i-1] != '||' and z[i+3] != '||':
+                        if z[i - 2] != '!':
+                            l.append((z[i], z[i + 2]))
                 i += 3
             else:
                 i += 1
