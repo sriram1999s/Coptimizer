@@ -224,6 +224,16 @@ def get_new_prebody(pos, z, var, cmp_with):
 
             if z[i + 3] == '&&':  # && after var
                 ret += 'if(' + ''.join(z[i + 4:])
+
+        elif i - 2 >= 0 and z[i - 1] == '==' and z[i - 2] == cmp_with:
+            if i - 3 >= 0 and z[i - 3] == '&&':  # && before cmp_with
+                ret += 'if' + ''.join(z[:i - 3]) + ')'
+
+            if i - 3 >= 0 and z[i - 3] == '(' and z[i + 1] == ')':  # condition is just cmp_with == var
+                return ret, end_here
+
+            if z[i + 1] == '&&':  # && after var
+                ret += 'if(' + ''.join(z[i + 2:])
     return ret, end_here
 
 
