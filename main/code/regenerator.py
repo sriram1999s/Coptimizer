@@ -8,7 +8,7 @@ def solve(start_index, end_index, parse_tree, output_prg):
     if(start_index == end_index):
         return
     elif(type(parse_tree[start_index]) is str):
-        if(parse_tree[start_index] in space_list):
+        if(start_index+1<end_index and parse_tree[start_index] in space_list and parse_tree[start_index+1]!=' '):
             output_prg += [parse_tree[start_index], ' ']
         else:
             output_prg += [parse_tree[start_index]]
@@ -22,7 +22,7 @@ def solve(start_index, end_index, parse_tree, output_prg):
             if(type(parse_tree[start_index][trav]) is tuple or type(parse_tree[start_index][trav]) is list):
                 solve(0, len(parse_tree[start_index][trav]), parse_tree[start_index][trav], output_prg)
             else:
-                if(parse_tree[start_index][trav] in space_list):
+                if(trav+1<end_index and parse_tree[start_index][trav] in space_list and parse_tree[start_index][trav+1]!=' '):
                     output_prg += [parse_tree[start_index][trav], ' ']
                 else:
                     output_prg += [str(parse_tree[start_index][trav])]

@@ -10,4 +10,8 @@ int main() {
         c[i] = 1;
 	j=j+1;
     }
+    printf("\n%d\n",b[0]); 
+    for(int i = 0;i<10;++i) {
+	b[i] = 1;
+    }
 }

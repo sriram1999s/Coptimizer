@@ -5,12 +5,15 @@ import re
 from collections import defaultdict
 
 array_hashmap = defaultdict(lambda:[])
-array_value = defaultdict(lambda:{})
+array_value = defaultdict(lambda: defaultdict(lambda: 'garbage'))
 
 def make_compile_inits(parse_tree):
     # print(parse_tree)
     for array in array_value:
-        rhs = '{'+ (str(array_value[array]['value']) + ',')* (array_value[array]['upper']-1)+ str(array_value[array]['value']) + '}'
+        if(type(array_value[array]['value'])==int):
+            rhs = '{'+ (str(array_value[array]['value']) + ',')* (array_value[array]['upper']-1)+ str(array_value[array]['value']) + '}'
+        else:
+            rhs = array_value[array]['value']
         # print("rhs", rhs)
         # print(array_hashmap[array], rhs)
         # print(parse_tree)
@@ -19,14 +22,16 @@ def make_compile_inits(parse_tree):
 
         dec_string = ''.join(dec_string)
         new_dec_string = re.sub('([\[\]])', rep ,dec_string)
-        parse_tree =  re.sub(new_dec_string, dec_string[:-1] + '=' + rhs + ';', parse_tree)
+        parse_tree,c =  re.subn(new_dec_string, dec_string[:-1] + '=' + rhs + ';', parse_tree,flags=re.S)
+        
     return parse_tree
 
 def rep(m):
     return '\\' + m.group(1)
 ''' adds array to hashmap '''
 def add_array(sub_tree):
-    # print("sub_tree", sub_tree)
+    #print("sub_tree", sub_tree)
+    global level_str
     if(type(sub_tree[3])==int):
         array_hashmap[sub_tree[1]] = sub_tree
 
@@ -38,6 +43,25 @@ def compile_init_validate(sub_tree):
     if(condition[1] != ';' and condition[2] != ';' and len(condition) == 5):  # full for condition
         initialize(sub_tree)
 
+'''makes series'''
+def make_series(lower_limit,upper_limit,op,increment_val,variation='i'):
+    #print(f"Series!! {[lower_limit,upper_limit,increment_val,op,variation]}")
+    increment_val = int(increment_val)
+    mx=max(lower_limit,upper_limit)
+    mi=min(lower_limit,upper_limit)
+    res = ['x' for i in range(mx-mi)]
+    if(lower_limit<upper_limit):
+        while(lower_limit<upper_limit):
+            res[lower_limit]=str(lower_limit)
+            lower_limit+=1
+    else:
+        while(lower_limit>upper_limit):
+            res[lower_limit]=str(lower_limit)
+            lower_limit-=1
+            
+    #res = [str(i) for i in res]
+    res = '{' + ','.join(res) + '}'
+    return res
 
 def initialize(sub_tree):
     condition = sub_tree[1]
@@ -49,11 +73,11 @@ def initialize(sub_tree):
     solve(0,len(condition[3]),condition[3],increment_str)
     m = re.search('=(.*?);',''.join(lower_limit_str))
     lower_limit = m.group(1)
-    if(re.search('^[0-9]*$',lower_limit)):
+    if(re.search('^-?[0-9]*$',lower_limit)):
         lower_limit = int(lower_limit)
     m1 = re.search('([<>])(.*?);',''.join(upper_limit_str))
     upper_limit = m1.group(2)
-    if(re.search('^[0-9]*$',upper_limit)):
+    if(re.search('^-?[0-9]*$',upper_limit)):
         upper_limit = int(upper_limit)
 
     increment_val = '1'
@@ -63,38 +87,61 @@ def initialize(sub_tree):
         # print(m2.groups())
         increment_val=m2.group(1)
 
-    # print("increment val:",increment_val)
+    op = ''
+    temp_m = re.search('([+\-\*/])|(\+\+)|(--)',''.join(increment_str))
+    if(temp_m):
+        if(temp_m.group(1)):
+            op = temp_m.group(1)
+        elif(temp_m.group(2)):
+            op = temp_m.group(2)
+        else:
+            op = temp_m.group(3)
+    
 
+    #print("increment val:",increment_val)
+    series_lowerlimit,series_upperlimit = lower_limit,upper_limit 
     if(m1.group(1)=='>'):
         lower_limit,upper_limit = upper_limit,lower_limit
-
-    # print("lower_limit: ",lower_limit,type(lower_limit))
-    # print("upper_limit: ",upper_limit,type(upper_limit))
-    if(lower_limit != 0):
-        return
+        print(lower_limit,type(lower_limit))
+        if(lower_limit != -1):
+            return
+    else:
+        if(lower_limit != 0):
+            return
     
+            
+
+    #print("lower_limit: ",lower_limit,type(lower_limit))
+    #print("upper_limit: ",upper_limit,type(upper_limit))
+
 
     ids = dict()
     find_id(0, len(condition[2:]), condition[2:], ids)
     loop_var = list(ids.keys())[0]
     # print("loop_var", loop_var)
-    find_array(0, len(sub_tree[2]), sub_tree[2], loop_var, upper_limit)
+    if(type(lower_limit)==type(upper_limit)==int and increment_val=='1' and op not in ['*','/']):
+        find_array(0, len(sub_tree[2]), sub_tree[2], loop_var, series_lowerlimit , series_upperlimit ,op,increment_val)
     print(sub_tree[2])
 
 ''' to find array in body'''
 # [['b', '[', 'i', ']'], '=', 0]
 # [[['c', '[', 'i', ']'], '=', 1], ';']
-def find_array(i, n, l, loop_var, upper):
+def find_array(i, n, l, loop_var, lower,upper,op,inc):
+    global level_str
     if(i == n):
         return
-    if(type(l[i]) == list and len(l[i]) == 3 and type(l[i][0]) == list and l[i][1] == '=' and l[i][0][2]==loop_var):
+    if(type(l[i]) == list and len(l[i]) == 3 and type(l[i][0]) == list and l[i][1] == '=' and l[i][0][2]==loop_var and array_value[l[i][0][0]]['value']=='garbage'):
         if(type(l[i][2]) == int):
             array_value[l[i][0][0]]['value'] = l[i][2]
-            array_value[l[i][0][0]]['upper'] = upper
+            array_value[l[i][0][0]]['upper'] = max(lower,upper)
             l[i].clear()
+        elif(l[i][2] == loop_var):
+            array_value[l[i][0][0]]['value'] = make_series(lower,upper,op,inc)
+            l[i].clear()
+            
     if(type(l[i]) == list):
-        find_array(0, len(l[i]), l[i], loop_var, upper)
-    find_array(i+1, n, l,loop_var, upper)
+        find_array(0, len(l[i]), l[i], loop_var,lower,upper,op,inc )
+    find_array(i+1, n, l,loop_var, lower,upper,op,inc)
 
 '''find_id()-----> scans for variables in loop condition'''
 def find_id(ind, end, lis, res=dict()):

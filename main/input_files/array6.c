@@ -4,10 +4,10 @@ int main() {
     int a[] = {1,2,3,4};
     int b[20];
     int j=2;
-    for(int i = 0;i< 5;++i)
+    for(int i = 0;i< 20;i+=1)
     {
-	b[i] = 0; 
-        c[i] = 1;
+	b[i] = i; 
+        c[i] = i;
 	j=j+1;
     }
 }
