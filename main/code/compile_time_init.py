@@ -3,6 +3,7 @@ from math import *
 from symboltable import *
 import re
 from collections import defaultdict
+from copy import deepcopy
 
 array_hashmap = defaultdict(lambda:[])
 array_value = defaultdict(lambda: defaultdict(lambda: 'garbage'))
@@ -43,16 +44,27 @@ def compile_init_validate(sub_tree):
     if(condition[1] != ';' and condition[2] != ';' and len(condition) == 5):  # full for condition
         initialize(sub_tree)
 
+def transform(x,val,variation):
+    # variation = [variation]
+    if(type(variation)==str):
+        return val
+    replace_string(0,len(variation),variation,x,val)
+    #print("before:",x,val,variation)
+    solve_expr(0,len(variation),variation)
+    #print("after:",x,val,variation)
+    return variation[0]
+    
+        
 '''makes series'''
-def make_series(lower_limit,upper_limit,op,increment_val,variation='i'):
-    #print(f"Series!! {[lower_limit,upper_limit,increment_val,op,variation]}")
+def make_series(lower_limit,upper_limit,loop_var,increment_val,variation='i'):
+    #print(f"Series!! {[lower_limit,upper_limit,increment_val,loop_var,variation]}")
     increment_val = int(increment_val)
     mx=max(lower_limit,upper_limit)
     mi=min(lower_limit,upper_limit)
     res = ['x' for i in range(mx-mi)]
     if(lower_limit<upper_limit):
         while(lower_limit<upper_limit):
-            res[lower_limit]=str(lower_limit)
+            res[lower_limit]=str(transform(loop_var,lower_limit,deepcopy(variation)))
             lower_limit+=1
     else:
         while(lower_limit>upper_limit):
@@ -136,8 +148,12 @@ def find_array(i, n, l, loop_var, lower,upper,op,inc):
             array_value[l[i][0][0]]['upper'] = max(lower,upper)
             l[i].clear()
         elif(l[i][2] == loop_var):
-            array_value[l[i][0][0]]['value'] = make_series(lower,upper,op,inc)
+            array_value[l[i][0][0]]['value'] = make_series(lower,upper,loop_var,inc)
             l[i].clear()
+        else:
+            array_value[l[i][0][0]]['value'] = make_series(lower,upper,loop_var,inc,l[i][2])
+            l[i].clear()
+            
             
     if(type(l[i]) == list):
         find_array(0, len(l[i]), l[i], loop_var,lower,upper,op,inc )
@@ -155,20 +171,15 @@ def find_id(ind, end, lis, res=dict()):
     find_id(ind+1, end, lis, res)
 
 '''replace_string() ------> given a pat and target substi for target whenever pat is matched in nested iterables'''
-def replace_array(i,n,l,pat,target):
+def replace_string(i,n,l,pat,target):
     if(i==n):
         return
     if(l[i]==pat):
-        print("pat", pat)
-        print("target", target)
-        l[i][-1]='='
-        l[i].append(target)
-        l[i].append(';')
-
+        l[i]=target
     if(type(l[i])==list):
-        replace_array(0,len(l[i]),l[i],pat,target)
-    replace_array(i+1,n,l,pat,target)
-
+        replace_string(0,len(l[i]),l[i],pat,target)
+    replace_string(i+1,n,l,pat,target)
+    
 
 '''find_int()-----> scans for Integers in loop condition'''
 def find_int(ind, end, lis, res=[]):
@@ -212,3 +223,60 @@ def find_id(ind, end, lis, res=dict()):
     elif(type(lis[ind]) is list):
         find_id(0, len(lis[ind]), lis[ind], res)
     find_id(ind+1, end, lis, res)
+
+'''solve_expr'''
+def solve_expr(i,n,l):
+    if(type(l)==list and len(l)==3 and type(l[0])==int and type(l[1])==str and type(l[2])==int):
+        x,y,op=l[0],l[2],l[1]
+        l.clear()
+        if(op=='+'):
+            l.append(x+y)
+        elif(op=='-'):
+            l.append(x-y)
+        elif(op=='*'):
+            l.append(x*y)
+        elif(op=='/'):
+            l.append(x/y)
+        elif(op=='&'):
+            l.append(x&y)
+        elif(op=='|'):
+            l.append(x|y)
+        elif(op=='^'):
+            l.append(x^y)
+        elif(op=='<<'):
+            l.append(x<<y)
+        elif(op=='>>'):
+            l.append(x>>y)
+        return
+    
+    if(i==n):
+        return
+
+    
+    if(type(l[i])==list and len(l[i])==3 and type(l[i][0])==int and type(l[i][1])==str and type(l[i][2])==int):
+        if(l[i][1]=='+'):
+            l[i] = l[i][0] + l[i][2]
+        elif(l[i][1]=='-'):
+            l[i] = l[i][0] - l[i][2]
+        elif(l[i][1]=='*'):
+            l[i] = l[i][0] * l[i][2]
+        elif(l[i][1]=='/'):
+            l[i] = l[i][0] / l[i][2]
+        elif(l[i][1]=='&'):
+            l[i] = l[i][0] & l[i][2]
+        elif(l[i][1]=='|'):
+            l[i] = l[i][0] | l[i][2]
+        elif(l[i][1]=='^'):
+            l[i] = l[i][0] ^ l[i][2]
+        elif(l[i][1]=='<<'):
+            l[i] = l[i][0] << l[i][2]
+        elif(l[i][1]=='>>'):
+            l[i] = l[i][0] >> l[i][2]
+
+    elif(type(l[i])==list):
+        for j in l:
+            if(type(j)==list):
+                solve_expr(0,len(j),j)
+    solve_expr(i+1,n,l)
+
+    
