@@ -20,7 +20,7 @@ def make_switch(z):
 
     i = 0
     while i < len(z):
-        print('in while', z[i])
+        print('in while', z[i], net_open, order)
 
         # check placement
         if seen_at_num and net_open < seen_at_num[-1]:
@@ -36,8 +36,9 @@ def make_switch(z):
             z_new.append(z[i])
 
             if order and order[-1][1] == net_open:
-                # print('order', order)
+                print('order', order)
                 i = skip_extra_brackets(i + 1, z)
+                order.pop()
             else:
                 i += 1
 
@@ -193,7 +194,7 @@ def check_change_to_switch(num):
                 count += 1
         if count == len(l):
             dict_num_list_common_vars[num][dict_num_chain_pos[num][0]].append(i[0])
-            print('returning', dict_num_list_common_vars[num][dict_num_chain_pos[num][0]][0])
+            # print('returning', dict_num_list_common_vars[num][dict_num_chain_pos[num][0]][0])
             return dict_num_list_common_vars[num][dict_num_chain_pos[num][0]][0]
 
     return None

@@ -10,7 +10,7 @@ void main()
     else
         int d;
 
-     if(a!=0 && b==0)
+    if(a!=0 && b==0)
         int b;
     else if(1==b && b!=0)
         int c;

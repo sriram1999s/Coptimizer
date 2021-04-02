@@ -73,36 +73,72 @@ def create_obj(type1, pos, z):
     if type1 == 'if':
         i = pos + 2
         l = []
-        while i < len(z) and z[i] != ')':
-            if i + 2 < len(z) and z[i + 1] == '==':
-                if (is_int(z[i]) or is_char(z[i])) and not is_int(z[i+2]):
-                    # if before or after are || don't add var to list because should not switch
-                    if z[i-1] != '||' and z[i+3] != '||':
-                        if z[i-2] != '!':
-                            l.append((z[i+2], z[i]))
-                elif (is_int(z[i+2]) or is_char(z[i+2])) and not is_int(z[i]):
-                    # if before or after are || don't add var to list because should not switch
-                    if z[i-1] != '||' and z[i+3] != '||':
-                        if z[i - 2] != '!':
-                            l.append((z[i], z[i + 2]))
-                i += 3
-            else:
-                i += 1
+        # while i < len(z) and z[i] != ')':
+        #     if i + 2 < len(z) and z[i + 1] == '==':
+        #         if (is_int(z[i]) or is_char(z[i])) and not is_int(z[i+2]):
+        #             # if before or after are || don't add var to list because should not switch
+        #             if z[i-1] != '||' and z[i+3] != '||':
+        #                 if z[i-2] != '!':
+        #                     l.append((z[i+2], z[i]))
+        #         elif (is_int(z[i+2]) or is_char(z[i+2])) and not is_int(z[i]):
+        #             # if before or after are || don't add var to list because should not switch
+        #             if z[i-1] != '||' and z[i+3] != '||':
+        #                 if z[i - 2] != '!':
+        #                     l.append((z[i], z[i + 2]))
+        #         i += 3
+        #     else:
+        #         i += 1
+
+        while i < len(z) and z[i] == '(':
+            i += 1
+        if i + 2 < len(z) and z[i + 1] == '==':
+            if (is_int(z[i]) or is_char(z[i])) and not is_int(z[i + 2]):
+                # if after is || don't add var to list because should not switch
+                if z[i + 3] != '||':
+                    l.append((z[i + 2], z[i]))
+                    # l = (z[i + 2], z[i])
+            elif (is_int(z[i + 2]) or is_char(z[i + 2])) and not is_int(z[i]):
+                # if after is || don't add var to list because should not switch
+                if z[i + 3] != '||':
+                    l.append((z[i], z[i + 2]))
+                    # l = (z[i], z[i + 2])
+
         obj = if_elif_else('if', l)
         return obj
 
     if type1 == 'elif':
         i = pos + 2
         l = []
-        while i < len(z) and z[i] != ')':
-            if i + 2 < len(z) and z[i + 1] == '==':
-                if (is_int(z[i]) or is_char(z[i])) and not is_int(z[i+2]):
+        # while i < len(z) and z[i] != ')':
+        #     if i + 2 < len(z) and z[i + 1] == '==':
+        #         if (is_int(z[i]) or is_char(z[i])) and not is_int(z[i+2]):
+        #             # if before or after are || don't add var to list because should not switch
+        #             if z[i-1] != '||' and z[i+3] != '||':
+        #                 if z[i-2] != '!':
+        #                     l.append((z[i+2], z[i]))
+        #         elif (is_int(z[i+2]) or is_char(z[i+2])) and not is_int(z[i]):
+        #             # if before or after are || don't add var to list because should not switch
+        #             if z[i-1] != '||' and z[i+3] != '||':
+        #                 if z[i - 2] != '!':
+        #                     l.append((z[i], z[i + 2]))
+        #         i += 3
+        #     else:
+        #         i += 1
+
+        while i < len(z) and z[i] == '(':
+            i += 1
+        if i + 2 < len(z) and z[i + 1] == '==':
+            if (is_int(z[i]) or is_char(z[i])) and not is_int(z[i + 2]):
+                # if after is || don't add var to list because should not switch
+                if z[i + 3] != '||':
                     l.append((z[i + 2], z[i]))
-                elif (is_int(z[i+2]) or is_char(z[i+2])) and not is_int(z[i]):
+                    # l = (z[i + 2], z[i])
+            elif (is_int(z[i + 2]) or is_char(z[i + 2])) and not is_int(z[i]):
+                # if after is || don't add var to list because should not switch
+                if z[i + 3] != '||':
                     l.append((z[i], z[i + 2]))
-                i += 3
-            else:
-                i += 1
+                    # l = (z[i], z[i + 2])
+
         obj = if_elif_else('elif', l)
         return obj
 
