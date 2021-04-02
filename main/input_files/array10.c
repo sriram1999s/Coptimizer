@@ -1,12 +1,12 @@
 #include<stdio.h>
 int main() {
-    int c[20];
+    int c[1];
     int a[] = {1,2,3,4};
-    int b[20];
+    int b[1];
     int j=2;
-    for(int i = 0;i<10;i++)
+    for(int i = 0;i<0;i++)
     {
-	b[9-i] = i*i*i; 
+	b[i] = i*i*i; 
         c[i] = i*i;
 	j=j+1;
     }

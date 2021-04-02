@@ -46,6 +46,9 @@ def compile_init_validate(sub_tree):
 
 def transform(x,val,variation):
     # variation = [variation]
+    print(variation)
+    if(type(variation)==int):
+        return variation
     if(type(variation)==str):
         return val
     replace_string(0,len(variation),variation,x,val)
@@ -56,19 +59,34 @@ def transform(x,val,variation):
     
         
 '''makes series'''
-def make_series(lower_limit,upper_limit,loop_var,increment_val,variation='i'):
+def make_series(lower_limit,upper_limit,loop_var,increment_val,variation='i',lhs_variation='i'):
     #print(f"Series!! {[lower_limit,upper_limit,increment_val,loop_var,variation]}")
     increment_val = int(increment_val)
     mx=max(lower_limit,upper_limit)
     mi=min(lower_limit,upper_limit)
-    res = ['x' for i in range(mx-mi)]
+    ll,ul=lower_limit,upper_limit
+    if(lower_limit>upper_limit):
+        ll = lower_limit + 1
+        
+    space = max(transform(loop_var,ll,deepcopy(lhs_variation))+1,transform(loop_var,ul,deepcopy(lhs_variation)))
+    
+    #print("space: ",space)
+    res = ['0' for i in range(space)]
     if(lower_limit<upper_limit):
         while(lower_limit<upper_limit):
-            res[lower_limit]=str(transform(loop_var,lower_limit,deepcopy(variation)))
+            lhs,rhs = lhs_variation,variation
+            lhs = transform(loop_var,lower_limit,deepcopy(lhs_variation))
+            rhs = transform(loop_var,lower_limit,deepcopy(variation))
+            #print(f"lhs: {lhs},rhs: {rhs}")
+            res[lhs]=str(rhs)
             lower_limit+=1
     else:
         while(lower_limit>upper_limit):
-            res[lower_limit]=str(lower_limit)
+            lhs,rhs = lhs_variation,variation
+            lhs = transform(loop_var,lower_limit,deepcopy(lhs_variation))
+            rhs = transform(loop_var,lower_limit,deepcopy(variation))
+            #print(f"lhs: {lhs},rhs: {rhs}")
+            res[lhs]=str(rhs)
             lower_limit-=1
             
     #res = [str(i) for i in res]
@@ -142,18 +160,21 @@ def find_array(i, n, l, loop_var, lower,upper,op,inc):
     global level_str
     if(i == n):
         return
-    if(type(l[i]) == list and len(l[i]) == 3 and type(l[i][0]) == list and l[i][1] == '=' and l[i][0][2]==loop_var and array_value[l[i][0][0]]['value']=='garbage'):
-        if(type(l[i][2]) == int):
-            array_value[l[i][0][0]]['value'] = l[i][2]
-            array_value[l[i][0][0]]['upper'] = max(lower,upper)
-            l[i].clear()
-        elif(l[i][2] == loop_var):
-            array_value[l[i][0][0]]['value'] = make_series(lower,upper,loop_var,inc)
-            l[i].clear()
+    if(type(l[i]) == list and len(l[i]) == 3 and type(l[i][0]) == list and l[i][1] == '=' and array_value[l[i][0][0]]['value']=='garbage'):
+        if(l[i][0][2]==loop_var):    
+            if(type(l[i][2]) == int):
+                array_value[l[i][0][0]]['value'] = l[i][2]
+                array_value[l[i][0][0]]['upper'] = max(lower,upper)
+                l[i].clear()
+            elif(l[i][2] == loop_var):
+                array_value[l[i][0][0]]['value'] = make_series(lower,upper,loop_var,inc)
+                l[i].clear()
+            else:
+                array_value[l[i][0][0]]['value'] = make_series(lower,upper,loop_var,inc,l[i][2])
+                l[i].clear()
         else:
-            array_value[l[i][0][0]]['value'] = make_series(lower,upper,loop_var,inc,l[i][2])
+            array_value[l[i][0][0]]['value'] = make_series(lower,upper,loop_var,inc,l[i][2],l[i][0][2])
             l[i].clear()
-            
             
     if(type(l[i]) == list):
         find_array(0, len(l[i]), l[i], loop_var,lower,upper,op,inc )
