@@ -17,5 +17,5 @@ def remove_rel_assign(m):
     return m.group(1) + new_val + m.group(3)
 
 def return_void(m):
-    # print("here")
+    print("here")
     print(m.groups(0))

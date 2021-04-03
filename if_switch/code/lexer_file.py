@@ -35,7 +35,7 @@ statements = ['FOR', 'WHILE', 'IF', 'ELSE']
 
 unary = ['NOT']
 
-extra = ['ID', 'TYPE', 'STRING' , 'HASH' , 'DOT','INCLUDE','HEADER_FILE']
+extra = ['ID', 'TYPE', 'STRING' , 'HASH' , 'DOT','INCLUDE','HEADER_FILE','CHAR']
 
 jump = ['RETURN']
 
@@ -179,6 +179,10 @@ def t_ID(t):
 
 def t_HEADER_FILE(t):
     r'<.+?\..>'
+    return t
+
+def t_CHAR(t):
+    '\'.\''
     return t
 
 # error

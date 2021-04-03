@@ -6,6 +6,17 @@ level_str = []
 symbol_table = defaultdict(lambda: 'garbage')
 
 
+def make_level_string(var):
+    global level_str
+    global symbol_table
+    copy_level_str = level_str.copy()
+    search_string = str(var) + ''.join(copy_level_str)
+    while (symbol_table[search_string] == 'garbage' and len(copy_level_str) > 1):
+        copy_level_str.pop()
+        search_string = str(var) + ''.join(copy_level_str)
+    return search_string
+
+
 def lookahead(i, n, l):
     global symbol_table
     global level_str

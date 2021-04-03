@@ -35,7 +35,7 @@ output_prg = []
 solve(0, len(z), z, output_prg)
 print("output_prg :\n", output_prg, "\n\n")
 
-# with open("temp.c", "w+") as f:
+# with open("temp0.c", "w+") as f:
 #     f.write("".join(output_prg))
 # print("".join(output_prg))
 
