@@ -16,10 +16,14 @@ def is_int(s):
 
 
 def is_char(s):
-    if len(s) == 1 and s.isalpha():
+    # if len(s) == 1 and s.isalpha():
+    #     return True
+    # else:
+    #     return False
+    print('s', s)
+    if s[0] == "'" and s[-1] == "'":
         return True
-    else:
-        return False
+    return False
 
 
 def identify_chains(z):
@@ -73,21 +77,6 @@ def create_obj(type1, pos, z):
     if type1 == 'if':
         i = pos + 2
         l = []
-        # while i < len(z) and z[i] != ')':
-        #     if i + 2 < len(z) and z[i + 1] == '==':
-        #         if (is_int(z[i]) or is_char(z[i])) and not is_int(z[i+2]):
-        #             # if before or after are || don't add var to list because should not switch
-        #             if z[i-1] != '||' and z[i+3] != '||':
-        #                 if z[i-2] != '!':
-        #                     l.append((z[i+2], z[i]))
-        #         elif (is_int(z[i+2]) or is_char(z[i+2])) and not is_int(z[i]):
-        #             # if before or after are || don't add var to list because should not switch
-        #             if z[i-1] != '||' and z[i+3] != '||':
-        #                 if z[i - 2] != '!':
-        #                     l.append((z[i], z[i + 2]))
-        #         i += 3
-        #     else:
-        #         i += 1
 
         while i < len(z) and z[i] == '(':
             i += 1
@@ -109,21 +98,6 @@ def create_obj(type1, pos, z):
     if type1 == 'elif':
         i = pos + 2
         l = []
-        # while i < len(z) and z[i] != ')':
-        #     if i + 2 < len(z) and z[i + 1] == '==':
-        #         if (is_int(z[i]) or is_char(z[i])) and not is_int(z[i+2]):
-        #             # if before or after are || don't add var to list because should not switch
-        #             if z[i-1] != '||' and z[i+3] != '||':
-        #                 if z[i-2] != '!':
-        #                     l.append((z[i+2], z[i]))
-        #         elif (is_int(z[i+2]) or is_char(z[i+2])) and not is_int(z[i]):
-        #             # if before or after are || don't add var to list because should not switch
-        #             if z[i-1] != '||' and z[i+3] != '||':
-        #                 if z[i - 2] != '!':
-        #                     l.append((z[i], z[i + 2]))
-        #         i += 3
-        #     else:
-        #         i += 1
 
         while i < len(z) and z[i] == '(':
             i += 1
