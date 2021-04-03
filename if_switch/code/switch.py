@@ -156,7 +156,6 @@ def check_change_to_switch(num):
 
     # don't switch single if
     if len(l) == 1:
-        # print('len is 1')
         return None
     # else has no condition vars, so don't compare with that
     if l[-1].type1 == 'else':
@@ -182,11 +181,15 @@ def check_change_to_switch(num):
     #     count = 1
 
     rhs = set()
-    if len(l[0].condition_vars)>0:
+    if len(l[0].condition_vars) > 0:
         i = l[0].condition_vars[0]
         rhs.add(i[1])
-        for j in l[1:]: # obj
-            k = j.condition_vars[0] # tuple
+        for j in l[1:]:  # obj
+
+            if len(j.condition_vars) == 0:
+                return None
+
+            k = j.condition_vars[0]  # tuple
             if k[0] == i[0]:
                 if k[1] in rhs:
                     return None
@@ -217,11 +220,11 @@ def get_new_prebody(pos, z, var, cmp_with):
         if i + 2 < len(z) and z[i + 1] == '==' and z[i + 2] == cmp_with:
             # possible other condition before var
             if i - 1 >= 0 and z[i - 1] == '(':
-                i_copy_l = i-2
-                while i_copy_l>=0 and z[i_copy_l] == '(':
+                i_copy_l = i - 2
+                while i_copy_l >= 0 and z[i_copy_l] == '(':
                     i_copy_l -= 1
                 # first condition
-                if i_copy_l<0:
+                if i_copy_l < 0:
                     i_copy_r = i + 3
                     while i_copy_r < len(z) and z[i_copy_r] == ')':
                         i_copy_r += 1
@@ -237,12 +240,12 @@ def get_new_prebody(pos, z, var, cmp_with):
                         return ret, end_here
                     # other operator like > or < or == after var==cmp_with in the beginning
                     else:
-                        ret = 'if(' + ''.join(z[i_copy_r+1:])
+                        ret = 'if(' + ''.join(z[i_copy_r + 1:])
                         return ret
                 # not first condition
-                elif i_copy_l>=0:
+                elif i_copy_l >= 0:
                     ret = 'if'
-                    return ret, pos+1
+                    return ret, pos + 1
             # not the first condition
             elif i - 1 >= 0 and z[i - 1] != '(':
                 ret = 'if'
@@ -250,7 +253,7 @@ def get_new_prebody(pos, z, var, cmp_with):
 
             # case of more ( and ) around the condition has to be considered
             # if i - 2 >= 0 and i + 3 < len(z) and z[i - 2] == 'if' and z[i - 1] == '(' and z[i + 3] == ')':  # condition is just var==cmp_with
-                # return ret, end_here
+            # return ret, end_here
 
             # if i + 3 < len(z) and z[i + 3] == '&&':  # && after var
             #     ret += 'if(' + ''.join(z[i + 4:])
@@ -269,7 +272,7 @@ def get_new_prebody(pos, z, var, cmp_with):
                 while i_copy_l >= 0 and z[i_copy_l] == '(':
                     i_copy_l -= 1
                 # first condition
-                if i_copy_l<0:
+                if i_copy_l < 0:
                     i_copy_r = i + 1
                     while i_copy_r < len(z) and z[i_copy_r] == ')':
                         i_copy_r += 1
