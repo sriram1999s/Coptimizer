@@ -9,7 +9,7 @@ void main()
         else
         {int e;}
         if('h'==1 && b<1)
-        int f;
+            int f;
     }
     if(b==2)
     {a=b;}

@@ -183,9 +183,6 @@ def util(type1, z, i):
         op2 = None
         range_var = None
 
-        flip_op1 = False
-        interchange = False
-
         # const
         if is_int(z[i]):
             lower = int(z[i])
@@ -207,8 +204,6 @@ def util(type1, z, i):
             # var has been seen
             elif range_var is not None:
                 op1 = lateral_op(z[i])
-
-                flip_op1 = True
 
         # other operator
         else:
@@ -240,18 +235,8 @@ def util(type1, z, i):
         # const
         if is_int(z[i]):
             upper = int(z[i])
-
-            if upper < lower:
-                lower = lower ^ upper
-                upper = lower ^ upper
-                lower = lower ^ upper
-                if flip_op1:
-                    op1 = lateral_op(op1)
-                interchange = True
-
         # var
         elif not is_int(z[i]):
-
             if z[i] != range_var:
                 obj = if_elif_else(type1, l)
                 return obj
@@ -268,9 +253,6 @@ def util(type1, z, i):
             if upper is not None:
                 op2 = lateral_op(z[i])
 
-                if interchange:
-                    op2 = lateral_op(op2)
-
             # var has been seen
             else:
                 op2 = z[i]
@@ -285,16 +267,6 @@ def util(type1, z, i):
         # const is seen for the first time
         if is_int(z[i]) and upper is None:
             upper = int(z[i])
-
-            if upper < lower:
-                lower = lower ^ upper
-                upper = lower ^ upper
-                lower = lower ^ upper
-                if flip_op1:
-                    op1 = lateral_op(op1)
-                interchange = True
-            if interchange:
-                op2 = lateral_op(op2)
 
         # var is seen for the first time
         elif not is_int(z[i]):
@@ -316,8 +288,12 @@ def util(type1, z, i):
             return obj
         # range condition
         else:
-            obj = if_elif_else(type1, l, range_var, lower, upper, op1, op2)
-            return obj
+            if lower < upper:
+                obj = if_elif_else(type1, l, range_var, lower, upper, op1, op2)
+                return obj
+            if lower > upper:
+                obj = if_elif_else(type1, l, range_var, upper, lower, lateral_op(op2), lateral_op(op1))
+                return obj
 
     obj = if_elif_else(type1, l)
     return obj
