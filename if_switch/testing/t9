@@ -1,0 +1,14 @@
+void main()
+{
+    int a;
+    if(9<=a && 0<=a)
+        int b1;
+    else if(10<=a && a<=19)
+        int b2;
+    else if(20<=a && a<=29)
+        int b3;
+    else if(30<=a && a<=39)
+        int b4;
+    else
+        int b5;
+}

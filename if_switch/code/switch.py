@@ -162,33 +162,14 @@ def check_change_to_switch(num):
         l.pop()
 
     count = 1
-    # for i in l[0].condition_vars:  # tuple
-    #     for j in l[1:]:  # obj
-    #         for k in j.condition_vars:  # tuple
-    #             if k[0] == i[0]:
-    #                 if k[1] == i[1]:    # const is the same
-    #
-    #                     # add check for switch on another variable that follows semantics
-    #                     return None
-    #
-    #                 count += 1
-    #                 break
-    #
-    #     if count == len(l):
-    #         dict_num_list_common_vars[num][dict_num_chain_pos[num][0]].append(i[0])
-    #         # print('returning', dict_num_list_common_vars[num][dict_num_chain_pos[num][0]][0])
-    #         return dict_num_list_common_vars[num][dict_num_chain_pos[num][0]][0]
-    #     count = 1
 
     rhs = set()
     if len(l[0].condition_vars) > 0:
         i = l[0].condition_vars[0]
         rhs.add(i[1])
         for j in l[1:]:  # obj
-
             if len(j.condition_vars) == 0:
                 return None
-
             k = j.condition_vars[0]  # tuple
             if k[0] == i[0]:
                 if k[1] in rhs:
@@ -251,21 +232,7 @@ def get_new_prebody(pos, z, var, cmp_with):
                 ret = 'if'
                 return ret, pos + 1
 
-            # case of more ( and ) around the condition has to be considered
-            # if i - 2 >= 0 and i + 3 < len(z) and z[i - 2] == 'if' and z[i - 1] == '(' and z[i + 3] == ')':  # condition is just var==cmp_with
-            # return ret, end_here
-
-            # if i + 3 < len(z) and z[i + 3] == '&&':  # && after var
-            #     ret += 'if(' + ''.join(z[i + 4:])
-
         elif i - 2 >= 0 and z[i - 1] == '==' and z[i - 2] == cmp_with:
-            # # case of more ( and ) around the condition has to be considered
-            # if i - 4 >= 0 and i + 1 < len(z) and z[i - 4] == 'if' and z[i - 3] == '(' and z[i + 1] == ')':  # condition is just cmp_with == var
-            #     return ret, end_here
-            #
-            # if i + 1 < len(z) and z[i + 1] == '&&':  # && after var
-            #     ret += 'if(' + ''.join(z[i + 2:])
-
             # possible other condition before var
             if i - 3 >= 0 and z[i - 3] == '(':
                 i_copy_l = i - 4
