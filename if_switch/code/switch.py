@@ -113,7 +113,7 @@ def make_switch(z):
 
                     case_no, range_case = get_case_no(obj, chosen_var, range_lower_bound)
                     z_new.append('case ' + case_no + ':')
-                    pre_body, new_pos = get_new_prebody(i, z, chosen_var, case_no, range_case)
+                    pre_body, new_pos = get_new_prebody(i+4, z, chosen_var, case_no, range_case)
 
                     z_new.append(pre_body)
                     i = new_pos
@@ -256,6 +256,7 @@ def get_new_prebody(pos, z, var, cmp_with, range_case):
 
     # look only from curr_pos + 1 till before a {
     z = z[pos + 1: end_here]
+    print('z shortened', z)
     indices = [i for i, x in enumerate(z) if x == var]  # list of positions of var in shortened z
     ret = ''
     for i in indices:
