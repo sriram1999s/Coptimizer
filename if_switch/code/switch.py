@@ -218,7 +218,8 @@ def check_change_to_switch(num):
             else:
                 return None, None
 
-        seq.sort(key=lambda x: x[0])
+        # seq.sort(key=lambda x: x[0])
+
         for i2 in range(1, len(seq)):
             if l_chain[0].op1=='<=' and l_chain[0].op2=='<=' and seq[i2][0]-1 != seq[i2-1][1]:
                 return None, None
@@ -256,7 +257,6 @@ def get_new_prebody(pos, z, var, cmp_with, range_case):
 
     # look only from curr_pos + 1 till before a {
     z = z[pos + 1: end_here]
-    print('z shortened', z)
     indices = [i for i, x in enumerate(z) if x == var]  # list of positions of var in shortened z
     ret = ''
     for i in indices:
@@ -373,19 +373,23 @@ def switch_range_condition(obj):
     condition = ''
     if obj.op1 == '<=' and obj.op2 == '<=':
         w = obj.u-obj.l+1
-        condition += '(' + obj.range_var + '-' + str(obj.l) + ')/' + str(w)
+        condition += '(' + obj.range_var + '-(' + str(obj.l) + '))/' + str(w)
         return condition
     if obj.op1 == '<=' and obj.op2 == '<':
         w = obj.u-obj.l
-        condition += '(' + obj.range_var + '-' + str(obj.l) + ')/' + str(w)
+        condition += '(' + obj.range_var + '-(' + str(obj.l) + '))/' + str(w)
         return condition
     if obj.op1 == '<' and obj.op2 == '<=':
         w = obj.u - obj.l
         condition += '(' + obj.range_var + '-(' + str(obj.l+1) + '))/' + str(w)
         return condition
     if obj.op1 == '<' and obj.op2 == '<':
-        w = obj.u - obj.l + 1
-        condition += '(' + obj.range_var + '-(' + str(obj.l+1) + '))/' + str(w)
+        # w = obj.u - obj.l + 1
+        # condition += '(' + obj.range_var + '-(' + str(obj.l+1) + '))/' + str(w)
+
+        w = obj.u - obj.l - 1   # (obj.u-1) - (obj.l+1) - 1
+        condition += '(' + obj.range_var + '-(' + str(obj.l + 1) + '))/' + str(w)
+
         return condition
 
 
@@ -403,4 +407,6 @@ def get_case_no(obj, chosen_var, range_lower_bound):
             return str((obj.l - range_lower_bound) / (obj.u - obj.l)).split('.')[0], True
 
         if obj.op1 == '<' and obj.op2 == '<':
-            return str((obj.l-(range_lower_bound+1))/(obj.u-obj.l+1)).split('.')[0], True
+            # return str((obj.l-(range_lower_bound+1))/(obj.u-obj.l+1)).split('.')[0], True
+
+            return str((obj.l - range_lower_bound) / (obj.u - obj.l - 1)).split('.')[0], True

@@ -9,7 +9,7 @@ void main()
             int c;
         else if(b==3)
             int d;
-        else
+        else if(b==4)
             int e;
         if(c==1)
             int f;

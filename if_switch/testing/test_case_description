@@ -1,0 +1,143 @@
+
+1. INPUT: testing/t1
+    INPUT DESCRIPTION:
+    - 3 chains
+    - 2 level nested
+    - Outer chain with condition of form var==int, and inner chains have conditions that are neither of form var==int nor are uniform, unbroken, ordered range
+    - One chain ends in else, other chains ends in else if
+    EXPECTED OUTPUT:
+    - Outer chain switched and inner chains retained the same
+
+
+2. INPUT: testing/t2
+    INPUT DESCRIPTION:
+    - 4 chains
+    - 1 level nested
+    - Multiple chains at same level
+    - There may or may not be other statements between chains at same level
+    - All conditions of form var==int
+    - All chains ends in else
+    EXPECTED OUTPUT:
+    - All chains switched
+
+
+3. INPUT: testing/t3
+    INPUT DESCRIPTION:
+    - 5 chains
+    - 1 level nested
+    - Multiple chains at same level
+    - All conditions of form var==int
+    - Chains that end in else as well as else if
+    - Single if condition
+    EXPECTED OUTPUT:
+    - All chains, but the single if, switched
+
+
+4. INPUT: testing/t4
+    INPUT DESCRIPTION:
+    - 6 chains
+    - 3 level nested
+    - Multiple chains at same level
+    - There may or may not be other statements between chains at same level
+    - All conditions of form var==int
+    - Chains that end in else as well as else if
+    - Single if condition
+    EXPECTED OUTPUT:
+    - All chains, but the single if, switched
+
+
+5. INPUT: testing/t5
+    INPUT DESCRIPTION:
+    - 2 chains
+    - Not nested
+    - Multiple chains at same level
+    - Fist chain with condition of form var==int
+    - Second chain does not have first condition of form var==int or var==char, nor is of the form of a uniform, unbroken, ordered range
+    - One chain ends in else, other chains ends in else if
+    EXPECTED OUTPUT:
+    - First chain switched and second chain retained the same
+
+
+7. INPUT: testing/t7
+    INPUT DESCRIPTION:
+    - 1 chain
+    - Not nested
+    - Multiple conditions of the form var==int
+    - Chain ends in else if
+    EXPECTED OUTPUT:
+    - Chain switched
+    - First condition of all if and else if must be of the form var==int and must be based on the same var
+    - The conditions following the chosen switch variable by && are retained in an if statement within the case
+    - Semantics of the conditions not violated
+
+
+8. INPUT: testing/t8
+    INPUT DESCRIPTION:
+    - 1 chain
+    - Not nested
+    - Multiple conditions of the form var==char or char==var
+    - Chain ends in else
+    EXPECTED OUTPUT:
+    - Chain switched
+
+
+12. INPUT: testing/t12
+    INPUT DESCRIPTION:
+    - Range cases specified using two relational operators- <= and <=
+    - Logically the case should be of the form l<=var<=u where l and u are integers
+    - First range beginning at 0 and having width of 10. Second range beginning at 2 and having width of 4
+    - All 8 ways of giving the condition for both ranges
+    - Ranges must be specified in their logical order, for eg, 0-9 and then 10-19 and not vice versa
+    EXPECTED OUTPUT:
+    - Ranges are uniform, unbroken and in logical order, so they should be switched
+    OUTPUT: Negative numbers get accepted in switch //?
+
+
+13. INPUT: testing/t13
+    INPUT DESCRIPTION:
+    - Range cases specified using two relational operators- <= and <
+    - Logically the case should be of the form l<=var<u where l and u are integers
+    - First range beginning at 0 and having width of 10. Second range beginning at 2 and having width of 4
+    - All 8 ways of giving the condition for both ranges
+    - Ranges must be specified in their logical order, for eg, 0-9 and then 10-19 and not vice versa
+    EXPECTED OUTPUT:
+    - Ranges are uniform, unbroken and in logical order, so they should be switched
+    OUTPUT: Negative numbers get accepted in switch //?
+
+
+14. INPUT: testing/t14
+    INPUT DESCRIPTION:
+    - Range cases specified using two relational operators- < and <=
+    - Logically the case should be of the form l<var<=u where l and u are integers
+    - First range beginning at 0 and having width of 10. Second range beginning at 2 and having width of 4
+    - All 8 ways of giving the condition for first range
+    - Ranges must be specified in their logical order, for eg, 0-9 and then 10-19 and not vice versa
+    EXPECTED OUTPUT:
+    - Ranges are uniform, unbroken and in logical order, so they should be switched
+    OUTPUT: Negative numbers get accepted in switch //?
+
+
+15. INPUT: testing/t15
+    INPUT DESCRIPTION:
+    - Range cases specified using two relational operators- < and <
+    - Logically the case should be of the form l<var<u where l and u are integers
+    - First range beginning at 0 and having width of 10. Second range beginning at 2 and having width of 4
+    - All 8 ways of giving the condition for first range
+    - Ranges must be specified in their logical order, for eg, 0-9 and then 10-19 and not vice versa
+    EXPECTED OUTPUT:
+    - Ranges are uniform, unbroken and in logical order, so they should be switched
+    OUTPUT: Negative numbers get accepted in switch //?
+
+
+16. INPUT: testing/t16
+    INPUT DESCRIPTION:
+    - Fist range can be switched, other two cannot.
+    EXPECTED OUTPUT:
+    - First range is uniform, unbroken and in logical order, so should be switched
+    - Second range has 0 width, so it should not be switched
+    - Third range is not in logical order, so it should not be switched
+    OUTPUT: Negative numbers get accepted in switch //?
+
+
+
+
