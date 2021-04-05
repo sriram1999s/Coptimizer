@@ -1,0 +1,22 @@
+# include <stdio.h>
+
+void main()
+{
+    int a=1, b;
+    if(a>=0 && a<1)
+    {
+        printf("one");
+    }
+    else if(a>=1 && a<2)
+    {
+        printf("two");
+    }
+    if(b>=0 && b<=0)
+    {
+        printf("b one");
+    }
+    else if(b>=1 && b<=1)
+    {
+        printf("b two");
+    }
+}
