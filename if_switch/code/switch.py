@@ -20,7 +20,7 @@ def make_switch(z):
 
     i = 0
     while i < len(z):
-        print('in while', z[i], net_open, order)
+        # print('in while', z[i], net_open, order)
 
         # check placement
         if seen_at_num and net_open < seen_at_num[-1]:
@@ -209,7 +209,6 @@ def check_change_to_switch(num):
     elif l_chain[0].range_var is not None:
         seq = [(l_chain[0].l, l_chain[0].u)]
         width = calculate_width(l_chain[0])
-        print('in elif', width)
         for j in l_chain[1:]:
             if j.range_var is not None and j.range_var == l_chain[0].range_var:
                 if l_chain[0].op1 == j.op1 and l_chain[0].op2 == j.op2 and width==calculate_width(j):
@@ -218,7 +217,8 @@ def check_change_to_switch(num):
                     return None, None
             else:
                 return None, None
-        sorted(seq, key=lambda x: x[0])
+
+        seq.sort(key=lambda x: x[0])
         for i2 in range(1, len(seq)):
             if l_chain[0].op1=='<=' and l_chain[0].op2=='<=' and seq[i2][0]-1 != seq[i2-1][1]:
                 return None, None
@@ -398,6 +398,9 @@ def get_case_no(obj, chosen_var, range_lower_bound):
         if obj.op1 == '<=' and obj.op2 == '<':
             return str((obj.l-range_lower_bound)/(obj.u-obj.l)).split('.')[0], True
         if obj.op1 == '<' and obj.op2 == '<=':
-            return str((obj.l-(range_lower_bound+1))/(obj.u-obj.l)).split('.')[0], True
+            # return str((obj.l-(range_lower_bound+1))/(obj.u-obj.l)).split('.')[0], True
+
+            return str((obj.l - range_lower_bound) / (obj.u - obj.l)).split('.')[0], True
+
         if obj.op1 == '<' and obj.op2 == '<':
             return str((obj.l-(range_lower_bound+1))/(obj.u-obj.l+1)).split('.')[0], True
