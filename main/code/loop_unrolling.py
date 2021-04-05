@@ -225,7 +225,9 @@ def for_full_unroll(block, condition, operator, res):
         count_unrolls = int(ceil(abs(res[0][0]-res[1][0])/increment_val))
     else:
         count_unrolls = int(my_log(res[0][0], res[1][0], increment_val))
-    return block * count_unrolls
+    if(block != [';']):
+        block = ['{'] + block + ['}']
+    return  block * count_unrolls
 
 
 ''' partial unrolling'''
@@ -265,6 +267,9 @@ def for_partial_unroll(block, condition, operator,res):
             condition[2][0][res[1][-1]] = res[0][0] - \
                 (count_unrolls//unroll_count)**increment_val
     extra = count_unrolls % unroll_count
+
+    if(block != [';']):
+        block = ['{'] + block + ['}']
 
     return ['{']+block*unroll_count+['}'] + block*extra
 

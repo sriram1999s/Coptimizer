@@ -11,19 +11,20 @@ array_value = defaultdict(lambda: defaultdict(lambda: 'garbage'))
 def make_compile_inits(parse_tree):
     # print(parse_tree)
     for array in array_value:
-        if(type(array_value[array]['value'])==int):
-            rhs = '{'+ (str(array_value[array]['value']) + ',')* (array_value[array]['upper']-1)+ str(array_value[array]['value']) + '}'
-        else:
-            rhs = array_value[array]['value']
-        # print("rhs", rhs)
-        # print(array_hashmap[array], rhs)
-        # print(parse_tree)
-        dec_string = []
-        solve(0, len(array_hashmap[array]), array_hashmap[array], dec_string)
+        if(array_value[array]['value']!='garbage'):
+            if(type(array_value[array]['value'])==int):
+                rhs = '{'+ (str(array_value[array]['value']) + ',')* (array_value[array]['upper']-1)+ str(array_value[array]['value']) + '}'
+            else:
+                rhs = array_value[array]['value']
+            # print("rhs", rhs)
+            # print(array_hashmap[array], rhs)
+            # print(parse_tree)
+            dec_string = []
+            solve(0, len(array_hashmap[array]), array_hashmap[array], dec_string)
 
-        dec_string = ''.join(dec_string)
-        new_dec_string = re.sub('([\[\]])', rep ,dec_string)
-        parse_tree,c =  re.subn(new_dec_string, dec_string[:-1] + '=' + rhs + ';', parse_tree,flags=re.S)
+            dec_string = ''.join(dec_string)
+            new_dec_string = re.sub('([\[\]])', rep ,dec_string)
+            parse_tree,c =  re.subn(new_dec_string, dec_string[:-1] + '=' + rhs + ';', parse_tree,flags=re.S)
         
     return parse_tree
 
@@ -31,14 +32,19 @@ def rep(m):
     return '\\' + m.group(1)
 ''' adds array to hashmap '''
 def add_array(sub_tree):
-    #print("sub_tree", sub_tree)
+    print("sub_tree", sub_tree)
     global level_str
-    if(type(sub_tree[3])==int):
+    flag=1
+    # for i in range(1,len(sub_tree[2]),3):
+    #     if(type(sub_tree[2][i])!=int):
+    #         flag=0
+    #         break
+    if(len(sub_tree[2])==3):
         array_hashmap[sub_tree[1]] = sub_tree
 
 ''' checks for possibility of compile time init '''
 def compile_init_validate(sub_tree):
-    # print("sub_tree", sub_tree)
+    print("sub_tree", sub_tree)
     # print("\nbody", sub_tree[2])
     condition = sub_tree[1]
     if(condition[1] != ';' and condition[2] != ';' and len(condition) == 5):  # full for condition
@@ -46,7 +52,7 @@ def compile_init_validate(sub_tree):
 
 def transform(x,val,variation):
     # variation = [variation]
-    print(variation)
+    #print(variation)
     if(type(variation)==int):
         return variation
     if(type(variation)==str):
@@ -60,7 +66,7 @@ def transform(x,val,variation):
         
 '''makes series'''
 def make_series(lower_limit,upper_limit,loop_var,increment_val,variation='i',lhs_variation='i'):
-    #print(f"Series!! {[lower_limit,upper_limit,increment_val,loop_var,variation]}")
+    #print(f"Series!! {[lower_limit,upper_limit,increment_val,loop_var,variation,lhs_variation]}")
     increment_val = int(increment_val)
     mx=max(lower_limit,upper_limit)
     mi=min(lower_limit,upper_limit)
@@ -149,6 +155,7 @@ def initialize(sub_tree):
     find_id(0, len(condition[2:]), condition[2:], ids)
     loop_var = list(ids.keys())[0]
     # print("loop_var", loop_var)
+    print(sub_tree[2])
     if(type(lower_limit)==type(upper_limit)==int and increment_val=='1' and op not in ['*','/']):
         find_array(0, len(sub_tree[2]), sub_tree[2], loop_var, series_lowerlimit , series_upperlimit ,op,increment_val)
     print(sub_tree[2])
@@ -160,8 +167,10 @@ def find_array(i, n, l, loop_var, lower,upper,op,inc):
     global level_str
     if(i == n):
         return
-    if(type(l[i]) == list and len(l[i]) == 3 and type(l[i][0]) == list and l[i][1] == '=' and array_value[l[i][0][0]]['value']=='garbage'):
-        if(l[i][0][2]==loop_var):    
+    if(type(l[i]) == list and len(l[i]) == 3 and type(l[i][0]) == list and len(l[i][0][1])==3 and l[i][1] == '=' and array_value[l[i][0][0]]['value']=='garbage'):
+        print("l[i]",l[i])
+        
+        if(type(l[i][0][1])==list and l[i][0][1][1]==loop_var):    
             if(type(l[i][2]) == int):
                 array_value[l[i][0][0]]['value'] = l[i][2]
                 array_value[l[i][0][0]]['upper'] = max(lower,upper)
@@ -170,10 +179,21 @@ def find_array(i, n, l, loop_var, lower,upper,op,inc):
                 array_value[l[i][0][0]]['value'] = make_series(lower,upper,loop_var,inc)
                 l[i].clear()
             else:
+                d = {}
+                find_id(0,len(l[i][2]),l[i][2],d)
+                if(len(d)>1):
+                    return
                 array_value[l[i][0][0]]['value'] = make_series(lower,upper,loop_var,inc,l[i][2])
                 l[i].clear()
         else:
-            array_value[l[i][0][0]]['value'] = make_series(lower,upper,loop_var,inc,l[i][2],l[i][0][2])
+            d = {}
+            if(type(l[i][2])==list):
+                find_id(0,len(l[i][2]),l[i][2],d)
+            if(type(l[i][0][1][1])==list):
+                find_id(0,len(l[i][0][1][1]),l[i][0][1][1],d)
+            if(len(d)>1):
+                return
+            array_value[l[i][0][0]]['value'] = make_series(lower,upper,loop_var,inc,l[i][2],l[i][0][1][1])
             l[i].clear()
             
     if(type(l[i]) == list):

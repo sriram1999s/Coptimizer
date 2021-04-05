@@ -12,7 +12,7 @@ def gen_normal_program(start,end,max_length):
 def runTestCases(program1_location,program2_location,num):
     assert type(program1_location) == str
     assert type(program2_location) == str
-    input = gen_normal_program(10000,1000000,num)
+    input = gen_normal_program(100000,10000000,num)
     for i in range(len(input)):
         input_str = str(input[i])+"\n"
         proc = subprocess.Popen(program2_location, stdin=subprocess.PIPE, stdout=subprocess.PIPE)

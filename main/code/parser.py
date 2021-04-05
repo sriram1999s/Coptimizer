@@ -15,6 +15,10 @@ from collections import defaultdict
 # )
 
 # start = 'start'
+
+count_for=0
+prev_count_for=0
+
 def p_start(p):
     '''
     start : multiple_statements
@@ -60,7 +64,7 @@ def p_open(p):
     open : IF condition statement
          | IF condition closed ELSE open
          | WHILE condition open
-         | FOR for_condition open
+         | for for_condition open
     '''
     if(len(p)==4):
         p[0] = [p[1], p[2], p[3]]
@@ -70,22 +74,40 @@ def p_open(p):
         lookahead(0, len(p[3]), p[3])
         lookahead(0, len(p[5]), p[5])
 
+
+def p_for(p):
+    '''
+    for : FOR 
+    '''
+    global count_for
+    global prev_count_for
+    prev_count_for = count_for
+    count_for+=1
+    p[0] = p[1]
+
 def p_closed(p):
     '''
     closed : simple
            | block
            | IF condition closed ELSE closed
            | WHILE condition closed
-           | FOR for_condition closed
+           | for for_condition closed
     '''
+    global count_for
+    global prev_count_for
     if(len(p)==2):
         p[0] = p[1]
     elif(len(p)==4):
         if(p[1] == 'for'):
-            print("for detected\n")
-            compile_init_validate([p[1], p[2], p[3]])
+            print(f"for detected {count_for} {prev_count_for}\n")
+            
+            if(count_for==1 and prev_count_for==0):
+                compile_init_validate([p[1], p[2], p[3]])
+            
             p[0] = for_unroll_validate([p[1], p[2], p[3]])
             lookahead(0, len(p[3]), p[3])
+            prev_count_for = count_for
+            count_for-=1
         else:
             print("while detected\n")
             p[0] = [p[1], p[2], p[3]]
@@ -164,6 +186,22 @@ def p_stop(p):
      else:
          p[0] = [p[1],p[2],p[3],p[4],p[5]]
 
+def p_arrayindex(p):
+    '''
+    arrayindex : L_SQBRACE index R_SQBRACE
+    '''
+    p[0] = [p[1],p[2],p[3]]
+
+def p_narrayindex(p):
+    '''
+    narrayindex : narrayindex arrayindex
+	    	 | arrayindex
+    '''
+    if(len(p)==3):
+        p[0] = p[1]+p[2]
+    else:
+        p[0] = p[1]
+
 def p_declaration(p):
     '''
     declaration : TYPE ID SEMICOLON
@@ -171,8 +209,8 @@ def p_declaration(p):
                 | TYPE ID ASSIGN expr SEMICOLON
                 | TYPE MULTIPLY ID ASSIGN expr SEMICOLON
 		        | TYPE multi_declaration stop
-    			| TYPE ID L_SQBRACE index R_SQBRACE SEMICOLON
-    			| TYPE ID L_SQBRACE index R_SQBRACE ASSIGN L_FLOWBRACE init_list R_FLOWBRACE SEMICOLON
+    			| TYPE ID narrayindex SEMICOLON
+    			| TYPE ID narrayindex ASSIGN init_list SEMICOLON
 
     '''
     global level
@@ -249,24 +287,41 @@ def p_declaration(p):
         p[0] = [p[1], p[2], p[3]]
     if(len(p)==5):
         p[0] = [p[1], p[2], p[3], p[4]]
+        print(p[3])
+        if(type(p[3])==list and p[3][0]=='['):
+            #add_array([p[1], p[2], p[3][0],p[3][1],p[3][2],p[4]])
+            add_array(p[0])
     if(len(p)==6):
         p[0] = [p[1], p[2], p[3], p[4], p[5]]
     if(len(p)==7):
         p[0] = [p[1], p[2], p[3], p[4], p[5], p[6]]
-        if(p[3]=='['):
-            add_array(p[0])
-    if(len(p)==11):
-        p[0] = [p[1], p[2], p[3], p[4], p[5], p[6] , p[7] , p[8] , p[9] , p[10]]
+    if(len(p)==9):
+        p[0] = [p[1], p[2], p[3], p[4], p[5], p[6] , p[7] , p[8]]
 
-def p_init_list(p):
+
+
+def p_init(p):
     '''
-    init_list : expr COMMA init_list
+    init : expr COMMA init
     	      | expr
     '''
     if(len(p)==4):
         p[0] = [p[1],p[2],p[3]]
     if(len(p)==2):
-        p[0] = [p[1]]
+        p[0] = p[1]
+        
+
+def p_init_list(p):
+    '''
+    init_list : L_FLOWBRACE init_list R_FLOWBRACE COMMA init_list
+    	      | L_FLOWBRACE init R_FLOWBRACE COMMA init_list
+	      | L_FLOWBRACE init R_FLOWBRACE
+	      | L_FLOWBRACE init_list R_FLOWBRACE
+    '''
+    if(len(p)==6):
+        p[0] = [p[1],p[2],p[3],p[4],p[5]]
+    if(len(p)==4):
+        p[0] = [p[1],p[2],p[3]]
 
 def p_index(p):
     '''
@@ -656,7 +711,8 @@ def p_factor(p):
            | MINUS factor
            | PLUS_PLUS factor
            | MINUS_MINUS factor
-           | brace
+           | cast brace
+	   | brace
     '''
     if(len(p)==3):
         if(p[1]=='++' or p[1]=='--'):
@@ -676,6 +732,16 @@ def p_factor(p):
         p[0] = p[1]
 
 
+def p_cast(p):
+    '''
+    cast : L_PAREN TYPE R_PAREN
+	 | L_PAREN TYPE MULTIPLY R_PAREN 
+    '''
+    if(len(p)==4):
+        p[0] = [p[1],p[2],p[3]]
+    elif(len(p)==5):
+        p[0] = [p[1],p[2],p[3],p[4]]
+
 def p_brace(p):
     '''
     brace  : L_PAREN expr R_PAREN
@@ -688,7 +754,8 @@ def p_brace(p):
            | ID
     	   | CHAR
            | function_call
-    	   | ID L_SQBRACE index R_SQBRACE
+    	   | ID narrayindex
+
     '''
     if(len(p)==4):
         p[0] = [p[1], p[2], p[3]]
