@@ -75,10 +75,43 @@
     INPUT DESCRIPTION:
     - 1 chain
     - Not nested
-    - Multiple conditions of the form var==char or char==var
+    - Chain with condition of form var==char or char==var
+    - Chains that end in else as well as else if
+    EXPECTED OUTPUT:
+    - Chain switched
+
+
+9. INPUT: testing/t9
+    INPUT DESCRIPTION:
+    - 6 chain
+    - 4 level nested
+    - Multiple chains at same level
+    - Multiple conditions of the form var==int
     - Chain ends in else
     EXPECTED OUTPUT:
     - Chain switched
+    - When the condition has || the chain must not be switched
+
+
+10. INPUT: testing/t10
+    INPUT DESCRIPTION:
+    - 1 chain
+    - Not nested
+    - Chain has conditions of the form var==int and var==float
+    - Chain ends in else
+    EXPECTED OUTPUT:
+    - Chain not switched for conditions based on types other than int and char
+    OUTPUT: chain will be switched if condition of form var==int or var==char. Should identify variable of type float and not switch?
+
+
+11. INPUT: testing/t11
+    INPUT DESCRIPTION:
+    - 1 chain
+    - Not nested
+    - Chain has conditions of the form var==var
+    - Chain ends in else if
+    EXPECTED OUTPUT:
+    - Chain not switched for equality conditions of any type other than var==int and var==char
 
 
 12. INPUT: testing/t12
