@@ -27,15 +27,18 @@ def p_start(p):
     for i in symbol_table:
         if(symbol_table[i] != 'garbage'):
             print(f"\t{i}------->{symbol_table[i]}")
-    print('printing array hashmap....')
-    for i in array_hashmap:
-        if(array_hashmap[i]!=-1):
-            print(f'\t{i}-------->{array_hashmap[i]}')
+    # print('printing array hashmap....')
+    # for i in array_hashmap:
+    #     if(array_hashmap[i]!=-1):
+    #         print(f'\t{i}-------->{array_hashmap[i]}')
+    #
+    # print('printing array values....')
+    # for i in array_value:
+    #     if(array_value[i]!=-1):
+    #         print(f'\t{i}-------->{array_value[i]}')
+    print('printing jam table....')
+    jam.disp()
 
-    print('printing array values....')
-    for i in array_value:
-        if(array_value[i]!=-1):
-            print(f'\t{i}-------->{array_value[i]}')
     p[0] = p[1]
 
 
@@ -77,7 +80,7 @@ def p_open(p):
 
 def p_for(p):
     '''
-    for : FOR 
+    for : FOR
     '''
     global count_for
     global prev_count_for
@@ -100,11 +103,11 @@ def p_closed(p):
     elif(len(p)==4):
         if(p[1] == 'for'):
             print(f"for detected {count_for} {prev_count_for}\n")
-            
+
             if(count_for==1 and prev_count_for==0):
                 compile_init_validate([p[1], p[2], p[3]])
-            
-            p[0] = for_unroll_validate([p[1], p[2], p[3]])
+
+            p[0] = for_unroll_validate(True, [p[1], p[2], p[3]])
             lookahead(0, len(p[3]), p[3])
             prev_count_for = count_for
             count_for-=1
@@ -133,7 +136,7 @@ def p_for_condition(p):
         if(p[2]!=';' and p[3]!=';'):
             ids = dict()
             find_id(0,len(p[3]), p[3] , ids)
-            loop_var = list(ids.keys())[0] 
+            loop_var = list(ids.keys())[0]
             solve_substi_id(0,len(p[2]),p[2],[loop_var])
         p[0] = [p[1], p[2], p[3], p[4], p[5]]
     else:
@@ -287,7 +290,7 @@ def p_declaration(p):
         p[0] = [p[1], p[2], p[3]]
     if(len(p)==5):
         p[0] = [p[1], p[2], p[3], p[4]]
-        print(p[3])
+        # print(p[3])
         if(type(p[3])==list and p[3][0]=='['):
             #add_array([p[1], p[2], p[3][0],p[3][1],p[3][2],p[4]])
             add_array(p[0])
@@ -309,7 +312,7 @@ def p_init(p):
         p[0] = [p[1],p[2],p[3]]
     if(len(p)==2):
         p[0] = p[1]
-        
+
 
 def p_init_list(p):
     '''
@@ -703,7 +706,7 @@ def p_term(p):
         p[0] = [p[1],p[2],p[3]]
     else :
         p[0] = p[1]
-        
+
 def p_factor(p):
     '''
     factor : NOT factor
@@ -735,7 +738,7 @@ def p_factor(p):
 def p_cast(p):
     '''
     cast : L_PAREN TYPE R_PAREN
-	 | L_PAREN TYPE MULTIPLY R_PAREN 
+	 | L_PAREN TYPE MULTIPLY R_PAREN
     '''
     if(len(p)==4):
         p[0] = [p[1],p[2],p[3]]

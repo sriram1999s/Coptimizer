@@ -6,8 +6,8 @@ int main() {
     int j=2;
     for(int i = 0;i< 20;i+=1)
     {
-	b[i] = i; 
-        c[i] = i;
-	j=j+1;
+	       b[i] = i;
+         c[i] = i;
+	       j=j+1;
     }
 }

@@ -1,12 +1,17 @@
 from regenerator import *
 from math import *
 from symboltable import *
+from loop_jamming import *
 import re
 
-
+''' Jamming object'''
+jam = Jamming()
 '''checks whether unrolling is possible and calls appropriate fxn'''
 
-def for_unroll_validate(sub_tree):
+def for_unroll_validate(OPTIMIZE, sub_tree):
+
+    if(not OPTIMIZE):
+        return sub_tree
 
     global level_str
     global symbol_table
@@ -59,8 +64,8 @@ def for_unroll_validate(sub_tree):
     find_id(0, len(condition), condition, ids)
     #print("ids : ",ids)
     if(len(ids) > 1):# more than 1 loop variable in condition, short circuit return
+        # return sub_tree
         return for_variable_unroll(sub_tree,operators,ids)
-        #return sub_tree
 
     operator_list = ['++', '--', '/', '*', '+', '-', '+=', '-=', '*=', '/=']
     # checking for operators
@@ -306,30 +311,32 @@ def for_variable_unroll(sub_tree,operator,ids):
         increment_val=m2.group(1)
 
     # print("increment val:",increment_val)
+    jam.add(lower_limit, upper_limit, increment_val, level_str.copy(), sub_tree)
+    return sub_tree
 
     if(m1.group(1)=='>'):
         lower_limit,upper_limit = upper_limit,lower_limit
 
-    print("lower_limit: ",lower_limit,type(lower_limit))
-    print("upper_limit: ",upper_limit,type(upper_limit))
+    # print("lower_limit: ",lower_limit,type(lower_limit))
+    # print("upper_limit: ",upper_limit,type(upper_limit))
 
     lower_limit = '(' + str(lower_limit) + ')'
 
     modified_upper_limit_1 = '('+'(' + str(upper_limit) + '-' + str(lower_limit) + ')' + '/' + str(increment_val) + ')'
     modified_upper_limit_2 = '(' + '('+'(' + str(upper_limit) + '-' + str(lower_limit) + ')' + '%' + str(increment_val) + ')' + '!=0' +')'
     modified_upper_limit = '(' + modified_upper_limit_1 + '+' + modified_upper_limit_2 + ')'
-    print("modified_upper_limit: ",modified_upper_limit)
+    # print("modified_upper_limit: ",modified_upper_limit)
 
     sub_from_upper = '(' + 'temp_8a69d4bf3c2b6818b9acf919a70d6c62' + '%' + '2' + ')'
 
     effective_upper_limit  = '(' + 'temp_8a69d4bf3c2b6818b9acf919a70d6c62' + '-' + sub_from_upper + ')'+ '/' +'2'
-    print("effective_upper_limit",effective_upper_limit)
+    # print("effective_upper_limit",effective_upper_limit)
 
     body = []
     solve(0,len(sub_tree[2]),sub_tree[2],body)
 
     body  = ''.join(body)
-    print("body: ",body)
+    # print("body: ",body)
 
     declarations = f'int temp_8a69d4bf3c2b6818b9acf919a70d6c62 = {modified_upper_limit};'
     new_for_loop = f'for(int i = 0 ; i < {effective_upper_limit} ;  i++)' + '{' + body*2 + '}'
