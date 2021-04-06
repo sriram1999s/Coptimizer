@@ -1,5 +1,4 @@
 class if_elif_else:
-    # def __init__(self, type1, condition_vars):
     def __init__(self, type1, condition_vars, range_var=None, l=None, u=None, op1=None, op2=None):
         self.type1 = type1
         self.condition_vars = condition_vars
@@ -82,47 +81,9 @@ def identify_chains(z):
 
 def create_obj(type1, pos, z):
     if type1 == 'if':
-        # i = pos + 2
-        # l = []
-        #
-        # while i < len(z) and z[i] == '(':
-        #     i += 1
-        # if i + 2 < len(z) and z[i + 1] == '==':
-        #     if (is_int(z[i]) or is_char(z[i])) and not is_int(z[i + 2]):
-        #         # if after is || don't add var to list because should not switch
-        #         if z[i + 3] != '||':
-        #             l.append((z[i + 2], z[i]))
-        #     elif (is_int(z[i + 2]) or is_char(z[i + 2])) and not is_int(z[i]):
-        #         # if after is || don't add var to list because should not switch
-        #         if z[i + 3] != '||':
-        #             l.append((z[i], z[i + 2]))
-        #
-        # obj = if_elif_else('if', l)
-        # return obj
-
         return util('if', z, pos+2)
 
     if type1 == 'elif':
-        # i = pos + 2
-        # l = []
-        #
-        # while i < len(z) and z[i] == '(':
-        #     i += 1
-        # if i + 2 < len(z) and z[i + 1] == '==':
-        #     if (is_int(z[i]) or is_char(z[i])) and not is_int(z[i + 2]):
-        #         # if after is || don't add var to list because should not switch
-        #         if z[i + 3] != '||':
-        #             l.append((z[i + 2], z[i]))
-        #             # l = (z[i + 2], z[i])
-        #     elif (is_int(z[i + 2]) or is_char(z[i + 2])) and not is_int(z[i]):
-        #         # if after is || don't add var to list because should not switch
-        #         if z[i + 3] != '||':
-        #             l.append((z[i], z[i + 2]))
-        #             # l = (z[i], z[i + 2])
-        #
-        # obj = if_elif_else('elif', l)
-        # return obj
-
         return util('elif', z, pos + 2)
 
     if type1 == 'else':
@@ -141,7 +102,6 @@ def find_prev_num(num):
             break
         else:
             break
-    # print('ret', ret)
     return ret
 
 
@@ -163,18 +123,18 @@ def lateral_op(op):
 
 
 def util(type1, z, i):
-    l = []
+    l1 = []
     range_ops = ['<=', '>=', '<', '>']
     i = skip_while(i, '(', z)
     if i + 2 < len(z) and z[i + 1] == '==':
         if (is_int(z[i]) or is_char(z[i])) and not is_int(z[i + 2]):
             # if after is || don't add var to list because should not switch
             if z[i + 3] != '||':
-                l.append((z[i + 2], z[i]))
+                l1.append((z[i + 2], z[i]))
         elif (is_int(z[i + 2]) or is_char(z[i + 2])) and not is_int(z[i]):
             # if after is || don't add var to list because should not switch
             if z[i + 3] != '||':
-                l.append((z[i], z[i + 2]))
+                l1.append((z[i], z[i + 2]))
 
     elif i + 7 < len(z) and z[i + 1] in range_ops:
         lower = None
@@ -191,7 +151,7 @@ def util(type1, z, i):
             range_var = z[i]
         # other
         else:
-            obj = if_elif_else(type1, l)
+            obj = if_elif_else(type1, l1)
             return obj
 
         i = skip_while(i + 1, ')', z)
@@ -207,7 +167,7 @@ def util(type1, z, i):
 
         # other operator
         else:
-            obj = if_elif_else(type1, l)
+            obj = if_elif_else(type1, l1)
             return obj
 
         i = skip_while(i + 1, ')', z)
@@ -220,14 +180,14 @@ def util(type1, z, i):
             range_var = z[i]
         # other
         else:
-            obj = if_elif_else(type1, l)
+            obj = if_elif_else(type1, l1)
             return obj
 
         i = skip_while(i + 1, ')', z)
 
         # other operator
         if z[i] != '&&':
-            obj = if_elif_else(type1, l)
+            obj = if_elif_else(type1, l1)
             return obj
 
         i = skip_while(i + 1, '(', z)
@@ -238,11 +198,11 @@ def util(type1, z, i):
         # var
         elif not is_int(z[i]):
             if z[i] != range_var:
-                obj = if_elif_else(type1, l)
+                obj = if_elif_else(type1, l1)
                 return obj
         # other
         else:
-            obj = if_elif_else(type1, l)
+            obj = if_elif_else(type1, l1)
             return obj
 
         i = skip_while(i + 1, ')', z)
@@ -259,7 +219,7 @@ def util(type1, z, i):
 
         # other operator
         else:
-            obj = if_elif_else(type1, l)
+            obj = if_elif_else(type1, l1)
             return obj
 
         i = skip_while(i + 1, ')', z)
@@ -271,30 +231,30 @@ def util(type1, z, i):
         # var is seen for the first time
         elif not is_int(z[i]):
             if range_var != z[i]:
-                obj = if_elif_else(type1, l)
+                obj = if_elif_else(type1, l1)
                 return obj
             else:
                 pass
         # other
         else:
-            obj = if_elif_else(type1, l)
+            obj = if_elif_else(type1, l1)
             return obj
 
         i = skip_while(i + 1, ')', z)
 
         # more conditions
         if z[i] != '{':
-            obj = if_elif_else(type1, l)
+            obj = if_elif_else(type1, l1)
             return obj
         # range condition
         else:
             if lower < upper:
-                obj = if_elif_else(type1, l, range_var, lower, upper, op1, op2)
+                obj = if_elif_else(type1, l1, range_var, lower, upper, op1, op2)
                 return obj
             if lower > upper:
-                obj = if_elif_else(type1, l, range_var, upper, lower, lateral_op(op2), lateral_op(op1))
+                obj = if_elif_else(type1, l1, range_var, upper, lower, lateral_op(op2), lateral_op(op1))
                 return obj
 
-    obj = if_elif_else(type1, l)
+    obj = if_elif_else(type1, l1)
     return obj
 
