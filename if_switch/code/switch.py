@@ -50,8 +50,6 @@ def make_switch(z):
 
             beg_net_open_if = net_open
 
-            # chosen_var = check_change_to_switch(net_open)
-
             chosen_var, range_lower_bound = check_change_to_switch(net_open)
 
             # chain to be switched
@@ -61,22 +59,12 @@ def make_switch(z):
                 chain_pos = dict_num_chain_pos[net_open][0]
                 if_obj = main_list[chain_pos][0]
 
-                # # list of tuples with chosen var
-                # l = list(filter(lambda x: chosen_var in x, if_obj.condition_vars))
-                #
-                # # by default choose the first tuple and get cmp_with value at index pos 1 of tuple
-                # z_new.append('switch(' + chosen_var + ') { case ' + l[0][1] + ':')
-                #
-                # # get how to deal with condition and where to read z from after handling that
-                # pre_body, new_pos = get_new_prebody(i, z, chosen_var, l[0][1])
-
                 case_no, range_case = get_case_no(if_obj, chosen_var, range_lower_bound)
                 z_new.append('switch(' + chosen_var + ') { case ' + case_no + ':')
                 pre_body, new_pos = get_new_prebody(i, z, chosen_var, case_no, range_case)
 
                 z_new.append(pre_body)
                 i = new_pos
-                # order.append(('if', beg_net_open_if, i))
 
                 order.append(('if', beg_net_open_if))
 
@@ -89,7 +77,6 @@ def make_switch(z):
                 i += 1
 
         elif z[i] == 'else':
-            # chosen_var = check_change_to_switch(seen_at_num[-1])
 
             chosen_var, range_lower_bound = check_change_to_switch(seen_at_num[-1])
 
@@ -106,10 +93,6 @@ def make_switch(z):
                     net_open += 1
 
                     beg_net_open_elif = net_open
-
-                    # l = list(filter(lambda x: chosen_var in x, obj.condition_vars))
-                    # z_new.append('case ' + l[0][1] + ':')
-                    # pre_body, new_pos = get_new_prebody(i + 4, z, chosen_var, l[0][1])
 
                     case_no, range_case = get_case_no(obj, chosen_var, range_lower_bound)
                     z_new.append('case ' + case_no + ':')
@@ -149,8 +132,6 @@ def check_change_to_switch(num):
         dict_num_list_common_vars[num] = []
     elif num in dict_num_list_common_vars.keys():  # calculated for some chain at num earlier
         try:
-            # return dict_num_list_common_vars[num][dict_num_chain_pos[num][0]][0]
-
             return dict_num_list_common_vars[num][dict_num_chain_pos[num][0]][
                        0], None  # calculated for same chain already
 
@@ -166,14 +147,10 @@ def check_change_to_switch(num):
         l_chain = main_list[chain_pos].copy()  # l_chain is a chain
 
     except:
-        # return None
-
         return None, None
 
     # don't switch single if
     if len(l_chain) == 1:
-        # return None
-
         return None, None
 
     # else has no condition vars, so don't compare with that
@@ -187,15 +164,11 @@ def check_change_to_switch(num):
         rhs.add(i[1])
         for j in l_chain[1:]:  # obj
             if len(j.condition_vars) == 0:
-                # return None
-
                 return None, None
 
             k = j.condition_vars[0]  # tuple
             if k[0] == i[0]:
                 if k[1] in rhs:
-                    # return None
-
                     return None, None
 
                 rhs.add(k[1])
@@ -203,8 +176,6 @@ def check_change_to_switch(num):
         if count == len(l_chain):
             dict_num_list_common_vars[num][dict_num_chain_pos[num][0]].append(i[0])
             # print('returning', dict_num_list_common_vars[num][dict_num_chain_pos[num][0]][0])
-            # return dict_num_list_common_vars[num][dict_num_chain_pos[num][0]][0]
-
             return dict_num_list_common_vars[num][dict_num_chain_pos[num][0]][0], None
 
     elif l_chain[0].range_var is not None:
@@ -231,10 +202,7 @@ def check_change_to_switch(num):
             if l_chain[0].op1 == '<' and l_chain[0].op2 == '<' and seq[i2][0] != seq[i2 - 1][1] - 1:
                 return None, None
 
-        # dict_num_list_common_vars[num][dict_num_chain_pos[num][0]].append([l_chain[0], l_chain[0].l])
         return switch_range_condition(l_chain[0]), l_chain[0].l
-
-    # return None
 
     return None, None
 
@@ -332,6 +300,7 @@ def get_new_prebody(pos, z, var, cmp_with, range_case):
     return ret, end_here
 
 
+# actually it is to put break
 def skip_extra_brackets(pos, z):
     global net_open
     global order
