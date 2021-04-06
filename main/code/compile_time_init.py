@@ -167,10 +167,17 @@ def find_array(i, n, l, loop_var, lower,upper,op,inc):
     global level_str
     if(i == n):
         return
+<<<<<<< HEAD
     if(type(l[i]) == list and len(l[i]) == 3 and type(l[i][0]) == list and len(l[i][0][1])==3 and l[i][1] == '=' and array_value[l[i][0][0]]['value']=='garbage'):
         print("l[i]",l[i])
 
         if(type(l[i][0][1])==list and l[i][0][1][1]==loop_var):
+=======
+    if(type(l[i]) == list and len(l[i]) == 3 and type(l[i][0]) == list and len(l[i][0][1])==3 and l[i][1] == '=' and l[i][0][0] in array_hashmap and array_value[l[i][0][0]]['value']=='garbage'):
+        #print("l[i]",l[i])
+        
+        if(type(l[i][0][1])==list and l[i][0][1][1]==loop_var):    
+>>>>>>> d000db340f2d18e041f2bb8d8ad3171aaaf97296
             if(type(l[i][2]) == int):
                 array_value[l[i][0][0]]['value'] = l[i][2]
                 array_value[l[i][0][0]]['upper'] = max(lower,upper)
