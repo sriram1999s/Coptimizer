@@ -32,7 +32,7 @@ solve(0,len(z),z,output_prg)
 # print(output_prg)
 
 output_prg = "".join(output_prg)
-output_prg = make_compile_inits(output_prg)
+output_prg = com_init.make_compile_inits(output_prg)
 
 output_prg = post_process(output_prg)
 

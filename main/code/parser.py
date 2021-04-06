@@ -15,7 +15,7 @@ from collections import defaultdict
 # )
 
 # start = 'start'
-
+com_init = CompileInit()
 count_for=0
 prev_count_for=0
 
@@ -27,15 +27,9 @@ def p_start(p):
     for i in symbol_table:
         if(symbol_table[i] != 'garbage'):
             print(f"\t{i}------->{symbol_table[i]}")
-    # print('printing array hashmap....')
-    # for i in array_hashmap:
-    #     if(array_hashmap[i]!=-1):
-    #         print(f'\t{i}-------->{array_hashmap[i]}')
-    #
-    # print('printing array values....')
-    # for i in array_value:
-    #     if(array_value[i]!=-1):
-    #         print(f'\t{i}-------->{array_value[i]}')
+
+    print('printing array data stores...')
+    com_init.disp()
     print('printing jam table....')
     jam.disp()
 
@@ -105,7 +99,7 @@ def p_closed(p):
             print(f"for detected {count_for} {prev_count_for}\n")
 
             if(count_for==1 and prev_count_for==0):
-                compile_init_validate([p[1], p[2], p[3]])
+                com_init.compile_init_validate([p[1], p[2], p[3]])
 
             p[0] = for_unroll_validate(True, [p[1], p[2], p[3]])
             lookahead(0, len(p[3]), p[3])
@@ -293,7 +287,7 @@ def p_declaration(p):
         # print(p[3])
         if(type(p[3])==list and p[3][0]=='['):
             #add_array([p[1], p[2], p[3][0],p[3][1],p[3][2],p[4]])
-            add_array(p[0])
+            com_init.add_array(p[0])
     if(len(p)==6):
         p[0] = [p[1], p[2], p[3], p[4], p[5]]
     if(len(p)==7):
