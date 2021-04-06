@@ -98,27 +98,16 @@ def p_closed(p):
     '''
     global count_for
     global prev_count_for
-    global flag_nest
     if(len(p)==2):
         p[0] = p[1]
     elif(len(p)==4):
         if(p[1] == 'for'):
-<<<<<<< HEAD
             print(f"for detected {count_for} {prev_count_for}\n")
 
             if(count_for==1 and prev_count_for==0):
                 compile_init_validate([p[1], p[2], p[3]])
 
             p[0] = for_unroll_validate(True, [p[1], p[2], p[3]])
-=======
-            print(f"for detected\n")
-            
-            if(count_for==1 and prev_count_for==0):
-                compile_init_validate([p[1], p[2], p[3]])
-                
-            
-            p[0] = for_unroll_validate([p[1], p[2], p[3]])
->>>>>>> d000db340f2d18e041f2bb8d8ad3171aaaf97296
             lookahead(0, len(p[3]), p[3])
             prev_count_for = count_for
             count_for-=1
@@ -301,10 +290,7 @@ def p_declaration(p):
         p[0] = [p[1], p[2], p[3]]
     if(len(p)==5):
         p[0] = [p[1], p[2], p[3], p[4]]
-<<<<<<< HEAD
         # print(p[3])
-=======
->>>>>>> d000db340f2d18e041f2bb8d8ad3171aaaf97296
         if(type(p[3])==list and p[3][0]=='['):
             #add_array([p[1], p[2], p[3][0],p[3][1],p[3][2],p[4]])
             add_array(p[0])
@@ -586,9 +572,6 @@ def p_expr(p):
                     symbol_table[var] = symbol_table['*'+search_string]
 
     if(len(p)==4):
-        if(type(p[1])==list and type(p[1][1])==list and p[1][1][0] == '['):
-            if(count_for>1):
-                array_hashmap.pop(p[1][0])      
         p[0] = [p[1], p[2], p[3]]
     elif(len(p)==7):
         p[0] = [p[1], p[2], p[3], p[4], p[5], p[6]]
