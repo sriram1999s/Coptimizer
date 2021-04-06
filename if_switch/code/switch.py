@@ -113,7 +113,7 @@ def make_switch(z):
 
                     case_no, range_case = get_case_no(obj, chosen_var, range_lower_bound)
                     z_new.append('case ' + case_no + ':')
-                    pre_body, new_pos = get_new_prebody(i+4, z, chosen_var, case_no, range_case)
+                    pre_body, new_pos = get_new_prebody(i + 4, z, chosen_var, case_no, range_case)
 
                     z_new.append(pre_body)
                     i = new_pos
@@ -151,7 +151,8 @@ def check_change_to_switch(num):
         try:
             # return dict_num_list_common_vars[num][dict_num_chain_pos[num][0]][0]
 
-            return dict_num_list_common_vars[num][dict_num_chain_pos[num][0]][0], None # calculated for same chain already
+            return dict_num_list_common_vars[num][dict_num_chain_pos[num][0]][
+                       0], None  # calculated for same chain already
 
         # not calculated for chain
         except:
@@ -211,7 +212,7 @@ def check_change_to_switch(num):
         width = calculate_width(l_chain[0])
         for j in l_chain[1:]:
             if j.range_var is not None and j.range_var == l_chain[0].range_var:
-                if l_chain[0].op1 == j.op1 and l_chain[0].op2 == j.op2 and width==calculate_width(j):
+                if l_chain[0].op1 == j.op1 and l_chain[0].op2 == j.op2 and width == calculate_width(j):
                     seq.append((j.l, j.u))
                 else:
                     return None, None
@@ -221,13 +222,13 @@ def check_change_to_switch(num):
         # seq.sort(key=lambda x: x[0])
 
         for i2 in range(1, len(seq)):
-            if l_chain[0].op1=='<=' and l_chain[0].op2=='<=' and seq[i2][0]-1 != seq[i2-1][1]:
+            if l_chain[0].op1 == '<=' and l_chain[0].op2 == '<=' and seq[i2][0] - 1 != seq[i2 - 1][1]:
                 return None, None
-            if l_chain[0].op1=='<=' and l_chain[0].op2=='<' and seq[i2][0] != seq[i2-1][1]:
+            if l_chain[0].op1 == '<=' and l_chain[0].op2 == '<' and seq[i2][0] != seq[i2 - 1][1]:
                 return None, None
             if l_chain[0].op1 == '<' and l_chain[0].op2 == '<=' and seq[i2][0] != seq[i2 - 1][1]:
                 return None, None
-            if l_chain[0].op1=='<' and l_chain[0].op2=='<' and seq[i2][0] != seq[i2-1][1]-1:
+            if l_chain[0].op1 == '<' and l_chain[0].op2 == '<' and seq[i2][0] != seq[i2 - 1][1] - 1:
                 return None, None
 
         # dict_num_list_common_vars[num][dict_num_chain_pos[num][0]].append([l_chain[0], l_chain[0].l])
@@ -363,31 +364,31 @@ def skip_extra_brackets(pos, z):
 
 
 def calculate_width(obj):
-    if (obj.op1=='<=' and obj.op2=='<=') or (obj.op1=='<' and obj.op2=='<'):
-        return obj.u-obj.l+1
-    if (obj.op1=='<=' and obj.op2=='<') or (obj.op1=='<' and obj.op2=='<='):
-        return obj.u-obj.l
+    if (obj.op1 == '<=' and obj.op2 == '<=') or (obj.op1 == '<' and obj.op2 == '<'):
+        return obj.u - obj.l + 1
+    if (obj.op1 == '<=' and obj.op2 == '<') or (obj.op1 == '<' and obj.op2 == '<='):
+        return obj.u - obj.l
 
 
 def switch_range_condition(obj):
     condition = ''
     if obj.op1 == '<=' and obj.op2 == '<=':
-        w = obj.u-obj.l+1
+        w = obj.u - obj.l + 1
         condition += '(' + obj.range_var + '-(' + str(obj.l) + '))/' + str(w)
         return condition
     if obj.op1 == '<=' and obj.op2 == '<':
-        w = obj.u-obj.l
+        w = obj.u - obj.l
         condition += '(' + obj.range_var + '-(' + str(obj.l) + '))/' + str(w)
         return condition
     if obj.op1 == '<' and obj.op2 == '<=':
         w = obj.u - obj.l
-        condition += '(' + obj.range_var + '-(' + str(obj.l+1) + '))/' + str(w)
+        condition += '(' + obj.range_var + '-(' + str(obj.l + 1) + '))/' + str(w)
         return condition
     if obj.op1 == '<' and obj.op2 == '<':
         # w = obj.u - obj.l + 1
         # condition += '(' + obj.range_var + '-(' + str(obj.l+1) + '))/' + str(w)
 
-        w = obj.u - obj.l - 1   # (obj.u-1) - (obj.l+1) - 1
+        w = obj.u - obj.l - 1  # (obj.u-1) - (obj.l+1) - 1
         condition += '(' + obj.range_var + '-(' + str(obj.l + 1) + '))/' + str(w)
 
         return condition
@@ -398,9 +399,9 @@ def get_case_no(obj, chosen_var, range_lower_bound):
         return list(filter(lambda x: chosen_var in x, obj.condition_vars))[0][1], False
     if obj.range_var is not None:
         if obj.op1 == '<=' and obj.op2 == '<=':
-            return str((obj.l-range_lower_bound)/(obj.u-obj.l+1)).split('.')[0], True
+            return str((obj.l - range_lower_bound) / (obj.u - obj.l + 1)).split('.')[0], True
         if obj.op1 == '<=' and obj.op2 == '<':
-            return str((obj.l-range_lower_bound)/(obj.u-obj.l)).split('.')[0], True
+            return str((obj.l - range_lower_bound) / (obj.u - obj.l)).split('.')[0], True
         if obj.op1 == '<' and obj.op2 == '<=':
             # return str((obj.l-(range_lower_bound+1))/(obj.u-obj.l)).split('.')[0], True
 
