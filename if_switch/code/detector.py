@@ -1,57 +1,66 @@
 import sys
-import re
-import copy
-import secrets
-import uuid
-import sys
-
-sys.setrecursionlimit(10 ** 9)
+from preprocessing import *
+from postprocessing import *
+sys.setrecursionlimit(10**9)
 from parser_file import *
 from stack_match2 import *
+from switch import *
 
 lexer = lex()
 parser = yacc()
 
 try:
     file = sys.argv[1]
-except:
+except :
     print('No arguments')
 
-# ------------------------------------IO handling --------------------------------------------------------------------------
+#------------------------------------IO handling --------------------------------------------------------------------------
 
 lines = ""
 with open(file) as f:
     for line in f:
         lines += line.strip('\n')
     lines.strip('\n')
-z = parser.parse(lines)
+''' pre processing '''
+lines = pre_process(lines)
+z=parser.parse(lines)
 
-# print("AST:")
-# print(z)
-# print()
-# print()
 
-output_prg = []
-solve(0, len(z), z, output_prg)
-print("output_prg :\n", output_prg, "\n\n")
+fn_defn_list.sort(key = lambda x:x[0])
+fn_defn_obj_list.sort(key = lambda x:x.name)
+cyc_chk = []
+non_in_fn = []
 
-# with open("temp0.c", "w+") as f:
-#     f.write("".join(output_prg))
-# print("".join(output_prg))
+''' tail end recursion '''
+tail_rec_eli_solve(0,len(z),z);
 
+''' function inlining '''
+fn_inline_solve(0,len(z),z,cyc_chk,non_in_fn);
+
+#print("AST:")
+#print(z)
+print()
+print()
+output_prg=[]
+solve(0,len(z),z,output_prg)
+''' if to switch '''
 identify_chains(output_prg)
-print('Dict num list of chains')
-for i in dict_num_list_of_chains:
-    print(i, ':')
-    for j in dict_num_list_of_chains[i]:
-        for k in j:
-            print('(', k.type1, k.condition_vars, k.l, k.u, k.op1, k.op2, k.range_var, ') ->', end=' ')
-        print()
-
-from switch import *
 make_switch(output_prg)
-print('z2', z_new)
-with open("temp.c", "w+") as f:
+
+output_prg = "".join(output_prg)
+
+''' compile time inits '''
+output_prg = com_init.make_compile_inits(output_prg)
+
+''' post processing '''
+output_prg = post_process(output_prg)
+
+
+with open("temp.c","w+") as f :
     f.write("".join(z_new))
-print("".join(z_new))
-# ----------------------------------IO handling -----------------------------------------------------------------------------
+# print("z_new", z_new)
+
+print("generated code")
+print(output_prg)
+
+#----------------------------------IO handling -----------------------------------------------------------------------------

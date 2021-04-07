@@ -1,87 +1,78 @@
 from collections import defaultdict
 import re
 
-level = '%'
-level_str = []
-symbol_table = defaultdict(lambda: 'garbage')
+class SymbolTable:
+    def __init__(self):
+        self.symbol_table = defaultdict(lambda:'garbage')
+        self.level = '%'
+        self.level_str = []
 
+    def make_level_string(self,var):
+        self.copy_level_str = self.level_str.copy()
+        self.search_string = str(var) + ''.join(self.copy_level_str)
+        while(self.symbol_table[self.search_string]=='garbage' and len(self.copy_level_str)>1):
+            self.copy_level_str.pop()
+            self.search_string = str(var) + ''.join(self.copy_level_str)
+        return self.search_string
 
-def make_level_string(var):
-    global level_str
-    global symbol_table
-    copy_level_str = level_str.copy()
-    search_string = str(var) + ''.join(copy_level_str)
-    while (symbol_table[search_string] == 'garbage' and len(copy_level_str) > 1):
-        copy_level_str.pop()
-        search_string = str(var) + ''.join(copy_level_str)
-    return search_string
+    def lookahead(self,i,n,l):
+        if(i == n):
+            return
 
+        if(type(l[i]) == list):
+            self.flag = True
+            if(check_type(l[i]) == 0):
+                self.flag = False
+            if(self.flag):
+                self.id = ''
+                self.change = False
+                if(len(l[i])==2):
+                    for k in l[i]:
+                        if(type(k) == str and re.search('[A-Za-z_][A-Za-z_0-9]*', k)):
+                            self.id = k;
+                            self.change = True
+                else:
+                    self.ind_id = 0
+                    self.op_ind = 0
+                    self.f = False
+                    for k in l[i]:
+                        if(type(k) == str and re.search('[A-Za-z_][A-Za-z_0-9]*', k)):
+                            if(self.f == False):
+                                self.id = k
+                                self.change = True
+                                break
+                        if(type(k) == str and re.search('[^<>!=]?=', k)):
+                            self.f = True
+                if(self.change):
+                    self.search_str = self.make_level_string(self.id)
+                    self.pointer_search_str = self.make_level_string('*'+self.id)
 
-def lookahead(i, n, l):
-    global symbol_table
-    global level_str
-    if (i == n):
-        return
+                    if(self.symbol_table[self.pointer_search_str]!='garbage' and type(self.symbol_table[self.pointer_search_str])==str):
+                        self.rhs_search_str = self.make_level_string(self.symbol_table[self.pointer_search_str])
+                        if(self.symbol_table[self.rhs_search_str]!= 'garbage'):
+                            self.symbol_table[self.rhs_search_str] = 'declared'
 
-    if (type(l[i]) == list):
-        flag = True
-        if (check_type(l[i]) == 0):
-            flag = False
-        if (flag):
-            id = ''
-            change = False
-            if (len(l[i]) == 2):
-                for k in l[i]:
-                    if (type(k) == str and re.search('[A-Za-z_][A-Za-z_0-9]*', k)):
-                        id = k;
-                        change = True
+                    if(self.symbol_table[self.search_str]!= 'garbage'):
+                        self.symbol_table[self.search_str] = 'declared'
             else:
-                ind_id = 0
-                op_ind = 0
-                f = False
-                for k in l[i]:
-                    if (type(k) == str and re.search('[A-Za-z_][A-Za-z_0-9]*', k)):
-                        if (f == False):
-                            id = k
-                            change = True
-                            break
-                    if (type(k) == str and re.search('[^<>!=]?=', k)):
-                        f = True
-            if (change):
-                search_str = id + '_'.join(level_str)
-                pointer_search_str = '*' + search_str
+                self.lookahead(0, len(l[i]), l[i])
 
-                copy_level_str = level_str.copy()
-                while (symbol_table[pointer_search_str] == 'garbage' and len(copy_level_str) > 1):
-                    copy_level_str.pop()
-                    pointer_search_str = id + '_'.join(copy_level_str)
+        self.lookahead(i + 1, len(l), l)
 
-                if (symbol_table[pointer_search_str] != 'garbage' and type(symbol_table[pointer_search_str]) == str):
-                    rhs_search_str = symbol_table[pointer_search_str] + '_'.join(level_str)
-                    copy_level_str = level_str.copy()
-                    while (symbol_table[rhs_search_str] == 'garbage' and len(copy_level_str) > 1):
-                        copy_level_str.pop()
-                        rhs_search_str = id + '_'.join(copy_level_str)
-                    if (symbol_table[rhs_search_str] != 'garbage'):
-                        symbol_table[rhs_search_str] = 'declared'
+    def disp(self):
+        for i in self.symbol_table:
+            if(self.symbol_table[i] != 'garbage'):
+                print(f"\t{i}------->{self.symbol_table[i]}")
 
-                copy_level_str = level_str.copy()
-                while (symbol_table[search_str] == 'garbage' and len(copy_level_str) > 1):
-                    copy_level_str.pop()
-                    search_str = id + '_'.join(copy_level_str)
-                if (symbol_table[search_str] != 'garbage'):
-                    symbol_table[search_str] = 'declared'
-        else:
-            lookahead(0, len(l[i]), l[i])
-
-    lookahead(i + 1, len(l), l)
+#=============================================================================helper========================================================================================#
 
 
 '''check whether type of variable is list (helper fxn)'''
-
-
 def check_type(l):
     for i in l:
-        if (type(i) == list):
+        if(type(i) == list):
             return 0
     return 1
+
+#defining symboltable global object
+sym_tab = SymbolTable()

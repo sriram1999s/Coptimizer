@@ -1,15 +1,15 @@
 from regenerator import *
 from math import *
 from symboltable import *
+from loop_jamming import *
 import re
-
 
 '''checks whether unrolling is possible and calls appropriate fxn'''
 
-def for_unroll_validate(sub_tree):
+def for_unroll_validate(OPTIMIZE, sub_tree):
 
-    global level_str
-    global symbol_table
+    if(not OPTIMIZE):
+        return sub_tree
 
     # print(sub_tree)
     condition = sub_tree[1]
@@ -28,13 +28,9 @@ def for_unroll_validate(sub_tree):
     #checking for pointers in loop body and adding what they refer to before taking intersection
     pointers = []
     for i in loop_var_list:
-        search_string = '*' + i + ''.join(level_str)
-        copy_level_str = level_str.copy()
-        while(symbol_table[search_string]=='garbage' and len(copy_level_str)>1):
-            copy_level_str.pop()
-            search_string = '*' + i + ''.join(copy_level_str)
-        if(symbol_table[search_string]!='garbage'):
-            pointers.append(symbol_table[search_string])
+        search_string = sym_tab.make_level_string('*' + i)
+        if(sym_tab.symbol_table[search_string]!='garbage'):
+            pointers.append(sym_tab.symbol_table[search_string])
 
     loop_var_list+=pointers
     # print("loop_var_list: ",loop_var_list)
@@ -59,8 +55,8 @@ def for_unroll_validate(sub_tree):
     find_id(0, len(condition), condition, ids)
     #print("ids : ",ids)
     if(len(ids) > 1):# more than 1 loop variable in condition, short circuit return
+        # return sub_tree
         return for_variable_unroll(sub_tree,operators,ids)
-        #return sub_tree
 
     operator_list = ['++', '--', '/', '*', '+', '-', '+=', '-=', '*=', '/=']
     # checking for operators
@@ -79,11 +75,11 @@ def for_unroll_validate(sub_tree):
         return for_full_condition(sub_tree, operators, ids)
 
 # def substi_id(var):
-#     global level_str
-#     global symbol_table
-#     search_str = var + '_'.join(level_str)
-#     if(type(symbol_table[search_str]) == int):
-#         return symbol_table[search_str]
+#
+#
+#     search_str = var + '_'.join(sym_tab.level_str)
+#     if(type(sym_tab.symbol_table[search_str]) == int):
+#         return sym_tab.symbol_table[search_str]
 #     return 'garbage'
 
 '''check whether type of variable is list (helper fxn)'''
@@ -103,9 +99,9 @@ def solve_substi_id(i,n,l,loop_var):
             walk = [1,3]
         for j in walk:
             if(type(l[j])==str and l[j] not in loop_var):
-                search_str = l[j] + '_'.join(level_str)
-                if(type(symbol_table[search_str]) == int):
-                    l[j] = symbol_table[search_str]
+                search_str = l[j] + '_'.join(sym_tab.level_str)
+                if(type(sym_tab.symbol_table[search_str]) == int):
+                    l[j] = sym_tab.symbol_table[search_str]
 
     if(type(l[i])==list and (len(l[i])==3 or len(l[i])==5) and check_type(l[i])):
         walk = [0,2]
@@ -113,9 +109,9 @@ def solve_substi_id(i,n,l,loop_var):
             walk = [1,3]
         for j in walk:
             if(type(l[i][j])==str and l[i][j] not in loop_var):
-                search_str = l[i][j] + '_'.join(level_str)
-                if(type(symbol_table[search_str]) == int):
-                    l[i][j] = symbol_table[search_str]
+                search_str = l[i][j] + '_'.join(sym_tab.level_str)
+                if(type(sym_tab.symbol_table[search_str]) == int):
+                    l[i][j] = sym_tab.symbol_table[search_str]
     if(type(l[i])==list):
         for j in l:
             if(type(j)==list):
@@ -158,27 +154,6 @@ def for_full_condition(sub_tree, operators, ids):
     condition = sub_tree[1]
     output = []
     type_list = ['int', 'float', 'void', 'double', 'char']
-
-    # if(type(condition[1][0]) != list):  # checking for declaration
-    #     if(type(condition[1][3]) == str):  # LHS is variable / expression
-    #         # print("Here1-----")
-    #         temp = substi_id(condition[1][3])
-    #         if(temp != 'garbage'):
-    #             condition[1][3] = temp
-    #         else:
-    #             return sub_tree
-    #     elif(type(condition[1][3]) == list):
-    #         return sub_tree
-    # else:
-    #     if(type(condition[1][0][2]) == str):  # LHS is variable / expression
-    #         # print("Here2-----")
-    #         temp = substi_id(condition[1][0][2])
-    #         if(temp != 'garbage'):
-    #             condition[1][0][2] = temp
-    #         else:
-    #             return sub_tree
-    #     elif(type(condition[1][0][2]) == list):
-    #         return sub_tree
 
     # LHS or RHS of bounds check is not an expression
     if(type(condition[2][0][0]) == list or type(condition[2][0][2]) == list):
@@ -225,7 +200,9 @@ def for_full_unroll(block, condition, operator, res):
         count_unrolls = int(ceil(abs(res[0][0]-res[1][0])/increment_val))
     else:
         count_unrolls = int(my_log(res[0][0], res[1][0], increment_val))
-    return block * count_unrolls
+    if(block != [';']):
+        block = ['{'] + block + ['}']
+    return  block * count_unrolls
 
 
 ''' partial unrolling'''
@@ -266,6 +243,9 @@ def for_partial_unroll(block, condition, operator,res):
                 (count_unrolls//unroll_count)**increment_val
     extra = count_unrolls % unroll_count
 
+    if(block != [';']):
+        block = ['{'] + block + ['}']
+
     return ['{']+block*unroll_count+['}'] + block*extra
 
 
@@ -301,30 +281,32 @@ def for_variable_unroll(sub_tree,operator,ids):
         increment_val=m2.group(1)
 
     # print("increment val:",increment_val)
+    jam.add(lower_limit, upper_limit, increment_val, sym_tab.level_str.copy(), sub_tree)
+    return sub_tree
 
     if(m1.group(1)=='>'):
         lower_limit,upper_limit = upper_limit,lower_limit
 
-    print("lower_limit: ",lower_limit,type(lower_limit))
-    print("upper_limit: ",upper_limit,type(upper_limit))
+    # print("lower_limit: ",lower_limit,type(lower_limit))
+    # print("upper_limit: ",upper_limit,type(upper_limit))
 
     lower_limit = '(' + str(lower_limit) + ')'
 
     modified_upper_limit_1 = '('+'(' + str(upper_limit) + '-' + str(lower_limit) + ')' + '/' + str(increment_val) + ')'
     modified_upper_limit_2 = '(' + '('+'(' + str(upper_limit) + '-' + str(lower_limit) + ')' + '%' + str(increment_val) + ')' + '!=0' +')'
     modified_upper_limit = '(' + modified_upper_limit_1 + '+' + modified_upper_limit_2 + ')'
-    print("modified_upper_limit: ",modified_upper_limit)
+    # print("modified_upper_limit: ",modified_upper_limit)
 
     sub_from_upper = '(' + 'temp_8a69d4bf3c2b6818b9acf919a70d6c62' + '%' + '2' + ')'
 
     effective_upper_limit  = '(' + 'temp_8a69d4bf3c2b6818b9acf919a70d6c62' + '-' + sub_from_upper + ')'+ '/' +'2'
-    print("effective_upper_limit",effective_upper_limit)
+    # print("effective_upper_limit",effective_upper_limit)
 
     body = []
     solve(0,len(sub_tree[2]),sub_tree[2],body)
 
     body  = ''.join(body)
-    print("body: ",body)
+    # print("body: ",body)
 
     declarations = f'int temp_8a69d4bf3c2b6818b9acf919a70d6c62 = {modified_upper_limit};'
     new_for_loop = f'for(int i = 0 ; i < {effective_upper_limit} ;  i++)' + '{' + body*2 + '}'
@@ -391,16 +373,9 @@ def reconstruct_for(sub_tree, loop_var):
     # sub_tree[1][1]
     # print(sub_tree[1][1])
 
-    global level_str
-    global symbol_table
-
-    search_str = loop_var + '_'.join(level_str)
-    copy_level_str = level_str.copy()
-    while(symbol_table[search_str] == 'garbage' and len(copy_level_str)>1):
-        copy_level_str.pop()
-        search_str = loop_var + '_'.join(copy_level_str)
-    if(symbol_table[search_str] != 'garbage'):
-        sub_tree[1][1] = [[str(loop_var), '=', symbol_table[search_str]], ';']
+    search_str = sym_tab.make_level_string(loop_var)
+    if(sym_tab.symbol_table[search_str] != 'garbage'):
+        sub_tree[1][1] = [[str(loop_var), '=', sym_tab.symbol_table[search_str]], ';']
     # print("subtree", sub_tree)
 
 '''custom log fxn'''
