@@ -179,15 +179,13 @@ def tail_rec_eli_solve(i,n,z):
 
 # ----------------------------------------------code generator ------------------------------------------------------
 
-
-
 def solve(start_index, end_index, parse_tree, output_prg):
-    space_list = ['int','float','void','double','bool','char','return']
+    space_list = ['int','float','void','double','bool','char','return','if','else']
     if(start_index == end_index):
         return
     elif(type(parse_tree[start_index]) is str):
-        if(start_index+1<end_index and parse_tree[start_index] in space_list and parse_tree[start_index+1]!=' '):
-            output_prg += [parse_tree[start_index], ' ']
+        if(parse_tree[start_index] in space_list):
+            output_prg += [parse_tree[start_index],' ']
         else:
             output_prg += [parse_tree[start_index]]
         solve(start_index+1, end_index, parse_tree, output_prg)
@@ -200,7 +198,7 @@ def solve(start_index, end_index, parse_tree, output_prg):
             if(type(parse_tree[start_index][trav]) is tuple or type(parse_tree[start_index][trav]) is list):
                 solve(0, len(parse_tree[start_index][trav]), parse_tree[start_index][trav], output_prg)
             else:
-                if(trav+1<end_index and parse_tree[start_index][trav] in space_list and parse_tree[start_index][trav+1]!=' '):
+                if(parse_tree[start_index][trav] in space_list):
                     output_prg += [parse_tree[start_index][trav], ' ']
                 else:
                     output_prg += [str(parse_tree[start_index][trav])]

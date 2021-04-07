@@ -4,7 +4,7 @@ from ply.yacc import yacc
 from regenerator import *
 from loop_unrolling import *
 from symboltable import *
-from compile_time_init import *
+from function_inline import *
 from collections import defaultdict
 # --------------------------------parser------------------------------------ #
 
@@ -15,26 +15,16 @@ from collections import defaultdict
 # )
 
 # start = 'start'
-count_for=0
-prev_count_for=0
-
-
-
 def p_start(p):
     '''
     start : multiple_statements
     '''
-    print('printing symbol table....')
-    sym_tab.disp()
-
-    print('printing array data stores...')
-    com_init.disp()
-    print('printing jam table....')
-    jam.disp()
-
+    #print('#printing symbol table....')
+    for i in symbol_table:
+        if(symbol_table[i] != 'garbage'):
+            x_1212dfjhi2378 = 1
+            #print(f"\t{i}------->{symbol_table[i]}")
     p[0] = p[1]
-
-
 
 def p_multiple_statements(p):
     '''
@@ -42,7 +32,14 @@ def p_multiple_statements(p):
                         | statement
     '''
     if(len(p)==3):
+        #print("p_multiple_statements :")
+        #print("p[1] :",p[1])
+        #print("p[2] :",p[2])
         p[0] = p[1] + [p[2]]
+        '''if(type(p[1]) is list):
+            p[0] = p[1] + [p[2]]
+        else:
+            p[0] = [p[1],p[2]]'''
     else:
         p[0] = p[1]
 
@@ -60,26 +57,15 @@ def p_open(p):
     open : IF condition statement
          | IF condition closed ELSE open
          | WHILE condition open
-         | for for_condition open
+         | FOR for_condition open
     '''
     if(len(p)==4):
         p[0] = [p[1], p[2], p[3]]
-        sym_tab.lookahead(0, len(p[3]), p[3])
+        lookahead(0, len(p[3]), p[3])
     else:
         p[0] = [p[1], [p[2], p[3]], p[4], p[5]]
-        sym_tab.lookahead(0, len(p[3]), p[3])
-        sym_tab.lookahead(0, len(p[5]), p[5])
-
-
-def p_for(p):
-    '''
-    for : FOR
-    '''
-    global count_for
-    global prev_count_for
-    prev_count_for = count_for
-    count_for+=1
-    p[0] = p[1]
+        lookahead(0, len(p[3]), p[3])
+        lookahead(0, len(p[5]), p[5])
 
 def p_closed(p):
     '''
@@ -87,31 +73,23 @@ def p_closed(p):
            | block
            | IF condition closed ELSE closed
            | WHILE condition closed
-           | for for_condition closed
+           | FOR for_condition closed
     '''
-    global count_for
-    global prev_count_for
     if(len(p)==2):
         p[0] = p[1]
     elif(len(p)==4):
         if(p[1] == 'for'):
-            print(f"for detected {count_for} {prev_count_for}\n")
-
-            if(count_for==1 and prev_count_for==0):
-                com_init.compile_init_validate([p[1], p[2], p[3]])
-
-            p[0] = for_unroll_validate(True, [p[1], p[2], p[3]])
-            sym_tab.lookahead(0, len(p[3]), p[3])
-            prev_count_for = count_for
-            count_for-=1
+            #print("for detected\n")
+            p[0] = for_unroll_validate([p[1], p[2], p[3]])
+            lookahead(0, len(p[3]), p[3])
         else:
-            print("while detected\n")
+            #print("while detected\n")
             p[0] = [p[1], p[2], p[3]]
-            sym_tab.lookahead(0, len(p[3]), p[3])
+            lookahead(0, len(p[3]), p[3])
     else:
         p[0] = [p[1], [p[2], p[3]], p[4], p[5]]
-        sym_tab.lookahead(0, len(p[3]), p[3])
-        sym_tab.lookahead(0, len(p[5]), p[5])
+        lookahead(0, len(p[3]), p[3])
+        lookahead(0, len(p[5]), p[5])
 
 
 def p_condition(p):
@@ -126,11 +104,6 @@ def p_for_condition(p):
                   | L_PAREN simple simple R_PAREN
     '''
     if(len(p) == 6):
-        if(p[2]!=';' and p[3]!=';'):
-            ids = dict()
-            find_id(0,len(p[3]), p[3] , ids)
-            loop_var = list(ids.keys())[0]
-            solve_substi_id(0,len(p[2]),p[2],[loop_var])
         p[0] = [p[1], p[2], p[3], p[4], p[5]]
     else:
         p[0] = [p[1], p[2], p[3], p[4]]
@@ -182,22 +155,6 @@ def p_stop(p):
      else:
          p[0] = [p[1],p[2],p[3],p[4],p[5]]
 
-def p_arrayindex(p):
-    '''
-    arrayindex : L_SQBRACE index R_SQBRACE
-    '''
-    p[0] = [p[1],p[2],p[3]]
-
-def p_narrayindex(p):
-    '''
-    narrayindex : narrayindex arrayindex
-	    	 | arrayindex
-    '''
-    if(len(p)==3):
-        p[0] = p[1]+p[2]
-    else:
-        p[0] = p[1]
-
 def p_declaration(p):
     '''
     declaration : TYPE ID SEMICOLON
@@ -205,86 +162,84 @@ def p_declaration(p):
                 | TYPE ID ASSIGN expr SEMICOLON
                 | TYPE MULTIPLY ID ASSIGN expr SEMICOLON
 		        | TYPE multi_declaration stop
-    			| TYPE ID narrayindex SEMICOLON
-    			| TYPE ID narrayindex ASSIGN init_list SEMICOLON
+    			| TYPE ID L_SQBRACE index R_SQBRACE SEMICOLON
+    			| TYPE ID L_SQBRACE index R_SQBRACE ASSIGN L_FLOWBRACE init_list R_FLOWBRACE SEMICOLON
 
     '''
+    global level
+    global level_str
+    global symbol_table
 
     if(p[2] == "*"):
-        search_string = '*' + p[3] + '_'.join(sym_tab.level_str)
+        search_string = '*' + p[3] + '_'.join(level_str)
         if(p[4] == '='):
             if(type(p[5]) == str):
-                dynamic_string = '*' + p[5] + '_'.join(sym_tab.level_str)
-                sym_tab.copy_level_str = sym_tab.level_str.copy()
-                while(sym_tab.symbol_table[dynamic_string] == 'garbage' and len(sym_tab.copy_level_str)>1):
-                    sym_tab.copy_level_str.pop()
-                    dynamic_string = '*' + p[5] + '_'.join(sym_tab.copy_level_str)
-                if(sym_tab.symbol_table[dynamic_string]!= 'garbage' and sym_tab.symbol_table[dynamic_string]!= 'declared'):
-                    sym_tab.symbol_table[search_string ] = sym_tab.symbol_table[dynamic_string]
+                dynamic_string = '*' + p[5] + '_'.join(level_str)
+                copy_level_str = level_str.copy()
+                while(symbol_table[dynamic_string] == 'garbage' and len(copy_level_str)>1):
+                    copy_level_str.pop()
+                    dynamic_string = '*' + p[5] + '_'.join(copy_level_str)
+                if(symbol_table[dynamic_string]!= 'garbage' and symbol_table[dynamic_string]!= 'declared'):
+                    symbol_table[search_string ] = symbol_table[dynamic_string]
                 else:
-                    sym_tab.symbol_table[search_string] = p[5]
+                    symbol_table[search_string] = p[5]
             else:
                 temp = []
                 solve(0, len(p[5]), p[5], temp)
                 rhs = ''.join(temp).strip('&')
-                dynamic_string = rhs + '_'.join(sym_tab.level_str)
-                sym_tab.copy_level_str = sym_tab.level_str.copy()
-                while(sym_tab.symbol_table[dynamic_string] == 'garbage' and len(sym_tab.copy_level_str)>1):
-                    sym_tab.copy_level_str.pop()
-                    dynamic_string = rhs + '_'.join(sym_tab.copy_level_str)
-                if(sym_tab.symbol_table[dynamic_string]!='garbage' and sym_tab.symbol_table[dynamic_string]!='declared'):
-                    if(re.search(r'(?:\d+\.\d+)|(?:\d+)|(?:".*?")|(?:\'.\')',str(sym_tab.symbol_table[dynamic_string]))):
-                        sym_tab.symbol_table[search_string] = rhs
+                dynamic_string = rhs + '_'.join(level_str)
+                copy_level_str = level_str.copy()
+                while(symbol_table[dynamic_string] == 'garbage' and len(copy_level_str)>1):
+                    copy_level_str.pop()
+                    dynamic_string = rhs + '_'.join(copy_level_str)
+                if(symbol_table[dynamic_string]!='garbage' and symbol_table[dynamic_string]!='declared'):
+                    if(re.search(r'(?:\d+\.\d+)|(?:\d+)|(?:".*?")|(?:\'.\')',str(symbol_table[dynamic_string]))):
+                        symbol_table[search_string] = rhs
                     else:
-                        sym_tab.symbol_table[search_string] = sym_tab.symbol_table[dynamic_string]
+                        symbol_table[search_string] = symbol_table[dynamic_string]
                 else:
-                    sym_tab.symbol_table[search_string] =  rhs
+                    symbol_table[search_string] =  rhs
 
         elif(p[4] == ';'):
-            sym_tab.symbol_table[search_string] = 'declared'
+            symbol_table[search_string] = 'declared'
 
-        if(sym_tab.symbol_table[search_string]!='garbage' and sym_tab.symbol_table[search_string]!='declared'):
-            for var in sym_tab.symbol_table:
-                if(
-                sym_tab.symbol_table[var]==p[3]):
-                    sym_tab.symbol_table[var] = sym_tab.symbol_table[search_string]
+        if(symbol_table[search_string]!='garbage' and symbol_table[search_string]!='declared'):
+            for var in symbol_table:
+                if(symbol_table[var]==p[3]):
+                    symbol_table[var] = symbol_table[search_string]
 
     elif(type(p[2])==str):
         if(p[3]== '='):
-            search_string = p[2] + '_'.join(sym_tab.level_str)
+            search_string = p[2] + '_'.join(level_str)
             if(type(p[4])==int):
-                sym_tab.symbol_table[search_string] = p[4]
+                symbol_table[search_string] = p[4]
             elif(type(p[4])==str and re.search(r'[A-Za-z_][A-Za-z_0-9]*',p[4])):
-                dynamic_string = p[4] + '_'.join(sym_tab.level_str)
-                sym_tab.copy_level_str = sym_tab.level_str.copy()
-                while(sym_tab.symbol_table[dynamic_string] == 'garbage' and len(sym_tab.copy_level_str)>1):
-                    sym_tab.copy_level_str.pop()
-                    dynamic_string = p[4] + '_'.join(sym_tab.copy_level_str)
-                if(sym_tab.symbol_table[dynamic_string]!='garbage' and sym_tab.symbol_table[dynamic_string]!='declared'):
-                    sym_tab.symbol_table[search_string] = sym_tab.symbol_table[dynamic_string]
+                dynamic_string = p[4] + '_'.join(level_str)
+                copy_level_str = level_str.copy()
+                while(symbol_table[dynamic_string] == 'garbage' and len(copy_level_str)>1):
+                    copy_level_str.pop()
+                    dynamic_string = p[4] + '_'.join(copy_level_str)
+                if(symbol_table[dynamic_string]!='garbage' and symbol_table[dynamic_string]!='declared'):
+                    symbol_table[search_string] = symbol_table[dynamic_string]
                 else:
-                    sym_tab.symbol_table[search_string] = p[4]
+                    symbol_table[search_string] = p[4]
             else:
-                sym_tab.symbol_table[search_string] = p[4]
+                symbol_table[search_string] = p[4]
 
-            if(sym_tab.symbol_table[search_string]!='garbage' and sym_tab.symbol_table[search_string]!='declared'):
-                for var in sym_tab.symbol_table:
-                    if(sym_tab.symbol_table[var]==p[2]):
-                        sym_tab.symbol_table[var] = sym_tab.symbol_table[search_string]
+            if(symbol_table[search_string]!='garbage' and symbol_table[search_string]!='declared'):
+                for var in symbol_table:
+                    if(symbol_table[var]==p[2]):
+                        symbol_table[var] = symbol_table[search_string]
 
 
 
         elif( p[3] == ';'):
-            sym_tab.symbol_table[p[2] + '_'.join(sym_tab.level_str)] = 'declared'
+            symbol_table[p[2] + '_'.join(level_str)] = 'declared'
 
     if(len(p)==4):
         p[0] = [p[1], p[2], p[3]]
     if(len(p)==5):
         p[0] = [p[1], p[2], p[3], p[4]]
-        # print(p[3])
-        if(type(p[3])==list and p[3][0]=='['):
-            #add_array([p[1], p[2], p[3][0],p[3][1],p[3][2],p[4]])
-            com_init.add_array(p[0])
     if(len(p)==6):
         ''' deals with fn calls in declaration '''
         if(type(p[4]) is list and type(p[4][0]) is tuple):
@@ -294,40 +249,26 @@ def p_declaration(p):
             p[0] = [(t[0], p[0][3:], "call", p[1], p[2])]
         else:
             p[0] = [p[1], p[2], p[3], p[4], p[5]]
+        # #print("p_declaration : ",p[0])
 
     if(len(p)==7):
         p[0] = [p[1], p[2], p[3], p[4], p[5], p[6]]
-    if(len(p)==9):
-        p[0] = [p[1], p[2], p[3], p[4], p[5], p[6] , p[7] , p[8]]
+    if(len(p)==11):
+        p[0] = [p[1], p[2], p[3], p[4], p[5], p[6] , p[7] , p[8] , p[9] , p[10]]
 
-
-
-def p_init(p):
+def p_init_list(p):
     '''
-    init : expr COMMA init
+    init_list : expr COMMA init_list
     	      | expr
     '''
     if(len(p)==4):
         p[0] = [p[1],p[2],p[3]]
     if(len(p)==2):
-        p[0] = p[1]
-
-
-def p_init_list(p):
-    '''
-    init_list : L_FLOWBRACE init_list R_FLOWBRACE COMMA init_list
-    	      | L_FLOWBRACE init R_FLOWBRACE COMMA init_list
-	      | L_FLOWBRACE init R_FLOWBRACE
-	      | L_FLOWBRACE init_list R_FLOWBRACE
-    '''
-    if(len(p)==6):
-        p[0] = [p[1],p[2],p[3],p[4],p[5]]
-    if(len(p)==4):
-        p[0] = [p[1],p[2],p[3]]
+        p[0] = [p[1]]
 
 def p_index(p):
     '''
-    index : expr
+    index : NUM
     	    | empty
     '''
     if(p[1]!=None):
@@ -336,26 +277,26 @@ def p_index(p):
 def p_block(p):
     '''
     block : left_flower multiple_statements right_flower
-          | left_flower right_flower
     '''
-    if(len(p) == 4):
-        p[0] = [p[1], p[2], p[3]]
-    else:
-        p[0] = [p[1], p[2]]
-        
+    p[0] = [p[1], p[2], p[3]]
+
 def p_left_flower(p):
     '''
     left_flower : L_FLOWBRACE
     '''
-    sym_tab.level = '%'
-    sym_tab.level_str.append(sym_tab.level)
+    global level
+    global level_str
+    level = '%'
+    level_str.append(level)
     p[0] = p[1]
 
 def p_right_flower(p):
     '''
     right_flower : R_FLOWBRACE
     '''
-    sym_tab.level_str.pop()
+    global level
+    global level_str
+    level_str.pop()
     p[0] = p[1]
 
 def p_simple(p):
@@ -369,6 +310,12 @@ def p_simple(p):
            | RETURN SEMICOLON
     '''
     if(len(p)==3):
+        # if(p[1] != "return"):
+        #     # #print("Before err : ",list(p))
+        #     # p[1].append(';') # FLAG
+        #     p[0] = [p[1]]
+        # else:
+        #     p[0] = [p[1],p[2]]
         p[0] = [p[1],p[2]]
     elif(len(p)==4):
         # #print("p_simpleI :",p[2])
@@ -385,7 +332,7 @@ def p_simple(p):
 def p_header(p):
     '''
     header : HASH INCLUDE STRING
-	       | HASH INCLUDE HEADER_FILE
+	   | HASH INCLUDE HEADER_FILE
     '''
     p[0] = [p[1],p[2],p[3]+'\n']
 
@@ -398,6 +345,7 @@ def p_function_call(p):
     '''
     function_call : ID L_PAREN call_params R_PAREN
     '''
+    # #print("function_call : ",list(p))
     p[0] = [p[1], p[2], p[3], p[4],';']
     call_helper(p[0],p[1])
     p[0] = [(p[1],p[0][0 : -1], 'call')]
@@ -496,6 +444,7 @@ def p_function(p):
     function : TYPE ID L_PAREN dec_params R_PAREN function_2
     '''
     p[0] = [p[1],p[2],p[3],p[4],p[5],p[6]]
+    #print("\n\np_functionnnn :",p[6],"\n\n")
     if p[2] != 'main':
         if(p[6][0] != ';'):
             temp = inline_defn_helper(p[0],p[2])
@@ -515,55 +464,77 @@ def p_expr(p):
          | exprOR
     '''
     if(len(p) > 2 and type(p[1])==str):
-        search_string = sym_tab.make_level_string(p[1])
-        # print("search_string : ", search_string)
+        search_string = p[1] + "_".join(level_str)
+        # #print("search_string : ", search_string)
+        if(len(level_str) != 0):
+            copy_level_str = level_str.copy()
+            while( (symbol_table[search_string] == 'garbage' and symbol_table['*' + search_string] == 'garbage') and len(copy_level_str)>1):
+                copy_level_str.pop()
+                # #print("copy_level_str", copy_level_str)
+                search_string = p[1] + "_".join(copy_level_str)
+                # #print("search_string : ", search_string)
+        # #print("* search", '*' + search_string , symbol_table['*' + search_string ])
+        # #print("search",search_string , symbol_table[ search_string ])
+        # #print("p[3]", p[3])
         if(type(p[3])==str and re.search(r'[A-Za-z_][A-Za-z_0-9]*',p[3])):
-            if(sym_tab.symbol_table['*' + search_string ] == "garbage" ):
-                print("here")
-                dynamic_string = sym_tab.make_level_string(p[3])
-                if(sym_tab.symbol_table[dynamic_string]!='garbage' and sym_tab.symbol_table[dynamic_string]!='declared'):
-                    sym_tab.symbol_table[search_string] = sym_tab.symbol_table[dynamic_string]
+            if(symbol_table['*' + search_string ] == "garbage" ):
+                # #print("here")
+                dynamic_string = p[3] + '_'.join(level_str)
+                copy_level_str = level_str.copy()
+                while(symbol_table[dynamic_string] == 'garbage' and len(copy_level_str)>1):
+                    copy_level_str.pop()
+                    dynamic_string = p[3] + '_'.join(copy_level_str)
+                if(symbol_table[dynamic_string]!='garbage' and symbol_table[dynamic_string]!='declared'):
+                    symbol_table[search_string] = symbol_table[dynamic_string]
                 else:
-                    sym_tab.symbol_table[search_string] = p[3]
+                    symbol_table[search_string] = p[3]
             else:
-                dynamic_string = sym_tab.make_level_string("*" + p[3])
-                if(sym_tab.symbol_table[dynamic_string]!='garbage' and sym_tab.symbol_table[dynamic_string]!='declared'):
-                    sym_tab.symbol_table['*' + search_string ] = sym_tab.symbol_table[dynamic_string]
+                dynamic_string = "*" + p[3] + '_'.join(level_str)
+                copy_level_str = level_str.copy()
+                while(symbol_table[dynamic_string] == 'garbage' and len(copy_level_str)>1):
+                    copy_level_str.pop()
+                    dynamic_string = "*" + p[3] + '_'.join(copy_level_str)
+                if(symbol_table[dynamic_string]!='garbage' and symbol_table[dynamic_string]!='declared'):
+                    symbol_table['*' + search_string ] = symbol_table[dynamic_string]
                 else:
-                    sym_tab.symbol_table['*' + search_string] = p[3]
+                    symbol_table['*' + search_string] = p[3]
 
-        elif(sym_tab.symbol_table['*' + search_string ] != "garbage" and type(p[3])==list):
+        elif(symbol_table['*' + search_string ] != "garbage" and type(p[3])==list):
             temp = []
             solve(0, len(p[3]), p[3], temp)
             rhs = ''.join(temp).strip('&')
-            dynamic_string = sym_tab.make_level_string(rhs)
-
-            if(sym_tab.symbol_table[dynamic_string]!='garbage' and sym_tab.symbol_table[dynamic_string]!='declared'):
-                    if(re.search(r'(?:\d+\.\d+)|(?:\d+)|(?:".*?")|(?:\'.\')',str(sym_tab.symbol_table[dynamic_string]))):
-                        sym_tab.symbol_table['*'+search_string] = rhs
+            dynamic_string = rhs + '_'.join(level_str)
+            copy_level_str = level_str.copy()
+            while(symbol_table[dynamic_string] == 'garbage' and len(copy_level_str)>1):
+                copy_level_str.pop()
+                dynamic_string = rhs + '_'.join(copy_level_str)
+            if(symbol_table[dynamic_string]!='garbage' and symbol_table[dynamic_string]!='declared'):
+                    if(re.search(r'(?:\d+\.\d+)|(?:\d+)|(?:".*?")|(?:\'.\')',str(symbol_table[dynamic_string]))):
+                        symbol_table['*'+search_string] = rhs
                     else:
-                        sym_tab.symbol_table['*'+search_string] = sym_tab.symbol_table[dynamic_string]
+                        symbol_table['*'+search_string] = symbol_table[dynamic_string]
             else:
-                sym_tab.symbol_table['*'+search_string] =  rhs
+                symbol_table['*'+search_string] =  rhs
         else:
-            sym_tab.symbol_table[search_string] = p[3]
+            symbol_table[search_string] = p[3]
 
-        #for i in sym_tab.symbol_table:
-         #   print(f'{i}---->{sym_tab.symbol_table[i]}')
+        #for i in symbol_table:
+         #   #print(f'{i}---->{symbol_table[i]}')
 
 
-        if(sym_tab.symbol_table[search_string]!='garbage' and sym_tab.symbol_table[search_string]!='declared'):
-            for var in sym_tab.symbol_table:
-                if(sym_tab.symbol_table[var]==p[1]):
-                    #print(var,sym_tab.symbol_table[search_string])
-                    sym_tab.symbol_table[var] = sym_tab.symbol_table[search_string]
+        if(symbol_table[search_string]!='garbage' and symbol_table[search_string]!='declared'):
+            for var in symbol_table:
+                if(symbol_table[var]==p[1]):
+                    ##print(var,symbol_table[search_string])
+                    symbol_table[var] = symbol_table[search_string]
 
-        if(sym_tab.symbol_table['*'+search_string]!='garbage' and sym_tab.symbol_table['*'+search_string]!='declared'):
-            for var in sym_tab.symbol_table:
-                if(sym_tab.symbol_table[var]==p[1]):
-                    sym_tab.symbol_table[var] = sym_tab.symbol_table['*'+search_string]
+        if(symbol_table['*'+search_string]!='garbage' and symbol_table['*'+search_string]!='declared'):
+            for var in symbol_table:
+                if(symbol_table[var]==p[1]):
+                    symbol_table[var] = symbol_table['*'+search_string]
 
     if(len(p)==4):
+        # #print("p_expr : ",p[3])
         if(type(p[3]) is list and type(p[3][0]) is tuple):
             t = p[3][0]
             p[0] = [p[1],p[2],t[0],'(',t[1][2],')']
@@ -571,8 +542,6 @@ def p_expr(p):
             p[0] = [ ( t[0] , p[0][2:] , "call" , p[1])]
         else:
             p[0] = [p[1], p[2], p[3]]
-    elif(len(p)==7):
-        p[0] = [p[1], p[2], p[3], p[4], p[5], p[6]]
     else :
         p[0] = p[1]
 
@@ -712,36 +681,13 @@ def p_factor(p):
            | MINUS factor
            | PLUS_PLUS factor
            | MINUS_MINUS factor
-           | cast brace
-	   | brace
+           | brace
     '''
     if(len(p)==3):
-        if(p[1]=='++' or p[1]=='--'):
-            if(type(p[2])==str):
-                sym_tab.symbol_table[sym_tab.make_level_string(p[2])] = 'declared'
-                p[0] = [p[1], p[2]]
-            else:
-                var_dict = {}
-                find_id(0,len(p[2]),p[2],var_dict)
-                var =list(var_dict.keys())[0]
-                #print("rhs: ",p[2],p[2][-1],sym_tab.symbol_table[sym_tab.make_level_string('*'+var)])
-                sym_tab.symbol_table[sym_tab.make_level_string(sym_tab.symbol_table[sym_tab.make_level_string('*'+var)])] = 'declared'
-                p[0] = [p[1], p[2]]
-        elif(p[1] == '-' and type(p[2])!=list and type(p[2])!=str):
-            p[0] = -1*p[2]
+        p[0] = [p[1], p[2]]
     else :
         p[0] = p[1]
 
-
-def p_cast(p):
-    '''
-    cast : L_PAREN TYPE R_PAREN
-	 | L_PAREN TYPE MULTIPLY R_PAREN
-    '''
-    if(len(p)==4):
-        p[0] = [p[1],p[2],p[3]]
-    elif(len(p)==5):
-        p[0] = [p[1],p[2],p[3],p[4]]
 
 def p_brace(p):
     '''
@@ -753,27 +699,14 @@ def p_brace(p):
            | MULTIPLY ID
            | BIT_AND ID
            | ID
-    	   | CHAR
            | function_call
-    	   | ID narrayindex
-
+    	   | ID L_SQBRACE index R_SQBRACE
     '''
     if(len(p)==4):
         p[0] = [p[1], p[2], p[3]]
     elif(len(p)==5):
         p[0] = [p[1], p[2], p[3],p[4]]
     elif(len(p)==3):
-        if(p[2]=='++' or p[2] =='--'):
-            if(type(p[1])==str):
-                sym_tab.symbol_table[sym_tab.make_level_string(p[1])] = 'declared'
-            else:
-                if(p[1][0]=='*'):
-                    sym_tab.symbol_table[sym_tab.make_level_string('*'+p[1][-1])] = 'declared'
-                else:
-                    var_dict = {}
-                    find_id(0,len(p[1]),p[1],var_dict)
-                    var =list(var_dict.keys())[0]
-                    sym_tab.symbol_table[sym_tab.make_level_string(sym_tab.symbol_table[sym_tab.make_level_string('*'+var)])] = 'declared'
         p[0] = [p[1], p[2]]
     else:
         if(type(p[1]) is list and type(p[1][0]) is tuple):
@@ -793,4 +726,5 @@ def p_NUM(p):
     p[0] = p[1]
 
 def p_error(p):
-    print(f"an error occurred ::: token {p} , char {p.value}")
+    x_1212dfjhi2378 = 1
+    #print(f"an error occurred ::: token {p} , char {p.value}")

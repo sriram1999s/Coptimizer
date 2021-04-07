@@ -1,6 +1,6 @@
 import sys
+
 from preprocessing import *
-from postprocessing import *
 sys.setrecursionlimit(10**9)
 from parser import *
 
@@ -19,40 +19,36 @@ with open(file) as f:
     for line in f:
         lines += line.strip('\n')
     lines.strip('\n')
-''' pre processing '''
 lines = pre_process(lines)
+# log = logging.getLogger()
 z=parser.parse(lines)
-
-
-fn_defn_list.sort(key = lambda x:x[0])
-fn_defn_obj_list.sort(key = lambda x:x.name)
-cyc_chk = []
-non_in_fn = []
-
-''' tail end recursion '''
-tail_rec_eli_solve(0,len(z),z);
-
-''' function inlining '''
-fn_inline_solve(0,len(z),z,cyc_chk,non_in_fn);
 
 #print("AST:")
 #print(z)
-print()
-print()
+# print()
+# print()
+fn_defn_list.sort(key = lambda x:x[0])
+fn_defn_obj_list.sort(key = lambda x:x.name)
+#fn_call_list.sort(key = lambda x:x[0])
+#fn_call_obj_list.sort(key = lambda x:x.name)
+cyc_chk = []
+non_in_fn = []
+# print("\nz before : \n",z)
+
+tail_rec_eli_solve(0,len(z),z);
+
+fn_inline_solve(0,len(z),z,cyc_chk,non_in_fn);
+#remove_unwanted_defns(0,len(z),z,non_in_fn)
+# print("\nz after : \n",z)
 output_prg=[]
 solve(0,len(z),z,output_prg)
+# print("\n\nnon_in_fn : ",non_in_fn,"\n\n")
+# print("\n\nz :",z,"\n\n")
+# print("\n\noutput_prg : \n",output_prg,"\n\n")
 
-output_prg = "".join(output_prg)
-
-''' compile time inits '''
-output_prg = com_init.make_compile_inits(output_prg)
-
-''' post processing '''
-output_prg = post_process(output_prg)
-
-with open("temp.c","w+") as f :
-    f.write(output_prg)
-print("generated code")
-print(output_prg)
+# with open("temp.c","w+") as f :
+#     f.write("".join(output_prg))
+# print("generated code")
+print("".join(output_prg))
 
 #----------------------------------IO handling -----------------------------------------------------------------------------

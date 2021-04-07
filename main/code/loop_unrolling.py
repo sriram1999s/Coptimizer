@@ -75,8 +75,8 @@ def for_unroll_validate(OPTIMIZE, sub_tree):
         return for_full_condition(sub_tree, operators, ids)
 
 # def substi_id(var):
-#     
-#     
+#
+#
 #     search_str = var + '_'.join(sym_tab.level_str)
 #     if(type(sym_tab.symbol_table[search_str]) == int):
 #         return sym_tab.symbol_table[search_str]
@@ -282,7 +282,7 @@ def for_variable_unroll(sub_tree,operator,ids):
 
     # print("increment val:",increment_val)
     jam.add(lower_limit, upper_limit, increment_val, sym_tab.level_str.copy(), sub_tree)
-    #return sub_tree
+    return sub_tree
 
     if(m1.group(1)=='>'):
         lower_limit,upper_limit = upper_limit,lower_limit
