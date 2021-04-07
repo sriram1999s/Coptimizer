@@ -87,3 +87,6 @@ def find_id(ind, end, lis, res=dict()):
     elif(type(lis[ind]) is list):
         find_id(0, len(lis[ind]), lis[ind], res)
     find_id(ind+1, end, lis, res)
+
+''' Jamming object'''
+jam = Jamming()
