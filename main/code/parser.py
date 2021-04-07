@@ -1,6 +1,6 @@
 from lexer import *
 from ply.yacc import yacc
-
+from menu import *
 from regenerator import *
 from loop_unrolling import *
 from symboltable import *
@@ -100,9 +100,9 @@ def p_closed(p):
             print(f"for detected {count_for} {prev_count_for}\n")
 
             if(count_for==1 and prev_count_for==0):
-                com_init.compile_init_validate([p[1], p[2], p[3]])
+                com_init.compile_init_validate(menu.FLAG_COMPILE_INIT,[p[1], p[2], p[3]])
 
-            p[0] = for_unroll_validate(True, [p[1], p[2], p[3]])
+            p[0] = for_unroll_validate(menu.FLAG_UNROLL,menu.FLAG_JAMMING,[p[1], p[2], p[3]])
             sym_tab.lookahead(0, len(p[3]), p[3])
             prev_count_for = count_for
             count_for-=1
@@ -290,7 +290,7 @@ def p_declaration(p):
         # print(p[3])
         if(type(p[3])==list and p[3][0]=='['):
             #add_array([p[1], p[2], p[3][0],p[3][1],p[3][2],p[4]])
-            com_init.add_array(p[0])
+            com_init.add_array(menu.FLAG_COMPILE_INIT,p[0])
     if(len(p)==6):
         ''' deals with fn calls in declaration '''
         if(type(p[4]) is list and type(p[4][0]) is tuple):

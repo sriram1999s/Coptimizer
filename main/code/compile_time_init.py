@@ -13,13 +13,17 @@ class CompileInit:
         self.array_value = defaultdict(lambda: defaultdict(lambda: 'garbage'))
 
     ''' adds array to hashmap '''
-    def add_array(self, sub_tree):
+    def add_array(self,OPTIMIZE,sub_tree):
         global level_str
+        if(not OPTIMIZE):
+            return
         if(len(sub_tree[2])==3):
             self.array_hashmap[sub_tree[1]] = sub_tree
 
     ''' checks for possibility of compile time init '''
-    def compile_init_validate(self, sub_tree):
+    def compile_init_validate(self,OPTIMIZE,sub_tree):
+        if(not OPTIMIZE):
+            return
         self.condition = sub_tree[1]
         if(self.condition[1] != ';' and self.condition[2] != ';' and len(self.condition) == 5):  # full for condition
             self.initialize(sub_tree)
@@ -121,8 +125,10 @@ class CompileInit:
 
 
     ''' final substitutions done in this fn'''
-    def make_compile_inits(self, parse_tree):
+    def make_compile_inits(self,OPTIMIZE,parse_tree):
         # print(parse_tree)
+        if(not OPTIMIZE):
+            return parse_tree
         for array in self.array_value:
             if(self.array_value[array]['value']!='garbage'):
                 if(type(self.array_value[array]['value'])==int):

@@ -5,10 +5,9 @@ from loop_jamming import *
 import re
 
 '''checks whether unrolling is possible and calls appropriate fxn'''
+def for_unroll_validate(OPTIMIZE1,OPTIMIZE2, sub_tree):
 
-def for_unroll_validate(OPTIMIZE, sub_tree):
-
-    if(not OPTIMIZE):
+    if(not OPTIMIZE1 and not OPTIMIZE2):
         return sub_tree
 
     # print(sub_tree)
@@ -56,8 +55,11 @@ def for_unroll_validate(OPTIMIZE, sub_tree):
     #print("ids : ",ids)
     if(len(ids) > 1):# more than 1 loop variable in condition, short circuit return
         # return sub_tree
-        return for_variable_unroll(sub_tree,operators,ids)
+        return for_variable_unroll(OPTIMIZE1,OPTIMIZE2,sub_tree,operators,ids)
 
+    if(not OPTIMIZE1):
+        return
+    
     operator_list = ['++', '--', '/', '*', '+', '-', '+=', '-=', '*=', '/=']
     # checking for operators
     if(len(operators) > 0 and operators[0][0] not in operator_list):
@@ -254,7 +256,7 @@ def for_partial_unroll(block, condition, operator,res):
 # if(n%2):
 #     unroll remaining
 '''for_variable_unroll() ------> when the limits are decided at runtime'''
-def for_variable_unroll(sub_tree,operator,ids):
+def for_variable_unroll(OPTIMIZE1,OPTIMIZE2,sub_tree,operator,ids):
     if(operator[0][0] in ['/=','*=','*','/']):
         return sub_tree
     condition = sub_tree[1]
@@ -281,8 +283,10 @@ def for_variable_unroll(sub_tree,operator,ids):
         increment_val=m2.group(1)
 
     # print("increment val:",increment_val)
-    jam.add(lower_limit, upper_limit, increment_val, sym_tab.level_str.copy(), sub_tree)
-    return sub_tree
+    if(OPTIMIZE2):
+        jam.add(lower_limit, upper_limit, increment_val, sym_tab.level_str.copy(), sub_tree)
+    if(not OPTIMIZE1):
+        return sub_tree
 
     if(m1.group(1)=='>'):
         lower_limit,upper_limit = upper_limit,lower_limit

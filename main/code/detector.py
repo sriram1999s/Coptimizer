@@ -15,6 +15,7 @@ except :
 
 #------------------------------------IO handling --------------------------------------------------------------------------
 
+
 lines = ""
 with open(file) as f:
     for line in f:
@@ -48,7 +49,7 @@ solve(0,len(z),z,output_prg)
 output_prg = "".join(output_prg)
 
 ''' compile time inits '''
-output_prg = com_init.make_compile_inits(output_prg)
+output_prg = com_init.make_compile_inits(menu.FLAG_COMPILE_INIT,output_prg)
 
 ''' post processing '''
 output_prg = post_process(output_prg)
