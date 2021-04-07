@@ -8,6 +8,5 @@ int main() {
     {
 	     b[2*i] = i*i*i;
        c[i] = i*i;
-	     j=j+1;
     }
 }
