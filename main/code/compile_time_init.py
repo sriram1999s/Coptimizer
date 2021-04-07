@@ -322,3 +322,6 @@ def solve_expr(i,n,l):
             if(type(j)==list):
                 solve_expr(0,len(j),j)
     solve_expr(i+1,n,l)
+
+#defining com_init global object
+com_init = CompileInit()
