@@ -3,6 +3,7 @@ from preprocessing import *
 from postprocessing import *
 sys.setrecursionlimit(10**9)
 from parser import *
+from switch import *
 
 lexer = lex()
 parser = yacc()
@@ -41,6 +42,8 @@ print()
 print()
 output_prg=[]
 solve(0,len(z),z,output_prg)
+# ''' if to switch '''
+# make_switch(output_prg)
 
 output_prg = "".join(output_prg)
 
@@ -50,8 +53,11 @@ output_prg = com_init.make_compile_inits(output_prg)
 ''' post processing '''
 output_prg = post_process(output_prg)
 
+
 with open("temp.c","w+") as f :
-    f.write(output_prg)
+    f.write("".join(z_new))
+# print("z_new", z_new)
+
 print("generated code")
 print(output_prg)
 

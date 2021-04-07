@@ -63,10 +63,12 @@ def p_open(p):
          | for for_condition open
     '''
     if(len(p)==4):
-        p[0] = [p[1], p[2], p[3]]
+        # p[0] = [p[1], p[2], p[3]]
+        p[0] = [' ', p[1], p[2], '{', p[3], '}']
         sym_tab.lookahead(0, len(p[3]), p[3])
     else:
-        p[0] = [p[1], [p[2], p[3]], p[4], p[5]]
+        # p[0] = [p[1], [p[2], p[3]], p[4], p[5]]
+        p[0] = [' ', p[1], [p[2], '{', p[3], '}'], p[4], ' ', '{', p[5], '}']
         sym_tab.lookahead(0, len(p[3]), p[3])
         sym_tab.lookahead(0, len(p[5]), p[5])
 
@@ -109,7 +111,7 @@ def p_closed(p):
             p[0] = [p[1], p[2], p[3]]
             sym_tab.lookahead(0, len(p[3]), p[3])
     else:
-        p[0] = [p[1], [p[2], p[3]], p[4], p[5]]
+        p[0] = [' ', p[1], [p[2], '{', p[3], '}'], p[4], ' ', '{', p[5], '}']
         sym_tab.lookahead(0, len(p[3]), p[3])
         sym_tab.lookahead(0, len(p[5]), p[5])
 
@@ -154,7 +156,11 @@ def p_multi_declaration(p):
         else:
             p[0]=p[1]+[p[2],p[3]]
     elif(len(p)==5):
-        p[0]=p[1]+[p[2],p[3],p[4]]
+        # if(type(p[1]) != list):
+        #     p[0]=p[1]+[p[2],p[3],p[4]]
+        # else:
+        p[0] = [p[1]] + [p[2], p[3], p[4]]
+
     elif(len(p)==6):
         if(p[1] == '*'):
             p[0] = [p[1],p[2],p[3],p[4],p[5]]
@@ -342,7 +348,7 @@ def p_block(p):
         p[0] = [p[1], p[2], p[3]]
     else:
         p[0] = [p[1], p[2]]
-        
+
 def p_left_flower(p):
     '''
     left_flower : L_FLOWBRACE
