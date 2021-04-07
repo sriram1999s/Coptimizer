@@ -3,6 +3,7 @@ from preprocessing import *
 from postprocessing import *
 sys.setrecursionlimit(10**9)
 from parser import *
+from stack_match2 import *
 from switch import *
 
 lexer = lex()
@@ -42,8 +43,9 @@ print()
 print()
 output_prg=[]
 solve(0,len(z),z,output_prg)
-# ''' if to switch '''
-# make_switch(output_prg)
+''' if to switch '''
+identify_chains(output_prg)
+make_switch(output_prg)
 
 output_prg = "".join(output_prg)
 
