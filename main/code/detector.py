@@ -32,10 +32,12 @@ cyc_chk = []
 non_in_fn = []
 
 ''' tail end recursion '''
-tail_rec_eli_solve(0,len(z),z);
+if(menu.FLAG_TAIL_RECURSION):
+    tail_rec_eli_solve(0,len(z),z)
 
 ''' function inlining '''
-fn_inline_solve(0,len(z),z,cyc_chk,non_in_fn);
+if(menu.FLAG_INLINE): 
+    fn_inline_solve(0,len(z),z,cyc_chk,non_in_fn)
 
 #print("AST:")
 #print(z)
@@ -44,7 +46,7 @@ print()
 output_prg=[]
 solve(0,len(z),z,output_prg)
 # ''' if to switch '''
-# make_switch(output_prg)
+# make_switch(menu.FLAG_IF_TO_SWITCH,output_prg)
 
 output_prg = "".join(output_prg)
 

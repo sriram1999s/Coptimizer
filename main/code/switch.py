@@ -10,7 +10,9 @@ seen_at_num = []
 order = []  # need not actually be a list, can just be a var
 
 
-def make_switch(z):
+def make_switch(OPTIMIZE,z):
+    if(not OPTIMIZE):
+        return
     global net_open
     global dict_num_chain_pos
     global z_new

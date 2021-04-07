@@ -293,7 +293,7 @@ def p_declaration(p):
             com_init.add_array(menu.FLAG_COMPILE_INIT,p[0])
     if(len(p)==6):
         ''' deals with fn calls in declaration '''
-        if(type(p[4]) is list and type(p[4][0]) is tuple):
+        if(type(p[4]) is list and type(p[4][0]) is tuple and (menu.FLAG_INLINE or menu.FLAG_TAIL_RECURSION)):
             t = p[4][0]
             p[0] = [p[1],p[2],p[3],t[0],'(',t[1][2],')',p[5]]
             call_helper(p[0],t[0])
@@ -378,7 +378,7 @@ def p_simple(p):
         p[0] = [p[1],p[2]]
     elif(len(p)==4):
         # #print("p_simpleI :",p[2])
-        if(type(p[2]) is list and type(p[2][0]) is tuple):
+        if(type(p[2]) is list and type(p[2][0]) is tuple and (menu.FLAG_INLINE or FLAG_TAIL_RECURSION)):
             t = p[2][0]
             p[0] = [p[1], t[0], '(',t[1][2], ')',';']
             call_helper(p[0], t[0])
@@ -405,8 +405,9 @@ def p_function_call(p):
     function_call : ID L_PAREN call_params R_PAREN
     '''
     p[0] = [p[1], p[2], p[3], p[4],';']
-    call_helper(p[0],p[1])
-    p[0] = [(p[1],p[0][0 : -1], 'call')]
+    if(menu.FLAG_INLINE or menu.FLAG_TAIL_RECURSION):
+        call_helper(p[0],p[1])
+        p[0] = [(p[1],p[0][0 : -1], 'call')]
 
 def p_call_params(p):
     '''
@@ -503,7 +504,7 @@ def p_function(p):
     '''
     p[0] = [p[1],p[2],p[3],p[4],p[5],p[6]]
     if p[2] != 'main':
-        if(p[6][0] != ';'):
+        if(p[6][0] != ';' and (menu.FLAG_INLINE or menu.FLAG_TAIL_RECURSION)):
             temp = inline_defn_helper(p[0],p[2])
             p[0] = [temp]
 
@@ -573,8 +574,9 @@ def p_expr(p):
         if(type(p[3]) is list and type(p[3][0]) is tuple):
             t = p[3][0]
             p[0] = [p[1],p[2],t[0],'(',t[1][2],')']
-            call_helper(p[0],t[0])
-            p[0] = [ ( t[0] , p[0][2:] , "call" , p[1])]
+            if(menu.FLAG_INLINE or menu.FLAG_TAIL_RECURSION):
+                call_helper(p[0],t[0])
+                p[0] = [ ( t[0] , p[0][2:] , "call" , p[1])]
         else:
             p[0] = [p[1], p[2], p[3]]
     elif(len(p)==7):

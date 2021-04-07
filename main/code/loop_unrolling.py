@@ -58,7 +58,7 @@ def for_unroll_validate(OPTIMIZE1,OPTIMIZE2, sub_tree):
         return for_variable_unroll(OPTIMIZE1,OPTIMIZE2,sub_tree,operators,ids)
 
     if(not OPTIMIZE1):
-        return
+        return sub_tree
     
     operator_list = ['++', '--', '/', '*', '+', '-', '+=', '-=', '*=', '/=']
     # checking for operators
