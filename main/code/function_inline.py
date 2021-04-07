@@ -1,10 +1,6 @@
 import copy
 from collections.abc import Iterable
 
-# def dummy_fn():
-#     print("YO")
-
-
 fn_defn_list = []  # list of tuple of fn_defn having parsed list and "defn"
 fn_defn_obj_list = []  # list of objects having function definition details
 

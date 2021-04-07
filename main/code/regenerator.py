@@ -150,10 +150,7 @@ def fn_inline_solve(i,n,z,cyc_chk,non_in_fn):
 
 # ----------------------------------------------tail-rec-elimination ------------------------------------------------------
 
-
-
 def tail_rec_eli_solve(i,n,z):
-    # global temp_list1;
     global temp_list2;
     if(i == n):
         return
@@ -163,23 +160,23 @@ def tail_rec_eli_solve(i,n,z):
             if(fn_defn_obj_list[defn_t_ix].inline_flag == 0):
                 fn_name = fn_defn_obj_list[defn_t_ix].name;
                 temp_list1 = fn_defn_list[defn_t_ix][1];
+
                 mark_tuples(0,len(temp_list1),temp_list1,[1]);
-                # print("temp_list1 : ",temp_list1,"\n\n");
-                temp_list2 = list(flatten1(copy.deepcopy(temp_list1)))
+
+                temp_list2 = list(flatten1(copy.deepcopy(temp_list1)));
                 # print("temp_list2 : ",temp_list2,"\n\n");
-                tail_rec_handler(0,len(temp_list1),temp_list1,fn_name);
+                tail_rec_handler(0,len(temp_list1),temp_list1,fn_name,temp_list2);
+
+                revert_tuples(0,len(temp_list1), temp_list1)
 
     elif(type(z[i]) is list):
         tail_rec_eli_solve(0,len(z[i]),z[i])
 
     tail_rec_eli_solve(i + 1,len(z),z)
 
-
 # ----------------------------------------------tail-rec-elimination ------------------------------------------------------
 
 # ----------------------------------------------code generator ------------------------------------------------------
-
-
 
 def solve(start_index, end_index, parse_tree, output_prg):
     space_list = ['int','float','void','double','bool','char','return']
