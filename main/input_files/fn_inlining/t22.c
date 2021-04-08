@@ -58,7 +58,7 @@ void foo8()
     foo6();
 }
 
-void main()
+int main()
 {
     foo1();
 }

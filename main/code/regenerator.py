@@ -6,7 +6,7 @@ import sys
 import re
 
 # temp_list1 = []
-temp_list2 = []
+# temp_list2 = []
 
 # ----------------------------------------------fn inliner -----------------------------------------------------------
 def fn_inline_solve(i,n,z,cyc_chk,non_in_fn):
@@ -150,8 +150,8 @@ def fn_inline_solve(i,n,z,cyc_chk,non_in_fn):
 
 # ----------------------------------------------tail-rec-elimination ------------------------------------------------------
 
-def tail_rec_eli_solve(i,n,z):
-    global temp_list2;
+def tail_rec_eli_solve(i,n,z,in_flag1):
+    global temp_list2
     if(i == n):
         return
     elif(type(z[i]) is tuple):
@@ -163,23 +163,34 @@ def tail_rec_eli_solve(i,n,z):
 
                 mark_tuples(0,len(temp_list1),temp_list1,[1]);
 
-                temp_list2 = list(flatten1(copy.deepcopy(temp_list1)));
-                # print("temp_list2 : ",temp_list2,"\n\n");
-                tail_rec_handler(0,len(temp_list1),temp_list1,fn_name,temp_list2);
+                temp_list2 = list(flatten1(copy.deepcopy(temp_list1)))
+                print("temp_list2 : ",temp_list2,"\n\n");
+                # tail_rec_handler(0,len(temp_list1),temp_list1,fn_name, temp_list2)
+                tail_rec_controller(0,len(temp_list1),temp_list1,fn_name, temp_list2)
 
                 revert_tuples(0,len(temp_list1), temp_list1)
+            else:
+                if(not in_flag1):
+                    pl = z[i][1]
+                    z.insert(i,pl);
+                    z.pop(i + 1)
+        else:
+            if(not in_flag1):
+                pl = z[i][1]
+                z.insert(i,pl)
+                z.pop(i + 1)
 
     elif(type(z[i]) is list):
-        tail_rec_eli_solve(0,len(z[i]),z[i])
+        tail_rec_eli_solve(0,len(z[i]),z[i],in_flag1)
 
-    tail_rec_eli_solve(i + 1,len(z),z)
+    tail_rec_eli_solve(i + 1,len(z),z,in_flag1)
 
 # ----------------------------------------------tail-rec-elimination ------------------------------------------------------
 
 # ----------------------------------------------code generator ------------------------------------------------------
 
 def solve(start_index, end_index, parse_tree, output_prg):
-    space_list = ['int','float','void','double','bool','char','return']
+    space_list = ['int','float','void','double','bool','char','return','else','if']
     if(start_index == end_index):
         return
     elif(type(parse_tree[start_index]) is str):

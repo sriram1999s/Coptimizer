@@ -26,7 +26,7 @@ void foo4()
 }
 
 
-void main()
+int main()
 {
     foo2();
 }

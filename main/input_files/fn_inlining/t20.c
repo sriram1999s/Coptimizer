@@ -49,7 +49,7 @@ void foo8()
     foo1();
 }
 
-void main()
+int main()
 {
     foo3();
 }

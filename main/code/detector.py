@@ -33,10 +33,10 @@ non_in_fn = []
 
 ''' tail end recursion '''
 if(menu.FLAG_TAIL_RECURSION):
-    tail_rec_eli_solve(0,len(z),z)
+    tail_rec_eli_solve(0,len(z),z,menu.FLAG_INLINE)
 
 ''' function inlining '''
-if(menu.FLAG_INLINE): 
+if(menu.FLAG_INLINE):
     fn_inline_solve(0,len(z),z,cyc_chk,non_in_fn)
 
 #print("AST:")
@@ -58,7 +58,8 @@ output_prg = post_process(output_prg)
 
 
 with open("temp.c","w+") as f :
-    f.write("".join(z_new))
+    # f.write("".join(z_new))
+    f.write("".join(output_prg))
 # print("z_new", z_new)
 
 print("generated code")

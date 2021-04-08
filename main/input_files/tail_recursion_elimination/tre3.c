@@ -6,7 +6,8 @@ void sum(int size, double sum1)
     {
         printf("sum : %f\n",sum1);
     }
-    else sum(size - 1, sum1 + size);
+    else { sum(size - 1, sum1 + size);
+}
 }
 
 int main()

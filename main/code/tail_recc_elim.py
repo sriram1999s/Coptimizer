@@ -2,7 +2,7 @@ from function_inline import *
 import uuid
 import re
 
-# temp_list2 = []
+temp_list2 = []
 
 def flatten1(l):
     for el in l:
@@ -43,7 +43,8 @@ def revert_tuples(i,n,z):
 
     revert_tuples(i + 1,len(z),z);
 
-def verify_end(ix, temp_list2):
+def verify_end(ix):
+    global temp_list2;
     bracket_count = 0;
     temp_list2_len = len(temp_list2);
     while(ix < temp_list2_len):
@@ -55,7 +56,8 @@ def verify_end(ix, temp_list2):
                 return ix;
         ix += 1;
 
-def lookback_for_loop(ix, temp_list2):
+def lookback_for_loop(ix):
+    global temp_list2;
     loop_list = ["while", "for", "do"];
     end_pts = ["{", "}"];
     while(ix >= 0):
@@ -65,7 +67,8 @@ def lookback_for_loop(ix, temp_list2):
             return 1;
         ix -= 1;
 
-def check_loop(ix, temp_list2):
+def check_loop(ix):
+    global temp_list2;
     bracket_count = 1;
     while(ix >= 0):
         if(temp_list2[ix] == "}"):
@@ -73,22 +76,23 @@ def check_loop(ix, temp_list2):
         if(temp_list2[ix] == "{"):
             bracket_count -= 1;
             if(bracket_count == 0):
-                return lookback_for_loop(ix - 1, temp_list2);
+                return lookback_for_loop(ix - 1);
         ix -= 1;
 
-def check_tail_rec(ix, temp_list2):
+def check_tail_rec(ix):
+    global temp_list2;
     if(temp_list2[ix][-1] == "return"):
         return 1;
     ix += 1;
     temp_list2_len = len(temp_list2)
     while(ix < temp_list2_len):
         if(temp_list2[ix] == "else"):
-            ix = verify_end(ix + 1, temp_list2)
+            ix = verify_end(ix + 1)
         elif(temp_list2[ix] == ";"):
             ix += 1;
             continue;
         elif(temp_list2[ix] == "}"):
-            res = check_loop(ix - 1, temp_list2);
+            res = check_loop(ix - 1);
             if(res == 1):
                 return 0;
             ix += 1; continue;
@@ -132,15 +136,21 @@ def assignArgPar(arg_list, param_list, goto_hash):
         str += param_list1[ix] + " = " + converted(arg_list[ix], goto_hash, param_list1) + ";\n"
     return str;
 
-def tail_rec_handler(i,n,z,fn_name,temp_list2):
+def tail_rec_controller(i, n, z, fn_name, ll):
+    global temp_list2
+    temp_list2 = ll
+    tail_rec_handler(i, n, z, fn_name)
+
+def tail_rec_handler(i,n,z,fn_name):
+    global temp_list2
     if(i == n):
         return;
     elif(type(z[i]) is list):
-        tail_rec_handler(0,len(z[i]),z[i],fn_name,temp_list2)
+        tail_rec_handler(0,len(z[i]),z[i],fn_name)
     elif(type(z[i]) is tuple):
         if(z[i][0][0] == fn_name):
             temp_list2_ix = temp_list2.index(z[i]);
-            res = check_tail_rec(temp_list2_ix, temp_list2)
+            res = check_tail_rec(temp_list2_ix)
             if(res == 1):
                 defn_t_ix = get_defn_t_ix(z[i][0][0]);
 
@@ -174,4 +184,4 @@ def tail_rec_handler(i,n,z,fn_name,temp_list2):
                 # print("rec_fn_body : ", fn_defn_obj_list[defn_t_ix].body[0]);
                 # # x_1212dfjhi2378 = 1
 
-    tail_rec_handler(i + 1,len(z),z,fn_name,temp_list2);
+    tail_rec_handler(i + 1,len(z),z,fn_name);

@@ -71,7 +71,7 @@ void foo11()
     int f11=11;
 }
 
-void main()
+int main()
 {
     foo6();
 }

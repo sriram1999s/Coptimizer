@@ -63,12 +63,12 @@ def p_open(p):
          | for for_condition open
     '''
     if(len(p)==4):
-        # p[0] = [p[1], p[2], p[3]]
-        p[0] = [' ', p[1], p[2], '{', p[3], '}']
+        p[0] = [p[1], p[2], p[3]]
+        # p[0] = [' ', p[1], p[2], '{', p[3], '}']
         sym_tab.lookahead(0, len(p[3]), p[3])
     else:
-        # p[0] = [p[1], [p[2], p[3]], p[4], p[5]]
-        p[0] = [' ', p[1], [p[2], '{', p[3], '}'], p[4], ' ', '{', p[5], '}']
+        p[0] = [p[1], [p[2], p[3]], p[4], p[5]]
+        # p[0] = [' ', p[1], [p[2], '{', p[3], '}'], p[4], ' ', '{', p[5], '}']
         sym_tab.lookahead(0, len(p[3]), p[3])
         sym_tab.lookahead(0, len(p[5]), p[5])
 
@@ -111,7 +111,8 @@ def p_closed(p):
             p[0] = [p[1], p[2], p[3]]
             sym_tab.lookahead(0, len(p[3]), p[3])
     else:
-        p[0] = [' ', p[1], [p[2], '{', p[3], '}'], p[4], ' ', '{', p[5], '}']
+        # p[0] = [' ', p[1], [p[2], '{', p[3], '}'], p[4], ' ', '{', p[5], '}']
+        p[0] = [p[1], [p[2], p[3]], p[4], p[5]]
         sym_tab.lookahead(0, len(p[3]), p[3])
         sym_tab.lookahead(0, len(p[5]), p[5])
 

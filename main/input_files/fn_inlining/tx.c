@@ -14,10 +14,11 @@ int foo1()
 int foo2()
 {
     int f2=2;
-    if(0)
+    if(0) {
         return foo3();
-    else
+    } else {
         return foo4();
+}
 }
 
 int foo3()

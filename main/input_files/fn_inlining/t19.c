@@ -91,7 +91,7 @@ void foo12()
 }
 
 
-void main()
+int main()
 {
     foo6();
 }

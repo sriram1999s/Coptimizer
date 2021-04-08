@@ -3,9 +3,9 @@
 
 int foo()
 {
-    if(0<1)
+    if(0<1) {
         return 1;
-    else
+    } else
     {
         return 0;
     }

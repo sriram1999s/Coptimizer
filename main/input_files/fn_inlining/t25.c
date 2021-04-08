@@ -49,7 +49,7 @@ void foo8()
     int f8=8;
 }
 
-void main()
+int main()
 {
     foo6();
 }

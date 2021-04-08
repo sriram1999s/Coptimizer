@@ -36,7 +36,7 @@ void foo6()
     foo3();
 }
 
-void main()
+int main()
 {
     foo6();
     foo2();

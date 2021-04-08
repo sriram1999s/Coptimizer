@@ -29,7 +29,7 @@ void foo5()
     foo2();
 }
 
-void main()
+int main()
 {
     foo1();
 }
