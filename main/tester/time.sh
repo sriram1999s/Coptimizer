@@ -3,11 +3,13 @@
 gcc -Wall -pg $1 -o unoptimized
 gcc -Wall -pg $2 -o optimized
 
-./unoptimized > unoptimized_output 
+./unoptimized < inp > unoptimized_output 
 
-gprof -b unoptimized gmon.out | head -n -6 > unoptimized_profile
+gprof unoptimized gmon.out | head -n -6 > unoptimized_profile
 rm gmon.out
 
-./optimized > optimized_output 
-gprof -b optimized gmon.out | head -n -6 > optimized_profile
+./optimized < inp > optimized_output 
+gprof optimized gmon.out | head -n -6 > optimized_profile
 
+rm unoptimized
+rm optimized gmon.out

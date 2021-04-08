@@ -3,6 +3,7 @@ from math import *
 from symboltable import *
 from loop_jamming import *
 import re
+import secrets
 
 '''checks whether unrolling is possible and calls appropriate fxn'''
 def for_unroll_validate(OPTIMIZE1,OPTIMIZE2, sub_tree):
@@ -301,9 +302,11 @@ def for_variable_unroll(OPTIMIZE1,OPTIMIZE2,sub_tree,operator,ids):
     modified_upper_limit = '(' + modified_upper_limit_1 + '+' + modified_upper_limit_2 + ')'
     # print("modified_upper_limit: ",modified_upper_limit)
 
-    sub_from_upper = '(' + 'temp_8a69d4bf3c2b6818b9acf919a70d6c62' + '%' + '2' + ')'
+    
+    tempesh_randesh_hashesh = 'temp_'+secrets.token_hex(nbytes=16)
+    sub_from_upper = '(' + tempesh_randesh_hashesh + '%' + '2' + ')'
 
-    effective_upper_limit  = '(' + 'temp_8a69d4bf3c2b6818b9acf919a70d6c62' + '-' + sub_from_upper + ')'+ '/' +'2'
+    effective_upper_limit  = '(' + tempesh_randesh_hashesh + '-' + sub_from_upper + ')'+ '/' +'2'
     # print("effective_upper_limit",effective_upper_limit)
 
     body = []
@@ -312,7 +315,7 @@ def for_variable_unroll(OPTIMIZE1,OPTIMIZE2,sub_tree,operator,ids):
     body  = ''.join(body)
     # print("body: ",body)
 
-    declarations = f'int temp_8a69d4bf3c2b6818b9acf919a70d6c62 = {modified_upper_limit};'
+    declarations = f'int {tempesh_randesh_hashesh} = {modified_upper_limit};'
     new_for_loop = f'for(int i = 0 ; i < {effective_upper_limit} ;  i++)' + '{' + body*2 + '}'
     remaining = f'if({sub_from_upper})' + '{' + body + '}'
     return declarations + new_for_loop + remaining
