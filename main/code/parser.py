@@ -526,7 +526,7 @@ def p_expr(p):
         # print("search_string : ", search_string)
         if(type(p[3])==str and re.search(r'[A-Za-z_][A-Za-z_0-9]*',p[3])):
             if(sym_tab.symbol_table['*' + search_string ] == "garbage" ):
-                print("here")
+                # print("here")
                 dynamic_string = sym_tab.make_level_string(p[3])
                 if(sym_tab.symbol_table[dynamic_string]!='garbage' and sym_tab.symbol_table[dynamic_string]!='declared'):
                     sym_tab.symbol_table[search_string] = sym_tab.symbol_table[dynamic_string]

@@ -90,7 +90,7 @@ class CompileInit:
         if(i == n):
             return
         if(type(l[i]) == list and len(l[i]) == 3 and type(l[i][0]) == list and len(l[i][0][1])==3 and l[i][1] == '=' and self.array_value[l[i][0][0]]['value']=='garbage'):
-            print("l[i]",l[i])
+            # print("l[i]",l[i])
 
             if(type(l[i][0][1])==list and l[i][0][1][1]==loop_var):
                 if(type(l[i][2]) == int):

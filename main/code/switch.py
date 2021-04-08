@@ -2,13 +2,17 @@ import stack_match2
 
 net_open = 0
 dict_num_chain_pos = dict()
-for i1 in stack_match2.dict_num_list_of_chains:
-    dict_num_chain_pos[i1] = [0, 0]
+# for i1 in stack_match2.dict_num_list_of_chains:
+#     dict_num_chain_pos[i1] = [0, 0]
 z_new = []
 dict_num_list_common_vars = dict()
 seen_at_num = []
 order = []  # need not actually be a list, can just be a var
 
+def initialize_dict_num_chain_pos():
+    global dict_num_chain_pos
+    for i1 in stack_match2.dict_num_list_of_chains:
+        dict_num_chain_pos[i1] = [0, 0]
 
 def make_switch(OPTIMIZE,z):
     if(not OPTIMIZE):
@@ -20,9 +24,11 @@ def make_switch(OPTIMIZE,z):
     global seen_at_num
     global order
 
+    initialize_dict_num_chain_pos()
+
     i = 0
     while i < len(z):
-        print('in while', z[i], net_open, order)
+        # print('in while', z[i], net_open, order)
 
         # check placement
         if seen_at_num and net_open < seen_at_num[-1]:
@@ -74,7 +80,7 @@ def make_switch(OPTIMIZE,z):
 
             # chain not switched
             else:
-                print('chain not switched')
+                # print('chain not switched')
                 z_new.append(z[i])
                 i += 1
 
@@ -139,7 +145,8 @@ def check_change_to_switch(num):
 
         # not calculated for chain
         except:
-            print('error')
+            # print('error')
+            None
 
     try:
         # not calculated for chain

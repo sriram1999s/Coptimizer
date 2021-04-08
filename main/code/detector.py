@@ -3,6 +3,7 @@ from preprocessing import *
 from postprocessing import *
 sys.setrecursionlimit(10**9)
 from parser import *
+from stack_match2 import *
 from switch import *
 
 lexer = lex()
@@ -36,7 +37,7 @@ if(menu.FLAG_TAIL_RECURSION):
     tail_rec_eli_solve(0,len(z),z)
 
 ''' function inlining '''
-if(menu.FLAG_INLINE): 
+if(menu.FLAG_INLINE):
     fn_inline_solve(0,len(z),z,cyc_chk,non_in_fn)
 
 #print("AST:")
@@ -45,10 +46,14 @@ print()
 print()
 output_prg=[]
 solve(0,len(z),z,output_prg)
-# ''' if to switch '''
-# make_switch(menu.FLAG_IF_TO_SWITCH,output_prg)
+''' if to switch '''
+identify_chains(menu.FLAG_IF_TO_SWITCH, output_prg)
+make_switch(menu.FLAG_IF_TO_SWITCH, output_prg)
 
-output_prg = "".join(output_prg)
+if(menu.FLAG_IF_TO_SWITCH):
+    output_prg = "".join(z_new)
+else:
+    output_prg = "".join(output_prg)
 
 ''' compile time inits '''
 output_prg = com_init.make_compile_inits(menu.FLAG_COMPILE_INIT,output_prg)
@@ -58,7 +63,7 @@ output_prg = post_process(output_prg)
 
 
 with open("temp.c","w+") as f :
-    f.write("".join(z_new))
+    f.write(output_prg)
 # print("z_new", z_new)
 
 print("generated code")

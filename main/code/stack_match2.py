@@ -26,13 +26,15 @@ def is_char(s):
     #     return True
     # else:
     #     return False
-    print('s', s)
+    # print('s', s)
     if s[0] == "'" and s[-1] == "'":
         return True
     return False
 
 
-def identify_chains(z):
+def identify_chains(OPTIMIZE, z):
+    if(not OPTIMIZE):
+        return
     global dict_num_list_of_chains
     window = []
     threshold = 0
@@ -257,4 +259,3 @@ def util(type1, z, i):
 
     obj = if_elif_else(type1, l1)
     return obj
-
