@@ -1,0 +1,18 @@
+Flat profile:
+
+Each sample counts as 0.01 seconds.
+  %   cumulative   self              self     total           
+ time   seconds   seconds    calls   s/call   s/call  name    
+101.78      3.50     3.50        3     1.17     1.17  looping
+
+			Call graph
+
+
+granularity: each sample hit covers 2 byte(s) for 0.29% of 3.50 seconds
+
+index % time    self  children    called     name
+                3.50    0.00       3/3           main [2]
+[1]    100.0    3.50    0.00       3         looping [1]
+-----------------------------------------------
+                                                 <spontaneous>
+[2]    100.0    0.00    3.50                 main [2]
