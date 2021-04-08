@@ -35,7 +35,7 @@ statements = ['FOR', 'WHILE', 'IF', 'ELSE']
 
 unary = ['NOT']
 
-extra = ['ID', 'TYPE', 'STRING' , 'HASH' , 'DOT','INCLUDE','HEADER_FILE','CHAR']
+extra = ['ID', 'TYPE', 'STRING' , 'HASH', 'INCLUDE','HEADER_FILE','CHAR']
 
 jump = ['RETURN']
 
@@ -82,7 +82,7 @@ t_R_SQBRACE = r'\]'
 t_SEMICOLON = r';'
 t_COMMA = r','
 t_HASH = r'\#'
-t_DOT = r'\.'
+
 
 # unary
 

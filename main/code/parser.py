@@ -378,7 +378,7 @@ def p_simple(p):
         p[0] = [p[1],p[2]]
     elif(len(p)==4):
         # #print("p_simpleI :",p[2])
-        if(type(p[2]) is list and type(p[2][0]) is tuple and (menu.FLAG_INLINE or FLAG_TAIL_RECURSION)):
+        if(type(p[2]) is list and type(p[2][0]) is tuple and (menu.FLAG_INLINE or menu.FLAG_TAIL_RECURSION)):
             t = p[2][0]
             p[0] = [p[1], t[0], '(',t[1][2], ')',';']
             call_helper(p[0], t[0])

@@ -1,4 +1,7 @@
 from function_inline import *
+import uuid
+import re
+
 temp_list2 = []
 
 def flatten1(l):
@@ -25,7 +28,23 @@ def mark_tuples(i,n,z,num):
 
     mark_tuples(i + 1,len(z),z,num);
 
+def revert_tuples(i,n,z):
+    if(i == n):
+        return;
+    elif(type(z[i]) is list):
+        revert_tuples(0,len(z[i]),z[i])
+    elif(type(z[i]) is tuple):
+        fn_name = z[i][0][0]
+        l = list(z[i])
+        l[0] = fn_name
+        l = tuple(l)
+        z.insert(i,l)
+        z.pop(i + 1)
+
+    revert_tuples(i + 1,len(z),z);
+
 def verify_end(ix):
+    global temp_list2;
     bracket_count = 0;
     temp_list2_len = len(temp_list2);
     while(ix < temp_list2_len):
@@ -38,6 +57,7 @@ def verify_end(ix):
         ix += 1;
 
 def lookback_for_loop(ix):
+    global temp_list2;
     loop_list = ["while", "for", "do"];
     end_pts = ["{", "}"];
     while(ix >= 0):
@@ -48,6 +68,7 @@ def lookback_for_loop(ix):
         ix -= 1;
 
 def check_loop(ix):
+    global temp_list2;
     bracket_count = 1;
     while(ix >= 0):
         if(temp_list2[ix] == "}"):
@@ -59,6 +80,7 @@ def check_loop(ix):
         ix -= 1;
 
 def check_tail_rec(ix):
+    global temp_list2;
     if(temp_list2[ix][-1] == "return"):
         return 1;
     ix += 1;
@@ -114,7 +136,13 @@ def assignArgPar(arg_list, param_list, goto_hash):
         str += param_list1[ix] + " = " + converted(arg_list[ix], goto_hash, param_list1) + ";\n"
     return str;
 
+def tail_rec_controller(i, n, z, fn_name, ll):
+    global temp_list2
+    temp_list2 = ll
+    tail_rec_handler(i, n, z, fn_name)
+
 def tail_rec_handler(i,n,z,fn_name):
+    global temp_list2
     if(i == n):
         return;
     elif(type(z[i]) is list):
@@ -124,7 +152,6 @@ def tail_rec_handler(i,n,z,fn_name):
             temp_list2_ix = temp_list2.index(z[i]);
             res = check_tail_rec(temp_list2_ix)
             if(res == 1):
-                # print("Tail rec call : ",z[i]);
                 defn_t_ix = get_defn_t_ix(z[i][0][0]);
 
                 arg_list = get_arg_list(z[i][1]);
@@ -133,7 +160,7 @@ def tail_rec_handler(i,n,z,fn_name):
                 rec_fn_body = fn_defn_obj_list[defn_t_ix].body[0];
                 if(type(rec_fn_body[1]) is str and len(rec_fn_body[1]) >= 6 and rec_fn_body[1][0:6] == "label_"):
                     colon_ix = rec_fn_body[1].index(":")
-                    goto_hash = rec_fn_body[6 : colon_ix];
+                    goto_hash = rec_fn_body[1][6 : colon_ix];
                 else:
                     goto_hash = uuid.uuid4().hex;
                     label_part = "label_" + goto_hash + ": {}\n"

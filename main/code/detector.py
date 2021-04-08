@@ -1,4 +1,5 @@
 import sys
+import json
 from preprocessing import *
 from postprocessing import *
 sys.setrecursionlimit(10**9)
@@ -14,6 +15,10 @@ try:
 except :
     print('No arguments')
 
+with open("flags.json", "r") as inp:
+    flags = json.load(inp)
+    menu.set(flags)
+print("flags ", flags)
 #------------------------------------IO handling --------------------------------------------------------------------------
 
 
@@ -34,7 +39,7 @@ non_in_fn = []
 
 ''' tail end recursion '''
 if(menu.FLAG_TAIL_RECURSION):
-    tail_rec_eli_solve(0,len(z),z)
+    tail_rec_eli_solve(menu.FLAG_INLINE, 0,len(z),z)
 
 ''' function inlining '''
 if(menu.FLAG_INLINE):
