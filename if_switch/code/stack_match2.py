@@ -73,7 +73,10 @@ def identify_chains(z):
             obj = create_obj('else', i, z)
             if net_open < threshold:
                 # threshold = net_open
-                threshold = find_prev_num(net_open)
+                # threshold = find_prev_num(net_open)
+
+                threshold = find_prev_num(net_open, z, i)
+
             dict_num_list_of_chains[threshold][-1].append(obj)
             window = [(net_open, 'else'), threshold]
 
@@ -91,31 +94,56 @@ def create_obj(type1, pos, z):
 
 
 # check logic for this function
-def find_prev_num(num):
+# def find_prev_num(num):
+#     global dict_num_list_of_chains
+#     ret = -1
+#
+#     count = 0
+#
+#     for i in dict_num_list_of_chains.keys():
+#         if i < num:
+#             ret = i
+#
+#             count+=1
+#
+#         # elif i == num:
+#         #     ret = i
+#         #     break
+#
+#         elif i == num:
+#             if count == 0:
+#                 ret = i
+#                 break
+#             else:
+#                 break
+#
+#         else:
+#             break
+#     return ret
+
+def find_prev_num(num, z, pos):
     global dict_num_list_of_chains
     ret = -1
-
-    count = 0
 
     for i in dict_num_list_of_chains.keys():
         if i < num:
             ret = i
 
-            count+=1
-
-        # elif i == num:
-        #     ret = i
-        #     break
-
         elif i == num:
-            if count == 0:
+
+            # print('in i==num', z[pos], z[pos+1], z[pos+2], z[pos+3], z[pos+4])
+            # else if
+            if pos+5<len(z) and z[pos+1]==' ' and z[pos+2] =='{' and z[pos+3]==' ' and z[pos+4] == 'if':
+                # print('in elfi i==num')
                 ret = i
                 break
-            else:
-                break
+            if ret == -1:
+                ret = i
+            break
 
         else:
             break
+    print('returning', ret)
     return ret
 
 

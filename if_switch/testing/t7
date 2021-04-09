@@ -1,12 +1,12 @@
-void main()
+int main()
 {
     int a, b;
     if(a == 0 && b==1)
-        int c;
+    {    int c; }
     else if(a==10 && b==0)
-        int d;
+    {    int d; }
     else if((a==2))
-        int e;
+    {    int e; }
     else if((((a==11))) && (b==2))
-        int f;
+    {    int f; }
 }

@@ -38,7 +38,7 @@ def remove_extra_brackets(z):
             i+=1
 
         elif z[i] == 'else':
-            if i+4<len(z) and z[i+1] == ' ' and z[i+2] == '{' and z[i+3] == ' ' and z[i+4] == 'if':
+            if i+5<len(z) and z[i+1] == ' ' and z[i+2] == '{' and z[i+3] == ' ' and z[i+4] == 'if':
                 seen_a = 'elif'
                 z_inp.append(z[i])
                 z_inp.append(z[i+1])

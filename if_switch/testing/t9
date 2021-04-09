@@ -1,6 +1,6 @@
 #include <stdio.h>
 
-void main()
+int main()
 {
     int a;
     if(a==1)
@@ -41,4 +41,5 @@ void main()
     }
     else
     {   int i;  }
+    return 0;
 }

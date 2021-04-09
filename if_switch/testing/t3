@@ -1,4 +1,4 @@
-void main()
+int main()
 {
     int a,b,c;
     if(a==1)
@@ -29,4 +29,5 @@ void main()
     {    int d; }
     if(a==10)
     {    int h; }
+    return 0;
 }
