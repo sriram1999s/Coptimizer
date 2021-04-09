@@ -1,6 +1,8 @@
+#include<time.h>
+#include<string.h>
 #include<stdio.h>
 int main()
-{
+{double startTime = (float)clock()/CLOCKS_PER_SEC;{
     int a = 0;
     int n;
     scanf("%d", &n);
@@ -17,5 +19,4 @@ int main()
 	    a++;
     }
     }
-    printf("\na: %d\n", a);
-}
+    printf("\na: %d\n", a);double endTime = (float)clock()/CLOCKS_PER_SEC; double timeElapsed = endTime - startTime; FILE *fp = fopen("profile","w"); fprintf(fp,"%f\n",timeElapsed); fclose(fp);}}
