@@ -2,8 +2,12 @@ from regenerator import *
 from math import *
 from symboltable import *
 from loop_jamming import *
+from collections import *
 import re
 import secrets
+import random
+
+list_looping_variables = defaultdict(lambda:0)
 
 '''checks whether unrolling is possible and calls appropriate fxn'''
 def for_unroll_validate(OPTIMIZE1,OPTIMIZE2, sub_tree):
@@ -20,6 +24,7 @@ def for_unroll_validate(OPTIMIZE1,OPTIMIZE2, sub_tree):
     ids = dict()
     find_id(0, len(condition[2:]), condition[2:], ids)
     loop_var = list(ids.keys())[0]
+    list_looping_variables[loop_var+'_'.join(sym_tab.level_str)]=1
 
     loop_var_dict = dict()
     find_id(0,len(sub_tree[2]),sub_tree[2],loop_var_dict)
@@ -56,7 +61,7 @@ def for_unroll_validate(OPTIMIZE1,OPTIMIZE2, sub_tree):
     #print("ids : ",ids)
     if(len(ids) > 1):# more than 1 loop variable in condition, short circuit return
         # return sub_tree
-        return for_variable_unroll(OPTIMIZE1,OPTIMIZE2,sub_tree,operators,ids)
+        return for_variable_unroll(OPTIMIZE1,OPTIMIZE2,sub_tree,operators,ids,loop_var)
 
     if(not OPTIMIZE1):
         return sub_tree
@@ -257,9 +262,10 @@ def for_partial_unroll(block, condition, operator,res):
 # if(n%2):
 #     unroll remaining
 '''for_variable_unroll() ------> when the limits are decided at runtime'''
-def for_variable_unroll(OPTIMIZE1,OPTIMIZE2,sub_tree,operator,ids):
+def for_variable_unroll(OPTIMIZE1,OPTIMIZE2,sub_tree,operator,ids,loop_var):
     if(operator[0][0] in ['/=','*=','*','/']):
         return sub_tree
+
     condition = sub_tree[1]
     lower_limit_str = []
     upper_limit_str = []
@@ -276,6 +282,15 @@ def for_variable_unroll(OPTIMIZE1,OPTIMIZE2,sub_tree,operator,ids):
     if(re.search('^[0-9]*$',upper_limit)):
         upper_limit = int(upper_limit)
 
+    if(type(lower_limit)==str):
+        if(list_looping_variables[sym_tab.make_level_string(lower_limit)]):
+            return sub_tree
+        
+    if(type(upper_limit)==str):
+        if(list_looping_variables[sym_tab.make_level_string(upper_limit)]):
+            return sub_tree
+    
+    
     increment_val = '1'
     #print(''.join(increment_str))
     m2 = re.search('=(.*)',''.join(increment_str))
@@ -304,6 +319,9 @@ def for_variable_unroll(OPTIMIZE1,OPTIMIZE2,sub_tree,operator,ids):
 
     
     tempesh_randesh_hashesh = 'temp_'+secrets.token_hex(nbytes=16)
+    #tempesh_randesh_hashesh = 'temp_'+ str(random.randint(1,100))
+    temp_loop_var = 'temp_loop_'+secrets.token_hex(nbytes=16)
+    #temp_loop_var = 'temp_loop_'+ str(random.randint(1,100))
     sub_from_upper = '(' + tempesh_randesh_hashesh + '%' + '2' + ')'
 
     effective_upper_limit  = '(' + tempesh_randesh_hashesh + '-' + sub_from_upper + ')'+ '/' +'2'
@@ -315,8 +333,14 @@ def for_variable_unroll(OPTIMIZE1,OPTIMIZE2,sub_tree,operator,ids):
     body  = ''.join(body)
     # print("body: ",body)
 
-    declarations = f'int {tempesh_randesh_hashesh} = {modified_upper_limit};'
-    new_for_loop = f'for(int i = 0 ; i < {effective_upper_limit} ;  i++)' + '{' + body*2 + '}'
+    declarations = f'int {tempesh_randesh_hashesh} = {modified_upper_limit};int {temp_loop_var};'
+    temp_declaration  ='{' + f'{temp_loop_var} = {loop_var};' + '}'
+    new_for_loop = f'for(int {loop_var} = 0 ; {loop_var} < {effective_upper_limit} ;  {loop_var}++)' + '{'+temp_declaration + body*2 + '}'
+    def rep_sub(m):
+        return m.group(1) + temp_loop_var + m.group(2)
+
+    pat = '(\W)'+str(loop_var)+r'(\W)'
+    body = re.sub(pat,rep_sub,body)
     remaining = f'if({sub_from_upper})' + '{' + body + '}'
     return declarations + new_for_loop + remaining
 

@@ -440,16 +440,12 @@ def p_end_call_params(p):
 
 def p_yes_dec_params(p):
     '''
-    yes_dec_params : yes_dec_params TYPE ID COMMA
-                   | yes_dec_params TYPE MULTIPLY ID COMMA
-    		       | yes_dec_params TYPE COMMA
+    yes_dec_params : yes_dec_params TYPE expr COMMA
+    		   | yes_dec_params TYPE COMMA
                    | yes_dec_params TYPE MULTIPLY COMMA
-		           | yes_dec_params TYPE ID ASSIGN NUM COMMA
-                   | TYPE ID COMMA
-                   | TYPE MULTIPLY ID COMMA
-   		           | TYPE COMMA
-                   | TYPE MULTIPLY COMMA
-		           | TYPE ID ASSIGN NUM COMMA
+                   | TYPE expr COMMA
+   		   | TYPE COMMA
+        	   | TYPE MULTIPLY COMMA
     '''
     if (len(p) == 5):
         if(type(p[1])==str):
@@ -470,10 +466,8 @@ def p_yes_dec_params(p):
 
 def p_end_dec_params(p):
     '''
-    end_dec_params : TYPE ID
-		           | TYPE ID ASSIGN NUM
+    end_dec_params : TYPE expr
 		           | TYPE
-                   | TYPE MULTIPLY ID
                    | TYPE MULTIPLY
     '''
     if(len(p)==3):
