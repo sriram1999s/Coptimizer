@@ -26,7 +26,6 @@ def is_char(s):
     #     return True
     # else:
     #     return False
-    print('s', s)
     if s[0] == "'" and s[-1] == "'":
         return True
     return False
@@ -91,15 +90,30 @@ def create_obj(type1, pos, z):
         return obj
 
 
+# check logic for this function
 def find_prev_num(num):
     global dict_num_list_of_chains
     ret = -1
+
+    count = 0
+
     for i in dict_num_list_of_chains.keys():
         if i < num:
             ret = i
+
+            count+=1
+
+        # elif i == num:
+        #     ret = i
+        #     break
+
         elif i == num:
-            ret = i
-            break
+            if count == 0:
+                ret = i
+                break
+            else:
+                break
+
         else:
             break
     return ret
