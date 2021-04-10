@@ -52,8 +52,18 @@ print()
 output_prg=[]
 solve(0,len(z),z,output_prg)
 ''' if to switch '''
+print('before', output_prg)
+with open("temp0.c","w+") as f :
+    f.write("".join(output_prg))
 identify_chains(menu.FLAG_IF_TO_SWITCH, output_prg)
-make_switch(menu.FLAG_IF_TO_SWITCH, output_prg)
+print('Dict num list of chains')
+for i in dict_num_list_of_chains:
+    print(i, ':')
+    for j in dict_num_list_of_chains[i]:
+        for k in j:
+            print(k.type1, k.condition_vars, '->', end=' ')
+        print()
+# make_switch(menu.FLAG_IF_TO_SWITCH, output_prg)
 
 if(menu.FLAG_IF_TO_SWITCH):
     output_prg = "".join(z_new)
