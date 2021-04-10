@@ -1,6 +1,6 @@
 # include <stdio.h>
 
-void main()
+int main()
 {
     float a;
     if(a==1)
@@ -15,4 +15,5 @@ void main()
     {
         printf("a is other");
     }
+    return 0;
 }

@@ -12,12 +12,12 @@ int main()
         {
             int e;
             if(e==0)
-            {   printf("0");    }
+            {   int printf1;    }
             else if(e==1)
             {
-                printf("in e=1");
+                int printf2;
                 if(e==1 && d==100)
-                {   printf("both 1");   }
+                {   int printf3;   }
                 else if(e==0 && d==100)
                 {
                     int b;
