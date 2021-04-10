@@ -53,12 +53,16 @@ def p_statement(p):
     '''
     p[0] = p[1]
 
-
+def p_else(p):
+    '''
+    else : ELSE
+    '''
+    p[0] = 'else '
 
 def p_open(p):
     '''
     open : IF condition statement
-         | IF condition closed ELSE open
+         | IF condition closed else open
          | WHILE condition open
          | for for_condition open
     '''
@@ -87,7 +91,7 @@ def p_closed(p):
     '''
     closed : simple
            | block
-           | IF condition closed ELSE closed
+           | IF condition closed else closed
            | WHILE condition closed
            | for for_condition closed
     '''

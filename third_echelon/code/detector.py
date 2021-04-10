@@ -45,15 +45,15 @@ if(menu.FLAG_TAIL_RECURSION):
 if(menu.FLAG_INLINE):
     fn_inline_solve(0,len(z),z,cyc_chk,non_in_fn)
 
-#print("AST:")
-#print(z)
+print("AST:")
+print(z)
 print()
 print()
 output_prg=[]
 solve(0,len(z),z,output_prg)
 ''' if to switch '''
 print('before', output_prg)
-with open("temp0.c","w+") as f :
+with open("temp0.c","w") as f :
     f.write("".join(output_prg))
 identify_chains(menu.FLAG_IF_TO_SWITCH, output_prg)
 print('Dict num list of chains')
