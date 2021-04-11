@@ -43,6 +43,7 @@ def identify_chains(OPTIMIZE, z):
 
     i = 0
     while i<len(z):
+
         if z[i] == '{':
             net_open += 1
             i+=1
@@ -78,21 +79,21 @@ def identify_chains(OPTIMIZE, z):
 
             if net_open not in dict_num_list_of_chains.keys():
                 dict_num_list_of_chains[net_open] = [[obj]]
-                threshold = net_open
+                # threshold = net_open
             else:
                 dict_num_list_of_chains[net_open].append([obj])
             i+=1
 
-        elif z[i] == 'else':
+        elif z[i] == 'else ':
             # obj = create_obj('else', i, z)
             # if net_open < threshold:
             #     # threshold = net_open
             #     threshold = find_prev_num(net_open)
             # dict_num_list_of_chains[threshold][-1].append(obj)
             # window = [(net_open, 'else'), threshold]
-            if i+2<len(z) and z[i+1]==' ' and z[i+2]=='if':
-                obj = create_obj('elif', i+2, z)
-                i+=3
+            if i+1<len(z) and z[i+1]=='if':
+                obj = create_obj('elif', i+1, z)
+                i+=2
             else:
                 obj = create_obj('else', i, z)
                 i+=1
@@ -100,7 +101,6 @@ def identify_chains(OPTIMIZE, z):
 
         else:
             i+=1
-
 
 
 def create_obj(type1, pos, z):
@@ -115,18 +115,18 @@ def create_obj(type1, pos, z):
         return obj
 
 
-def find_prev_num(num):
-    global dict_num_list_of_chains
-    ret = -1
-    for i in dict_num_list_of_chains.keys():
-        if i < num:
-            ret = i
-        elif i == num:
-            ret = i
-            break
-        else:
-            break
-    return ret
+# def find_prev_num(num):
+#     global dict_num_list_of_chains
+#     ret = -1
+#     for i in dict_num_list_of_chains.keys():
+#         if i < num:
+#             ret = i
+#         elif i == num:
+#             ret = i
+#             break
+#         else:
+#             break
+#     return ret
 
 
 def skip_while(pos, ch, z):
@@ -281,3 +281,4 @@ def util(type1, z, i):
 
     obj = if_elif_else(type1, l1)
     return obj
+

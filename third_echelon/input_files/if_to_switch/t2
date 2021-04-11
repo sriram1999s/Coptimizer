@@ -1,22 +1,25 @@
-void main()
+# include<stdio.h>
+
+int main()
 {
     int var1=1, var2;
     if(var1==0)
     {
         if(var1==10)
-            int a;
+        {   int a;  }
         else
-            int b;
+        {    int b; }
         if(var1==0)
-            int c;
+        {    int c; }
         else
-            int d;
+        {    int d; }
     }
     else
-        int e;
+    {    int e; }
      int h;
     if(var2==1)
-        int f;
+    {    int f; }
     else
-        int g;
+    {    int g; }
+    return 0;
 }

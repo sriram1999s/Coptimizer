@@ -1,4 +1,6 @@
-void main()
+# include <stdio.h>
+
+int main()
 {
     int choice = 1;
     if(choice==0)
@@ -32,4 +34,5 @@ void main()
     {
         int temp5;
     }
+    return 0;
 }

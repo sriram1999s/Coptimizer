@@ -1,6 +1,6 @@
 # include <stdio.h>
 
-void main()
+int main()
 {
     int a=1, b, c;
     scanf("%d", &b);
@@ -8,20 +8,20 @@ void main()
 
     if(a>=0 && a<1)
     {
-        printf("one");
+        printf("zero");
     }
     else if(a>=1 && a<2)
     {
-        printf("two");
+        printf("one");
     }
 
     if(b>=0 && b<=0)
     {
-        printf("b one");
+        printf("b zero");
     }
     else if(b>=1 && b<=1)
     {
-        printf("b two");
+        printf("b one");
     }
 
     if(c>0 && c<=5)

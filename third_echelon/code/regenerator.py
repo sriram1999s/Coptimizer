@@ -201,7 +201,7 @@ def solve(start_index, end_index, parse_tree, output_prg):
         return
     elif(type(parse_tree[start_index]) is str):
         if(start_index+1<end_index and parse_tree[start_index] in space_list and parse_tree[start_index+1]!=' '):
-            print("here", parse_tree[start_index], parse_tree[start_index + 1])
+            # print("here", parse_tree[start_index], parse_tree[start_index + 1])
             output_prg += [parse_tree[start_index], ' ']
         else:
             output_prg += [parse_tree[start_index]]
@@ -216,7 +216,7 @@ def solve(start_index, end_index, parse_tree, output_prg):
                 solve(0, len(parse_tree[start_index][trav]), parse_tree[start_index][trav], output_prg)
             else:
                 if(trav+1<end_index and parse_tree[start_index][trav] in space_list and parse_tree[start_index][trav+1]!=' '):
-                    print("here", parse_tree[start_index][trav], parse_tree[start_index ][trav + 1])
+                    # print("here", parse_tree[start_index][trav], parse_tree[start_index ][trav + 1])
                     output_prg += [parse_tree[start_index][trav], ' ']
                 else:
                     output_prg += [str(parse_tree[start_index][trav])]

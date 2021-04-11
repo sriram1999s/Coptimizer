@@ -1,5 +1,7 @@
 default:
-	python3 detector.py $(1)
+	py detector.py "C:/Users/KR/PycharmProjects/Capstone/if_switch/testing/t12"
 clean:
-	del parser.out parsetab.py temp.c temp_op.c
+	del parser.out parsetab.py temp.c temp0.c
 	rmdir /S /Q __pycache__
+
+

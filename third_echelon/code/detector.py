@@ -28,7 +28,7 @@ with open(file) as f:
         lines += line.strip('\n')
     lines.strip('\n')
 ''' pre processing '''
-lines = pre_process(lines)
+# lines = pre_process(lines)
 z=parser.parse(lines)
 
 
@@ -61,9 +61,9 @@ for i in dict_num_list_of_chains:
     print(i, ':')
     for j in dict_num_list_of_chains[i]:
         for k in j:
-            print(k.type1, k.condition_vars, '->', end=' ')
+            print('(', k.type1, k.condition_vars, k.l, k.op1, k.range_var, k.op2, k.u, ')', '->', end=' ')
         print()
-# make_switch(menu.FLAG_IF_TO_SWITCH, output_prg)
+make_switch(menu.FLAG_IF_TO_SWITCH, output_prg)
 
 if(menu.FLAG_IF_TO_SWITCH):
     output_prg = "".join(z_new)

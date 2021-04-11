@@ -1,4 +1,4 @@
-void main()
+int main()
 {
     int a;
     if(a==0)
@@ -8,27 +8,28 @@ void main()
             if(a==2)
             {
                 if(a==3)
-                    int b;
+                {    int b; }
                 else
-                    int c;
+                {    int c; }
             }
             else if(a==4)
-                int d;
+            {    int d; }
             else if(a==5)
-                int e;
+            {    int e; }
             else
-                int f;
+            {    int f; }
         }
         else if(a==6)
-            int g;
+        {    int g; }
 
         int h;
         if(a==7)
-            int i;
+        {    int i; }
         if(a==8)
-            int j;
+        {    int j; }
         else
-            int k;
+        {    int k; }
         int l;
     }
+    return 0;
 }
