@@ -48,9 +48,15 @@ def make_switch(OPTIMIZE,z):
         elif z[i] == 'if':
             if net_open not in seen_at_num:
                 seen_at_num.append(net_open)
+            # else:
+            #     dict_num_chain_pos[net_open][0] += 1
+            #     dict_num_chain_pos[net_open][1] = 0
+
             else:
-                dict_num_chain_pos[net_open][0] += 1
-                dict_num_chain_pos[net_open][1] = 0
+                if not (i-1>=0 and z[i-1]=='else '):
+                    # print('should not come here')
+                    dict_num_chain_pos[net_open][0] += 1
+                    dict_num_chain_pos[net_open][1] = 0
 
             chosen_var, range_lower_bound = check_change_to_switch(net_open)
 
