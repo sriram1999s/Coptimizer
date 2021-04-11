@@ -33,57 +33,46 @@ def is_char(s):
 
 
 def identify_chains(OPTIMIZE, z):
-    if(not OPTIMIZE):
+    if (not OPTIMIZE):
         return
     global dict_num_list_of_chains
-    window = []
-    threshold = 0
     net_open = 0
-    for i in range(len(z)):
+
+    i = 0
+    while i < len(z):
+
         if z[i] == '{':
             net_open += 1
+            i += 1
 
         elif z[i] == '}':
             net_open -= 1
+            i += 1
 
         elif z[i] == 'if':
             obj = create_obj('if', i, z)
-            if window == []:
-                if net_open not in dict_num_list_of_chains.keys():
-                    dict_num_list_of_chains[net_open] = [[obj]]
-
-                    threshold = net_open
-
-                else:
-                    dict_num_list_of_chains[net_open].append([obj])
-                if threshold < net_open:
-                    threshold = net_open
+            if net_open not in dict_num_list_of_chains.keys():
+                dict_num_list_of_chains[net_open] = [[obj]]
             else:
-                if net_open == threshold:
-                    window = []
-                    dict_num_list_of_chains[net_open].append([obj])
-                elif net_open > threshold:
-                    dict_num_list_of_chains[window[1]][-1].pop()
-                    obj = create_obj('elif', i, z)
-                    dict_num_list_of_chains[window[1]][-1].append(obj)
-                    window = []
-                else:
-                    threshold = net_open
-                    dict_num_list_of_chains[threshold].append([obj])
-                    window = []
+                dict_num_list_of_chains[net_open].append([obj])
+            i += 1
 
-        elif z[i] == 'else':
-            obj = create_obj('else', i, z)
-            if net_open < threshold:
-                # threshold = net_open
-                threshold = find_prev_num(net_open)
-            dict_num_list_of_chains[threshold][-1].append(obj)
-            window = [(net_open, 'else'), threshold]
+        elif z[i] == 'else ':
+            if i + 1 < len(z) and z[i + 1] == 'if':
+                obj = create_obj('elif', i + 1, z)
+                i += 2
+            else:
+                obj = create_obj('else', i, z)
+                i += 1
+            dict_num_list_of_chains[net_open][-1].append(obj)
+
+        else:
+            i += 1
 
 
 def create_obj(type1, pos, z):
     if type1 == 'if':
-        return util('if', z, pos+2)
+        return util('if', z, pos + 2)
 
     if type1 == 'elif':
         return util('elif', z, pos + 2)
@@ -93,23 +82,9 @@ def create_obj(type1, pos, z):
         return obj
 
 
-def find_prev_num(num):
-    global dict_num_list_of_chains
-    ret = -1
-    for i in dict_num_list_of_chains.keys():
-        if i < num:
-            ret = i
-        elif i == num:
-            ret = i
-            break
-        else:
-            break
-    return ret
-
-
 def skip_while(pos, ch, z):
-    while pos<len(z) and z[pos] == ch:
-        pos+=1
+    while pos < len(z) and z[pos] == ch:
+        pos += 1
     return pos
 
 

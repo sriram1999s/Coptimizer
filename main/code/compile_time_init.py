@@ -27,7 +27,7 @@ class CompileInit:
         self.condition = sub_tree[1]
         if(self.condition[1] != ';' and self.condition[2] != ';' and len(self.condition) == 5):  # full for condition
             self.initialize(sub_tree)
-
+            
     def initialize(self, sub_tree):
         self.condition = sub_tree[1]
         self.lower_limit_str = []
@@ -140,7 +140,6 @@ class CompileInit:
                 # print(parse_tree)
                 self.dec_string = []
                 solve(0, len(self.array_hashmap[array]), self.array_hashmap[array], self.dec_string)
-
                 self.dec_string = ''.join(self.dec_string)
                 self.new_dec_string = re.sub('([\[\]])', rep ,self.dec_string)
                 parse_tree,self.c =  re.subn(self.new_dec_string, self.dec_string[:-1] + '=' + self.rhs + ';', parse_tree,flags=re.S)

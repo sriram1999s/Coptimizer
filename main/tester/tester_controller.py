@@ -26,6 +26,7 @@ with open("profile","r") as prof:
 
 time_diff = time_unoptimized-time_optimized
 percent_increase = (time_diff/time_unoptimized)*100
+
     
 print(f"Unoptimized execution time : {time_unoptimized} sec")
 print(f"optimized execution time : {time_optimized} sec")

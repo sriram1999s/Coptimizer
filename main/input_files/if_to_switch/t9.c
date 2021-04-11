@@ -1,26 +1,26 @@
 #include <stdio.h>
 
-void main()
+int main()
 {
-    int a;
+    int a=2;
     if(a==1)
     {   int c;  }
     else if(a==2)
     {
-        int d;
+        int d=100;
         if(d==100 || d==200)
         {
-            int e;
+            int e=-1;
             if(e==0)
-            {   printf("0");    }
+            {   int printf1;    }
             else if(e==1)
             {
-                printf("in e=1");
+                int printf2;
                 if(e==1 && d==100)
-                {   printf("both 1");   }
+                {   int printf3;   }
                 else if(e==0 && d==100)
                 {
-                    int b;
+                    int b=30;
                     if(b==20)
                     {   int f;  }
                     else if(b==30)
@@ -28,7 +28,7 @@ void main()
                 }
                 else if(e==-1 && d==100)
                 {
-                    int b;
+                    int b=30;
                     if(b==20)
                     {   int f;  }
                     else if(b==30)
@@ -41,4 +41,5 @@ void main()
     }
     else
     {   int i;  }
+    return 0;
 }

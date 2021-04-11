@@ -2,14 +2,15 @@
 
 void print(int n)
 {
-    if (n < 0)  return;
+    if (n < 0) {  return;
+}
     printf(" %d",n);
     print(n-1);
 }
 
 int main()
 {
-  print(5);
+  print(1000000);
   printf("\n");
   return 0;
 }

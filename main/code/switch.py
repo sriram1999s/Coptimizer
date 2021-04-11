@@ -2,20 +2,20 @@ import stack_match2
 
 net_open = 0
 dict_num_chain_pos = dict()
-# for i1 in stack_match2.dict_num_list_of_chains:
-#     dict_num_chain_pos[i1] = [0, 0]
 z_new = []
 dict_num_list_common_vars = dict()
 seen_at_num = []
 order = []  # need not actually be a list, can just be a var
+
 
 def initialize_dict_num_chain_pos():
     global dict_num_chain_pos
     for i1 in stack_match2.dict_num_list_of_chains:
         dict_num_chain_pos[i1] = [0, 0]
 
+
 def make_switch(OPTIMIZE,z):
-    if(not OPTIMIZE):
+    if not OPTIMIZE:
         return
     global net_open
     global dict_num_chain_pos
@@ -29,10 +29,6 @@ def make_switch(OPTIMIZE,z):
     i = 0
     while i < len(z):
         # print('in while', z[i], net_open, order)
-
-        # check placement
-        if seen_at_num and net_open < seen_at_num[-1]:
-            seen_at_num.pop()
 
         if z[i] == '{':
             net_open += 1
@@ -56,8 +52,6 @@ def make_switch(OPTIMIZE,z):
                 dict_num_chain_pos[net_open][0] += 1
                 dict_num_chain_pos[net_open][1] = 0
 
-            beg_net_open_if = net_open
-
             chosen_var, range_lower_bound = check_change_to_switch(net_open)
 
             # chain to be switched
@@ -74,7 +68,7 @@ def make_switch(OPTIMIZE,z):
                 z_new.append(pre_body)
                 i = new_pos
 
-                order.append(('if', beg_net_open_if))
+                order.append(('if', net_open))
 
                 dict_num_chain_pos[net_open][1] += 1  # incremented object by one
 
@@ -84,42 +78,35 @@ def make_switch(OPTIMIZE,z):
                 z_new.append(z[i])
                 i += 1
 
-        elif z[i] == 'else':
-
-            chosen_var, range_lower_bound = check_change_to_switch(seen_at_num[-1])
+        elif z[i] == 'else ':
+            chosen_var, range_lower_bound = check_change_to_switch(net_open)
 
             # to be switched
             if chosen_var is not None:
-                main_list = stack_match2.dict_num_list_of_chains[seen_at_num[-1]]
-                chain_pos = dict_num_chain_pos[seen_at_num[-1]][0]
-                obj_no = dict_num_chain_pos[seen_at_num[-1]][1]
+                main_list = stack_match2.dict_num_list_of_chains[net_open]
+                chain_pos = dict_num_chain_pos[net_open][0]
+                obj_no = dict_num_chain_pos[net_open][1]
                 chosen_chain = main_list[chain_pos]
                 obj = chosen_chain[obj_no]
                 if obj.type1 == 'elif':
-                    dict_num_chain_pos[seen_at_num[-1]][1] += 1
-
-                    net_open += 1
-
-                    beg_net_open_elif = net_open
+                    dict_num_chain_pos[net_open][1] += 1
 
                     case_no, range_case = get_case_no(obj, chosen_var, range_lower_bound)
                     z_new.append('case ' + case_no + ':')
-                    pre_body, new_pos = get_new_prebody(i + 4, z, chosen_var, case_no, range_case)
+                    pre_body, new_pos = get_new_prebody(i + 1, z, chosen_var, case_no, range_case)
 
                     z_new.append(pre_body)
                     i = new_pos
 
-                    order.append(('elif', beg_net_open_elif))
+                    order.append(('elif', net_open))
 
                 else:
-                    dict_num_chain_pos[seen_at_num[-1]][1] += 1
-
-                    beg_net_open_else = net_open
+                    dict_num_chain_pos[net_open][1] += 1
 
                     z_new.append('default:')
-                    i += 2
+                    i += 1
 
-                    order.append(('else', beg_net_open_else))
+                    order.append(('else', net_open))
 
             else:
                 z_new.append(z[i])
@@ -216,7 +203,6 @@ def check_change_to_switch(num):
     return None, None
 
 
-# def get_new_prebody(pos, z, var, cmp_with):
 def get_new_prebody(pos, z, var, cmp_with, range_case):
     indices = [i for i, x in enumerate(z) if x == '{']  # list of positions of { in z
     end_here = -1
@@ -234,7 +220,7 @@ def get_new_prebody(pos, z, var, cmp_with, range_case):
                 return '', i
 
     # look only from curr_pos + 1 till before a {
-    z = z[pos + 1: end_here]
+    z = z[pos + 2: end_here]
     indices = [i for i, x in enumerate(z) if x == var]  # list of positions of var in shortened z
     ret = ''
     for i in indices:
@@ -262,7 +248,7 @@ def get_new_prebody(pos, z, var, cmp_with, range_case):
                     # other operator like > or < or == after var==cmp_with in the beginning
                     else:
                         ret = 'if(' + ''.join(z[i_copy_r + 1:])
-                        return ret
+                        return ret  # add other value to return
                 # not first condition
                 elif i_copy_l >= 0:
                     ret = 'if'
@@ -296,7 +282,7 @@ def get_new_prebody(pos, z, var, cmp_with, range_case):
                     # other operator like > or < or == after var==cmp_with in the beginning
                     else:
                         ret = 'if(' + ''.join(z[i_copy_r + 1:])
-                        return ret
+                        return ret  # add other value to return
                 # not first condition
                 elif i_copy_l >= 0:
                     ret = 'if'
@@ -309,19 +295,12 @@ def get_new_prebody(pos, z, var, cmp_with, range_case):
     return ret, end_here
 
 
-# actually it is to put break
 def skip_extra_brackets(pos, z):
-    global net_open
     global order
-    global seen_at_num
     global z_new
 
     if order[-1][0] == 'else':
         z_new.append('break;}')
-
-        while pos < len(z) and z[pos] == '}' and net_open != seen_at_num[-1]:
-            net_open -= 1
-            pos += 1
         return pos
 
     if order[-1][0] == 'if':
@@ -329,15 +308,12 @@ def skip_extra_brackets(pos, z):
         return pos
 
     if order[-1][0] == 'elif':
-        if z[pos] == 'else':
+        if z[pos] == 'else ':
             z_new.append('break;')
             return pos
 
         else:  # has to be a }
             z_new.append('break;}')
-            while pos < len(z) and z[pos] == '}' and net_open != seen_at_num[-1]:
-                net_open -= 1
-                pos += 1
             return pos
 
 

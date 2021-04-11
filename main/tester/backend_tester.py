@@ -37,7 +37,9 @@ def profile(file):
 
     headers = '#include<time.h>\n#include<string.h>\n#include<sys/resource.h>\n#include <errno.h>\n#include<stdio.h>\n'
 
-    final_string =  headers + source[0:ind] + '{' +'struct rusage r_usage;' + 'double startTime = (float)clock()/CLOCKS_PER_SEC;' + captured_string[0:-1] + 'double endTime = (float)clock()/CLOCKS_PER_SEC; double timeElapsed = endTime - startTime; int ret = getrusage(RUSAGE_SELF,&r_usage);FILE *fp = fopen("profile","w");\nif(ret == 0)\nfprintf(fp,"%ld\\n",r_usage.ru_maxrss);\nelse\nfprintf(fp,"%d\\n", -1);' + 'fprintf(fp,"%f\\n",timeElapsed); fclose(fp);' + '}' + source[end_ind:]
+    print("captured_string: ",captured_string)
+
+    final_string =  headers + source[0:ind] + '{' +'struct rusage r_usage;' + 'double startTime = (float)clock()/CLOCKS_PER_SEC;' + captured_string[1:] + 'double endTime = (float)clock()/CLOCKS_PER_SEC; double timeElapsed = endTime - startTime; int ret = getrusage(RUSAGE_SELF,&r_usage);FILE *fp = fopen("profile","w");\nif(ret == 0)\nfprintf(fp,"%ld\\n",r_usage.ru_maxrss);\nelse\nfprintf(fp,"%d\\n", -1);' + 'fprintf(fp,"%f\\n",timeElapsed); fclose(fp);' + '}' + source[end_ind+1:]
 
     return final_string
 
