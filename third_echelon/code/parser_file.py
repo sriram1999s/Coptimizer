@@ -59,6 +59,7 @@ def p_else(p):
     '''
     p[0] = 'else '
 
+
 def p_open(p):
     '''
     open : IF condition statement
@@ -68,11 +69,11 @@ def p_open(p):
     '''
     if(len(p)==4):
         p[0] = [p[1], p[2], p[3]]
-        # p[0] = [' ', p[1], p[2], '{', p[3], '}']
+        #p[0] = [' ', p[1], p[2], '{', p[3], '}']
         sym_tab.lookahead(0, len(p[3]), p[3])
     else:
         p[0] = [p[1], [p[2], p[3]], p[4], p[5]]
-        # p[0] = [' ', p[1], [p[2], '{', p[3], '}'], p[4], ' ', '{', p[5], '}']
+        #p[0] = [' ', p[1], [p[2], '{', p[3], '}'], p[4], ' ', '{', p[5], '}']
         sym_tab.lookahead(0, len(p[3]), p[3])
         sym_tab.lookahead(0, len(p[5]), p[5])
 
@@ -105,8 +106,14 @@ def p_closed(p):
 
             if(count_for==1 and prev_count_for==0):
                 com_init.compile_init_validate(menu.FLAG_COMPILE_INIT,[p[1], p[2], p[3]])
-
-            p[0] = for_unroll_validate(menu.FLAG_UNROLL,menu.FLAG_JAMMING,[p[1], p[2], p[3]])
+                temp = list(set(list(flatten(p[3]))))
+                #print("body: ", temp )
+                if(temp.count('{')==1 and temp.count('}')==1 and temp.count(';') and len(temp)==3):
+                    p[1] = [None]
+                    p[2] = [None]
+                    p[3] = [None]
+            if(p[1]!=[None] and p[2]!=[None] and p[3]!=[None]):
+                p[0] = for_unroll_validate(menu.FLAG_UNROLL,menu.FLAG_JAMMING,[p[1], p[2], p[3]])
             sym_tab.lookahead(0, len(p[3]), p[3])
             prev_count_for = count_for
             count_for-=1
@@ -115,8 +122,8 @@ def p_closed(p):
             p[0] = [p[1], p[2], p[3]]
             sym_tab.lookahead(0, len(p[3]), p[3])
     else:
-        p[0] = [p[1], [p[2], p[3]], p[4], p[5]]
-        # p[0] = [' ', p[1], [p[2], '{', p[3], '}'], p[4], ' ', '{', p[5], '}']
+        p[0] = [p[1],[p[2],p[3]],p[4],p[5]]
+        #p[0] = [' ', p[1], [p[2], '{', p[3], '}'], p[4], ' ', '{', p[5], '}']
         sym_tab.lookahead(0, len(p[3]), p[3])
         sym_tab.lookahead(0, len(p[5]), p[5])
 
@@ -165,7 +172,6 @@ def p_multi_declaration(p):
         #     p[0]=p[1]+[p[2],p[3],p[4]]
         # else:
         p[0] = [p[1]] + [p[2], p[3], p[4]]
-        # p[0] = p[1] + [p[2], p[3], p[4]]
 
     elif(len(p)==6):
         if(p[1] == '*'):
@@ -737,6 +743,8 @@ def p_factor(p):
                 p[0] = [p[1], p[2]]
         elif(p[1] == '-' and type(p[2])!=list and type(p[2])!=str):
             p[0] = -1*p[2]
+        else:
+            p[0] = [p[1],p[2]]
     else :
         p[0] = p[1]
 
@@ -802,3 +810,11 @@ def p_NUM(p):
 
 def p_error(p):
     print(f"an error occurred ::: token {p} , char {p.value}")
+
+
+def flatten(L):
+    for l in L:
+        if isinstance(l, list):
+            yield from flatten(l)
+        else:
+            yield l

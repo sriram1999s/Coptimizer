@@ -28,7 +28,7 @@ with open(file) as f:
         lines += line.strip('\n')
     lines.strip('\n')
 ''' pre processing '''
-# lines = pre_process(lines)
+lines = pre_process(lines)
 z=parser.parse(lines)
 
 
@@ -52,9 +52,9 @@ print()
 output_prg=[]
 solve(0,len(z),z,output_prg)
 ''' if to switch '''
-print('before', output_prg)
-with open("temp0.c","w") as f :
-    f.write("".join(output_prg))
+print('before', "".join(output_prg))
+# with open("temp0.c","w") as f :
+#     f.write("".join(output_prg))
 identify_chains(menu.FLAG_IF_TO_SWITCH, output_prg)
 print('Dict num list of chains')
 for i in dict_num_list_of_chains:
