@@ -58,6 +58,16 @@
     - First chain switched and second chain retained the same
 
 
+6. INPUT: testing/t6
+    INPUT DESCRIPTION:
+    - 3 chains
+    - Not nested
+    - Conditions with ! and && and ||
+    - Chain that end in else if as well as else
+    EXPECTED OUTPUT:
+    - First and second chains retained the same and third chain switched
+
+
 7. INPUT: testing/t7
     INPUT DESCRIPTION:
     - 1 chain
