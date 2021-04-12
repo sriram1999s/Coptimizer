@@ -198,5 +198,16 @@
     OUTPUT: Negative numbers get accepted in switch //?
 
 
+17. INPUT: testing/t17
+    INPUT DESCRIPTION:
+    - 4 chain
+    - 2 level nested
+    - Multiple chains at same level
+    - Chains have conditions of the form var==int
+    - Conditions with && and ||
+    - Chains that end in else if as well as else
+    EXPECTED OUTPUT:
+    - First, second and fourth chain switched
+    - When the condition has || the chain must not be switched
 
 
