@@ -3,7 +3,7 @@
     INPUT DESCRIPTION:
     - 3 chains
     - 2 level nested
-    - Outer chain with condition of form var==int, and inner chains have conditions that are neither of form var==int nor are uniform, unbroken, ordered range
+    - Outer chain with condition of form var==int, and inner chains have conditions that are neither of form var==int nor are uniform, unbroken, range
     - One chain ends in else, other chains ends in else if
     EXPECTED OUTPUT:
     - Outer chain switched and inner chains retained the same
@@ -52,7 +52,7 @@
     - Not nested
     - Multiple chains at same level
     - Fist chain with condition of form var==int
-    - Second chain does not have first condition of form var==int or var==char, nor is of the form of a uniform, unbroken, ordered range
+    - Second chain does not have first condition of form var==int or var==char, nor is of the form of a uniform, unbroken, range
     - One chain ends in else, other chains ends in else if
     EXPECTED OUTPUT:
     - First chain switched and second chain retained the same
@@ -133,10 +133,9 @@
     - Second range beginning at 2 and having width of 4
     - Third range beginning at -50 and having width of 10
     - All 8 ways of giving the condition for both ranges
-    - Ranges must be specified in their logical order, for eg, 0-9 and then 10-19 and not vice versa
     - Multiple chains at same level
     EXPECTED OUTPUT:
-    - Ranges are uniform, unbroken and in logical order, so they should be switched
+    - Ranges are uniform and unbroken, so they should be switched
     OUTPUT: Negative numbers -1 to -9 get accepted in first switch case 0 //?
 
 
@@ -149,10 +148,9 @@
     - Second range beginning at 2 and having width of 4
     - Third range beginning at -50 and having width of 10
     - All 8 ways of giving the condition for both ranges
-    - Ranges must be specified in their logical order, for eg, 0-9 and then 10-19 and not vice versa
     - Multiple chains at same level
     EXPECTED OUTPUT:
-    - Ranges are uniform, unbroken and in logical order, so they should be switched
+    - Ranges are uniform and unbroken, so they should be switched
     OUTPUT: Negative numbers -1 to -9 get accepted in first switch case 0 //?
 
 
@@ -165,10 +163,9 @@
     - Second range beginning at 2 and having width of 4
     - Third range beginning at -50 and having width of 10
     - All 8 ways of giving the condition for first range
-    - Ranges must be specified in their logical order, for eg, 0-9 and then 10-19 and not vice versa
     - Multiple chains at same level
     EXPECTED OUTPUT:
-    - Ranges are uniform, unbroken and in logical order, so they should be switched
+    - Ranges are uniform and unbroken, so they should be switched
     OUTPUT: Negative numbers -1 to -9 get accepted in first switch case 0 //?
 
 
@@ -181,20 +178,19 @@
     - Second range beginning at 2 and having width of 4
     - Third range beginning at -50 and having width of 10
     - All 8 ways of giving the condition for first range
-    - Ranges must be specified in their logical order, for eg, 0-9 and then 10-19 and not vice versa
     - Multiple chains at same level
     EXPECTED OUTPUT:
-    - Ranges are uniform, unbroken and in logical order, so they should be switched
+    - Ranges are uniform and unbroken, so they should be switched
     OUTPUT: Negative numbers -1 to -9 get accepted in first switch case 0 //?
 
 
 16. INPUT: testing/t16
     INPUT DESCRIPTION:
-    - Fist range can be switched, other two cannot.
+    - Fist and third range can be switched, second cannot.
     EXPECTED OUTPUT:
-    - First range is uniform, unbroken and in logical order, so should be switched
+    - First range is uniform and unbroken, so should be switched
     - Second range has 0 width, so it should not be switched
-    - Third range is not in logical order, so it should not be switched
+    - Third range is not in logical order, so it should be switched accordingly
     OUTPUT: Negative numbers get accepted in switch //?
 
 

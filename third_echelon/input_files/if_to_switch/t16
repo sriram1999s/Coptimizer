@@ -24,22 +24,23 @@ int main()
         printf("b one");
     }
 
-    if(c>0 && c<=5)
-    {
-        printf(" c one");
-    }
-    else if(c>15 && c<=20)
+    if(c>15 && c<=20)
     {
         printf("c four");
     }
-    else if(c>5 && c<=10)
+    else if(c>0 && c<=5)
     {
-        printf("c two");
+        printf(" c one");
     }
     else if(c>10 && c<=15)
     {
         printf("c three");
     }
+    else if(c>5 && c<=10)
+    {
+        printf("c two");
+    }
+
 
 
 }

@@ -1,7 +1,7 @@
 #!/bin/sh
 
-gcc -Wall -pg $1 -o unoptimized
-gcc -Wall -pg $2 -o optimized
+gcc -Wall -pg "C:/Users/KR/PycharmProjects/Capstone/if_switch/testing/t2" -o unoptimized
+gcc -Wall -pg "C:\Users\KR\PycharmProjects\Capstone\third_echelon\code\temp.c" -o optimized
 
 ./unoptimized < inp > unoptimized_output 
 
