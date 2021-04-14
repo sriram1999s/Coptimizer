@@ -10,7 +10,7 @@ void print(int n)
 
 int main()
 {
-  print(1000000);
+  print(100000);
   printf("\n");
   return 0;
 }
