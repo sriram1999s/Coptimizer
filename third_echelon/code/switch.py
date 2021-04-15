@@ -86,7 +86,11 @@ def make_switch(OPTIMIZE,z):
                 case_no, range_case = get_case_no(if_obj, chosen_var, range_lower_bound)
 
                 if range_case:
-                    range_obj = range_if_elif(range_lower_bound, len(z_new), -1, if_obj.op1, if_obj.op2, if_obj.u, True)
+                    if if_obj.op1 == '<':
+                        range_obj = range_if_elif(range_lower_bound+1, len(z_new), -1, if_obj.op1, if_obj.op2, if_obj.u,
+                                                  True)
+                    else:
+                        range_obj = range_if_elif(range_lower_bound, len(z_new), -1, if_obj.op1, if_obj.op2, if_obj.u, True)
                     d_range[net_open] = [range_obj]
                     range_j = len(z_new)
 
@@ -142,7 +146,6 @@ def make_switch(OPTIMIZE,z):
                     order.append(('else', net_open))
 
             else:
-                print('else not switched')
                 z_new.append(z[i])
                 i += 1
 
@@ -417,12 +420,15 @@ def get_case_no(obj, chosen_var, range_lower_bound):
         if obj.op1 == '<' and obj.op2 == '<=':
             # return str((obj.l-(range_lower_bound+1))/(obj.u-obj.l)).split('.')[0], True
 
-            return str((obj.l - range_lower_bound) / (obj.u - obj.l)).split('.')[0], True
+            # return str((obj.l - range_lower_bound) / (obj.u - obj.l)).split('.')[0], True
 
+            return str((obj.l+1 - range_lower_bound) / (obj.u - obj.l)).split('.')[0], True
         if obj.op1 == '<' and obj.op2 == '<':
             # return str((obj.l-(range_lower_bound+1))/(obj.u-obj.l+1)).split('.')[0], True
 
-            return str((obj.l - range_lower_bound) / (obj.u - obj.l - 1)).split('.')[0], True
+            # return str((obj.l - range_lower_bound) / (obj.u - obj.l - 1)).split('.')[0], True
+
+            return str((obj.l+1 - range_lower_bound) / (obj.u - obj.l - 1)).split('.')[0], True
 
 
 def reorder():
@@ -431,23 +437,17 @@ def reorder():
     global z_new
     global range_j
 
-    # print('z new begin', z_new)
-    min1 = -1
+    min1 = 'not set'
     z_copy = []
 
     beg = range_j
 
     # get lower bound of chain
     for i in d_range[net_open]:
-        if min1 == -1:
+        if min1 == 'not set':
             min1 = i.l
         else:
             min1 = min(min1, i.l)
-
-    # sort chain by starting pos
-    # d = dict()
-    # for k in d_range:
-    #     d[k] = sorted(d_range[k], key=lambda x: x.start)
 
     # sort chain by lower bound
     d1 = dict()
@@ -490,7 +490,6 @@ def reorder():
                     range_j = d1[i1][0].start
                 if z_copy[-1] == 'break;}':
                     z_copy[-1] = 'break;'
-            # print('z copy else', z_copy)
 
     z_copy[-1] = 'break;}'
 
@@ -498,8 +497,8 @@ def reorder():
 
     d_range.pop(net_open)
     # range_j = len(z_new)
-    print('returning', z_new)
-    print()
+    # print('returning', z_new)
+    # print()
 
 
 
