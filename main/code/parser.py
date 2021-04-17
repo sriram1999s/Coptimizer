@@ -6,6 +6,7 @@ from loop_unrolling import *
 from symboltable import *
 from compile_time_init import *
 from collections import defaultdict
+from pprint import pprint
 # --------------------------------parser------------------------------------ #
 
 # defining precedence of operators
@@ -41,8 +42,10 @@ def p_multiple_statements(p):
     multiple_statements : multiple_statements statement
                         | statement
     '''
+
     if(len(p)==3):
-        p[0] = p[1] + [p[2]]
+        # print("\n\nmultiple_statements", p[1], p[2])
+        p[0] = [p[1]] + [p[2]]
     else:
         p[0] = p[1]
 
@@ -98,6 +101,7 @@ def p_closed(p):
     '''
     global count_for
     global prev_count_for
+    global loop_var_flags
     if(len(p)==2):
         p[0] = p[1]
     elif(len(p)==4):
@@ -112,8 +116,14 @@ def p_closed(p):
                     p[1] = [None]
                     p[2] = [None]
                     p[3] = [None]
+                loop_var_flags = {}
+                nested = False
+            else:
+                nested = True
+
             if(p[1]!=[None] and p[2]!=[None] and p[3]!=[None]):
-                p[0] = for_unroll_validate(menu.FLAG_UNROLL,menu.FLAG_JAMMING,[p[1], p[2], p[3]])
+                p[0] = for_unroll_validate(menu.FLAG_UNROLL,menu.FLAG_JAMMING,[p[1], p[2], p[3]], nested)
+                # pprint(loop_var_flags)
             sym_tab.lookahead(0, len(p[3]), p[3])
             prev_count_for = count_for
             count_for-=1
@@ -146,6 +156,25 @@ def p_for_condition(p):
             loop_var = list(ids.keys())[0]
             solve_substi_id(0,len(p[2]),p[2],[loop_var])
         p[0] = [p[1], p[2], p[3], p[4], p[5]]
+        if(p[3] != ';'):
+            condition = list(map(str, flatten(p[3])))
+            loop_var = re.search('([A-Za-z_][A-Za-z_0-9]*)', ''.join(condition)).group(1)
+            loop_var_flags[loop_var] = True
+
+            init = flatten(p[2])
+            for i in init:
+                if i in loop_var_flags and i != loop_var:
+                    loop_var_flags[i] = False
+
+            init2 = flatten(p[3])
+            for i in init2:
+                if i in loop_var_flags and i != loop_var:
+                    loop_var_flags[i] = False
+
+            init3 = flatten(p[4])
+            for i in init3:
+                if i in loop_var_flags and i != loop_var:
+                    loop_var_flags[i] = False
     else:
         p[0] = [p[1], p[2], p[3], p[4]]
 

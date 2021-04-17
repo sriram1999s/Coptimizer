@@ -8,9 +8,10 @@ import secrets
 import random
 
 list_looping_variables = defaultdict(lambda:0)
+loop_var_flags = {}
 
 '''checks whether unrolling is possible and calls appropriate fxn'''
-def for_unroll_validate(OPTIMIZE1,OPTIMIZE2, sub_tree):
+def for_unroll_validate(OPTIMIZE1,OPTIMIZE2, sub_tree, nested):
 
     if(not OPTIMIZE1 and not OPTIMIZE2):
         return sub_tree
@@ -22,8 +23,15 @@ def for_unroll_validate(OPTIMIZE1,OPTIMIZE2, sub_tree):
     operators = []
     find_operator(0, len(condition[-2]), condition[-2], operators)
     ids = dict()
-    find_id(0, len(condition[2:]), condition[2:], ids)
+    if nested:
+        find_id(0, len(condition), condition, ids)
+    else:
+        find_id(0, len(condition[2:]), condition[2:], ids)
+
     loop_var = list(ids.keys())[0]
+    if(loop_var not in loop_var_flags or not loop_var_flags[loop_var]):
+        return sub_tree
+
     list_looping_variables[loop_var+'_'.join(sym_tab.level_str)]=1
 
     loop_var_dict = dict()
@@ -65,7 +73,7 @@ def for_unroll_validate(OPTIMIZE1,OPTIMIZE2, sub_tree):
 
     if(not OPTIMIZE1):
         return sub_tree
-    
+
     operator_list = ['++', '--', '/', '*', '+', '-', '+=', '-=', '*=', '/=']
     # checking for operators
     if(len(operators) > 0 and operators[0][0] not in operator_list):
@@ -285,12 +293,12 @@ def for_variable_unroll(OPTIMIZE1,OPTIMIZE2,sub_tree,operator,ids,loop_var):
     if(type(lower_limit)==str):
         if(list_looping_variables[sym_tab.make_level_string(lower_limit)]):
             return sub_tree
-        
+
     if(type(upper_limit)==str):
         if(list_looping_variables[sym_tab.make_level_string(upper_limit)]):
             return sub_tree
-    
-    
+
+
     increment_val = '1'
     #print(''.join(increment_str))
     m2 = re.search('=(.*)',''.join(increment_str))
@@ -317,7 +325,7 @@ def for_variable_unroll(OPTIMIZE1,OPTIMIZE2,sub_tree,operator,ids,loop_var):
     modified_upper_limit = '(' + modified_upper_limit_1 + '+' + modified_upper_limit_2 + ')'
     # print("modified_upper_limit: ",modified_upper_limit)
 
-    
+
     tempesh_randesh_hashesh = 'temp_'+secrets.token_hex(nbytes=16)
     #tempesh_randesh_hashesh = 'temp_'+ str(random.randint(1,100))
     temp_loop_var = 'temp_loop_'+secrets.token_hex(nbytes=16)
