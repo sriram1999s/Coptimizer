@@ -12,7 +12,7 @@ void sum(int size, double sum1)
 
 int main()
 {
-    int size = 100000;
+    int size = 100000000;
     sum(size, 0);
     return 0;
 }
