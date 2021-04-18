@@ -10,7 +10,6 @@ double sum_of_squares(double A, int n)
     double sum = 0.0;
     for(int i=0; i<n; ++i)
     {
-
         sum = sum + square(A[i]);
     }
     return sum;

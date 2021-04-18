@@ -56,17 +56,17 @@ def p_statement(p):
     '''
     p[0] = p[1]
 
-def p_else(p):
-    '''
-    else : ELSE
-    '''
-    p[0] = 'else '
+# def p_else(p):
+#     '''
+#     else : ELSE
+#     '''
+#     p[0] = 'else'
 
 
 def p_open(p):
     '''
-    open : if condition statement
-         | if condition closed else open
+    open : IF condition statement
+         | IF condition closed ELSE open
          | WHILE condition open
          | for for_condition open
     '''
@@ -95,7 +95,7 @@ def p_closed(p):
     '''
     closed : simple
            | block
-           | if condition closed else closed
+           | IF condition closed ELSE closed
            | WHILE condition closed
            | for for_condition closed
     '''
@@ -107,26 +107,29 @@ def p_closed(p):
     elif(len(p)==4):
         if(p[1] == 'for'):
             print(f"for detected {count_for} {prev_count_for}\n")
+            if(menu.FLAG_UNROLL):
+                if(count_for==1 and prev_count_for==0):
+                    com_init.compile_init_validate(menu.FLAG_COMPILE_INIT,[p[1], p[2], p[3]])
+                    print("p[3] in for: ", p[3])
+                    temp = list(set(list(flatten(p[3]))))
+                    #print("body: ", temp )
+                    if(temp.count('{')==1 and temp.count('}')==1 and temp.count(';') and len(temp)==3):
+                        p[1] = [None]
+                        p[2] = [None]
+                        p[3] = [None]
+                    loop_var_flags = {}
+                    nested = False
+                else:
+                    nested = True
 
-            if(count_for==1 and prev_count_for==0):
-                com_init.compile_init_validate(menu.FLAG_COMPILE_INIT,[p[1], p[2], p[3]])
-                temp = list(set(list(flatten(p[3]))))
-                #print("body: ", temp )
-                if(temp.count('{')==1 and temp.count('}')==1 and temp.count(';') and len(temp)==3):
-                    p[1] = [None]
-                    p[2] = [None]
-                    p[3] = [None]
-                loop_var_flags = {}
-                nested = False
+                if(p[1]!=[None] and p[2]!=[None] and p[3]!=[None]):
+                    p[0] = for_unroll_validate(menu.FLAG_UNROLL,menu.FLAG_JAMMING,[p[1], p[2], p[3]], nested)
+                    # pprint(loop_var_flags)
+                sym_tab.lookahead(0, len(p[3]), p[3])
+                prev_count_for = count_for
+                count_for-=1
             else:
-                nested = True
-
-            if(p[1]!=[None] and p[2]!=[None] and p[3]!=[None]):
-                p[0] = for_unroll_validate(menu.FLAG_UNROLL,menu.FLAG_JAMMING,[p[1], p[2], p[3]], nested)
-                # pprint(loop_var_flags)
-            sym_tab.lookahead(0, len(p[3]), p[3])
-            prev_count_for = count_for
-            count_for-=1
+                p[0] = [p[1], p[2], p[3]]
         else:
             print("while detected\n")
             p[0] = [p[1], p[2], p[3]]
@@ -245,21 +248,21 @@ def p_narrayindex(p):
     else:
         p[0] = p[1]
 
-def p_type(p):
-    '''
-    type : TYPE
-    '''
-    p[0] = p[1] + ' '
+# def p_type(p):
+#     '''
+#     type : TYPE
+#     '''
+#     p[0] = p[1]
 
 def p_declaration(p):
     '''
-    declaration : type ID SEMICOLON
-                | type MULTIPLY ID SEMICOLON
-                | type ID ASSIGN expr SEMICOLON
-                | type MULTIPLY ID ASSIGN expr SEMICOLON
-		        | type multi_declaration stop
-    			| type ID narrayindex SEMICOLON
-    			| type ID narrayindex ASSIGN init_list SEMICOLON
+    declaration : TYPE ID SEMICOLON
+                | TYPE MULTIPLY ID SEMICOLON
+                | TYPE ID ASSIGN expr SEMICOLON
+                | TYPE MULTIPLY ID ASSIGN expr SEMICOLON
+		        | TYPE multi_declaration stop
+    			| TYPE ID narrayindex SEMICOLON
+    			| TYPE ID narrayindex ASSIGN init_list SEMICOLON
 
     '''
 
@@ -381,7 +384,7 @@ def p_init_list(p):
 def p_index(p):
     '''
     index : expr
-    	    | empty
+    	  | empty
     '''
     if(p[1]!=None):
         p[0] = p[1]
@@ -411,17 +414,17 @@ def p_right_flower(p):
     sym_tab.level_str.pop()
     p[0] = p[1]
 
-def p_if(p):
-    '''
-    if : IF
-    '''
-    p[0] = 'if '
+# def p_if(p):
+#     '''
+#     if : IF
+#     '''
+#     p[0] = 'if'
 
-def p_return(p):
-    '''
-    return : RETURN
-    '''
-    p[0] = 'return '
+# def p_return(p):
+#     '''
+#     return : RETURN
+#     '''
+#     p[0] = 'return'
 
 def p_simple(p):
     '''
@@ -430,8 +433,8 @@ def p_simple(p):
            | declaration
            | SEMICOLON
 	       | function
-	       | return  expr SEMICOLON
-           | return  SEMICOLON
+	       | RETURN expr SEMICOLON
+           | RETURN SEMICOLON
     '''
     if(len(p)==3):
         p[0] = [p[1],p[2]]
@@ -499,12 +502,12 @@ def p_end_call_params(p):
 
 def p_yes_dec_params(p):
     '''
-    yes_dec_params : yes_dec_params type expr COMMA
-    		   | yes_dec_params type COMMA
-                   | yes_dec_params type MULTIPLY COMMA
-                   | type expr COMMA
-   		   | type COMMA
-        	   | type MULTIPLY COMMA
+    yes_dec_params : yes_dec_params TYPE expr COMMA
+    		   | yes_dec_params TYPE COMMA
+                   | yes_dec_params TYPE MULTIPLY COMMA
+                   | TYPE expr COMMA
+   		   | TYPE COMMA
+        	   | TYPE MULTIPLY COMMA
     '''
     if (len(p) == 5):
         if(type(p[1])==str):
@@ -525,9 +528,9 @@ def p_yes_dec_params(p):
 
 def p_end_dec_params(p):
     '''
-    end_dec_params : type expr
-		           | type
-                   | type MULTIPLY
+    end_dec_params : TYPE expr
+		           | TYPE
+                   | TYPE MULTIPLY
     '''
     if(len(p)==3):
         p[0] = [p[1], p[2]]
@@ -553,7 +556,7 @@ def p_dec_params(p):
 
 def p_function(p):
     '''
-    function : type ID L_PAREN dec_params R_PAREN function_2
+    function : TYPE ID L_PAREN dec_params R_PAREN function_2
     '''
     p[0] = [p[1],p[2],p[3],p[4],p[5],p[6]]
     if p[2] != 'main':
@@ -798,8 +801,8 @@ def p_factor(p):
 
 def p_cast(p):
     '''
-    cast : L_PAREN type R_PAREN
-	 | L_PAREN type MULTIPLY R_PAREN
+    cast : L_PAREN TYPE R_PAREN
+	 | L_PAREN TYPE MULTIPLY R_PAREN
     '''
     if(len(p)==4):
         p[0] = [p[1],p[2],p[3]]
