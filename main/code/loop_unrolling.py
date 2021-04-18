@@ -13,6 +13,7 @@ loop_var_flags = {}
 '''checks whether unrolling is possible and calls appropriate fxn'''
 def for_unroll_validate(OPTIMIZE1,OPTIMIZE2, sub_tree, nested):
 
+    print("\n sub tree in unroll :\n", sub_tree)
     if(not OPTIMIZE1 and not OPTIMIZE2):
         return sub_tree
 
@@ -169,7 +170,7 @@ def solve_expr(i,n,l):
 def for_full_condition(sub_tree, operators, ids):
     condition = sub_tree[1]
     output = []
-    type_list = ['int', 'float', 'void', 'double', 'char']
+    type_list = ['int ', 'float ', 'void ', 'double ', 'char ']
 
     # LHS or RHS of bounds check is not an expression
     if(type(condition[2][0][0]) == list or type(condition[2][0][2]) == list):
@@ -400,7 +401,7 @@ def find_rel_operator(ind, end, lis, res=[]):
 def find_id(ind, end, lis, res=dict()):
     if(ind == end):
         return
-    type_list = ['int', 'float', 'void', 'double', 'char']
+    type_list = ['int ', 'float ', 'void ', 'double ', 'char ']
     if(type(lis[ind]) == str and re.search('[A-Za-z_][A-Za-z_0-9]*', lis[ind]) and lis[ind] not in type_list):
         res[lis[ind]]=0
     elif(type(lis[ind]) is list):

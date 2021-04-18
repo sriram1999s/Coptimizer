@@ -65,8 +65,8 @@ def p_else(p):
 
 def p_open(p):
     '''
-    open : IF condition statement
-         | IF condition closed else open
+    open : if condition statement
+         | if condition closed else open
          | WHILE condition open
          | for for_condition open
     '''
@@ -95,7 +95,7 @@ def p_closed(p):
     '''
     closed : simple
            | block
-           | IF condition closed else closed
+           | if condition closed else closed
            | WHILE condition closed
            | for for_condition closed
     '''
@@ -245,15 +245,21 @@ def p_narrayindex(p):
     else:
         p[0] = p[1]
 
+def p_type(p):
+    '''
+    type : TYPE
+    '''
+    p[0] = p[1] + ' '
+
 def p_declaration(p):
     '''
-    declaration : TYPE ID SEMICOLON
-                | TYPE MULTIPLY ID SEMICOLON
-                | TYPE ID ASSIGN expr SEMICOLON
-                | TYPE MULTIPLY ID ASSIGN expr SEMICOLON
-		        | TYPE multi_declaration stop
-    			| TYPE ID narrayindex SEMICOLON
-    			| TYPE ID narrayindex ASSIGN init_list SEMICOLON
+    declaration : type ID SEMICOLON
+                | type MULTIPLY ID SEMICOLON
+                | type ID ASSIGN expr SEMICOLON
+                | type MULTIPLY ID ASSIGN expr SEMICOLON
+		        | type multi_declaration stop
+    			| type ID narrayindex SEMICOLON
+    			| type ID narrayindex ASSIGN init_list SEMICOLON
 
     '''
 
@@ -405,6 +411,18 @@ def p_right_flower(p):
     sym_tab.level_str.pop()
     p[0] = p[1]
 
+def p_if(p):
+    '''
+    if : IF
+    '''
+    p[0] = 'if '
+
+def p_return(p):
+    '''
+    return : RETURN
+    '''
+    p[0] = 'return '
+
 def p_simple(p):
     '''
     simple : expr SEMICOLON
@@ -412,8 +430,8 @@ def p_simple(p):
            | declaration
            | SEMICOLON
 	       | function
-	       | RETURN expr SEMICOLON
-           | RETURN SEMICOLON
+	       | return  expr SEMICOLON
+           | return  SEMICOLON
     '''
     if(len(p)==3):
         p[0] = [p[1],p[2]]
@@ -481,12 +499,12 @@ def p_end_call_params(p):
 
 def p_yes_dec_params(p):
     '''
-    yes_dec_params : yes_dec_params TYPE expr COMMA
-    		   | yes_dec_params TYPE COMMA
-                   | yes_dec_params TYPE MULTIPLY COMMA
-                   | TYPE expr COMMA
-   		   | TYPE COMMA
-        	   | TYPE MULTIPLY COMMA
+    yes_dec_params : yes_dec_params type expr COMMA
+    		   | yes_dec_params type COMMA
+                   | yes_dec_params type MULTIPLY COMMA
+                   | type expr COMMA
+   		   | type COMMA
+        	   | type MULTIPLY COMMA
     '''
     if (len(p) == 5):
         if(type(p[1])==str):
@@ -507,9 +525,9 @@ def p_yes_dec_params(p):
 
 def p_end_dec_params(p):
     '''
-    end_dec_params : TYPE expr
-		           | TYPE
-                   | TYPE MULTIPLY
+    end_dec_params : type expr
+		           | type
+                   | type MULTIPLY
     '''
     if(len(p)==3):
         p[0] = [p[1], p[2]]
@@ -535,7 +553,7 @@ def p_dec_params(p):
 
 def p_function(p):
     '''
-    function : TYPE ID L_PAREN dec_params R_PAREN function_2
+    function : type ID L_PAREN dec_params R_PAREN function_2
     '''
     p[0] = [p[1],p[2],p[3],p[4],p[5],p[6]]
     if p[2] != 'main':
@@ -780,8 +798,8 @@ def p_factor(p):
 
 def p_cast(p):
     '''
-    cast : L_PAREN TYPE R_PAREN
-	 | L_PAREN TYPE MULTIPLY R_PAREN
+    cast : L_PAREN type R_PAREN
+	 | L_PAREN type MULTIPLY R_PAREN
     '''
     if(len(p)==4):
         p[0] = [p[1],p[2],p[3]]
