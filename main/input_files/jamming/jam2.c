@@ -4,6 +4,7 @@ int main()
   int n;
   int a = 0;
   int b = 0;
+  int k = 0;
   scanf("%d", &n);
   for(int i = 0; i < n; ++i)
   {
@@ -15,6 +16,6 @@ int main()
   }
   for(int i = 0; i < n; ++i)
   {
-    printf("mando\n");
+    k = k + 1;
   }
 }
