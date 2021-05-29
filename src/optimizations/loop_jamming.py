@@ -18,6 +18,7 @@ class Jamming:
             roger_that_jam, ranges, case = self.get_range(loop, lower, upper, inc, scope)
             if(roger_that_jam):
                 body_og = self._jam_table[loop]['body']
+                sub_tree_2_og = sub_tree[2]
                 self._flag = self.jam(loop, body) # passing loop but not loops body !!!!!!
                 if(case == 0): # when the ranges are identical
                     if(self._flag):
@@ -46,6 +47,7 @@ class Jamming:
                         # changing first loop
                         self._jam_table[loop]['sub_tree'][1][2][0][2] = 'temp_' + min_hash
                         self._jam_table[loop]['sub_tree'][2] = ['{'] + self._jam_table[loop]['body'] + ['}']
+                        # adding declare statements at beginning of first loop
                         self._jam_table[loop]['sub_tree'].insert(0,[declare_min] + [declare_max])
                         
                 elif(case == 2): # lower_og != lower else all identical
@@ -68,7 +70,44 @@ class Jamming:
                         # changing first loop
                         self._jam_table[loop]['sub_tree'][1][1][3] = 'temp_' + max_hash
                         self._jam_table[loop]['sub_tree'][2] = ['{'] + self._jam_table[loop]['body'] + ['}']
+                        # adding declare statements at beginning of first loop
                         self._jam_table[loop]['sub_tree'].insert(0,[declare_min] + [declare_max])
+                        
+                elif(case == 3): # lower_og != lower else all identical
+                    if(self._flag):
+                        # declaring variables for min and max ranges
+                        min_lower_hash = secrets.token_hex(nbytes=6)
+                        max_lower_hash = secrets.token_hex(nbytes=6)
+                        min_upper_hash = secrets.token_hex(nbytes=6)
+                        max_upper_hash = secrets.token_hex(nbytes=6)
+                        declare_min = 'int temp_'+ min_lower_hash + ' = ' + ranges[0] + ';' + 'int temp_'+ min_upper_hash + ' = ' + ranges[2] + ';'
+                        declare_max = 'int temp_'+ max_lower_hash + ' = ' + ranges[1] + ';' + 'int temp_'+ max_upper_hash + ' = ' + ranges[3] + ';'
+                        diff_lower = '(' + 'temp_' + max_lower_hash + '-' + 'temp_' + min_lower_hash + ')'
+                        diff_upper = '(' + 'temp_' + max_upper_hash + '-' + 'temp_' + min_upper_hash + ')'                        
+                        # 
+                        # print("dslkvnhioduhv ", sub_tree[1])
+                        # replacing second loop with remaining part of lower range
+                        sub_tree[1][2][0][2] = diff_lower
+                        sub_tree[1][1][3] = 0
+                        if_block = ['if(' + str('temp_' + min_lower_hash) + '==' + str(self._jam_table[loop]['lower']) + ')'] + ['{'] + body_og + ['}']
+                        else_block = ['else' + '{'] + sub_tree_2_og + ['}']
+                        sub_tree[2] = ['{'] + if_block + else_block + ['}']
+
+                        # changing first loop ------> intersected loop [common range]
+                        self._jam_table[loop]['sub_tree'][1][1][3] = 'temp_' + max_lower_hash
+                        self._jam_table[loop]['sub_tree'][1][2][0][2] = 'temp_' + min_upper_hash
+                        self._jam_table[loop]['sub_tree'][2] = ['{'] + self._jam_table[loop]['body'] + ['}']
+                        # adding declare statements at beginning of first loop
+                        self._jam_table[loop]['sub_tree'].insert(0,[declare_min] + [declare_max])
+
+                        # creating another loop to cover remaining part of upper range
+                        if_block = ['if(' + str('temp_' + max_upper_hash) + '==' + str(self._jam_table[loop]['upper']) + ')'] + ['{'] + body_og + ['}']
+                        else_block = ['else' + '{'] + sub_tree_2_og + ['}']
+                        body = ['{'] + if_block + else_block + ['}']
+                        extra_for = ['for(int z = 0 ; z < ' + diff_upper + ';z++)'] + body
+                        # adding this list to parse tree in sub_tree
+                        sub_tree.append(extra_for)
+
 
         ''' if jamming not possible , add to jam_table '''
         if(not self._flag):
@@ -119,6 +158,7 @@ class Jamming:
             min_range, max_range = 0, 0
             if(lower == lower_og and upper == upper_og):
                 return (True, [lower, upper], 0)
+            # when lower  ==  lower_og and upper differs Case 1
             elif(lower == lower_og):
                 if(type(upper) == str or type(upper_og) == str):
                     upper, upper_og = str(upper), str(upper_og)
@@ -131,8 +171,10 @@ class Jamming:
                     diff = max_range - min_range
 
                 return (True, [min_range, max_range, diff], 1)
+            # when upper == upper_og and lower differs Case 2
             elif(upper == upper_og):
                 if(type(lower) == str or type(lower_og) == str):
+                    upper, upper_og = str(upper), str(upper_og)
                     min_range = '(' + lower + '<' + lower_og +'?' + lower + ':' + lower_og + ')'
                     max_range = '(' + lower + '>' + lower_og +'?' + lower + ':' + lower_og + ')'
                     diff = max_range + ' - ' + min_range
@@ -140,8 +182,28 @@ class Jamming:
                     min_range = min(lower, lower_og)
                     max_range = max(lower, lower_og)
                     diff = max_range - min_range
+                    return (True, [min_range, max_range, diff], 2)
+            # when both differ worst case scenarion consider these 2 intervals [0,n],[n/2,2n] Case 3
+            else:
+                if(type(lower) == str or type(upper) == str or type(lower_og)==str or type(upper_og)==str):
+                    upper, upper_og = str(upper), str(upper_og)
+                    lower, lower_og = str(lower), str(lower_og)
+                    min_lower_lower_og = '(' + lower + '<' + lower_og +'?' + lower + ':' + lower_og + ')'
+                    max_lower_lower_og = '(' + lower + '>' + lower_og +'?' + lower + ':' + lower_og + ')'
+                    min_upper_upper_og = '(' + upper + '<' + upper_og +'?' + upper + ':' + upper_og + ')'
+                    max_upper_upper_og = '(' + upper + '>' + upper_og +'?' + upper + ':' + upper_og + ')'
+                    diff_lower = max_lower_lower_og + '-' + min_lower_lower_og
+                    diff_upper = max_upper_upper_og + '-' + min_upper_upper_og
+                else:
+                    min_lower_lower_og = min(lower,lower_og)
+                    max_lower_lower_og = max(lower,lower_og)
+                    min_upper_upper_og = min(upper,upper_og)
+                    max_upper_upper_og = max(upper,upper_og)
+                    diff_lower = max_lower_lower_og - min_lower_lower_og
+                    diff_upper = max_upper_upper_og - min_upper_upper_og
+                return (True,[min_lower_lower_og,max_lower_lower_og,min_upper_upper_og,max_upper_upper_og,diff_lower,diff_upper],3)
 
-                return (True, [min_range, max_range, diff], 2)
+
         return (False,[],-1)
 
 #------------------------------------class ends-----------------------------------------
