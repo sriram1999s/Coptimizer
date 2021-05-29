@@ -36,12 +36,16 @@ class Jamming:
                         self._jam_table[loop]['sub_tree'][1][2][0][2] = ranges[0]
                         self._jam_table[loop]['sub_tree'][2] = ['{'] + self._jam_table[loop]['body'] + ['}']
                 elif(case == 2): # lower_og != lower else all identical
+                    body_og = self._jam_table[loop]['body']
                     self._flag = self.jam(loop, body) # passing loop but not loops body !!!!!!
                     if(self._flag):
                         # eliminating
                         # print("dslkvnhioduhv ", sub_tree[1])
                         sub_tree[1][2][0][2] = ranges[2]
                         sub_tree[1][1][3] = 0
+                        if_block = ['if(' + str(ranges[0]) + '==' + str(self._jam_table[loop]['lower']) + ')'] + ['{'] + body_og + ['}']
+                        else_block = ['else' + '{'] + sub_tree[2] + ['}']
+                        sub_tree[2] = ['{'] + if_block + else_block + ['}']
 
                         # changing first loop
                         self._jam_table[loop]['sub_tree'][1][1][3] = ranges[1]
