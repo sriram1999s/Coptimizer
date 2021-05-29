@@ -5,11 +5,11 @@ int main()
   int a = 0;
   int b = 0;
   scanf("%d", &n);
-  for(int i = 1; i < n; ++i)
+  for(int i = 1; i < n + 1; ++i)
   {
     ++a;
   }
-  for(int i = 1; i < n + 1; ++i)
+  for(int i = 1; i < n; ++i)
   {
     ++b;
   }
