@@ -319,6 +319,8 @@ def for_variable_unroll(OPTIMIZE1,OPTIMIZE2,sub_tree,operator,ids,loop_var):
     if(OPTIMIZE2):
         #print("\nOPtimize 2 baaro magan!\n")
         jam.add(lower_limit, upper_limit, increment_val, sym_tab.level_str.copy(), sub_tree)
+        with open("check.c","w") as f:
+            f.write(gen_check(jam._worst_case))
     if(not OPTIMIZE1):
         return sub_tree
 

@@ -4,6 +4,7 @@ import secrets
 
 # [x1,y1) , [x2,y2)
 
+
 def check(x1,y1,x2,y2):
     if(x2<=x1<=y2 or x2<=y1<=y2):
         return 1
@@ -19,6 +20,7 @@ class Jamming:
     def __init__(self):
         self._jam_table = defaultdict(lambda: defaultdict(lambda : 'garbage')) # stores all information of for loops (lower, upper , scope, body, ptr)
         self._count = 0
+        self._worst_case = 0
     def add(self, lower, upper, inc ,scope, sub_tree):
         body = sub_tree[2]
         self._flag = 0
@@ -85,7 +87,8 @@ class Jamming:
                         # adding declare statements at beginning of first loop
                         self._jam_table[loop]['sub_tree'].insert(0,[declare_min] + [declare_max])
                         
-                elif(case == 3): # lower_og != lower else all identical
+                elif(case == 3): # worst case upper and lower not equal
+                    self._worst_case = 1
                     if(self._flag):
                         # declaring variables for min and max ranges
                         min_lower_hash = secrets.token_hex(nbytes=6)
@@ -252,27 +255,25 @@ def find_id(ind, end, lis, res=dict()):
     find_id(ind+1, end, lis, res)
 
 ''' generate check_overlap_function '''
-def gen_check():
-    fn_hash = secrets.token_hex(nbytes=6)
-    fn_dec = 'int' + ' check_overlap' + fn_hash + '(int x1, int y1, int x2, int y2) {'
+def gen_check(worst_case):
+    final_condition = ''
+    if(worst_case):
+        fn_hash = secrets.token_hex(nbytes=6)
+        fn_dec = 'int' + ' check_overlap' + fn_hash + '(int x1, int y1, int x2, int y2) {'
 
-    return_1 = 'return 1;'
-    return_0 = 'return 0;'
+        return_1 = 'return 1;'
+        return_0 = 'return 0;'
 
-    first_condition = 'if((x1>=x2 && x1<y2) || (y1>x2 && y1<=y2) || '
-    second_condition = '((x1<y1?x1:y1) > (x2<y2?x2:y2) && (x1>y1?x1:y1) < (x2>y2?x2:y2)) ||'
-    third_condition = '((x1<y1?x1:y1) < (x2<y2?x2:y2) && (x1>y1?x1:y1) > (x2>y2?x2:y2)))'
+        first_condition = 'if((x1>=x2 && x1<y2) || (y1>x2 && y1<=y2) || '
+        second_condition = '((x1<y1?x1:y1) > (x2<y2?x2:y2) && (x1>y1?x1:y1) < (x2>y2?x2:y2)) ||'
+        third_condition = '((x1<y1?x1:y1) < (x2<y2?x2:y2) && (x1>y1?x1:y1) > (x2>y2?x2:y2)))'
 
-    final_condition = fn_dec + first_condition + second_condition + third_condition + return_1 + return_0 + '}';
+        final_condition = fn_dec + first_condition + second_condition + third_condition + return_1 + return_0 + '}';
     return final_condition    
 
 ''' Jamming object'''
 jam = Jamming()
-worst_case = 1
-if(worst_case):
-    with open("check.c","w+") as f:
-        f.write(gen_check())
-else:
-    with open("check.c","w") as f:
-        None
+
+
+
 
