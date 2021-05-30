@@ -2,6 +2,18 @@ from collections import defaultdict
 import re
 import secrets
 
+# [x1,y1) , [x2,y2)
+
+def check(x1,y1,x2,y2):
+    if(x2<=x1<=y2 or x2<=y1<=y2):
+        return 1
+                    # [1,3] , [0,4]
+    elif(min(x1,y1) > min(x2,y2) and max(x1,y1) < max(x2,y2)):
+        return 1
+
+    elif(min(x1,y1) < min(x2,y2) and max(x1,y1) > max(x2,y2)):
+        return 1
+    return 0
 
 class Jamming:
     def __init__(self):
@@ -179,28 +191,31 @@ class Jamming:
                     max_range = '(' + lower + '>' + lower_og +'?' + lower + ':' + lower_og + ')'
                     diff = max_range + ' - ' + min_range
                 else:
-                    min_range = min(lower, lower_og)
-                    max_range = max(lower, lower_og)
+                    min_range = str(min(lower, lower_og))
+                    max_range = str(max(lower, lower_og))
                     diff = max_range - min_range
-                    return (True, [min_range, max_range, diff], 2)
+                return (True, [min_range, max_range, diff], 2)
             # when both differ worst case scenarion consider these 2 intervals [0,n],[n/2,2n] Case 3
             else:
-                if(type(lower) == str or type(upper) == str or type(lower_og)==str or type(upper_og)==str):
-                    upper, upper_og = str(upper), str(upper_og)
+            
+                if(type(lower)==str or type(lower_og)==str):
                     lower, lower_og = str(lower), str(lower_og)
                     min_lower_lower_og = '(' + lower + '<' + lower_og +'?' + lower + ':' + lower_og + ')'
                     max_lower_lower_og = '(' + lower + '>' + lower_og +'?' + lower + ':' + lower_og + ')'
+                else:
+                     min_lower_lower_og = str(min(lower,lower_og))
+                     max_lower_lower_og = str(max(lower,lower_og))
+
+                if(type(upper)==str or type(upper_og)==str):
+                    upper, upper_og = str(upper), str(upper_og)
                     min_upper_upper_og = '(' + upper + '<' + upper_og +'?' + upper + ':' + upper_og + ')'
                     max_upper_upper_og = '(' + upper + '>' + upper_og +'?' + upper + ':' + upper_og + ')'
-                    diff_lower = max_lower_lower_og + '-' + min_lower_lower_og
-                    diff_upper = max_upper_upper_og + '-' + min_upper_upper_og
                 else:
-                    min_lower_lower_og = min(lower,lower_og)
-                    max_lower_lower_og = max(lower,lower_og)
-                    min_upper_upper_og = min(upper,upper_og)
-                    max_upper_upper_og = max(upper,upper_og)
-                    diff_lower = max_lower_lower_og - min_lower_lower_og
-                    diff_upper = max_upper_upper_og - min_upper_upper_og
+                     min_upper_upper_og = str(min(upper,upper_og))
+                     max_upper_upper_og = str(max(upper,upper_og))
+
+                diff_lower = 0
+                diff_upper = 0
                 return (True,[min_lower_lower_og,max_lower_lower_og,min_upper_upper_og,max_upper_upper_og,diff_lower,diff_upper],3)
 
 
@@ -236,5 +251,28 @@ def find_id(ind, end, lis, res=dict()):
         find_id(0, len(lis[ind]), lis[ind], res)
     find_id(ind+1, end, lis, res)
 
+''' generate check_overlap_function '''
+def gen_check():
+    fn_hash = secrets.token_hex(nbytes=6)
+    fn_dec = 'int' + ' check_overlap' + fn_hash + '(int x1, int y1, int x2, int y2) {'
+
+    return_1 = 'return 1;'
+    return_0 = 'return 0;'
+
+    first_condition = 'if((x1>=x2 && x1<y2) || (y1>x2 && y1<=y2) || '
+    second_condition = '((x1<y1?x1:y1) > (x2<y2?x2:y2) && (x1>y1?x1:y1) < (x2>y2?x2:y2)) ||'
+    third_condition = '((x1<y1?x1:y1) < (x2<y2?x2:y2) && (x1>y1?x1:y1) > (x2>y2?x2:y2)))'
+
+    final_condition = fn_dec + first_condition + second_condition + third_condition + return_1 + return_0 + '}';
+    return final_condition    
+
 ''' Jamming object'''
 jam = Jamming()
+worst_case = 1
+if(worst_case):
+    with open("check.c","w+") as f:
+        f.write(gen_check())
+else:
+    with open("check.c","w") as f:
+        None
+
