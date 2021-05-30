@@ -10,6 +10,12 @@ import random
 list_looping_variables = defaultdict(lambda:0)
 loop_var_flags = {}
 
+# TODO
+
+# 1) integerate check fxn with add
+# 2) test it pls
+
+
 '''checks whether unrolling is possible and calls appropriate fxn'''
 def for_unroll_validate(OPTIMIZE1,OPTIMIZE2, sub_tree, nested):
 
