@@ -1,7 +1,7 @@
 from collections import defaultdict
 import re
 import secrets
-
+import copy
 # [x1,y1) , [x2,y2)
 
 
@@ -88,6 +88,11 @@ class Jamming:
                         self._jam_table[loop]['sub_tree'].insert(0,[declare_min] + [declare_max])
 
                 elif(case == 3): # worst case upper and lower not equal
+                    print("\n\nin case 3 : ", sub_tree)
+                    print("\n\nin case 3 : ", self.container[loop]['sub_tree'])
+
+                    temp_tree_1 = copy.deepcopy(sub_tree)
+                    temp_tree_2 = copy.deepcopy(self.container[loop]['sub_tree'])
                     self._worst_case = 1
                     if(self._flag):
                         # declaring variables for min and max ranges
@@ -95,7 +100,10 @@ class Jamming:
                         max_lower_hash = secrets.token_hex(nbytes=6)
                         min_upper_hash = secrets.token_hex(nbytes=6)
                         max_upper_hash = secrets.token_hex(nbytes=6)
-                        declare_min = 'int temp_'+ min_lower_hash + ' = ' + ranges[0] + ';' + 'int temp_'+ min_upper_hash + ' = ' + ranges[2] + ';'
+                        lower_og = self.container[loop]['lower']
+                        upper_og = self.container[loop]['upper']
+                        if_cond = f"if(check_overlap({lower}, {upper}, {lower_og}, {upper_og}))"
+                        declare_min = if_cond + '{\n' + 'int temp_'+ min_lower_hash + ' = ' + ranges[0] + ';' + 'int temp_'+ min_upper_hash + ' = ' + ranges[2] + ';'
                         declare_max = 'int temp_'+ max_lower_hash + ' = ' + ranges[1] + ';' + 'int temp_'+ max_upper_hash + ' = ' + ranges[3] + ';'
                         diff_lower = '(' + 'temp_' + max_lower_hash + '-' + 'temp_' + min_lower_hash + ')'
                         diff_upper = '(' + 'temp_' + max_upper_hash + '-' + 'temp_' + min_upper_hash + ')'
@@ -119,9 +127,14 @@ class Jamming:
                         if_block = ['if(' + str('temp_' + max_upper_hash) + '==' + str(self._jam_table[loop]['upper']) + ')'] + ['{'] + body_og + ['}']
                         else_block = ['else' + '{'] + sub_tree_2_og + ['}']
                         body = ['{'] + if_block + else_block + ['}']
-                        extra_for = ['for(int z = 0 ; z < ' + diff_upper + ';z++)'] + body
+                        extra_for = ['for(int z = 0 ; z < ' + diff_upper + ';z++)'] + body + ['}']
+
+                        else_condition = ['else {'] + temp_tree_1 + temp_tree_2 + ['}']
+                        final = extra_for + else_condition
                         # adding this list to parse tree in sub_tree
-                        sub_tree.append(extra_for)
+                        # sub_tree.append(extra_for)
+                        sub_tree.append(final)
+
 
 
         ''' if jamming not possible , add to jam_table '''
@@ -258,7 +271,10 @@ def find_id(ind, end, lis, res=dict()):
 def gen_check(worst_case):
     final_condition = ''
     if(worst_case):
-        fn_hash = secrets.token_hex(nbytes=6)
+        ''' have to change this later '''
+        # fn_hash = secrets.token_hex(nbytes=6
+        fn_hash = ''
+
         fn_dec = 'int' + ' check_overlap' + fn_hash + '(int x1, int y1, int x2, int y2) {'
 
         return_1 = 'return 1;'
