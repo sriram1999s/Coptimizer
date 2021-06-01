@@ -43,7 +43,7 @@ class Jamming:
                         # print("sub_tree : ", sub_tree)
                         self._jam_table[loop]['sub_tree'][2] = ['{'] + self._jam_table[loop]['body'] + ['}']
                         return
-                    
+
                 elif(case == 1): # upper_og != upper else all identical
                     if(self._flag):
                         # declaring variables for min and max ranges
@@ -53,7 +53,7 @@ class Jamming:
                         declare_max = 'int temp_'+ max_hash + ' = ' + ranges[1] + ';'
                         diff = '(' + 'temp_' + max_hash + '-' + 'temp_' + min_hash + ')'
                         # eliminating
-                        sub_tree[1][2][0][2] = diff 
+                        sub_tree[1][2][0][2] = diff
                         sub_tree[1][1][3] = 0
                         if_block = ['if(' + str('temp_' + max_hash) + '==' + str(self._jam_table[loop]['upper']) + ')'] + ['{'] + body_og + ['}']
                         else_block = ['else' + '{'] + sub_tree[2] + ['}']
@@ -63,7 +63,7 @@ class Jamming:
                         self._jam_table[loop]['sub_tree'][2] = ['{'] + self._jam_table[loop]['body'] + ['}']
                         # adding declare statements at beginning of first loop
                         self._jam_table[loop]['sub_tree'].insert(0,[declare_min] + [declare_max])
-                        
+
                 elif(case == 2): # lower_og != lower else all identical
                     if(self._flag):
                         # declaring variables for min and max ranges
@@ -72,7 +72,7 @@ class Jamming:
                         declare_min = 'int temp_'+ min_hash + ' = ' + ranges[0] + ';'
                         declare_max = 'int temp_'+ max_hash + ' = ' + ranges[1] + ';'
                         diff = '(' + 'temp_' + max_hash + '-' + 'temp_' + min_hash + ')'
-                        
+
                         # eliminating
                         # print("dslkvnhioduhv ", sub_tree[1])
                         sub_tree[1][2][0][2] = diff
@@ -86,7 +86,7 @@ class Jamming:
                         self._jam_table[loop]['sub_tree'][2] = ['{'] + self._jam_table[loop]['body'] + ['}']
                         # adding declare statements at beginning of first loop
                         self._jam_table[loop]['sub_tree'].insert(0,[declare_min] + [declare_max])
-                        
+
                 elif(case == 3): # worst case upper and lower not equal
                     self._worst_case = 1
                     if(self._flag):
@@ -98,8 +98,8 @@ class Jamming:
                         declare_min = 'int temp_'+ min_lower_hash + ' = ' + ranges[0] + ';' + 'int temp_'+ min_upper_hash + ' = ' + ranges[2] + ';'
                         declare_max = 'int temp_'+ max_lower_hash + ' = ' + ranges[1] + ';' + 'int temp_'+ max_upper_hash + ' = ' + ranges[3] + ';'
                         diff_lower = '(' + 'temp_' + max_lower_hash + '-' + 'temp_' + min_lower_hash + ')'
-                        diff_upper = '(' + 'temp_' + max_upper_hash + '-' + 'temp_' + min_upper_hash + ')'                        
-                        # 
+                        diff_upper = '(' + 'temp_' + max_upper_hash + '-' + 'temp_' + min_upper_hash + ')'
+                        #
                         # print("dslkvnhioduhv ", sub_tree[1])
                         # replacing second loop with remaining part of lower range
                         sub_tree[1][2][0][2] = diff_lower
@@ -196,11 +196,11 @@ class Jamming:
                 else:
                     min_range = str(min(lower, lower_og))
                     max_range = str(max(lower, lower_og))
-                    diff = max_range - min_range
+                    diff = int(max_range) - int(min_range)
                 return (True, [min_range, max_range, diff], 2)
             # when both differ worst case scenarion consider these 2 intervals [0,n],[n/2,2n] Case 3
             else:
-            
+
                 if(type(lower)==str or type(lower_og)==str):
                     lower, lower_og = str(lower), str(lower_og)
                     min_lower_lower_og = '(' + lower + '<' + lower_og +'?' + lower + ':' + lower_og + ')'
@@ -269,11 +269,7 @@ def gen_check(worst_case):
         third_condition = '((x1<y1?x1:y1) < (x2<y2?x2:y2) && (x1>y1?x1:y1) > (x2>y2?x2:y2)))'
 
         final_condition = fn_dec + first_condition + second_condition + third_condition + return_1 + return_0 + '}';
-    return final_condition    
+    return final_condition
 
 ''' Jamming object'''
 jam = Jamming()
-
-
-
-
