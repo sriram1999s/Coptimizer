@@ -10,9 +10,6 @@ from parser import *
 from optimizations.stack_match2 import *
 from optimizations.switch import *
 
-# from ply.lex import lex
-# from ply.yacc import yacc
-
 lexer = lex()
 parser = yacc()
 

@@ -2,8 +2,8 @@
   "FLAG_UNROLL" : false,
   "FLAG_COMPILE_INIT" : false,
   "FLAG_INLINE" : false,
-  "FLAG_IF_TO_SWITCH" : true,
-  "FLAG_IF_TO_SWITCH" : true,
+  "FLAG_IF_TO_SWITCH" : false,
+  "FLAG_IF_TO_SWITCH" : false,
   "FLAG_TAIL_RECURSION" : false,
   "FLAG_JAMMING" : true
 }

@@ -28,9 +28,12 @@ class Jamming:
         ''' check for similar loops '''
         for loop in self.container:
             self.container = self._jam_table.copy()
-
-            roger_that_jam, ranges, case = self.get_range(loop, lower, upper, inc, scope)
+            print("sub_tree ",sub_tree)
+            greater_flag = '>' in sub_tree[1][2][0]
+            roger_that_jam, ranges, case = self.get_range(loop, lower, upper, inc, scope,greater_flag)
             if(roger_that_jam):
+                lower_og = self.container[loop]['lower']
+                upper_og = self.container[loop]['upper']
                 body_og = self._jam_table[loop]['body']
                 sub_tree_2_og = sub_tree[2]
                 self._flag = self.jam(loop, body) # passing loop but not loops body !!!!!!
@@ -49,12 +52,17 @@ class Jamming:
                         # declaring variables for min and max ranges
                         min_hash = secrets.token_hex(nbytes=6)
                         max_hash = secrets.token_hex(nbytes=6)
+                        min_hash_2 = secrets.token_hex(nbytes=6)
                         declare_min = 'int temp_'+ min_hash + ' = ' + ranges[0] + ';'
                         declare_max = 'int temp_'+ max_hash + ' = ' + ranges[1] + ';'
                         diff = '(' + 'temp_' + max_hash + '-' + 'temp_' + min_hash + ')'
+                        declare_min_2 = 'int temp_' + min_hash_2 + ' = ' + f'{diff}<0?{diff}:0' + ';'
                         # eliminating
-                        sub_tree[1][2][0][2] = diff
-                        sub_tree[1][1][3] = 0
+                        # print(sub_tree[1])
+                        #sub_tree[1][2][0][2] = diff
+                        replace_string(0,len(sub_tree[1][2]),sub_tree[1][2],upper,'temp_'+min_hash_2)
+                        replace_string(0,len(sub_tree[1][1]),sub_tree[1][1],lower,0)
+                        #sub_tree[1][1][3] = 0
                         if_block = ['if(' + str('temp_' + max_hash) + '==' + str(self._jam_table[loop]['upper']) + ')'] + ['{'] + body_og + ['}']
                         else_block = ['else' + '{'] + sub_tree[2] + ['}']
                         sub_tree[2] = ['{'] + if_block + else_block + ['}']
@@ -62,21 +70,27 @@ class Jamming:
                         self._jam_table[loop]['sub_tree'][1][2][0][2] = 'temp_' + min_hash
                         self._jam_table[loop]['sub_tree'][2] = ['{'] + self._jam_table[loop]['body'] + ['}']
                         # adding declare statements at beginning of first loop
-                        self._jam_table[loop]['sub_tree'].insert(0,[declare_min] + [declare_max])
+                        self._jam_table[loop]['sub_tree'].insert(0,[declare_min] + [declare_max] + [declare_min_2])
 
                 elif(case == 2): # lower_og != lower else all identical
                     if(self._flag):
                         # declaring variables for min and max ranges
                         min_hash = secrets.token_hex(nbytes=6)
                         max_hash = secrets.token_hex(nbytes=6)
+                        min_hash_2 = secrets.token_hex(nbytes=6)
                         declare_min = 'int temp_'+ min_hash + ' = ' + ranges[0] + ';'
                         declare_max = 'int temp_'+ max_hash + ' = ' + ranges[1] + ';'
                         diff = '(' + 'temp_' + max_hash + '-' + 'temp_' + min_hash + ')'
+                        declare_min_2 = 'int temp_' + min_hash_2 + ' = ' + f'{diff}<{upper}?{diff}:{upper}' + ';'
+                        
 
                         # eliminating
                         # print("dslkvnhioduhv ", sub_tree[1])
-                        sub_tree[1][2][0][2] = diff
-                        sub_tree[1][1][3] = 0
+                        # sub_tree[1][2][0][2] = diff
+                        # sub_tree[1][1][3] = 0
+                        replace_string(0,len(sub_tree[1][2]),sub_tree[1][2],upper,'temp_'+min_hash_2)
+                        replace_string(0,len(sub_tree[1][1]),sub_tree[1][1],lower,0)
+                        
                         if_block = ['if(' + str('temp_' + min_hash) + '==' + str(self._jam_table[loop]['lower']) + ')'] + ['{'] + body_og + ['}']
                         else_block = ['else' + '{'] + sub_tree[2] + ['}']
                         sub_tree[2] = ['{'] + if_block + else_block + ['}']
@@ -85,7 +99,7 @@ class Jamming:
                         self._jam_table[loop]['sub_tree'][1][1][3] = 'temp_' + max_hash
                         self._jam_table[loop]['sub_tree'][2] = ['{'] + self._jam_table[loop]['body'] + ['}']
                         # adding declare statements at beginning of first loop
-                        self._jam_table[loop]['sub_tree'].insert(0,[declare_min] + [declare_max])
+                        self._jam_table[loop]['sub_tree'].insert(0,[declare_min] + [declare_max] + [declare_min_2])
 
                 elif(case == 3): # worst case upper and lower not equal
                     print("\n\nin case 3 : ", sub_tree)
@@ -102,16 +116,33 @@ class Jamming:
                         max_upper_hash = secrets.token_hex(nbytes=6)
                         lower_og = self.container[loop]['lower']
                         upper_og = self.container[loop]['upper']
-                        if_cond = f"if(check_overlap({lower}, {upper}, {lower_og}, {upper_og}))"
+                        if(greater_flag):
+                            if_cond = f"if(check_overlap({lower}+1, {upper}+1, {lower_og}, {upper_og}))"
+                        else:
+                            if_cond = f"if(check_overlap({lower}, {upper}, {lower_og}, {upper_og}))"
                         declare_min = if_cond + '{\n' + 'int temp_'+ min_lower_hash + ' = ' + ranges[0] + ';' + 'int temp_'+ min_upper_hash + ' = ' + ranges[2] + ';'
                         declare_max = 'int temp_'+ max_lower_hash + ' = ' + ranges[1] + ';' + 'int temp_'+ max_upper_hash + ' = ' + ranges[3] + ';'
                         diff_lower = '(' + 'temp_' + max_lower_hash + '-' + 'temp_' + min_lower_hash + ')'
                         diff_upper = '(' + 'temp_' + max_upper_hash + '-' + 'temp_' + min_upper_hash + ')'
                         #
-                        # print("dslkvnhioduhv ", sub_tree[1])
+                        print("dslkvnhioduhv ", sub_tree[1][1] , lower)
                         # replacing second loop with remaining part of lower range
-                        sub_tree[1][2][0][2] = diff_lower
-                        sub_tree[1][1][3] = 0
+                        # sub_tree[1][2][0][2] = diff_lower
+                        # sub_tree[1][1][3] = 0
+                        
+                        if(greater_flag):
+                            replace_string(0,len(sub_tree[1][2]),sub_tree[1][2],lower,diff_lower)
+                            replace_string(0,len(sub_tree[1][1]),sub_tree[1][1],upper,0)
+                            replace_string(0,len(sub_tree[1][2]),sub_tree[1][2],'>','<')
+                            replace_string(0,len(sub_tree[1][3]),sub_tree[1][3],'--','++')
+                            replace_string(0,len(sub_tree[1][3]),sub_tree[1][3],'-=','+=')
+                            replace_string(0,len(sub_tree[1][3]),sub_tree[1][3],'-','+')
+                            # semicolon_index = declare_max.index(';')
+                            # declare_max = declare_max[0:semicolon_index] + '+ 1' + declare_max[semicolon_index:]
+                        else:
+                            replace_string(0,len(sub_tree[1][2]),sub_tree[1][2],upper,diff_lower)
+                            replace_string(0,len(sub_tree[1][1]),sub_tree[1][1],lower,0)
+                            
                         if_block = ['if(' + str('temp_' + min_lower_hash) + '==' + str(self._jam_table[loop]['lower']) + ')'] + ['{'] + body_og + ['}']
                         else_block = ['else' + '{'] + sub_tree_2_og + ['}']
                         sub_tree[2] = ['{'] + if_block + else_block + ['}']
@@ -140,8 +171,20 @@ class Jamming:
         ''' if jamming not possible , add to jam_table '''
         if(not self._flag):
             temp = 'for' + str(self._count)
-            self._jam_table[temp]['lower'] = lower
-            self._jam_table[temp]['upper'] = upper
+            if('>' in sub_tree[1][2][0]):
+                self._jam_table[temp]['lower'] = str(lower) + '+1'
+            else:
+                self._jam_table[temp]['lower'] = lower
+            if('>' in sub_tree[1][2][0]):
+                self._jam_table[temp]['upper'] = str(upper) + '+1'
+                replace_string(0,len(sub_tree[1][2]),sub_tree[1][2],lower,self._jam_table[temp]['upper'])
+                replace_string(0,len(sub_tree[1][1]),sub_tree[1][1],upper,self._jam_table[temp]['lower'])
+                replace_string(0,len(sub_tree[1][2]),sub_tree[1][2],'>','<')
+                replace_string(0,len(sub_tree[1][3]),sub_tree[1][3],'--','++')
+                replace_string(0,len(sub_tree[1][3]),sub_tree[1][3],'-=','+=')
+                replace_string(0,len(sub_tree[1][3]),sub_tree[1][3],'-','+')
+            else:
+                self._jam_table[temp]['upper'] = upper
             self._jam_table[temp]['inc'] = inc
             self._jam_table[temp]['scope'] = scope
             self._jam_table[temp]['body'] = body
@@ -176,7 +219,7 @@ class Jamming:
             print(f"     ----> {self._jam_table[loop]['sub_tree']}")
 
     ''' check for range equality '''
-    def get_range(self, loop, lower, upper, inc, scope):
+    def get_range(self, loop, lower, upper, inc, scope,greater_flag):
         lower_og = self.container[loop]['lower']
         upper_og = self.container[loop]['upper']
         inc_og = self.container[loop]['inc']
@@ -216,19 +259,27 @@ class Jamming:
 
                 if(type(lower)==str or type(lower_og)==str):
                     lower, lower_og = str(lower), str(lower_og)
+                    if(greater_flag):
+                        lower = lower + '+1'
                     min_lower_lower_og = '(' + lower + '<' + lower_og +'?' + lower + ':' + lower_og + ')'
                     max_lower_lower_og = '(' + lower + '>' + lower_og +'?' + lower + ':' + lower_og + ')'
                 else:
-                     min_lower_lower_og = str(min(lower,lower_og))
-                     max_lower_lower_og = str(max(lower,lower_og))
+                    if(greater_flag):
+                        lower = lower+1
+                    min_lower_lower_og = str(min(lower,lower_og))
+                    max_lower_lower_og = str(max(lower,lower_og))
 
                 if(type(upper)==str or type(upper_og)==str):
                     upper, upper_og = str(upper), str(upper_og)
+                    if(greater_flag):
+                        upper = upper + '+1'
                     min_upper_upper_og = '(' + upper + '<' + upper_og +'?' + upper + ':' + upper_og + ')'
                     max_upper_upper_og = '(' + upper + '>' + upper_og +'?' + upper + ':' + upper_og + ')'
                 else:
-                     min_upper_upper_og = str(min(upper,upper_og))
-                     max_upper_upper_og = str(max(upper,upper_og))
+                    if(greater_flag):
+                        upper = upper + 1 
+                    min_upper_upper_og = str(min(upper,upper_og))
+                    max_upper_upper_og = str(max(upper,upper_og))
 
                 diff_lower = 0
                 diff_upper = 0
@@ -280,12 +331,37 @@ def gen_check(worst_case):
         return_1 = 'return 1;'
         return_0 = 'return 0;'
 
+        zero_condition = 'if(x1>y1 || x2>y2)' + return_0
+
         first_condition = 'if((x1>=x2 && x1<y2) || (y1>x2 && y1<=y2) || '
         second_condition = '((x1<y1?x1:y1) > (x2<y2?x2:y2) && (x1>y1?x1:y1) < (x2>y2?x2:y2)) ||'
         third_condition = '((x1<y1?x1:y1) < (x2<y2?x2:y2) && (x1>y1?x1:y1) > (x2>y2?x2:y2)))'
 
-        final_condition = fn_dec + first_condition + second_condition + third_condition + return_1 + return_0 + '}';
+        final_condition = fn_dec + zero_condition + first_condition + second_condition + third_condition + return_1 + return_0 + '}';
     return final_condition
+
+
+'''replace_string() ------> given a pat and target substi for target whenever pat is matched in nested iterables'''
+def replace_string(i,n,l,pat,target):
+    if(i==n):
+        return
+    if(type(l[i])==list and check_list(l[i])):
+        #print("louda",pat,''.join([str(j) for j in l[i]]).strip())
+        if(pat == ''.join([str(j) for j in l[i]]).strip()): 
+            l[i]=target
+    if(l[i]==pat):
+        l[i] = target
+    if(type(l[i])==list):
+        replace_string(0,len(l[i]),l[i],pat,target)
+    replace_string(i+1,n,l,pat,target)
+
+
+'''check whether type of variable is list (helper fxn)'''
+def check_list(l):
+    for i in l:
+        if(type(i) == list):
+            return 0
+    return 1
 
 ''' Jamming object'''
 jam = Jamming()
