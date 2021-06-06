@@ -171,8 +171,20 @@ class Jamming:
         ''' if jamming not possible , add to jam_table '''
         if(not self._flag):
             temp = 'for' + str(self._count)
-            self._jam_table[temp]['lower'] = lower
-            self._jam_table[temp]['upper'] = upper
+            if('>' in sub_tree[1][2][0]):
+                self._jam_table[temp]['lower'] = str(lower) + '+1'
+            else:
+                self._jam_table[temp]['lower'] = lower
+            if('>' in sub_tree[1][2][0]):
+                self._jam_table[temp]['upper'] = str(upper) + '+1'
+                replace_string(0,len(sub_tree[1][2]),sub_tree[1][2],lower,self._jam_table[temp]['upper'])
+                replace_string(0,len(sub_tree[1][1]),sub_tree[1][1],upper,self._jam_table[temp]['lower'])
+                replace_string(0,len(sub_tree[1][2]),sub_tree[1][2],'>','<')
+                replace_string(0,len(sub_tree[1][3]),sub_tree[1][3],'--','++')
+                replace_string(0,len(sub_tree[1][3]),sub_tree[1][3],'-=','+=')
+                replace_string(0,len(sub_tree[1][3]),sub_tree[1][3],'-','+')
+            else:
+                self._jam_table[temp]['upper'] = upper
             self._jam_table[temp]['inc'] = inc
             self._jam_table[temp]['scope'] = scope
             self._jam_table[temp]['body'] = body

@@ -20,21 +20,21 @@ int main()
 	int b = 0;
 	int c = 0;
 	for (int i = 0; i < n; i++) {	/* [0,4) */
-		if (check_overlap(i + 2 + 1, n - 1 + 1, i + 1, n)) {
-			int temp_870b1f7c2abf =
-			    (i + 2 + 1 < i + 1 ? i + 2 + 1 : i + 1);
-			int temp_05fba5751808 = (n - 1 + 1 < n ? n - 1 + 1 : n);
-			int temp_065a2058eac0 =
-			    (i + 2 + 1 > i + 1 ? i + 2 + 1 : i + 1);
-			int temp_55be130ff850 = (n - 1 + 1 > n ? n - 1 + 1 : n);
-			for (int j = temp_065a2058eac0; j < temp_05fba5751808; j += 1) { {	/* [i+1,4) */
+		if (check_overlap(i + 1, n, i + 2 + 1, n - 1 + 1)) {
+			int temp_b45ce20f2924 =
+			    (i + 1 < i + 2 + 1 ? i + 1 : i + 2 + 1);
+			int temp_13702ee525ac = (n < n - 1 + 1 ? n : n - 1 + 1);
+			int temp_b5aea6cb850b =
+			    (i + 1 > i + 2 + 1 ? i + 1 : i + 2 + 1);
+			int temp_94c5281cda92 = (n > n - 1 + 1 ? n : n - 1 + 1);
+			for (int j = temp_b5aea6cb850b; j < temp_13702ee525ac; j += 1) { {	/* [i+1,4) */
 					a++;
 			} {	/* [i+2,n-1)    i+3-n */
 				b++;
 			}} for (int j = 0;
-				j < (temp_065a2058eac0 - temp_870b1f7c2abf);
+				j < (temp_b5aea6cb850b - temp_b45ce20f2924);
 				j += 1) {
-				if (temp_870b1f7c2abf == i + 1) { {	/* [i+1,4) */
+				if (temp_b45ce20f2924 == i + 2 + 1) { {	/* [i+1,4) */
 						a++;
 				}
 				} else { {	/* [i+2,n-1)    i+3-n */
@@ -43,8 +43,8 @@ int main()
 				}
 			}
 			for (int z = 0;
-			     z < (temp_55be130ff850 - temp_05fba5751808); z++) {
-				if (temp_55be130ff850 == n) { {	/* [i+1,4) */
+			     z < (temp_94c5281cda92 - temp_13702ee525ac); z++) {
+				if (temp_94c5281cda92 == n - 1 + 1) { {	/* [i+1,4) */
 						a++;
 				}
 				} else { {	/* [i+2,n-1)    i+3-n */
@@ -53,11 +53,11 @@ int main()
 				}
 			}
 		} else {
-			for (int j = n - 1; j > i + 2; j -= 1) {	/* [i+2,n-1)    i+3-n */
+			for (int j = i + 1; j < n; j += 1) {	/* [i+2,n-1)    i+3-n */
 				b++;
-			} for (int j = i + 1; j < n; j += 1) {	/* [i+1,4) */
+			} for (int j = i + 2 + 1; j < n - 1 + 1; j += 1) {	/* [i+1,4) */
 				a++;
 	}}} for (int i = 1; i < n - 1; i++) {
 		c++;
 	} printf("%d %d %d\n", a, b, c);
-}				/* after jamming *//* lower = i+3 *//* upper = n *//*   intersected  [i+3,n) *//*   left remaining [0,2) *//*   right remaining [0,0) */
+}

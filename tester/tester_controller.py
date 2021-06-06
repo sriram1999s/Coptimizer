@@ -54,19 +54,8 @@ def parallel_shit():
 def normal_shit():
     processes = []
     for i in range(10):
-        print(test_results.cache_info())
         processes.append(test_results())
-        test_results.cache_clear()
     return processes
-
-
-
-# for task in as_completed(processes):
-#     time_optimized += task.result()[0]
-#     time_unoptimized += task.result()[1]
-#     memory_optimized += task.result()[2]
-#     memory_unoptimized += task.result()[3]
-
 
 processes = normal_shit()
 #print(processes)               

@@ -30,6 +30,9 @@ int main() {
 /*   intersected  [i+3,n) */
 /*   left remaining [0,2) */
 /*   right remaining [0,0) */
+
+
+
   
 
 
