@@ -15,49 +15,75 @@ int check_overlap(int x1, int y1, int x2, int y2)
 int main()
 {
 	int n;
-	scanf("%d", &n);	/* n = 4 */
+	scanf("%d", &n);
 	int a = 0;
 	int b = 0;
-	int c = 0;
-	for (int i = 0; i < n; i++) {	/* [0,4) */
-		if (check_overlap(i + 1, n, i + 2 + 1, n - 1 + 1)) {
-			int temp_b45ce20f2924 =
-			    (i + 1 < i + 2 + 1 ? i + 1 : i + 2 + 1);
-			int temp_13702ee525ac = (n < n - 1 + 1 ? n : n - 1 + 1);
-			int temp_b5aea6cb850b =
-			    (i + 1 > i + 2 + 1 ? i + 1 : i + 2 + 1);
-			int temp_94c5281cda92 = (n > n - 1 + 1 ? n : n - 1 + 1);
-			for (int j = temp_b5aea6cb850b; j < temp_13702ee525ac; j += 1) { {	/* [i+1,4) */
-					a++;
-			} {	/* [i+2,n-1)    i+3-n */
-				b++;
-			}} for (int j = 0;
-				j < (temp_b5aea6cb850b - temp_b45ce20f2924);
-				j += 1) {
-				if (temp_b45ce20f2924 == i + 2 + 1) { {	/* [i+1,4) */
-						a++;
-				}
-				} else { {	/* [i+2,n-1)    i+3-n */
-						b++;
-				}
-				}
-			}
-			for (int z = 0;
-			     z < (temp_94c5281cda92 - temp_13702ee525ac); z++) {
-				if (temp_94c5281cda92 == n - 1 + 1) { {	/* [i+1,4) */
-						a++;
-				}
-				} else { {	/* [i+2,n-1)    i+3-n */
-						b++;
-				}
-				}
-			}
-		} else {
-			for (int j = i + 1; j < n; j += 1) {	/* [i+2,n-1)    i+3-n */
-				b++;
-			} for (int j = i + 2 + 1; j < n - 1 + 1; j += 1) {	/* [i+1,4) */
+	int k = 3;
+	if (check_overlap(4 + 1, n - 1 + 1, 3, n)) {
+		int temp_4e56e2063c2d = 3;
+		int temp_2898847f7acd = (n - 1 + 1 < n ? n - 1 + 1 : n);
+		int temp_128e7a861a68 = 5;
+		int temp_dfeddef4ab93 = (n - 1 + 1 > n ? n - 1 + 1 : n);
+		for (int j = temp_128e7a861a68; j < temp_2898847f7acd; j += 1) { {
 				a++;
-	}}} for (int i = 1; i < n - 1; i++) {
-		c++;
-	} printf("%d %d %d\n", a, b, c);
+				a = a * 2 + a - 3 + (1000);
+				a = a * 2 + a - 3 + (1000);
+				a = a * 2 + a - 3 + (1000);
+				a = a * 2 + a - 3 + (1000);
+		} {
+			b++;
+			b = b * 2 + b - 3 + (1000);
+			b = b * 2 + b - 3 + (1000);
+			b = b * 2 + b - 3 + (1000);
+			b = b * 2 + b - 3 + (1000);
+		}} for (int j = 0; j < (temp_128e7a861a68 - temp_4e56e2063c2d);
+			j += 1) {
+			if (temp_4e56e2063c2d == 3) { {
+					a++;
+					a = a * 2 + a - 3 + (1000);
+					a = a * 2 + a - 3 + (1000);
+					a = a * 2 + a - 3 + (1000);
+					a = a * 2 + a - 3 + (1000);
+			}
+			} else { {
+					b++;
+					b = b * 2 + b - 3 + (1000);
+					b = b * 2 + b - 3 + (1000);
+					b = b * 2 + b - 3 + (1000);
+					b = b * 2 + b - 3 + (1000);
+			}
+			}
+		}
+		for (int z = 0; z < (temp_dfeddef4ab93 - temp_2898847f7acd);
+		     z++) {
+			if (temp_dfeddef4ab93 == n) { {
+					a++;
+					a = a * 2 + a - 3 + (1000);
+					a = a * 2 + a - 3 + (1000);
+					a = a * 2 + a - 3 + (1000);
+					a = a * 2 + a - 3 + (1000);
+			}
+			} else { {
+					b++;
+					b = b * 2 + b - 3 + (1000);
+					b = b * 2 + b - 3 + (1000);
+					b = b * 2 + b - 3 + (1000);
+					b = b * 2 + b - 3 + (1000);
+			}
+			}
+		}
+	} else {
+		for (int j = n - 1; j > 4; j -= 1) {
+			b++;
+			b = b * 2 + b - 3 + (1000);
+			b = b * 2 + b - 3 + (1000);
+			b = b * 2 + b - 3 + (1000);
+			b = b * 2 + b - 3 + (1000);
+		} for (int j = 3; j < n; j += 1) {
+			a++;
+			a = a * 2 + a - 3 + (1000);
+			a = a * 2 + a - 3 + (1000);
+			a = a * 2 + a - 3 + (1000);
+			a = a * 2 + a - 3 + (1000);
+	}} printf("%d %d\n", a, b);
 }
