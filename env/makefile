@@ -1,5 +1,5 @@
 default:
-	python3 ../src/controller.py $(argument)
+	py C:\Users\KR\PycharmProjects\Capstone\src\controller.py "C:\Users\KR\PycharmProjects\Capstone\input_files\if_to_switch\t2.c"
 clean:
-	rm ../src/parser.out ../src/parsetab.py temp.c
-	rm -r ../src/__pycache__
+	del ..\src\parser.out ..\src\parsetab.py ..\src\temp.c
+	rmdir /S /Q ..\src\__pycache__

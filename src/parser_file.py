@@ -1,4 +1,4 @@
-from lexer import *
+from lexer_file import *
 from ply.yacc import yacc
 from menu import *
 from regenerator import *
@@ -6,6 +6,7 @@ from loop_unrolling import *
 from symboltable import *
 from compile_time_init import *
 from collections import defaultdict
+from pprint import pprint
 # --------------------------------parser------------------------------------ #
 
 # defining precedence of operators
@@ -18,7 +19,7 @@ from collections import defaultdict
 count_for=0
 prev_count_for=0
 
-
+# TODO : Macros, ternary op a>b?1:0 , typedef
 
 def p_start(p):
     '''
@@ -41,8 +42,10 @@ def p_multiple_statements(p):
     multiple_statements : multiple_statements statement
                         | statement
     '''
+
     if(len(p)==3):
-        p[0] = p[1] + [p[2]]
+        # print("\n\nmultiple_statements", p[1], p[2])
+        p[0] = [p[1]] + [p[2]]
     else:
         p[0] = p[1]
 
@@ -53,6 +56,11 @@ def p_statement(p):
     '''
     p[0] = p[1]
 
+# def p_else(p):
+#     '''
+#     else : ELSE
+#     '''
+#     p[0] = 'else'
 
 
 def p_open(p):
@@ -63,12 +71,12 @@ def p_open(p):
          | for for_condition open
     '''
     if(len(p)==4):
-        # p[0] = [p[1], p[2], p[3]]
-        p[0] = [' ', p[1], p[2], '{', p[3], '}']
+        p[0] = [p[1], p[2], p[3]]
+        #p[0] = [' ', p[1], p[2], '{', p[3], '}']
         sym_tab.lookahead(0, len(p[3]), p[3])
     else:
-        # p[0] = [p[1], [p[2], p[3]], p[4], p[5]]
-        p[0] = [' ', p[1], [p[2], '{', p[3], '}'], p[4], ' ', '{', p[5], '}']
+        p[0] = [p[1], [p[2], p[3]], p[4], p[5]]
+        #p[0] = [' ', p[1], [p[2], '{', p[3], '}'], p[4], ' ', '{', p[5], '}']
         sym_tab.lookahead(0, len(p[3]), p[3])
         sym_tab.lookahead(0, len(p[5]), p[5])
 
@@ -93,27 +101,49 @@ def p_closed(p):
     '''
     global count_for
     global prev_count_for
+    global loop_var_flags
     if(len(p)==2):
         p[0] = p[1]
     elif(len(p)==4):
         if(p[1] == 'for'):
             print(f"for detected {count_for} {prev_count_for}\n")
+            if(True):
+                if(count_for==1 and prev_count_for==0):
+                    com_init.compile_init_validate(menu.FLAG_COMPILE_INIT,[p[1], p[2], p[3]])
+                    #print("p[3] in for: ", p[3])
+                    temp = list(set(list(flatten(p[3]))))
+                    #print("body: ", temp )
+                    if(temp.count('{')==1 and temp.count('}')==1 and temp.count(';') and len(temp)==3):
+                        p[1] = [None]
+                        p[2] = [None]
+                        p[3] = [None]
+                    #loop_var_flags = {}
+                    nested = False
+                else:
+                    nested = True
 
-            if(count_for==1 and prev_count_for==0):
-                com_init.compile_init_validate(menu.FLAG_COMPILE_INIT,[p[1], p[2], p[3]])
+                if(p[1]!=[None] and p[2]!=[None] and p[3]!=[None]):
+                    p[0] = for_unroll_validate(menu.FLAG_UNROLL,menu.FLAG_JAMMING,[p[1], p[2], p[3]], nested)
 
-            p[0] = for_unroll_validate(menu.FLAG_UNROLL,menu.FLAG_JAMMING,[p[1], p[2], p[3]])
-            sym_tab.lookahead(0, len(p[3]), p[3])
-            prev_count_for = count_for
-            count_for-=1
+                    # pprint(loop_var_flags)
+                sym_tab.lookahead(0, len(p[3]), p[3])
+                prev_count_for = count_for
+                count_for-=1
+            else:
+                p[0] = [p[1], p[2], p[3]]
         else:
             print("while detected\n")
             p[0] = [p[1], p[2], p[3]]
             sym_tab.lookahead(0, len(p[3]), p[3])
     else:
-        p[0] = [' ', p[1], [p[2], '{', p[3], '}'], p[4], ' ', '{', p[5], '}']
+        p[0] = [p[1],[p[2],p[3]],p[4],p[5]]
+        #p[0] = [' ', p[1], [p[2], '{', p[3], '}'], p[4], ' ', '{', p[5], '}']
         sym_tab.lookahead(0, len(p[3]), p[3])
         sym_tab.lookahead(0, len(p[5]), p[5])
+
+    # if(count_for==1 and prev_count_for==0):
+    #     print("loop_var_flags in parser : ", loop_var_flags)
+    #     loop_var_flags = {}
 
 
 def p_condition(p):
@@ -134,6 +164,25 @@ def p_for_condition(p):
             loop_var = list(ids.keys())[0]
             solve_substi_id(0,len(p[2]),p[2],[loop_var])
         p[0] = [p[1], p[2], p[3], p[4], p[5]]
+        if(p[3] != ';'):
+            condition = list(map(str, flatten(p[3])))
+            loop_var = re.search('([A-Za-z_][A-Za-z_0-9]*)', ''.join(condition)).group(1)
+            loop_var_flags[loop_var] = True
+
+            init = flatten(p[2])
+            for i in init:
+                if i in loop_var_flags and i != loop_var:
+                    loop_var_flags[i] = False
+
+            init2 = flatten(p[3])
+            for i in init2:
+                if i in loop_var_flags and i != loop_var:
+                    loop_var_flags[i] = False
+
+            init3 = flatten(p[4])
+            for i in init3:
+                if i in loop_var_flags and i != loop_var:
+                    loop_var_flags[i] = False
     else:
         p[0] = [p[1], p[2], p[3], p[4]]
 
@@ -204,15 +253,23 @@ def p_narrayindex(p):
     else:
         p[0] = p[1]
 
+# def p_type(p):
+#     '''
+#     type : TYPE
+#     '''
+#     p[0] = p[1]
+
 def p_declaration(p):
     '''
     declaration : TYPE ID SEMICOLON
-                | TYPE MULTIPLY ID SEMICOLON
                 | TYPE ID ASSIGN expr SEMICOLON
                 | TYPE MULTIPLY ID ASSIGN expr SEMICOLON
 		        | TYPE multi_declaration stop
     			| TYPE ID narrayindex SEMICOLON
     			| TYPE ID narrayindex ASSIGN init_list SEMICOLON
+		| TYPE L_FLOWBRACE multiple_statements R_FLOWBRACE SEMICOLON
+		| TYPEDEF TYPE L_FLOWBRACE multiple_statements R_FLOWBRACE ID SEMICOLON
+		| TYPEDEF TYPE ID SEMICOLON
 
     '''
 
@@ -334,7 +391,7 @@ def p_init_list(p):
 def p_index(p):
     '''
     index : expr
-    	    | empty
+    	  | empty
     '''
     if(p[1]!=None):
         p[0] = p[1]
@@ -364,6 +421,18 @@ def p_right_flower(p):
     sym_tab.level_str.pop()
     p[0] = p[1]
 
+# def p_if(p):
+#     '''
+#     if : IF
+#     '''
+#     p[0] = 'if'
+
+# def p_return(p):
+#     '''
+#     return : RETURN
+#     '''
+#     p[0] = 'return'
+
 def p_simple(p):
     '''
     simple : expr SEMICOLON
@@ -373,6 +442,7 @@ def p_simple(p):
 	       | function
 	       | RETURN expr SEMICOLON
            | RETURN SEMICOLON
+	   | MULTILINE_COMMENT
     '''
     if(len(p)==3):
         p[0] = [p[1],p[2]]
@@ -404,7 +474,8 @@ def p_function_call(p):
     '''
     function_call : ID L_PAREN call_params R_PAREN
     '''
-    p[0] = [p[1], p[2], p[3], p[4],';']
+    #p[0] = [p[1], p[2], p[3], p[4],';']
+    p[0] = [p[1], p[2], p[3], p[4]]
     if(menu.FLAG_INLINE or menu.FLAG_TAIL_RECURSION):
         call_helper(p[0],p[1])
         p[0] = [(p[1],p[0][0 : -1], 'call')]
@@ -423,7 +494,9 @@ def p_call_params(p):
 def p_yes_call_params(p):
     '''
     yes_call_params : yes_call_params expr COMMA
+		    | yes_call_params TYPE COMMA
 		            | expr COMMA
+			    | TYPE COMMA
     '''
     if(len(p)==3):
         p[0] = [p[1],p[2]]
@@ -433,6 +506,7 @@ def p_yes_call_params(p):
 def p_end_call_params(p):
     '''
     end_call_params : expr
+		    | TYPE 
     '''
     p[0] = p[1]
 
@@ -731,6 +805,8 @@ def p_factor(p):
                 p[0] = [p[1], p[2]]
         elif(p[1] == '-' and type(p[2])!=list and type(p[2])!=str):
             p[0] = -1*p[2]
+        else:
+            p[0] = [p[1],p[2]]
     else :
         p[0] = p[1]
 
@@ -754,10 +830,13 @@ def p_brace(p):
            | STRING
            | MULTIPLY ID
            | BIT_AND ID
+	   | BIT_AND ID narrayindex
            | ID
     	   | CHAR
            | function_call
     	   | ID narrayindex
+	   | arrow
+	   | dot
 
     '''
     if(len(p)==4):
@@ -787,6 +866,19 @@ def p_brace(p):
         p[0] = p[1]
 
 
+def p_arrow(p):
+    '''
+    arrow : ID ARROW ID
+    '''
+    p[0] = [p[1],p[2],p[3]]
+
+def p_dot(p):
+    '''
+    dot : ID DOT ID
+    '''
+    p[0] = [p[1],p[2],p[3]]
+
+
 def p_NUM(p):
     '''
     NUM : INT_NUM
@@ -796,3 +888,11 @@ def p_NUM(p):
 
 def p_error(p):
     print(f"an error occurred ::: token {p} , char {p.value}")
+
+
+def flatten(L):
+    for l in L:
+        if isinstance(l, list):
+            yield from flatten(l)
+        else:
+            yield l

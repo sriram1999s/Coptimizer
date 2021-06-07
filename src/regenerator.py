@@ -1,4 +1,4 @@
-from optimizations.tail_recc_elim import *
+from tail_recc_elim import *
 from multiprocessing import Pool
 import copy
 import secrets
@@ -8,6 +8,10 @@ import re
 import itertools
 # temp_list1 = []
 # temp_list2 = []
+
+
+# added
+# from optimizations.function_inline import *
 
 # ----------------------------------------------fn inliner -----------------------------------------------------------
 def fn_inline_solve(i,n,z,cyc_chk,non_in_fn):
