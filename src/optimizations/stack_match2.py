@@ -57,14 +57,15 @@ def identify_chains(OPTIMIZE, z):
                 dict_num_list_of_chains[net_open].append([obj])
             i += 1
 
-        elif z[i] == 'else ':
-            if i + 1 < len(z) and z[i + 1] == 'if':
-                obj = create_obj('elif', i + 1, z)
-                i += 2
+        elif z[i] == 'else':
+            if i+2 < len(z) and z[i+1] == ' ' and z[i+2] == 'if':
+                obj = create_obj('elif', i+2, z)
+                i+=3
             else:
                 obj = create_obj('else', i, z)
                 i += 1
             dict_num_list_of_chains[net_open][-1].append(obj)
+
 
         else:
             i += 1
