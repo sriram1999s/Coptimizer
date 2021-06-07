@@ -72,10 +72,7 @@ def make_switch(OPTIMIZE, z):
             #     dict_num_chain_pos[net_open][1] = 0
 
             else:
-                # if not (i - 1 >= 0 and z[i - 1] == 'else '):
-
                 if not (i - 2 >= 0 and z[i - 1] == ' ' and z[i-2] == 'else'):
-
                     # print('should not come here')
                     dict_num_chain_pos[net_open][0] += 1
                     dict_num_chain_pos[net_open][1] = 0
@@ -118,10 +115,7 @@ def make_switch(OPTIMIZE, z):
                 z_new.append(z[i])
                 i += 1
 
-        # elif z[i] == 'else ':
-
         elif z[i] == 'else':
-
             chosen_var, range_lower_bound = check_change_to_switch(net_open)
 
             # to be switched
@@ -141,8 +135,6 @@ def make_switch(OPTIMIZE, z):
                         d_range[net_open].append(range_obj)
 
                     z_new.append('case ' + case_no + ':')
-                    # pre_body, new_pos = get_new_prebody(i + 1, z, chosen_var, case_no, range_case)
-
                     pre_body, new_pos = get_new_prebody(i + 2, z, chosen_var, case_no, range_case)
 
                     z_new.append(pre_body)
@@ -370,8 +362,6 @@ def skip_extra_brackets(pos, z):
         return pos
 
     if order[-1][0] == 'elif':
-        # if z[pos] == 'else ':
-
         if z[pos] == 'else':
 
             z_new.append('break;')

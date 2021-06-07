@@ -7,6 +7,7 @@ dict_num_list_common_vars = dict()
 seen_at_num = []
 order = []  # need not actually be a list, can just be a var
 
+
 class range_if_elif:
     def __init__(self, lb, start, end, op1, op2, u, if1=False, range_var='yes'):
         self.l = lb
@@ -17,6 +18,8 @@ class range_if_elif:
         self.if1 = if1
         self.range_var = range_var
         self.u = u
+
+
 d_range = dict()
 range_j = -1
 
@@ -27,7 +30,7 @@ def initialize_dict_num_chain_pos():
         dict_num_chain_pos[i1] = [0, 0]
 
 
-def make_switch(OPTIMIZE,z):
+def make_switch(OPTIMIZE, z):
     if not OPTIMIZE:
         return
     global net_open
@@ -69,7 +72,7 @@ def make_switch(OPTIMIZE,z):
             #     dict_num_chain_pos[net_open][1] = 0
 
             else:
-                if not (i-1>=0 and z[i-1]=='else '):
+                if not (i - 2 >= 0 and z[i - 1] == ' ' and z[i-2] == 'else'):
                     # print('should not come here')
                     dict_num_chain_pos[net_open][0] += 1
                     dict_num_chain_pos[net_open][1] = 0
@@ -87,10 +90,12 @@ def make_switch(OPTIMIZE,z):
 
                 if range_case:
                     if if_obj.op1 == '<':
-                        range_obj = range_if_elif(range_lower_bound+1, len(z_new), -1, if_obj.op1, if_obj.op2, if_obj.u,
+                        range_obj = range_if_elif(range_lower_bound + 1, len(z_new), -1, if_obj.op1, if_obj.op2,
+                                                  if_obj.u,
                                                   True)
                     else:
-                        range_obj = range_if_elif(range_lower_bound, len(z_new), -1, if_obj.op1, if_obj.op2, if_obj.u, True)
+                        range_obj = range_if_elif(range_lower_bound, len(z_new), -1, if_obj.op1, if_obj.op2, if_obj.u,
+                                                  True)
                     d_range[net_open] = [range_obj]
                     range_j = len(z_new)
 
@@ -110,7 +115,7 @@ def make_switch(OPTIMIZE,z):
                 z_new.append(z[i])
                 i += 1
 
-        elif z[i] == 'else ':
+        elif z[i] == 'else':
             chosen_var, range_lower_bound = check_change_to_switch(net_open)
 
             # to be switched
@@ -130,7 +135,7 @@ def make_switch(OPTIMIZE,z):
                         d_range[net_open].append(range_obj)
 
                     z_new.append('case ' + case_no + ':')
-                    pre_body, new_pos = get_new_prebody(i + 1, z, chosen_var, case_no, range_case)
+                    pre_body, new_pos = get_new_prebody(i + 2, z, chosen_var, case_no, range_case)
 
                     z_new.append(pre_body)
                     i = new_pos
@@ -357,7 +362,8 @@ def skip_extra_brackets(pos, z):
         return pos
 
     if order[-1][0] == 'elif':
-        if z[pos] == 'else ':
+        if z[pos] == 'else':
+
             z_new.append('break;')
 
             if net_open in d_range.keys():
@@ -410,7 +416,6 @@ def get_case_no(obj, chosen_var, range_lower_bound):
     # if obj.condition_vars != []:
 
     if obj.range_var is None:
-
         return list(filter(lambda x: chosen_var in x, obj.condition_vars))[0][1], False
     if obj.range_var is not None:
         if obj.op1 == '<=' and obj.op2 == '<=':
@@ -422,13 +427,13 @@ def get_case_no(obj, chosen_var, range_lower_bound):
 
             # return str((obj.l - range_lower_bound) / (obj.u - obj.l)).split('.')[0], True
 
-            return str((obj.l+1 - range_lower_bound) / (obj.u - obj.l)).split('.')[0], True
+            return str((obj.l + 1 - range_lower_bound) / (obj.u - obj.l)).split('.')[0], True
         if obj.op1 == '<' and obj.op2 == '<':
             # return str((obj.l-(range_lower_bound+1))/(obj.u-obj.l+1)).split('.')[0], True
 
             # return str((obj.l - range_lower_bound) / (obj.u - obj.l - 1)).split('.')[0], True
 
-            return str((obj.l+1 - range_lower_bound) / (obj.u - obj.l - 1)).split('.')[0], True
+            return str((obj.l + 1 - range_lower_bound) / (obj.u - obj.l - 1)).split('.')[0], True
 
 
 def reorder():
@@ -456,7 +461,7 @@ def reorder():
 
     for i1 in d_range.keys():
         # not part of this chain
-        if i1<net_open:
+        if i1 < net_open:
             continue
 
         # add switch condition
