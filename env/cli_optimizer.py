@@ -1,4 +1,5 @@
-from collections import defaultdict
+#!/usr/bin/python3
+
 import fire
 import json
 import subprocess
