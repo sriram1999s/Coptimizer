@@ -20,77 +20,51 @@ int check_overlap(int x1, int y1, int x2, int y2)
 int main()
 {struct rusage r_usage;double startTime = (float)clock()/CLOCKS_PER_SEC;
 	int n;
-	scanf("%d", &n);
+	scanf("%d", &n);	/* n = 4 */
 	int a = 0;
 	int b = 0;
-	int k = 3;
-	if (check_overlap(4 + 1, n - 1 + 1, 3, n)) {
-		int temp_4e56e2063c2d = 3;
-		int temp_2898847f7acd = (n - 1 + 1 < n ? n - 1 + 1 : n);
-		int temp_128e7a861a68 = 5;
-		int temp_dfeddef4ab93 = (n - 1 + 1 > n ? n - 1 + 1 : n);
-		for (int j = temp_128e7a861a68; j < temp_2898847f7acd; j += 1) { {
+	int c = 0;
+	for (int i = 0; i < n; i++) {	/* [0,4) */
+		if (check_overlap(i + 1, n, i + 2 + 1, n - 1 + 1)) {
+			int temp_3bc9cf357b18 =
+			    (i + 1 < i + 2 + 1 ? i + 1 : i + 2 + 1);
+			int temp_a1606e38b9a4 = (n < n - 1 + 1 ? n : n - 1 + 1);
+			int temp_7253e101df7a =
+			    (i + 1 > i + 2 + 1 ? i + 1 : i + 2 + 1);
+			int temp_61be0f576948 = (n > n - 1 + 1 ? n : n - 1 + 1);
+			for (int j = temp_7253e101df7a; j < temp_a1606e38b9a4; j += 1) { {	/* [i+1,4) */
+					a++;
+			} {	/* [i+2,n-1)    i+3-n */
+				b++;
+			}} for (int j = 0;
+				j < (temp_7253e101df7a - temp_3bc9cf357b18);
+				j += 1) {
+				if (temp_3bc9cf357b18 == i + 2 + 1) { {	/* [i+1,4) */
+						a++;
+				}
+				} else { {	/* [i+2,n-1)    i+3-n */
+						b++;
+				}
+				}
+			}
+			for (int z = 0;
+			     z < (temp_61be0f576948 - temp_a1606e38b9a4); z++) {
+				if (temp_61be0f576948 == n - 1 + 1) { {	/* [i+1,4) */
+						a++;
+				}
+				} else { {	/* [i+2,n-1)    i+3-n */
+						b++;
+				}
+				}
+			}
+		} else {
+			for (int j = i + 1; j < n; j += 1) {	/* [i+2,n-1)    i+3-n */
+				b++;
+			} for (int j = i + 2 + 1; j < n - 1 + 1; j += 1) {	/* [i+1,4) */
 				a++;
-				a = a * 2 + a - 3 + (1000);
-				a = a * 2 + a - 3 + (1000);
-				a = a * 2 + a - 3 + (1000);
-				a = a * 2 + a - 3 + (1000);
-		} {
-			b++;
-			b = b * 2 + b - 3 + (1000);
-			b = b * 2 + b - 3 + (1000);
-			b = b * 2 + b - 3 + (1000);
-			b = b * 2 + b - 3 + (1000);
-		}} for (int j = 0; j < (temp_128e7a861a68 - temp_4e56e2063c2d);
-			j += 1) {
-			if (temp_4e56e2063c2d == 3) { {
-					a++;
-					a = a * 2 + a - 3 + (1000);
-					a = a * 2 + a - 3 + (1000);
-					a = a * 2 + a - 3 + (1000);
-					a = a * 2 + a - 3 + (1000);
-			}
-			} else { {
-					b++;
-					b = b * 2 + b - 3 + (1000);
-					b = b * 2 + b - 3 + (1000);
-					b = b * 2 + b - 3 + (1000);
-					b = b * 2 + b - 3 + (1000);
-			}
-			}
-		}
-		for (int z = 0; z < (temp_dfeddef4ab93 - temp_2898847f7acd);
-		     z++) {
-			if (temp_dfeddef4ab93 == n) { {
-					a++;
-					a = a * 2 + a - 3 + (1000);
-					a = a * 2 + a - 3 + (1000);
-					a = a * 2 + a - 3 + (1000);
-					a = a * 2 + a - 3 + (1000);
-			}
-			} else { {
-					b++;
-					b = b * 2 + b - 3 + (1000);
-					b = b * 2 + b - 3 + (1000);
-					b = b * 2 + b - 3 + (1000);
-					b = b * 2 + b - 3 + (1000);
-			}
-			}
-		}
-	} else {
-		for (int j = n - 1; j > 4; j -= 1) {
-			b++;
-			b = b * 2 + b - 3 + (1000);
-			b = b * 2 + b - 3 + (1000);
-			b = b * 2 + b - 3 + (1000);
-			b = b * 2 + b - 3 + (1000);
-		} for (int j = 3; j < n; j += 1) {
-			a++;
-			a = a * 2 + a - 3 + (1000);
-			a = a * 2 + a - 3 + (1000);
-			a = a * 2 + a - 3 + (1000);
-			a = a * 2 + a - 3 + (1000);
-	}} printf("%d %d\n", a, b);
+	}}} for (int i = 1; i < n - 1; i++) {
+		c++;
+	} printf("%d %d %d\n", a, b, c);
 double endTime = (float)clock()/CLOCKS_PER_SEC; double timeElapsed = endTime - startTime; int ret = getrusage(RUSAGE_SELF,&r_usage);FILE *fp = fopen("profile","w");
 if(ret == 0)
 fprintf(fp,"%ld\n",r_usage.ru_maxrss);
