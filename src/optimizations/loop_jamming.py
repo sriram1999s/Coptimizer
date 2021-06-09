@@ -293,19 +293,34 @@ class Jamming:
 
 ''' checks for intersection of variables between 2 bodies'''
 def check_intersect(body1, body2):
-    id1 = {}
-    id2 = {}
-    find_id(0, len(body1), body1, id1)
-    find_id(0, len(body2), body2, id2)
+    # id1 = {}
+    # id2 = {}
+    # find_id(0, len(body1), body1, id1)
+    # find_id(0, len(body2), body2, id2)
 
-    id1 = set(id1.keys())
-    id2 = set(id2.keys())
-    inter = id1&id2
-    # print(inter)
-    if len(inter):
+    # id1 = set(id1.keys())
+    # id2 = set(id2.keys())
+    # inter = id1&id2
+
+    left_side_body1 = find_lhs_id(0,len(body1),body1)
+    left_side_body2 = find_lhs_id(0,len(body2),body2)
+    right_side_body1 = find_rhs_id(0,len(body1),body1)
+    right_side_body2 = find_rhs_id(0,len(body2),body2)
+
+    print(f"left_side_body 1 : {left_side_body1}")
+    print(f"left_side_body 2 : {left_side_body2}")
+    print(f"right_side_body 1 : {right_side_body1}")
+    print(f"right_side_body 2 : {right_side_body2}")
+
+    inter1 = set(left_side_body1) & set(right_side_body2)
+    inter2 = set(left_side_body2) & set(right_side_body1)
+
+    print("Inter l1 - r2 : ",inter1)
+    print("Inter r1 - l2 : ",inter2)
+
+    if(inter1 or inter2):
         return 0
-    else:
-        return 1
+    return 1
 
 '''find_id()-----> scans for variables in loop condition'''
 def find_id(ind, end, lis, res=dict()):
@@ -317,6 +332,46 @@ def find_id(ind, end, lis, res=dict()):
     elif(type(lis[ind]) is list):
         find_id(0, len(lis[ind]), lis[ind], res)
     find_id(ind+1, end, lis, res)
+
+'''find_lhs_id() ------> scans for variables on lhs of '=' '''
+def find_lhs_id(ind,end,lis):
+    if(ind==end):
+        return []
+    elif(type(lis[ind])==list and len(lis[ind])==3 and re.search(r'=',lis[ind][1])):
+        return [''.join(lis[ind][0])]+find_lhs_id(ind+1,end,lis)
+    elif(type(lis[ind])==list and len(lis[ind])==2 and check_list(lis[ind])):
+        res = []
+        for var in lis[ind]:
+            if(var not in ['++','--']):
+                res.append(var)
+        return res + find_lhs_id(ind+1,end,lis)
+            
+    elif(type(lis[ind])==list):
+        return find_lhs_id(0,len(lis[ind]),lis[ind]) + find_lhs_id(ind+1,end,lis)
+    else:
+        return find_lhs_id(ind+1,end,lis)
+        
+
+'''find_lhs_id() ------> scans for variables on rhs of '=' '''
+def find_rhs_id(ind,end,lis):
+    if(ind==end):
+        return []
+    if(type(lis[ind])==list and len(lis[ind])==3 and re.search(r'=',lis[ind][1])):
+        res = []
+        for var in flatten(lis[ind][2]):
+            if(re.search('[A-Za-z_][A-Za-z_0-9]*',str(var))):
+                res.append(var)
+        lhs_var = ''.join(lis[ind][0])
+        if(lhs_var in res):
+            res.remove(lhs_var)
+        res = list(set(res))
+        return res+find_rhs_id(ind+1,end,lis)
+    elif(type(lis[ind])==list):
+        return find_rhs_id(0,len(lis[ind]),lis[ind]) + find_rhs_id(ind+1,end,lis)
+    else:
+        return find_rhs_id(ind+1,end,lis)
+    
+       
 
 ''' generate check_overlap_function '''
 def gen_check(worst_case):
@@ -362,6 +417,15 @@ def check_list(l):
         if(type(i) == list):
             return 0
     return 1
+
+'''flatten list'''
+def flatten(L):
+    for l in L:
+        if isinstance(l, list):
+            yield from flatten(l)
+        else:
+            yield l
+
 
 ''' Jamming object'''
 jam = Jamming()

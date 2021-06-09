@@ -63,9 +63,13 @@ def for_unroll_validate(OPTIMIZE1,OPTIMIZE2, sub_tree, nested):
 
     if(len(intersection)>1):
         return sub_tree
-    if(len(intersection)==1 and loop_var_list.count(loop_var) > 1):
-        #print("\n\nintersection problem loop_var\n\n")
-        return sub_tree
+
+    # This part is changed so that loop variable will not be caught here (TODO major bug)
+    if(len(intersection)==1):
+        print("\n\nintersection problem loop_var\n\n",loop_var_list)
+        for tok in loop_var_list:
+            if(tok!=loop_var and loop_var_list.count(tok)>1):
+                return sub_tree
 
     res = []
     find_int(0, len(condition), condition, res)
