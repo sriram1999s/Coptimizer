@@ -20,23 +20,87 @@ loop_var_flags = {}
 def for_unroll_validate(OPTIMIZE1, OPTIMIZE2, sub_tree, nested):
     if(not OPTIMIZE1 and not OPTIMIZE2):
         return sub_tree
-    ''' condition[1] ['int', 'i', '=', 'a', ';'] '''
-    ''' condition[1] ['int', ['u', '=', 0, ','], ['i', '=', 'a', ';']] '''
-    
-    ''' condition[1] [['i', '=', 'a'], ';'] '''
-
+    #print("\n sub tree in unroll :\n", sub_tree)
     condition = sub_tree[1]
-    print("condition[1]", condition[1])
+    # print("condition[2:]: ", condition[2:])
+    # print("sub_tree[2]",sub_tree[2])
     operators = []
     find_operator(0, len(condition[-2]), condition[-2], operators)
     ids = dict()
-    ''' finding all variables in the loop condition '''
     if nested:
         find_id(0, len(condition), condition, ids)
     else:
         find_id(0, len(condition[2:]), condition[2:], ids)
 
+    loop_var = list(ids.keys())[0]
+    #print("loop_var_flags: ",loop_var_flags,loop_var)
+    if(loop_var not in loop_var_flags or not loop_var_flags[loop_var]):
+        print("\n\nloop_var_flag problem\n\n")
+        return sub_tree
 
+    list_looping_variables[loop_var+'_'.join(sym_tab.level_str)]=1
+
+    loop_var_dict = dict()
+    find_id(0,len(sub_tree[2]),sub_tree[2],loop_var_dict)
+    #print("loop_var_dict: ",loop_var_dict)
+    loop_var_list = list(loop_var_dict.keys())+[loop_var]
+
+    #checking for pointers in loop body and adding what they refer to before taking intersection
+    pointers = []
+    for i in loop_var_list:
+        search_string = sym_tab.make_level_string('*' + i)
+        if(sym_tab.symbol_table[search_string]!='garbage'):
+            pointers.append(sym_tab.symbol_table[search_string])
+
+    loop_var_list+=pointers
+    #print("loop_var_list: ",loop_var_list)
+    # print("ids.keys(): ",list(ids.keys()))
+    intersection = list(set(list(ids.keys()))&set(loop_var_list))
+    #print("intersection: ",intersection)
+
+    if(len(intersection)>1):
+        return sub_tree
+
+    # This part is changed so that loop variable will not be caught here (TODO major bug)
+    if(len(intersection)==1):
+        print("\n\nintersection problem loop_var\n\n",loop_var_list)
+        for tok in loop_var_list:
+            if(tok!=loop_var and loop_var_list.count(tok)>1):
+                return sub_tree
+
+    res = []
+    find_int(0, len(condition), condition, res)
+    # print("operators : ", operators)
+    solve_substi_id(0,len(condition),condition,intersection)
+    solve_expr(0,len(condition),condition)
+
+    # print("condition: ", condition,"\n")
+
+    ids=dict()
+    find_id(0, len(condition), condition, ids)
+    #print("ids : ",ids)
+    if(len(ids) > 1):# more than 1 loop variable in condition, short circuit return
+        # return sub_tree
+        return for_variable_unroll(OPTIMIZE1,OPTIMIZE2,sub_tree,operators,ids,loop_var)
+
+    if(not OPTIMIZE1):
+        return sub_tree
+
+    operator_list = ['++', '--', '/', '*', '+', '-', '+=', '-=', '*=', '/=']
+    # checking for operators
+    if(len(operators) > 0 and operators[0][0] not in operator_list):
+        return sub_tree
+
+    if(condition[1] != ';' and condition[2] != ';' and len(condition) == 5):  # full for condition
+        return for_full_condition(sub_tree, operators, ids)
+    elif(condition[2] == ';'):  # bounds check missing
+        return sub_tree
+    else:
+        # print("Here2")
+        reconstruct_for(sub_tree, loop_var)
+        if(sub_tree[1][3] == ')'):
+            return sub_tree
+        return for_full_condition(sub_tree, operators, ids)
 
 # def substi_id(var):
 #

@@ -442,7 +442,7 @@ def p_simple(p):
 	       | function
 	       | RETURN expr SEMICOLON
            | RETURN SEMICOLON
-	   | MULTILINE_COMMENT
+	       | MULTILINE_COMMENT
     '''
     if(len(p)==3):
         p[0] = [p[1],p[2]]
@@ -506,7 +506,7 @@ def p_yes_call_params(p):
 def p_end_call_params(p):
     '''
     end_call_params : expr
-		    | TYPE 
+		    | TYPE
     '''
     p[0] = p[1]
 
@@ -582,7 +582,6 @@ def p_function_2(p):
     	       | block
     '''
     p[0]=[p[1]]
-
 
 def p_expr(p):
     '''
