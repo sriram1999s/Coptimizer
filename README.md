@@ -27,7 +27,7 @@ print("Yet to complete :D")
 
 ## Usage
 
-### help
+# help
 
 provides general information about the interface
 
