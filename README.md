@@ -16,7 +16,7 @@
 Is a CLI software tool. Interface provided  
 
 ## Functionalities
-  - [help](###help)
+  - [help](#help)
   - [set flags](###set-flags)
   - [optimize](###optimize)
 
@@ -27,7 +27,7 @@ print("Yet to complete :D")
 
 ## Usage
 
-# help
+### help
 
 provides general information about the interface
 
