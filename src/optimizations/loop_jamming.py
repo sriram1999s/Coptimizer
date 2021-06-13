@@ -82,7 +82,7 @@ class Jamming:
                         declare_max = 'int temp_'+ max_hash + ' = ' + ranges[1] + ';'
                         diff = '(' + 'temp_' + max_hash + '-' + 'temp_' + min_hash + ')'
                         declare_min_2 = 'int temp_' + min_hash_2 + ' = ' + f'{diff}<{upper}?{diff}:{upper}' + ';'
-                        
+
 
                         # eliminating
                         # print("dslkvnhioduhv ", sub_tree[1])
@@ -90,7 +90,7 @@ class Jamming:
                         # sub_tree[1][1][3] = 0
                         replace_string(0,len(sub_tree[1][2]),sub_tree[1][2],upper,'temp_'+min_hash_2)
                         replace_string(0,len(sub_tree[1][1]),sub_tree[1][1],lower,0)
-                        
+
                         if_block = ['if(' + str('temp_' + min_hash) + '==' + str(self._jam_table[loop]['lower']) + ')'] + ['{'] + body_og + ['}']
                         else_block = ['else' + '{'] + sub_tree[2] + ['}']
                         sub_tree[2] = ['{'] + if_block + else_block + ['}']
@@ -129,7 +129,7 @@ class Jamming:
                         # replacing second loop with remaining part of lower range
                         # sub_tree[1][2][0][2] = diff_lower
                         # sub_tree[1][1][3] = 0
-                        
+
                         if(greater_flag):
                             replace_string(0,len(sub_tree[1][2]),sub_tree[1][2],lower,diff_lower)
                             replace_string(0,len(sub_tree[1][1]),sub_tree[1][1],upper,0)
@@ -142,7 +142,7 @@ class Jamming:
                         else:
                             replace_string(0,len(sub_tree[1][2]),sub_tree[1][2],upper,diff_lower)
                             replace_string(0,len(sub_tree[1][1]),sub_tree[1][1],lower,0)
-                            
+
                         if_block = ['if(' + str('temp_' + min_lower_hash) + '==' + str(self._jam_table[loop]['lower']) + ')'] + ['{'] + body_og + ['}']
                         else_block = ['else' + '{'] + sub_tree_2_og + ['}']
                         sub_tree[2] = ['{'] + if_block + else_block + ['}']
@@ -277,7 +277,7 @@ class Jamming:
                     max_upper_upper_og = '(' + upper + '>' + upper_og +'?' + upper + ':' + upper_og + ')'
                 else:
                     if(greater_flag):
-                        upper = upper + 1 
+                        upper = upper + 1
                     min_upper_upper_og = str(min(upper,upper_og))
                     max_upper_upper_og = str(max(upper,upper_og))
 
@@ -335,22 +335,25 @@ def find_id(ind, end, lis, res=dict()):
 
 '''find_lhs_id() ------> scans for variables on lhs of '=' '''
 def find_lhs_id(ind,end,lis):
+    # print("In 5 case ...words of mini boss bennur", )
     if(ind==end):
         return []
-    elif(type(lis[ind])==list and len(lis[ind])==3 and re.search(r'=',lis[ind][1])):
+    elif(type(lis[ind])==list and len(lis[ind])==3 and type(lis[ind][1])==str and re.search(r'=',lis[ind][1])):
         return [''.join(lis[ind][0])]+find_lhs_id(ind+1,end,lis)
+    elif(type(lis[ind])==list and len(lis[ind])==5 and type(lis[ind][2])==str and re.search(r'=',lis[ind][2])):
+        return [''.join(lis[ind][1])]+find_lhs_id(ind+1,end,lis)
     elif(type(lis[ind])==list and len(lis[ind])==2 and check_list(lis[ind])):
         res = []
         for var in lis[ind]:
             if(var not in ['++','--']):
                 res.append(var)
         return res + find_lhs_id(ind+1,end,lis)
-            
+
     elif(type(lis[ind])==list):
         return find_lhs_id(0,len(lis[ind]),lis[ind]) + find_lhs_id(ind+1,end,lis)
     else:
         return find_lhs_id(ind+1,end,lis)
-        
+
 
 '''find_lhs_id() ------> scans for variables on rhs of '=' '''
 def find_rhs_id(ind,end,lis):
@@ -370,8 +373,8 @@ def find_rhs_id(ind,end,lis):
         return find_rhs_id(0,len(lis[ind]),lis[ind]) + find_rhs_id(ind+1,end,lis)
     else:
         return find_rhs_id(ind+1,end,lis)
-    
-       
+
+
 
 ''' generate check_overlap_function '''
 def gen_check(worst_case):
@@ -402,7 +405,7 @@ def replace_string(i,n,l,pat,target):
         return
     if(type(l[i])==list and check_list(l[i])):
         #print("louda",pat,''.join([str(j) for j in l[i]]).strip())
-        if(pat == ''.join([str(j) for j in l[i]]).strip()): 
+        if(pat == ''.join([str(j) for j in l[i]]).strip()):
             l[i]=target
     if(l[i]==pat):
         l[i] = target

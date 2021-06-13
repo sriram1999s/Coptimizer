@@ -1,2 +1,1 @@
-#include<stdio.h>
-int main(){int a;int z=1;int n;scanf("%d %d",&a,&n);int i,u;printf("\n res: %d\n",z);}
+int main(){int a=5;for(int i=0;i<40;i+=2){a+=i;/* ++a ; */}for(int i=0;i<10;i+=2){{++a;}{++a;}{++a;}{++a;}}{++a;}}

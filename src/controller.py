@@ -52,8 +52,8 @@ if(menu.FLAG_INLINE):
 # print(z)
 print()
 print()
-#output_prg = solve(0,len(z),z)
-output_prg = solve_multithread(0,len(z),z)
+output_prg = solve(0,len(z),z)
+# output_prg = solve_multithread(0,len(z),z)
 ''' if to switch '''
 identify_chains(menu.FLAG_IF_TO_SWITCH, output_prg)
 make_switch(menu.FLAG_IF_TO_SWITCH, output_prg)

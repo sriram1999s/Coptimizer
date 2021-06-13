@@ -27,16 +27,16 @@ class CompileInit:
         self.condition = sub_tree[1]
         if(self.condition[1] != ';' and self.condition[2] != ';' and len(self.condition) == 5):  # full for condition
             self.initialize(sub_tree)
-            
+
     def initialize(self, sub_tree):
         #print("\n\nwhat is up ? biatch!\n\n")
         self.condition = sub_tree[1]
         self.lower_limit_str = []
         self.upper_limit_str = []
         self.increment_str = []
-        solve(0,len(self.condition[1]),self.condition[1],self.lower_limit_str)
-        solve(0,len(self.condition[2]),self.condition[2],self.upper_limit_str)
-        solve(0,len(self.condition[3]),self.condition[3],self.increment_str)
+        self.lower_limit_str = solve(0,len(self.condition[1]),self.condition[1])
+        self.upper_limit_str = solve(0,len(self.condition[2]),self.condition[2])
+        self.increment_str = solve(0,len(self.condition[3]),self.condition[3])
         self.m = re.search('=(.*?);',''.join(self.lower_limit_str))
         self.lower_limit = self.m.group(1)
         if(re.search('^-?[0-9]*$',self.lower_limit)):
@@ -81,7 +81,7 @@ class CompileInit:
         # print(sub_tree[2])
         #print([type(self.lower_limit),type(self.upper_limit),self.op,self.increment_val])
         if(type(self.lower_limit)==type(self.upper_limit)==int and self.increment_val=='1' and self.op not in ['*','/']):
-            
+
             self.find_array(0, len(sub_tree[2]), sub_tree[2], self.loop_var, self.series_lowerlimit , self.series_upperlimit ,self.op,self.increment_val)
         # print(sub_tree[2])
     ''' to find array in body'''
@@ -141,7 +141,7 @@ class CompileInit:
                 # print(self.array_hashmap[array], rhs)
                 # print(parse_tree)
                 self.dec_string = []
-                solve(0, len(self.array_hashmap[array]), self.array_hashmap[array], self.dec_string)
+                self.dec_string = solve(0, len(self.array_hashmap[array]), self.array_hashmap[array])
                 self.dec_string = ''.join(self.dec_string)
                 self.new_dec_string = re.sub('([\[\]])', rep ,self.dec_string)
                 parse_tree,self.c =  re.subn(self.new_dec_string, self.dec_string[:-1] + '=' + self.rhs + ';', parse_tree,flags=re.S)

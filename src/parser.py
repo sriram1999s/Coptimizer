@@ -123,6 +123,7 @@ def p_closed(p):
                     nested = True
 
                 if(p[1]!=[None] and p[2]!=[None] and p[3]!=[None]):
+
                     p[0] = for_unroll_validate(menu.FLAG_UNROLL,menu.FLAG_JAMMING,[p[1], p[2], p[3]], nested)
 
                     # pprint(loop_var_flags)
@@ -162,7 +163,10 @@ def p_for_condition(p):
             ids = dict()
             find_id(0,len(p[3]), p[3] , ids)
             loop_var = list(ids.keys())[0]
-            solve_substi_id(0,len(p[2]),p[2],[loop_var])
+            do_not_sub = find_lhs_id(0, 1, [p[2]])
+            # print("\n\ndo not sub ", p[2] , do_not_sub)
+            solve_substi_id(0,len(p[2]),p[2], do_not_sub)
+
         p[0] = [p[1], p[2], p[3], p[4], p[5]]
         if(p[3] != ';'):
             condition = list(map(str, flatten(p[3])))
@@ -236,6 +240,16 @@ def p_stop(p):
          p[0] = [p[1],p[2],p[3],p[4]]
      else:
          p[0] = [p[1],p[2],p[3],p[4],p[5]]
+
+def p_multi_expr(p):
+    '''
+    multi_expr : multi_expr expr COMMA
+               | expr COMMA
+    '''
+    if(len(p)==4):
+        p[0] = p[1] + [p[2], p[3]]
+    else:
+        p[0] = [p[1], p[2]]
 
 def p_arrayindex(p):
     '''
@@ -436,6 +450,7 @@ def p_right_flower(p):
 def p_simple(p):
     '''
     simple : expr SEMICOLON
+           | multi_expr expr SEMICOLON
 	       | header
            | declaration
            | SEMICOLON
@@ -447,7 +462,7 @@ def p_simple(p):
     if(len(p)==3):
         p[0] = [p[1],p[2]]
     elif(len(p)==4):
-        # #print("p_simpleI :",p[2])
+        # print("p_simpleI :",p[2])
         if(type(p[2]) is list and type(p[2][0]) is tuple and (menu.FLAG_INLINE or menu.FLAG_TAIL_RECURSION)):
             t = p[2][0]
             p[0] = [p[1], t[0], '(',t[1][2], ')',';']

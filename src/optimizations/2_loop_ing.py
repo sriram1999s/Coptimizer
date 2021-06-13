@@ -33,7 +33,6 @@ def for_unroll_validate(OPTIMIZE1, OPTIMIZE2, sub_tree, nested):
         find_id(0, len(condition[2:]), condition[2:], ids)
 
     loop_var = list(ids.keys())[0]
-    #print("loop_var_flags: ",loop_var_flags,loop_var)
     if(loop_var not in loop_var_flags or not loop_var_flags[loop_var]):
         print("\n\nloop_var_flag problem\n\n")
         return sub_tree
@@ -42,7 +41,6 @@ def for_unroll_validate(OPTIMIZE1, OPTIMIZE2, sub_tree, nested):
 
     loop_var_dict = dict()
     find_id(0,len(sub_tree[2]),sub_tree[2],loop_var_dict)
-    #print("loop_var_dict: ",loop_var_dict)
     loop_var_list = list(loop_var_dict.keys())+[loop_var]
 
     #checking for pointers in loop body and adding what they refer to before taking intersection
@@ -96,7 +94,6 @@ def for_unroll_validate(OPTIMIZE1, OPTIMIZE2, sub_tree, nested):
     elif(condition[2] == ';'):  # bounds check missing
         return sub_tree
     else:
-        # print("Here2")
         reconstruct_for(sub_tree, loop_var)
         if(sub_tree[1][3] == ')'):
             return sub_tree
