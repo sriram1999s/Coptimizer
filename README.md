@@ -58,4 +58,4 @@ Coptimizer ox <path to file>
 Is a graphical user interface provided by the Coptimizer server:
 [www.Coptimizer.com](www.Coptimizer.com)
 
-![User Interface][https://github.com/sriram1999s/Capstone/blob/third_echelon/images/ui1.png?raw=true]
+![User Interface](https://github.com/sriram1999s/Capstone/blob/third_echelon/images/ui1.png?raw=true)
