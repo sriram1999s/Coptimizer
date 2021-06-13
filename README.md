@@ -56,6 +56,6 @@ Coptimizer ox <path to file>
 # GUI
 
 Is a graphical user interface provided by the Coptimizer server:
-[www.Coptimizer.com](#www.Coptimizer.com)
+[www.Coptimizer.com](www.Coptimizer.com)
 
-![User Interface][images/ui1.png]
+![User Interface][https://github.com/sriram1999s/Capstone/blob/third_echelon/images/ui1.png?raw=true]
