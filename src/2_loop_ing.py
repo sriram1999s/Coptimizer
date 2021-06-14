@@ -7,9 +7,8 @@ import re
 import secrets
 import random
 
-list_looping_variables = defaultdict(lambda:0) # keeps track of loop variables along with nested info
-
-loop_var_flags = {} # keeps track of loop variables along with nested info
+list_looping_variables = defaultdict(lambda:0)
+loop_var_flags = {}
 
 # TODO
 
@@ -19,69 +18,58 @@ loop_var_flags = {} # keeps track of loop variables along with nested info
 
 '''checks whether unrolling is possible and calls appropriate fxn'''
 def for_unroll_validate(OPTIMIZE1, OPTIMIZE2, sub_tree, nested):
-    print("sub_tree in for_unroll_validate", sub_tree)
     if(not OPTIMIZE1 and not OPTIMIZE2):
         return sub_tree
-    ''' condition[1] ['int', 'i', '=', 'a', ';'] '''
-    ''' condition[1] ['int', ['u', '=', 0, ','], ['i', '=', 'a', ';']] '''
-
-    ''' condition[1] [['i', '=', 'a'], ';'] '''
-
-    DO_NOT_FULL_UNROLL = False
+    #print("\n sub tree in unroll :\n", sub_tree)
     condition = sub_tree[1]
-    print("condition[1]", condition[1])
+    # print("condition[2:]: ", condition[2:])
+    # print("sub_tree[2]",sub_tree[2])
     operators = []
     find_operator(0, len(condition[-2]), condition[-2], operators)
     ids = dict()
-    ''' finding all variables in the loop condition '''
     if nested:
         find_id(0, len(condition), condition, ids)
     else:
         find_id(0, len(condition[2:]), condition[2:], ids)
 
     loop_var = list(ids.keys())[0]
-    ''' finding the loop dependant variable from for condition '''
-    # print("loop_var_flags: ",loop_var_flags,loop_var)
     if(loop_var not in loop_var_flags or not loop_var_flags[loop_var]):
         print("\n\nloop_var_flag problem\n\n")
-        ''' if it is a nested loop , must unroll only inner most loop '''
         return sub_tree
 
     list_looping_variables[loop_var+'_'.join(sym_tab.level_str)]=1
 
-    ''' finding all variables in the body of the for loop '''
-    full_loop_var_dict = dict()
-    find_id(0,len(sub_tree[2]),sub_tree[2],full_loop_var_dict)
-    full_loop_var_list = list(full_loop_var_dict.keys())+[loop_var]
-    full_intersection = list(set(list(ids.keys()))&set(full_loop_var_list))
+    loop_var_dict = dict()
+    find_id(0,len(sub_tree[2]),sub_tree[2],loop_var_dict)
+    loop_var_list = list(loop_var_dict.keys())+[loop_var]
 
-    ''' finding all variables used as lvalue in for loop body '''
-    loop_var_list = find_lhs_id(0, len(sub_tree[2]), sub_tree[2])
+    #checking for pointers in loop body and adding what they refer to before taking intersection
+    pointers = []
+    for i in loop_var_list:
+        search_string = sym_tab.make_level_string('*' + i)
+        if(sym_tab.symbol_table[search_string]!='garbage'):
+            pointers.append(sym_tab.symbol_table[search_string])
+
+    loop_var_list+=pointers
+    #print("loop_var_list: ",loop_var_list)
+    # print("ids.keys(): ",list(ids.keys()))
     intersection = list(set(list(ids.keys()))&set(loop_var_list))
+    #print("intersection: ",intersection)
 
-    ''' should not be doing full unrolling but can still do partial unroll '''
-    if(len(full_intersection) > 1):
-        DO_NOT_FULL_UNROLL = True
-    if(len(full_intersection)>=1 and full_loop_var_list.count(loop_var) > 1):
-        DO_NOT_FULL_UNROLL = True
-
-    # print("Intersection ", intersection)
     if(len(intersection)>1):
         return sub_tree
 
-    ''' here '''
     # This part is changed so that loop variable will not be caught here (TODO major bug)
-    # if(len(intersection)==1):
-    #     print("\n\nintersection problem loop_var\n\n",loop_var_list)
-    #     for tok in loop_var_list:
-    #         if(tok!=loop_var and loop_var_list.count(tok)>1):
-    #             return sub_tree
-
+    if(len(intersection)==1):
+        print("\n\nintersection problem loop_var\n\n",loop_var_list)
+        for tok in loop_var_list:
+            if(tok!=loop_var and loop_var_list.count(tok)>1):
+                return sub_tree
 
     res = []
     find_int(0, len(condition), condition, res)
-    do_not_sub = find_lhs_id(0, len(condition), condition)
-    solve_substi_id(0,len(condition),condition,do_not_sub)
+    # print("operators : ", operators)
+    solve_substi_id(0,len(condition),condition,intersection)
     solve_expr(0,len(condition),condition)
 
     # print("condition: ", condition,"\n")
@@ -93,9 +81,6 @@ def for_unroll_validate(OPTIMIZE1, OPTIMIZE2, sub_tree, nested):
         # return sub_tree
         return for_variable_unroll(OPTIMIZE1,OPTIMIZE2,sub_tree,operators,ids,loop_var)
 
-    if(DO_NOT_FULL_UNROLL): # temporary solution
-        return sub_tree
-
     if(not OPTIMIZE1):
         return sub_tree
 
@@ -106,7 +91,6 @@ def for_unroll_validate(OPTIMIZE1, OPTIMIZE2, sub_tree, nested):
 
     if(condition[1] != ';' and condition[2] != ';' and len(condition) == 5):  # full for condition
         return for_full_condition(sub_tree, operators, ids)
-
     elif(condition[2] == ';'):  # bounds check missing
         return sub_tree
     else:
@@ -114,6 +98,7 @@ def for_unroll_validate(OPTIMIZE1, OPTIMIZE2, sub_tree, nested):
         if(sub_tree[1][3] == ')'):
             return sub_tree
         return for_full_condition(sub_tree, operators, ids)
+
 # def substi_id(var):
 #
 #

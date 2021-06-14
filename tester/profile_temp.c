@@ -25,11 +25,11 @@ int main()
 	int b = 0;
 	int k = 3;
 	if (check_overlap(4 + 1, n - 1 + 1, 3, n)) {
-		int temp_4e56e2063c2d = 3;
-		int temp_2898847f7acd = (n - 1 + 1 < n ? n - 1 + 1 : n);
-		int temp_128e7a861a68 = 5;
-		int temp_dfeddef4ab93 = (n - 1 + 1 > n ? n - 1 + 1 : n);
-		for (int j = temp_128e7a861a68; j < temp_2898847f7acd; j += 1) { {
+		int temp_bb0d6b7362c5 = 3;
+		int temp_aefff4a407bd = (n - 1 + 1 < n ? n - 1 + 1 : n);
+		int temp_258e57444e1a = 5;
+		int temp_6576ba88f268 = (n - 1 + 1 > n ? n - 1 + 1 : n);
+		for (int j = temp_258e57444e1a; j < temp_aefff4a407bd; j += 1) { {
 				a++;
 				a = a * 2 + a - 3 + (1000);
 				a = a * 2 + a - 3 + (1000);
@@ -41,9 +41,9 @@ int main()
 			b = b * 2 + b - 3 + (1000);
 			b = b * 2 + b - 3 + (1000);
 			b = b * 2 + b - 3 + (1000);
-		}} for (int j = 0; j < (temp_128e7a861a68 - temp_4e56e2063c2d);
+		}} for (int j = 0; j < (temp_258e57444e1a - temp_bb0d6b7362c5);
 			j += 1) {
-			if (temp_4e56e2063c2d == 3) { {
+			if (temp_bb0d6b7362c5 == 3) { {
 					a++;
 					a = a * 2 + a - 3 + (1000);
 					a = a * 2 + a - 3 + (1000);
@@ -59,9 +59,9 @@ int main()
 			}
 			}
 		}
-		for (int z = 0; z < (temp_dfeddef4ab93 - temp_2898847f7acd);
+		for (int z = 0; z < (temp_6576ba88f268 - temp_aefff4a407bd);
 		     z++) {
-			if (temp_dfeddef4ab93 == n) { {
+			if (temp_6576ba88f268 == n) { {
 					a++;
 					a = a * 2 + a - 3 + (1000);
 					a = a * 2 + a - 3 + (1000);
