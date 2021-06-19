@@ -18,6 +18,7 @@ P.S: Try to stick to a single convention
 
 
 
+
 ''' defining tokens '''
 
 numbers = ['INT_NUM', 'FLOAT_NUM']
@@ -177,7 +178,7 @@ def t_TYPE(t):
     else:
         m = re.match(r'(struct\s+[A-Za-z_][A-Za-z_0-9]*?\s)',t.value)
         res = m.group(1)
-        start_ind = m.span()[-1] + 1  
+        start_ind = m.span()[-1] + 1
         for i in range(start_ind,len(t.value)):
             if(t.value[i]!=' '):
                 res+=t.value[i]
@@ -218,7 +219,6 @@ def t_CHAR(t):
 def t_TYPEDEF(t):
     'typedef'
     return t
-
 
 # error
 

@@ -28,8 +28,8 @@ print("flags ", flags)
 lines = ""
 with open(file) as f:
     for line in f:
-        lines += line.strip('\n')
-    lines.strip('\n')
+        lines += line
+    # lines.strip('\n')
 ''' pre processing '''
 lines = pre_process(lines)
 z=parser.parse(lines)

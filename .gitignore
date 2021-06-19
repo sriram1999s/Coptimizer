@@ -4,3 +4,7 @@ __pycache__
 *#
 our
 orig
+parsetab.py
+lexer.py
+output.c
+temp.c
