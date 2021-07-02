@@ -4,9 +4,9 @@ int main() {
     int a[] = {1,2,3,4};
     int b[50];
     int j=2;
-    for(int i = 0;i<10;i++)
+    for(int i = 0;i<9;i++)
     {
-	     b[2*i] = i*i*i;
+	     b[i] = i*i*i;
        c[i] = i*i;
     }
 }
