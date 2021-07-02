@@ -1,5 +1,7 @@
 # Coptimizer : Automated Tool For  C Source Optimization.
 
+>**NOTE :** Combinations of optimizations do not work currently due to implementation issues.
+
 ## Optimizations
   - Function Inlining
   - Loop Unrolling
