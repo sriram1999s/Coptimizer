@@ -19,7 +19,7 @@ Is a software tool with command line interface
 
 ## Dependancies
 
-  - Python3
+  - Python3.6+
 
 ## Functionalities
   - [help](#Help)
@@ -27,6 +27,7 @@ Is a software tool with command line interface
   - [optimize](###Optimize)
 
 ## Installation
+
 1. Clone the repository
 2. Run the install script (install.sh)
 3. add this to your shell config file : ```export PATH=$PATH":<enter-path-to-directory>/env```
