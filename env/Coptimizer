@@ -4,6 +4,15 @@ import fire
 import json
 import subprocess
 import emoji
+import os
+
+dir_path = ""
+
+def init():
+    global dir_path
+    dir_path = os.environ['COPTIMIZER_PATH']
+
+        # print(dir_path)
 
 '''help menu'''
 def help():
@@ -24,7 +33,7 @@ def sf(*args):
 
     json_obj = json.dumps(flags)
 
-    with open("flags.json","w") as f:
+    with open(f"{dir_path}/env/flags.json","w") as f:
         f.write(json_obj)
 
 
@@ -32,13 +41,14 @@ def sf(*args):
 
 def ox(path):
     subprocess.call([f'clang-tidy {path} -fix -checks="readability-braces-around-statements,readability-isolate-declaration" -- COMPILE_OPTIONS > /dev/null 2> /dev/null'],shell=True)
-    subprocess.call([f"python3 ../src/controller.py {path} > /dev/null"],shell=True)
-    subprocess.call(["indent -linux temp.c -o output.c"],shell=True)
-    subprocess.call(["rm ../src/parser.out ../src/parsetab.py temp.c;rm -r ../src/__pycache__;"],shell=True)
+    subprocess.call([f"python3 {dir_path}/src/controller.py {path} > /dev/null"],shell=True)
+    subprocess.call([f"indent -linux temp.c -o output.c"],shell=True)
+    subprocess.call([f"rm {dir_path}/src/parser.out {dir_path}/src/parsetab.py temp.c;rm -r {dir_path}/src/__pycache__;"],shell=True)
     subprocess.call([f"cat output.c"],shell=True)
 
 
 
 if(__name__ == '__main__'):
+    init()
     command_dict = {'help':help, 'sf':sf, 'ox':ox}
     fire.Fire(command_dict)
