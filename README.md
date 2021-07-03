@@ -20,6 +20,7 @@ Is a software tool with command line interface
 ## Dependancies
 
   - Python3.6+
+  - linux 
 
 ## Functionalities
   - [help](#Help)
