@@ -17,15 +17,19 @@
 # Command Line Utility
 Is a software tool with command line interface
 
+## Dependancies
+
+  - Python3
+
 ## Functionalities
   - [help](#Help)
   - [set flags](###Set-Flags)
   - [optimize](###Optimize)
 
 ## Installation
-```python
-print("Yet to complete :D")
-```
+1. Clone the repository
+2. Run the install script (install.sh)
+3. add this to your shell config file : ```export PATH=$PATH":<enter-path-to-directory>/env```
 
 ## Usage
 
