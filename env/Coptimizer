@@ -3,10 +3,11 @@
 import fire
 import json
 import subprocess
+import emoji
 
 '''help menu'''
 def help():
-    print("\nWelcome to the command line Coptimizer....(bhenki)\n")
+    print(f"\nWelcome to the command line Coptimizer....{emoji.emojize(':fire:')}\n")
     print("Usage sf ------> python3 cli_optimzer.py sf [FLAGS]")
     print("Usage ox ------> python3 cli_optimzer.py ox [PATH]")
     print("sf [options] ----> setflags in from this pool [UNROLL,COMPILE_INIT,INLINE,IF_TO_SWITCH,TAIL_RECURSION,JAMMING]")
