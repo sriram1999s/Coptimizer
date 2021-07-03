@@ -20,3 +20,4 @@ tester/*
 
 env/flags.json
 env/output.c
+env/check_input
