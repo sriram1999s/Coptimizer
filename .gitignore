@@ -8,3 +8,4 @@ parsetab.py
 lexer.py
 output.c
 temp.c
+docs/
