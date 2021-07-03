@@ -9,3 +9,7 @@ lexer.py
 output.c
 temp.c
 docs/
+tester/*
+!tester/tester_controller.py
+!tester/backend_tester.py
+!tester/inp
