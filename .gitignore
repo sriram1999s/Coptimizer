@@ -19,3 +19,4 @@ tester/*
 !tester/inp
 
 env/flags.json
+env/output.c
