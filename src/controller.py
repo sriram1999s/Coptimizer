@@ -18,7 +18,9 @@ try:
 except :
     print('No arguments')
 
-with open("flags.json", "r") as inp:
+dir_path = os.environ['COPTIMIZER_PATH']
+
+with open(f"{dir_path}/env/flags.json", "r") as inp:
     flags = json.load(inp)
     menu.set(flags)
 print("flags ", flags)
