@@ -1,4 +1,6 @@
 import re
+import os
+
 def pre_process(text):
     pat1 = '(for\s*\(.*?)(<|>)=\s*(.*?)([\s;)])'
     text = re.sub(pat1 ,remove_rel_assign ,text)
@@ -10,7 +12,9 @@ def pre_process(text):
     # re.sub(pat2 ,return_void ,text)
     print("Printing preprocessed text...\n")
     print(text,"\n\n")
-    with open('check_input', 'w') as file:
+
+    dir_path = os.environ['COPTIMIZER_PATH']
+    with open(f'{dir_path}/env/check_input', 'w') as file:
         check_inp = '(?:scanf\()|(?:gets\()|(?:getc\()'
         if(re.search(check_inp, text)):
             file.write('1')
