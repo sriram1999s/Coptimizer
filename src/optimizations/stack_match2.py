@@ -1,3 +1,5 @@
+''' This is the first part of if-to-switch. It deals with the identification of if-elif-else chains '''
+
 ''' details of every if, else if, and else condition
 type1 - indicates whether the object represents an if condition, else if condition, or else case
 condition_vars - the list of variables used in the conditional statements
