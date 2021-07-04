@@ -2,9 +2,8 @@ from collections import defaultdict
 import re
 import secrets
 import copy
-# [x1,y1) , [x2,y2)
 
-
+'''check intersect function in pyth for reference'''
 def check(x1,y1,x2,y2):
     if(x2<=x1<=y2 or x2<=y1<=y2):
         return 1
@@ -21,6 +20,7 @@ class Jamming:
         self._jam_table = defaultdict(lambda: defaultdict(lambda : 'garbage')) # stores all information of for loops (lower, upper , scope, body, ptr)
         self._count = 0
         self._worst_case = 0
+    '''adds loop to jam table given the loop revelant info'''
     def add(self, lower, upper, inc ,scope, sub_tree):
         body = sub_tree[2]
         self._flag = 0
@@ -335,7 +335,6 @@ def find_id(ind, end, lis, res=dict()):
 
 '''find_lhs_id() ------> scans for variables on lhs of '=' '''
 def find_lhs_id(ind,end,lis):
-    # print("In 5 case ...words of mini boss bennur", )
     if(ind==end):
         return []
     elif(type(lis[ind])==list and len(lis[ind])==3 and type(lis[ind][1])==str and re.search(r'=',lis[ind][1])):
@@ -381,7 +380,6 @@ def gen_check(worst_case):
     final_condition = ''
     if(worst_case):
         ''' have to change this later '''
-        # fn_hash = secrets.token_hex(nbytes=6
         fn_hash = ''
 
         fn_dec = 'int' + ' check_overlap' + fn_hash + '(int x1, int y1, int x2, int y2) {'
