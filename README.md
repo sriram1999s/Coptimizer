@@ -3,7 +3,9 @@
 >**NOTE :** Combinations of optimizations do not work currently due to implementation issues.
 
 ## Optimizations
-> The optimizations are goverened by Jon Bentley's rules for optimizing work. Find the link to a pdf explaining the rules [here](#http://progforperf.github.io/Bentley_Rules.pdf) 
+> The optimizations are goverened by Jon Bentley's rules for optimizing work.
+
+Find the link to a pdf explaining the rules [here](#http://progforperf.github.io/Bentley_Rules.pdf) 
 
   - Function Inlining
   - Loop Unrolling
