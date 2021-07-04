@@ -90,3 +90,9 @@ Is a graphical user interface provided by the Coptimizer server
 Find the link for the demonstration [here](https://www.youtube.com/watch?v=Oyf43YoXJuI)
 
 ![User Interface 1](https://github.com/sriram1999s/Coptimizer/blob/main/images/UI1.png)
+
+![User Interface 2](https://github.com/sriram1999s/Coptimizer/blob/main/images/UI2.png)
+
+![User Interface 3](https://github.com/sriram1999s/Coptimizer/blob/main/images/UI3.png)
+
+![User Interface 4](https://github.com/sriram1999s/Coptimizer/blob/main/images/UI4.png)
