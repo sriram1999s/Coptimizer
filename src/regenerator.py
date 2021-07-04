@@ -10,6 +10,7 @@ import itertools
 # temp_list2 = []
 
 # ----------------------------------------------fn inliner -----------------------------------------------------------
+'''function inlining recursive handler'''
 def fn_inline_solve(i,n,z,cyc_chk,non_in_fn):
     ##print("cyc_chk1 :",cyc_chk)
     if(i == n):
@@ -150,7 +151,7 @@ def fn_inline_solve(i,n,z,cyc_chk,non_in_fn):
     fn_inline_solve(i+1,len(z),z,cyc_chk,non_in_fn)
 
 # ----------------------------------------------tail-rec-elimination ------------------------------------------------------
-
+'''tail recursion recursive handler'''
 def tail_rec_eli_solve(in_flag1, i,n,z):
     global temp_list2
     if(i == n):
@@ -227,27 +228,34 @@ def tail_rec_eli_solve(in_flag1, i,n,z):
 #                     output_prg += [str(parse_tree[start_index][trav])]
 #         solve(start_index+1, end_index, parse_tree, output_prg)
 
+'''recursive regenerator'''
 def solve(start_index, end_index, parse_tree):
-    # print("in solve : ", start_index, end_index)
     space_list = ['int','float','void','double','bool','char','return','else','if','struct']
-    # space_list = ['return']
+    '''base case when index has reached the end'''
     if(start_index == end_index):
         return []
+    '''continue recursion'''
     elif(parse_tree[start_index]==None):
              return solve(start_index+1, end_index, parse_tree)
+    '''solve for string and continue recursion'''
     elif(type(parse_tree[start_index]) is str):
+            '''space inserted in case the string belongs to space_list'''
             if(start_index+1<end_index and parse_tree[start_index] in space_list and parse_tree[start_index+1]!=' '):
                 output_prg = [parse_tree[start_index], ' ']
             else:
                 output_prg = [parse_tree[start_index]]
             return output_prg + solve(start_index+1, end_index, parse_tree)
+    '''handle appending if element is int and continue recursion'''
     elif(type(parse_tree[start_index]) is int):
         output_prg = [str(parse_tree[start_index])]
         return output_prg + solve(start_index+1, end_index, parse_tree)
+    '''recurse into the sublist if type is list'''
     elif(type(parse_tree[start_index])==list):
         return solve(0, len(parse_tree[start_index]), parse_tree[start_index]) + solve(start_index+1, end_index, parse_tree)
     
 
+
+'''multi threaded solve (Buggy)'''
 def solve_multithread(start_index,end_index,parse_tree):
     workers = 3
     p = Pool(workers)
@@ -256,7 +264,6 @@ def solve_multithread(start_index,end_index,parse_tree):
     output_worker = p.starmap(solve,list(zip(itertools.repeat(0),len_slices,slices)))
     p.close()
     p.join()
-
     output_prg = []
     for output in output_worker:
         output_prg += output
