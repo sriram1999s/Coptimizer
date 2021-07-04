@@ -42,24 +42,24 @@ memory_unoptimized = 0.0
 
 
 
-def parallel_shit():
+def parallel():
     processes = []
     with ThreadPoolExecutor(max_workers=10) as executor:
         for i in range(10):
             processes.append(executor.submit(test_results))
 
     return processes
-    
 
-def normal_shit():
+
+def normal():
     processes = []
     for i in range(10):
         processes.append(test_results())
     return processes
 
-processes = normal_shit()
-#print(processes)               
-for task in processes: 
+processes = normal()
+#print(processes)
+for task in processes:
     time_optimized += task[0]
     time_unoptimized += task[1]
     memory_optimized += task[2]
@@ -97,4 +97,3 @@ print(f"Percent_decrease : {percent_increase}")
 
 
 subprocess.call(["rm -r __pycache__"],shell=True)
-
