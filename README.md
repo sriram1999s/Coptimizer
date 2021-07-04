@@ -5,7 +5,7 @@
 ## Optimizations
 > The optimizations are goverened by Jon Bentley's rules for optimizing work.
 
-Find the link to a pdf explaining the rules [here](#http://progforperf.github.io/Bentley_Rules.pdf) 
+Find the link to a pdf explaining the rules [here](http://progforperf.github.io/Bentley_Rules.pdf) 
 
   - Function Inlining
   - Loop Unrolling
