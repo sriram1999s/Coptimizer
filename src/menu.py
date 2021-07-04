@@ -1,3 +1,4 @@
+''' takes in flags from the UI '''
 class Menu:
     def __init__(self):
         self.FLAG_UNROLL = True
@@ -14,4 +15,6 @@ class Menu:
         self.FLAG_IF_TO_SWITCH = flags["FLAG_IF_TO_SWITCH"]
         self.FLAG_TAIL_RECURSION = flags["FLAG_TAIL_RECURSION"]
         self.FLAG_JAMMING = flags["FLAG_JAMMING"]
+
+''' instantiation '''
 menu = Menu()

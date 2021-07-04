@@ -10,9 +10,11 @@ from parser import *
 from optimizations.stack_match2 import *
 from optimizations.switch import *
 
+''' init lexxer and parser '''
 lexer = lex()
 parser = yacc()
 
+''' reading input '''
 try:
     file = sys.argv[1]
 except :
@@ -20,20 +22,23 @@ except :
 
 dir_path = os.environ['COPTIMIZER_PATH']
 
+''' reading optimizer flags '''
 with open(f"{dir_path}/env/flags.json", "r") as inp:
     flags = json.load(inp)
     menu.set(flags)
 print("flags ", flags)
 #------------------------------------IO handling --------------------------------------------------------------------------
 
-
+''' reading input file '''
 lines = ""
 with open(file) as f:
     for line in f:
         lines += line
     # lines.strip('\n')
-''' pre processing '''
+''' pre-processing '''
 lines = pre_process(lines)
+
+''' parsing '''
 z=parser.parse(lines)
 
 
@@ -50,8 +55,8 @@ if(menu.FLAG_TAIL_RECURSION):
 if(menu.FLAG_INLINE):
     fn_inline_solve(0,len(z),z,cyc_chk,non_in_fn)
 
-print("AST:")
-print(z)
+# print("AST:")
+# print(z)
 print()
 print()
 output_prg = solve(0,len(z),z)
@@ -71,11 +76,12 @@ output_prg = com_init.make_compile_inits(menu.FLAG_COMPILE_INIT,output_prg)
 ''' post processing '''
 output_prg = post_process(output_prg)
 
-
+''' writing output to temporary file '''
 with open("temp.c","w+") as f :
     f.write(output_prg)
 # print("z_new", z_new)
 
+''' printing to stdout '''
 print("generated code")
 print(output_prg)
 

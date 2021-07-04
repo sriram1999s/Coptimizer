@@ -9,11 +9,6 @@ from collections import defaultdict
 from pprint import pprint
 # --------------------------------parser------------------------------------ #
 
-# defining precedence of operators
-# precedence = (
-#     ('left', 'PLUS', 'MINUS'),
-#     ('left', 'MULTIPLY', 'DIVIDE')
-# )
 
 # start = 'start'
 count_for=0
@@ -21,6 +16,7 @@ prev_count_for=0
 
 # TODO : Macros, ternary op a>b?1:0 , typedef
 
+''' start symbol of grammar '''
 def p_start(p):
     '''
     start : multiple_statements
@@ -36,7 +32,7 @@ def p_start(p):
     p[0] = p[1]
 
 
-
+''' recursion for several statements '''
 def p_multiple_statements(p):
     '''
     multiple_statements : multiple_statements statement
@@ -44,11 +40,11 @@ def p_multiple_statements(p):
     '''
 
     if(len(p)==3):
-        # print("\n\nmultiple_statements", p[1], p[2])
         p[0] = [p[1]] + [p[2]]
     else:
         p[0] = p[1]
 
+''' single statement '''
 def p_statement(p):
     '''
     statement : open
@@ -56,13 +52,7 @@ def p_statement(p):
     '''
     p[0] = p[1]
 
-# def p_else(p):
-#     '''
-#     else : ELSE
-#     '''
-#     p[0] = 'else'
-
-
+''' open statement '''
 def p_open(p):
     '''
     open : IF condition statement
@@ -72,15 +62,13 @@ def p_open(p):
     '''
     if(len(p)==4):
         p[0] = [p[1], p[2], p[3]]
-        #p[0] = [' ', p[1], p[2], '{', p[3], '}']
         sym_tab.lookahead(0, len(p[3]), p[3])
     else:
         p[0] = [p[1], [p[2], p[3]], p[4], p[5]]
-        #p[0] = [' ', p[1], [p[2], '{', p[3], '}'], p[4], ' ', '{', p[5], '}']
         sym_tab.lookahead(0, len(p[3]), p[3])
         sym_tab.lookahead(0, len(p[5]), p[5])
 
-
+''' keyword for '''
 def p_for(p):
     '''
     for : FOR
@@ -91,6 +79,7 @@ def p_for(p):
     count_for+=1
     p[0] = p[1]
 
+''' closed statement '''
 def p_closed(p):
     '''
     closed : simple
@@ -109,24 +98,22 @@ def p_closed(p):
             print(f"for detected {count_for} {prev_count_for}\n")
             if(True):
                 if(count_for==1 and prev_count_for==0):
+                    ''' check if comile time initialization is possible '''
                     com_init.compile_init_validate(menu.FLAG_COMPILE_INIT,[p[1], p[2], p[3]])
-                    #print("p[3] in for: ", p[3])
                     temp = list(set(list(flatten(p[3]))))
-                    #print("body: ", temp )
                     if(temp.count('{')==1 and temp.count('}')==1 and temp.count(';') and len(temp)==3):
                         p[1] = [None]
                         p[2] = [None]
                         p[3] = [None]
-                    #loop_var_flags = {}
                     nested = False
                 else:
                     nested = True
 
                 if(p[1]!=[None] and p[2]!=[None] and p[3]!=[None]):
 
+                    ''' check loop unrolling is possible '''
                     p[0] = for_unroll_validate(menu.FLAG_UNROLL,menu.FLAG_JAMMING,[p[1], p[2], p[3]], nested)
 
-                    # pprint(loop_var_flags)
                 sym_tab.lookahead(0, len(p[3]), p[3])
                 prev_count_for = count_for
                 count_for-=1
@@ -138,21 +125,19 @@ def p_closed(p):
             sym_tab.lookahead(0, len(p[3]), p[3])
     else:
         p[0] = [p[1],[p[2],p[3]],p[4],p[5]]
-        #p[0] = [' ', p[1], [p[2], '{', p[3], '}'], p[4], ' ', '{', p[5], '}']
         sym_tab.lookahead(0, len(p[3]), p[3])
         sym_tab.lookahead(0, len(p[5]), p[5])
 
-    # if(count_for==1 and prev_count_for==0):
-    #     print("loop_var_flags in parser : ", loop_var_flags)
-    #     loop_var_flags = {}
 
 
+''' conditional '''
 def p_condition(p):
     '''
     condition : L_PAREN expr R_PAREN
     '''
     p[0] = [p[1],p[2],p[3]]
 
+''' for loop conditional '''
 def p_for_condition(p):
     '''
     for_condition : L_PAREN simple simple expr R_PAREN
@@ -164,7 +149,6 @@ def p_for_condition(p):
             find_id(0,len(p[3]), p[3] , ids)
             loop_var = list(ids.keys())[0]
             do_not_sub = find_lhs_id(0, 1, [p[2]])
-            # print("\n\ndo not sub ", p[2] , do_not_sub)
             solve_substi_id(0,len(p[2]),p[2], do_not_sub)
 
         p[0] = [p[1], p[2], p[3], p[4], p[5]]
@@ -172,7 +156,7 @@ def p_for_condition(p):
             condition = list(map(str, flatten(p[3])))
             loop_var = re.search('([A-Za-z_][A-Za-z_0-9]*)', ''.join(condition)).group(1)
             loop_var_flags[loop_var] = True
-
+            ''' determining nesting '''
             init = flatten(p[2])
             for i in init:
                 if i in loop_var_flags and i != loop_var:
@@ -190,6 +174,7 @@ def p_for_condition(p):
     else:
         p[0] = [p[1], p[2], p[3], p[4]]
 
+''' recursion for multiple declarations '''
 def p_multi_declaration(p):
     '''
     multi_declaration : multi_declaration ID COMMA
@@ -209,9 +194,6 @@ def p_multi_declaration(p):
         else:
             p[0]=p[1]+[p[2],p[3]]
     elif(len(p)==5):
-        # if(type(p[1]) != list):
-        #     p[0]=p[1]+[p[2],p[3],p[4]]
-        # else:
         p[0] = [p[1]] + [p[2], p[3], p[4]]
 
     elif(len(p)==6):
@@ -224,7 +206,7 @@ def p_multi_declaration(p):
     else:
         p[0]=[p[1],p[2],p[3],p[4]]
 
-
+''' recursion base '''
 def p_stop(p):
      '''
      stop : ID SEMICOLON
@@ -241,6 +223,7 @@ def p_stop(p):
      else:
          p[0] = [p[1],p[2],p[3],p[4],p[5]]
 
+''' recursion for multiple expressions '''
 def p_multi_expr(p):
     '''
     multi_expr : multi_expr expr COMMA
@@ -251,12 +234,14 @@ def p_multi_expr(p):
     else:
         p[0] = [p[1], p[2]]
 
+''' array indexing '''
 def p_arrayindex(p):
     '''
     arrayindex : L_SQBRACE index R_SQBRACE
     '''
     p[0] = [p[1],p[2],p[3]]
 
+''' recursion for multidimensional indexing '''
 def p_narrayindex(p):
     '''
     narrayindex : narrayindex arrayindex
@@ -267,12 +252,7 @@ def p_narrayindex(p):
     else:
         p[0] = p[1]
 
-# def p_type(p):
-#     '''
-#     type : TYPE
-#     '''
-#     p[0] = p[1]
-
+''' variable declarations '''
 def p_declaration(p):
     '''
     declaration : TYPE ID SEMICOLON
@@ -281,12 +261,12 @@ def p_declaration(p):
 		        | TYPE multi_declaration stop
     			| TYPE ID narrayindex SEMICOLON
     			| TYPE ID narrayindex ASSIGN init_list SEMICOLON
-		| TYPE L_FLOWBRACE multiple_statements R_FLOWBRACE SEMICOLON
-		| TYPEDEF TYPE L_FLOWBRACE multiple_statements R_FLOWBRACE ID SEMICOLON
-		| TYPEDEF TYPE ID SEMICOLON
-
+		        | TYPE L_FLOWBRACE multiple_statements R_FLOWBRACE SEMICOLON
+		        | TYPEDEF TYPE L_FLOWBRACE multiple_statements R_FLOWBRACE ID SEMICOLON
+		        | TYPEDEF TYPE ID SEMICOLON
     '''
 
+    ''' updating symbol table '''
     if(p[2] == "*"):
         search_string = '*' + p[3] + '_'.join(sym_tab.level_str)
         if(p[4] == '='):
@@ -358,9 +338,7 @@ def p_declaration(p):
         p[0] = [p[1], p[2], p[3]]
     if(len(p)==5):
         p[0] = [p[1], p[2], p[3], p[4]]
-        # print(p[3])
         if(type(p[3])==list and p[3][0]=='['):
-            #add_array([p[1], p[2], p[3][0],p[3][1],p[3][2],p[4]])
             com_init.add_array(menu.FLAG_COMPILE_INIT,p[0])
     if(len(p)==6):
         ''' deals with fn calls in declaration '''
@@ -378,7 +356,7 @@ def p_declaration(p):
         p[0] = [p[1], p[2], p[3], p[4], p[5], p[6] , p[7] , p[8]]
 
 
-
+''' array initialization '''
 def p_init(p):
     '''
     init : expr COMMA init
@@ -389,13 +367,13 @@ def p_init(p):
     if(len(p)==2):
         p[0] = p[1]
 
-
+''' array init list '''
 def p_init_list(p):
     '''
     init_list : L_FLOWBRACE init_list R_FLOWBRACE COMMA init_list
     	      | L_FLOWBRACE init R_FLOWBRACE COMMA init_list
-	      | L_FLOWBRACE init R_FLOWBRACE
-	      | L_FLOWBRACE init_list R_FLOWBRACE
+	          | L_FLOWBRACE init R_FLOWBRACE
+	          | L_FLOWBRACE init_list R_FLOWBRACE
     '''
     if(len(p)==6):
         p[0] = [p[1],p[2],p[3],p[4],p[5]]
@@ -410,6 +388,7 @@ def p_index(p):
     if(p[1]!=None):
         p[0] = p[1]
 
+''' code block '''
 def p_block(p):
     '''
     block : left_flower multiple_statements right_flower
@@ -420,6 +399,7 @@ def p_block(p):
     else:
         p[0] = [p[1], p[2]]
 
+''' left flower bracket '''
 def p_left_flower(p):
     '''
     left_flower : L_FLOWBRACE
@@ -428,6 +408,7 @@ def p_left_flower(p):
     sym_tab.level_str.append(sym_tab.level)
     p[0] = p[1]
 
+''' right flower bracket '''
 def p_right_flower(p):
     '''
     right_flower : R_FLOWBRACE
@@ -435,18 +416,9 @@ def p_right_flower(p):
     sym_tab.level_str.pop()
     p[0] = p[1]
 
-# def p_if(p):
-#     '''
-#     if : IF
-#     '''
-#     p[0] = 'if'
 
-# def p_return(p):
-#     '''
-#     return : RETURN
-#     '''
-#     p[0] = 'return'
 
+''' statement without constructs '''
 def p_simple(p):
     '''
     simple : expr SEMICOLON
@@ -462,7 +434,6 @@ def p_simple(p):
     if(len(p)==3):
         p[0] = [p[1],p[2]]
     elif(len(p)==4):
-        # print("p_simpleI :",p[2])
         if(type(p[2]) is list and type(p[2][0]) is tuple and (menu.FLAG_INLINE or menu.FLAG_TAIL_RECURSION)):
             t = p[2][0]
             p[0] = [p[1], t[0], '(',t[1][2], ')',';']
@@ -473,6 +444,7 @@ def p_simple(p):
     else:
         p[0] = p[1]
 
+''' header files are parsed and not preprocessed since they need to be reproduced in the o/p source code '''
 def p_header(p):
     '''
     header : HASH INCLUDE STRING
@@ -484,17 +456,17 @@ def p_empty(p):
     'empty :'
     p[0] = []
 
-
+''' function call expression '''
 def p_function_call(p):
     '''
     function_call : ID L_PAREN call_params R_PAREN
     '''
-    #p[0] = [p[1], p[2], p[3], p[4],';']
     p[0] = [p[1], p[2], p[3], p[4]]
     if(menu.FLAG_INLINE or menu.FLAG_TAIL_RECURSION):
         call_helper(p[0],p[1])
         p[0] = [(p[1],p[0][0 : -1], 'call')]
 
+''' function call parameters '''
 def p_call_params(p):
     '''
     	call_params : empty
@@ -506,35 +478,37 @@ def p_call_params(p):
     elif(len(p) == 2):
         p[0] = p[1]
 
+'''  recursion for call parameters '''
 def p_yes_call_params(p):
     '''
     yes_call_params : yes_call_params expr COMMA
-		    | yes_call_params TYPE COMMA
+		            | yes_call_params TYPE COMMA
 		            | expr COMMA
-			    | TYPE COMMA
+			        | TYPE COMMA
     '''
     if(len(p)==3):
         p[0] = [p[1],p[2]]
     else:
         p[0] = p[1] + [p[2],p[3]]
 
+''' recursion base for call parameters '''
 def p_end_call_params(p):
     '''
     end_call_params : expr
-		    | TYPE
+		            | TYPE
     '''
     p[0] = p[1]
 
 
-
+''' recursion for declaration parameters '''
 def p_yes_dec_params(p):
     '''
     yes_dec_params : yes_dec_params TYPE expr COMMA
-    		   | yes_dec_params TYPE COMMA
+    		       | yes_dec_params TYPE COMMA
                    | yes_dec_params TYPE MULTIPLY COMMA
                    | TYPE expr COMMA
-   		   | TYPE COMMA
-        	   | TYPE MULTIPLY COMMA
+   		           | TYPE COMMA
+        	       | TYPE MULTIPLY COMMA
     '''
     if (len(p) == 5):
         if(type(p[1])==str):
@@ -552,7 +526,7 @@ def p_yes_dec_params(p):
     else:
         p[0] = [p[1],p[2],p[3],p[4],p[5]]
 
-
+''' recursion base for declaration parameters '''
 def p_end_dec_params(p):
     '''
     end_dec_params : TYPE expr
@@ -568,7 +542,7 @@ def p_end_dec_params(p):
     else:
         p[0] = p[1]
 
-
+''' declaration parameters '''
 def p_dec_params(p):
     '''
     dec_params : empty
@@ -580,7 +554,7 @@ def p_dec_params(p):
     elif(len(p)==2):
         p[0] = p[1]
 
-
+''' functions '''
 def p_function(p):
     '''
     function : TYPE ID L_PAREN dec_params R_PAREN function_2
@@ -598,6 +572,8 @@ def p_function_2(p):
     '''
     p[0]=[p[1]]
 
+
+''' below all expr functions are expression parsing '''
 def p_expr(p):
     '''
     expr : expr assignment exprOR
@@ -605,10 +581,8 @@ def p_expr(p):
     '''
     if(len(p) > 2 and type(p[1])==str):
         search_string = sym_tab.make_level_string(p[1])
-        # print("search_string : ", search_string)
         if(type(p[3])==str and re.search(r'[A-Za-z_][A-Za-z_0-9]*',p[3])):
             if(sym_tab.symbol_table['*' + search_string ] == "garbage" ):
-                # print("here")
                 dynamic_string = sym_tab.make_level_string(p[3])
                 if(sym_tab.symbol_table[dynamic_string]!='garbage' and sym_tab.symbol_table[dynamic_string]!='declared'):
                     sym_tab.symbol_table[search_string] = sym_tab.symbol_table[dynamic_string]
@@ -637,14 +611,9 @@ def p_expr(p):
         else:
             sym_tab.symbol_table[search_string] = p[3]
 
-        #for i in sym_tab.symbol_table:
-         #   print(f'{i}---->{sym_tab.symbol_table[i]}')
-
-
         if(sym_tab.symbol_table[search_string]!='garbage' and sym_tab.symbol_table[search_string]!='declared'):
             for var in sym_tab.symbol_table:
                 if(sym_tab.symbol_table[var]==p[1]):
-                    #print(var,sym_tab.symbol_table[search_string])
                     sym_tab.symbol_table[var] = sym_tab.symbol_table[search_string]
 
         if(sym_tab.symbol_table['*'+search_string]!='garbage' and sym_tab.symbol_table['*'+search_string]!='declared'):
@@ -761,6 +730,7 @@ def p_relop(p):
           | GT
     '''
     p[0] = p[1]
+
 def p_exprSHIFT(p):
     '''
     exprSHIFT : exprSHIFT L_SHIFT exprOP
@@ -783,6 +753,7 @@ def p_exprOP(p):
     else :
         p[0] = p[1]
 
+''' still expressions '''
 def p_term(p):
     '''
     term : term MULTIPLY factor
@@ -795,6 +766,7 @@ def p_term(p):
     else :
         p[0] = p[1]
 
+''' still expressions '''
 def p_factor(p):
     '''
     factor : NOT factor
@@ -803,7 +775,7 @@ def p_factor(p):
            | PLUS_PLUS factor
            | MINUS_MINUS factor
            | cast brace
-	   | brace
+	       | brace
     '''
     if(len(p)==3):
         if(p[1]=='++' or p[1]=='--'):
@@ -814,7 +786,6 @@ def p_factor(p):
                 var_dict = {}
                 find_id(0,len(p[2]),p[2],var_dict)
                 var =list(var_dict.keys())[0]
-                #print("rhs: ",p[2],p[2][-1],sym_tab.symbol_table[sym_tab.make_level_string('*'+var)])
                 sym_tab.symbol_table[sym_tab.make_level_string(sym_tab.symbol_table[sym_tab.make_level_string('*'+var)])] = 'declared'
                 p[0] = [p[1], p[2]]
         elif(p[1] == '-' and type(p[2])!=list and type(p[2])!=str):
@@ -824,17 +795,18 @@ def p_factor(p):
     else :
         p[0] = p[1]
 
-
+''' type casting '''
 def p_cast(p):
     '''
     cast : L_PAREN TYPE R_PAREN
-	 | L_PAREN TYPE MULTIPLY R_PAREN
+	     | L_PAREN TYPE MULTIPLY R_PAREN
     '''
     if(len(p)==4):
         p[0] = [p[1],p[2],p[3]]
     elif(len(p)==5):
         p[0] = [p[1],p[2],p[3],p[4]]
 
+''' expression base '''
 def p_brace(p):
     '''
     brace  : L_PAREN expr R_PAREN
@@ -844,13 +816,13 @@ def p_brace(p):
            | STRING
            | MULTIPLY ID
            | BIT_AND ID
-	   | BIT_AND ID narrayindex
+	       | BIT_AND ID narrayindex
            | ID
     	   | CHAR
            | function_call
     	   | ID narrayindex
-	   | arrow
-	   | dot
+	       | arrow
+	       | dot
 
     '''
     if(len(p)==4):
@@ -879,20 +851,21 @@ def p_brace(p):
             del(t)
         p[0] = p[1]
 
-
+''' arrow dereference '''
 def p_arrow(p):
     '''
     arrow : ID ARROW ID
     '''
     p[0] = [p[1],p[2],p[3]]
 
+''' dot dereference '''
 def p_dot(p):
     '''
     dot : ID DOT ID
     '''
     p[0] = [p[1],p[2],p[3]]
 
-
+''' number literals '''
 def p_NUM(p):
     '''
     NUM : INT_NUM
@@ -903,7 +876,7 @@ def p_NUM(p):
 def p_error(p):
     print(f"an error occurred ::: token {p} , char {p.value}")
 
-
+''' flattening function to flatten nested loops '''
 def flatten(L):
     for l in L:
         if isinstance(l, list):
