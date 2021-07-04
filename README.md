@@ -5,7 +5,7 @@
 ## Optimizations
 > The optimizations are goverened by Jon Bentley's rules for optimizing work.
 
-Find the link to a pdf explaining the rules [here](http://progforperf.github.io/Bentley_Rules.pdf) 
+Find the link to a pdf explaining the rules [here](http://progforperf.github.io/Bentley_Rules.pdf)
 
   - Function Inlining
   - Loop Unrolling
@@ -37,6 +37,23 @@ Is a software tool with command line interface
 2. Run the install script (install.sh)
 3. add this to your shell config file : ```export PATH=$PATH":<enter-path-to-directory>/env```
 4. add this to your shell config file : ```export COPTIMIZER_PATH="<enter-path-to-directory>"```
+
+To verify installation type:
+```sh
+Coptimizer help
+```
+
+The output should look like this:
+```sh
+
+Welcome to the command line Coptimizer....🔥
+
+Usage sf ➡️  Coptimizer sf [FLAGS]
+Usage ox ➡️  Coptimizer ox [PATH]
+sf [options] ➡️  setflags in from this pool [UNROLL,COMPILE_INIT,INLINE,IF_TO_SWITCH,TAIL_RECURSION,JAMMING]
+ox [PATH] ➡️  optimize file in given path and create output.c file in same path
+
+```
 
 ## Usage
 
