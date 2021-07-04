@@ -3,6 +3,8 @@
 >**NOTE :** Combinations of optimizations do not work currently due to implementation issues.
 
 ## Optimizations
+> The optimizations are goverened by Jon Bentley's rules for optimizing work. Find the link to a pdf explaining the rules [here](#http://progforperf.github.io/Bentley_Rules.pdf) 
+
   - Function Inlining
   - Loop Unrolling
   - Combining Tests(If-Else to Switch)
@@ -32,7 +34,7 @@ Is a software tool with command line interface
 1. Clone the repository
 2. Run the install script (install.sh)
 3. add this to your shell config file : ```export PATH=$PATH":<enter-path-to-directory>/env```
-4. add this to your shell config file : ```export COPTIMIZER_PATH="<enter-path-to-directory>"``` 
+4. add this to your shell config file : ```export COPTIMIZER_PATH="<enter-path-to-directory>"```
 
 ## Usage
 
