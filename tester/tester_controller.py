@@ -10,9 +10,9 @@ def test_results():
         f.write(profile(sys.argv[1]))
 
     subprocess.call(["gcc","profile_temp.c"])
-    subprocess.call(["./a.out < inp > unop_output"],shell=True)
+    subprocess.call(["./a.out < inp.txt > ../Front_End_Code/unop_output.txt"],shell=True)
 
-    with open("profile","r") as prof:
+    with open("profile.txt","r") as prof:
         string = prof.read().split('\n')
         memory_unoptimized = float(string[0])
         time_unoptimized = float(string[1])
@@ -21,9 +21,9 @@ def test_results():
         f.write(profile(sys.argv[2]))
 
     subprocess.call(["gcc","profile_temp.c"])
-    subprocess.call(["./a.out < inp > op_output"],shell=True)
+    subprocess.call(["./a.out < inp.txt > ../Front_End_Code/op_output.txt"],shell=True)
 
-    with open("profile","r") as prof:
+    with open("profile.txt","r") as prof:
         string = prof.read().split('\n')
         memory_optimized = float(string[0])
         time_optimized = float(string[1])
@@ -49,7 +49,7 @@ def parallel_shit():
             processes.append(executor.submit(test_results))
 
     return processes
-    
+
 
 def normal_shit():
     processes = []
@@ -58,8 +58,8 @@ def normal_shit():
     return processes
 
 processes = normal_shit()
-#print(processes)               
-for task in processes: 
+#print(processes)
+for task in processes:
     time_optimized += task[0]
     time_unoptimized += task[1]
     memory_optimized += task[2]
@@ -76,12 +76,18 @@ memory_unoptimized = memory_unoptimized/10
 time_diff = time_unoptimized - time_optimized
 percent_increase = (time_diff / time_unoptimized) * 100
 
-print(f"Unoptimized execution time : {time_unoptimized} sec")
-print(f"optimized execution time : {time_optimized} sec")
-print(f"Time_difference : {time_diff} sec")
-print(f"Percent_decrease : {percent_increase}")
 
-print("\n\n-------------------------------------------------------------------------------------\n\n")
+json_out = "{";
+json_out += "\"unop_time\" : \"" + str(time_unoptimized) + " sec\","
+json_out += "\"op_time\" : \"" + str(time_optimized) + " sec\","
+json_out += "\"time_diff\" : \"" + str(time_diff) + " sec\","
+json_out += "\"p_dec_t\" : \"" + str(percent_increase_t) + " %\","
+# print(f"Unoptimized execution time : {time_unoptimized} sec")
+# print(f"optimized execution time : {time_optimized} sec")
+# print(f"Time_difference : {time_diff} sec")
+# print(f"Percent_decrease : {percent_increase}")
+#
+# print("\n\n-------------------------------------------------------------------------------------\n\n")
 
 
 # Memory stuff
@@ -90,11 +96,15 @@ memory_diff = memory_unoptimized-memory_optimized
 percent_increase = (memory_diff/memory_unoptimized)*100
 
 
-print(f"unoptimized memory usage : {memory_unoptimized} kB")
-print(f"optimized memory usage : {memory_optimized} kB")
-print(f"memory_difference : {memory_diff} kB")
-print(f"Percent_decrease : {percent_increase}")
+json_out += "\"unop_mem\" : \"" + str(memory_unoptimized) + " kB\","
+json_out += "\"op_mem\" : \"" + str(memory_optimized) + " kB\","
+json_out += "\"mem_diff\" : \"" + str(memory_diff) + " kB\","
+json_out += "\"p_dec_m\" : \"" + str(percent_increase_m) + " %\""
+json_out += "}";
+# print(f"unoptimized memory usage : {memory_unoptimized} kB")
+# print(f"optimized memory usage : {memory_optimized} kB")
+# print(f"memory_difference : {memory_diff} kB")
+# print(f"Percent_decrease : {percent_increase}")
 
 
 subprocess.call(["rm -r __pycache__"],shell=True)
-

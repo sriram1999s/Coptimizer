@@ -1,0 +1,17 @@
+<?php
+  extract($_POST);
+  $myfile = fopen("inp.txt", "w") or die("Unable to open the file : 'inp' !");
+  fwrite($myfile, $inp_code);
+
+  $shell_command = "/usr/local/bin/python3.8 ../tester/tester_controller.py testfile.c ../env/output.c > met_op.txt";
+  exec($shell_command);
+
+  $unop = file_get_contents("unop_output.txt");
+  $op = file_get_contents("op_output.txt");
+  $met = file_get_contents("met_op.txt");
+  $ret_array = array("unop_output" => $unop, "op_output" => $op, "met_op" => $met);
+
+  fclose($myfile);
+
+  echo json_encode($ret_array);
+ ?>

@@ -1,0 +1,1 @@
+{"unop_time" : "3.6e-05 sec","op_time" : "2.5e-05 sec","time_diff" : "1.1e-05 sec","p_dec_t" : "30.555555555555554 %","unop_mem" : "798720.0 kB","op_mem" : "778240.0 kB","mem_diff" : "20480.0 kB","p_dec_m" : "2.564102564102564 %"}
