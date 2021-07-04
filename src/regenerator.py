@@ -190,10 +190,10 @@ def solve(start_index, end_index, parse_tree):
     '''base case when index has reached the end'''
     if(start_index == end_index):
         return []
-    '''continue recursion'''
+        '''continue recursion'''
     elif(parse_tree[start_index]==None):
              return solve(start_index+1, end_index, parse_tree)
-    '''solve for string and continue recursion'''
+             '''solve for string and continue recursion'''
     elif(type(parse_tree[start_index]) is str):
             '''space inserted in case the string belongs to space_list'''
             if(start_index+1<end_index and parse_tree[start_index] in space_list and parse_tree[start_index+1]!=' '):
@@ -201,12 +201,12 @@ def solve(start_index, end_index, parse_tree):
             else:
                 output_prg = [parse_tree[start_index]]
             return output_prg + solve(start_index+1, end_index, parse_tree)
-    '''handle appending if element is int and continue recursion'''
+            '''handle appending if element is int and continue recursion'''
     elif(type(parse_tree[start_index]) is int):
         output_prg = [str(parse_tree[start_index])]
         return output_prg + solve(start_index+1, end_index, parse_tree)
-    '''recurse into the sublist if type is list'''
     elif(type(parse_tree[start_index])==list):
+        '''recurse into the sublist if type is list'''
         return solve(0, len(parse_tree[start_index]), parse_tree[start_index]) + solve(start_index+1, end_index, parse_tree)
 
 
