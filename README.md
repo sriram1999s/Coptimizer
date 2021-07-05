@@ -90,7 +90,7 @@ Is a graphical user interface provided by the Coptimizer server
 ## Server setup
 
 After ```apache``` & ```PHP``` setup use the url to access the interface.
-URL : [localhost/Coptimizer/ui/templates](localhost/Coptimizer/ui/templates)
+URL : [https://localhost/Coptimizer/ui/templates](https://localhost/Coptimizer/ui/templates)
 
 ## Hosted interface
 
