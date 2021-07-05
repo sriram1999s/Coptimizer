@@ -21,3 +21,7 @@ tester/*
 env/flags.json
 env/output.c
 env/check_input
+
+ui/*.txt
+ui/check_input
+ui/flags.json
