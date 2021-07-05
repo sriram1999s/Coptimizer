@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <link rel="stylesheet" href="../statics/style.css">
+  <link rel = "stylesheet" href = "../statics/dropdown.css">
+  <link rel = "stylesheet" href = "../statics/flip_card.css">
+  <link rel = "stylesheet" href = "../statics/p_graph.css">
+  <a href="https://icons8.com/icon/WpGZDK8WoTej/file-download"></a>
+
+<title>C Source Code Optimization</title>
+<style type="text/css" media="screen">
+    #editor
+    {
+        position: absolute;
+        top : 1.5%;
+        border : 1.2px solid #ece8e1;
+        height : 73%;
+    }
+    #output
+    {
+        position: absolute;
+        top : 1.5%;
+        border : 1.2px solid #ece8e1;
+        height : 73%;
+    }
+    .primary
+    {
+      font-weight: bold;
+      position : absolute;
+      display : inline-block;
+      font-weight : bold;
+      left : 20%;
+      top : 2.5%;
+    }
+    .outline
+    {
+      font-weight: bold;
+      position : absolute;
+      display : inline-block;
+      font-weight : bold;
+      left : 35%;
+      top : 2.5%;
+    }
+    #pes_logo
+    {
+      position : absolute;
+      top : 30px;
+      right : 20px;
+      border-left: 6px solid #ff4655;
+    }
+    #pes_logo:hover
+    {
+      cursor : pointer;
+    }
+    #p_logo
+    {
+      position : absolute;
+      top : 26%;
+      left : 20px;
+      cursor : pointer;
+    }
+    #IDE
+    {
+      height : 100%;
+      width : 100%;
+      position : absolute;
+    }
+    label
+    {
+      font-family : Arial;
+      font-size : 18px;
+    }
+    div.selectMultiple > div
+    {
+      height : 47px;
+      overflow-y : auto;
+    }
+    #user_inp_label > a
+    {
+        font-family : Arial;
+        color : white;
+        font-size : 18px;
+        text-decoration: underline;
+    }
+    #user_inp_label > a:hover
+    {
+        cursor : pointer;
+        text-decoration: none;
+    }
+    .span111
+    {
+      overflow: hidden;
+      display: inline-block;
+      vertical-align: middle;
+      width : 45%;
+      height : 80%;
+      position: absolute;
+      left : 27%;
+      top : 10%;
+    }
+    #my-input
+    {
+      outline : None;
+      transform: translateX(-100%);
+      opacity: 1;
+      transition: opacity .25s, transform .25s;
+      resize : None;
+      width : 100%;
+      height : 98%;
+      overflow : auto;
+      font-size: 22px;
+      font-family : Arial;
+      background : #1b1b1b;
+      display : inline-block;
+      color : white;
+      border-radius : 30px;
+      border: 4px solid #1b1b1b;
+      padding : 20px;
+    }
+
+    #my-input.show {
+      transform: translateX(0);
+      opacity: 1;
+    }
+    #my-button
+    {
+      position: absolute;
+      left : 12%;
+      top : 6%
+    }
+
+    #upload
+    {
+      border : 1px solid #ff4655;
+      border-radius : 50px;
+      padding : 5px;
+    }
+    #download
+    {
+      border : 1px solid #ff4655;
+      border-radius : 50px;
+      padding : 5px;
+    }
+    #op_met
+    {
+      position: absolute;
+      top : 3%;
+      left : 2%;
+      height : 10%;
+    }
+
+</style>
+</head>
+<body style = "background : #141411; font-family : Arial; overflow : scroll;">
+  <script src="../statics/dropdown1.js"></script>
+
+  <script>
+    function showInpBox()
+    {
+      document.getElementById('my-input').classList.toggle('show');
+    }
+    // src="https://img.icons8.com/pastel-glyph/64/fa314a/download--v2.png"
+    function mouseOver()
+    {
+      document.getElementById("download").src = "https://img.icons8.com/pastel-glyph/64/ff4655/download--v2.png";
+    }
+    function mouseOut()
+    {
+      document.getElementById("download").src = "https://img.icons8.com/pastel-glyph/64/ffffff/download--v2.png";
+    }
+    function mouseOver1()
+    {
+      document.getElementById("upload").src = "https://img.icons8.com/pastel-glyph/64/ff4655/upload--v2.png";
+    }
+    function mouseOut1()
+    {
+      document.getElementById("upload").src = "https://img.icons8.com/pastel-glyph/64/ffffff/upload--v2.png";
+    }
+  </script>
+
+  <script>
+    function runCode()
+    {
+      var inp_box_contents = document.querySelector(".inp_t_area").value;
+      console.log("inp_box_contents : ",inp_box_contents);
+      $.ajax
+      (
+        {
+          url : "../metrics.php",
+          method : 'POST',
+          data : {inp_code : inp_box_contents},
+          beforeSend : function()
+          {
+            $('#body').hide();
+            $('#loader').show();
+          },
+          success : function(res)
+          {
+            console.log("metrics.php > success > res : ", res);
+            res = JSON.parse(res);
+            console.log("res JSON : ",res);
+            console.log("res.unop_output : ",res.unop_output);
+            $('#div_body').show();
+            document.querySelector('#left_op_term').value = res.unop_output;
+            document.querySelector('#right_op_term').value = res.op_output;
+            // document.querySelector('#back_lbl').textContent = res.met_op;
+            console.log("met_json : ", res);
+            met_json = JSON.parse(res.met_op);
+            document.getElementById('d1_top_1').innerHTML = parseFloat(met_json.unop_time.split(' ')[0]).toFixed(5);
+            document.getElementById('d1_top_2').innerHTML = "Non-Opt. Time in " + met_json.unop_time.split(' ')[1].bold();
+            document.getElementById('d1_bot_1').innerHTML = parseFloat(met_json.unop_mem.split(' ')[0]).toFixed(2);
+            document.getElementById('d1_bot_2').innerHTML = "Non-Opt. Mem. in " + met_json.unop_mem.split(' ')[1].bold();
+
+            document.getElementById('d2_top_1').innerHTML = parseFloat(met_json.op_time.split(' ')[0]).toFixed(5);
+            document.getElementById('d2_top_2').innerHTML = "Opt. Time in " + met_json.op_time.split(' ')[1].bold();
+            document.getElementById('d2_bot_1').innerHTML = parseFloat(met_json.op_mem.split(' ')[0]).toFixed(2);
+            document.getElementById('d2_bot_2').innerHTML = "Opt. Mem. in " + met_json.op_mem.split(' ')[1].bold();
+
+            document.getElementById('d3_top_1').innerHTML = parseFloat(met_json.time_diff.split(' ')[0]).toFixed(5);
+            document.getElementById('d3_top_2').innerHTML = "Time Diff. in " + met_json.time_diff.split(' ')[1].bold();
+            document.getElementById('d3_bot_1').innerHTML = parseFloat(met_json.mem_diff.split(' ')[0]).toFixed(2);
+            document.getElementById('d3_bot_2').innerHTML = "Mem. Diff. in " + met_json.mem_diff.split(' ')[1].bold();
+            // #28a745 : Green
+            // #ff073a : Red
+            document.getElementById('p_time').innerHTML = String(Math.round(parseFloat(met_json.p_dec_t.split(' ')[0]))) + "%";
+            document.getElementById('p_mem').innerHTML = String(Math.round(parseFloat(met_json.p_dec_m.split(' ')[0]))) + "%";
+            if(parseFloat(met_json.p_dec_t.split(' ')[0]) < 0)
+            {
+              document.querySelector('.circular-chart.green .circle').style.stroke = "#ff073a";
+            }
+            else
+            {
+              document.querySelector('.circular-chart.green .circle').style.stroke = "#28a745";
+            }
+
+            if(parseFloat(met_json.p_dec_m.split(' ')[0]) < 0)
+            {
+              document.querySelector('.circular-chart.blue .circle').style.stroke = "#ff073a";
+            }
+            else
+            {
+              document.querySelector('.circular-chart.blue .circle').style.stroke = "#28a745";
+            }
+            document.getElementById('stroke_t').style.strokeDasharray = String(Math.abs(Math.round(parseFloat(met_json.p_dec_t.split(' ')[0])))) + ",100"
+            document.getElementById('stroke_m').style.strokeDasharray = String(Math.abs(Math.round(parseFloat(met_json.p_dec_m.split(' ')[0])))) + ",100"
+          },
+          complete : function()
+          {
+            $('#loader').hide();
+            $('#body').show();
+          },
+          error: function(jqXHR, textStatus, errorThrown)
+          {
+            console.log(textStatus, errorThrown);
+          }
+        }
+      );
+    }
+  </script>
+
+  <div id="loader" class="nfLoader" style = "display : None;"></div>
+  <div id = "body" style = "height : 100%; overflow : scroll;">
+    <script>
+    $(window).load(function()
+    {
+      $("#loader").hide();
+      $("#body").show();
+    });
+    </script>
+
+    <script>
+      function downloadCode()
+      {
+        var output1 = ace.edit("output");
+        var lines = output1.session.doc.getAllLines();
+        var code1 = "";
+        for(var i = 0; i < lines.length; ++i)
+        {
+          code1 = code1 + lines[i] + "\n";
+        }
+        var ele = document.createElement('a');
+        ele.style.display = 'None';
+        ele.setAttribute('href','data:text/plain; charset = utf-8,' + encodeURIComponent(code1));
+        ele.setAttribute('download','opt_output.c');
+        document.body.appendChild(ele);
+        ele.click();
+        document.body.removeChild(ele);
+      }
+      function uploadCode()
+      {
+        //<input type="file" id="file-selector" accept=".c">
+        var input_file = document.createElement('input');
+        input_file.style.display = 'None';
+        input_file.setAttribute('type','file');
+        input_file.setAttribute('accept','.c');
+        document.body.appendChild(input_file);
+        input_file.click();
+        input_file.addEventListener('change', function()
+          {
+              var fr=new FileReader();
+              fr.onload=function()
+              {
+                  console.log("Uploaded file contents : ",fr);
+                  var editor1 = document.getElementById("editor");
+                  var editor2 = ace.edit(editor1);
+                  editor2.session.setValue(fr.result);
+              }
+              fr.readAsText(this.files[0]);
+          })
+        document.body.removeChild(input_file);
+        }
+    </script>
+
+    <script>
+
+      function rotateCard()
+      {
+        var card = document.querySelector('.container22');
+        card.style.webkitTransform = "rotateY(180deg)";
+        card.style.transform = "rotateY(180deg)";
+        setTimeout(() => { $('#p_graph_div').show() }, 1350);
+      }
+
+      function rotateCard1()
+      {
+        var card = document.querySelector('.container22');
+        card.style.transform = "rotateY(0deg)";
+        setTimeout(() => { $('#p_graph_div').hide() }, 1000);
+      }
+    </script>
+
+    <script>
+      function optimizeCode()
+      {
+        $('#inp_btn_').hide();
+        $('#inp_box_').hide();
+        $('#div_body').hide();
+
+        opt_menu_label1 = document.getElementById('opt_menu_label');
+        opt_menu_label1.textContent = "";
+        var select = $('.selectMultiple > div > a > em');
+        if(select.length === 0)
+        {
+          opt_menu_label1.textContent = "Please select optimizations";
+          opt_menu_label1.style.color = "red";
+          return;
+        }
+
+        var menu_obj = {
+          FLAG_UNROLL : false,
+          FLAG_COMPILE_INIT : false,
+          FLAG_INLINE : false,
+          FLAG_IF_TO_SWITCH : false,
+          FLAG_TAIL_RECURSION : false,
+          FLAG_JAMMING : false
+        };
+        for(var i = 0;i < select.length; ++i)
+        {
+          opt_name = select[i].textContent;
+          if(opt_name == "Loop Unrolling") menu_obj.FLAG_UNROLL = true;
+          else if(opt_name == "Compile Time Initialization") menu_obj.FLAG_COMPILE_INIT = true;
+          else if(opt_name == "Function Inlining") menu_obj.FLAG_INLINE = true;
+          else if(opt_name == "if - to - switch") menu_obj.FLAG_IF_TO_SWITCH = true;
+          else if(opt_name == "Tail Recursion Elimination") menu_obj.FLAG_TAIL_RECURSION = true;
+          else menu_obj.FLAG_JAMMING = true;
+        }
+        // console.log("menu_obj : ",menu_obj);
+        var menu_opt_json_str1 = JSON.stringify(menu_obj);
+
+        var editor1 = ace.edit("editor");
+        var lines = editor1.session.doc.getAllLines();
+        var code1 = "";
+        var opt_code = "";
+        for(var i = 0; i < lines.length; ++i)
+        {
+          code1 = code1 + lines[i] + "\n";
+        }
+        $.ajax
+        (
+          {
+            url : "../index.php",
+            method : 'POST',
+            data : {code : code1, menu_opt_json_str : menu_opt_json_str1},
+            beforeSend : function()
+            {
+              $('#body').hide();
+              $('#loader').show();
+            },
+            success : function(res)
+            {
+              console.log(res);
+              res = JSON.parse(res);
+              console.log(res);
+              var op_ele = document.getElementById("output");
+              var op_editor = ace.edit(op_ele);
+              var res1 = '// optimized code\n\n' + res.op;
+              op_editor.session.setValue(res1);
+              inp_json = JSON.parse(res.inp_json);
+
+              $('#user_inp_label').show();
+              $('#download').show();
+              $('#run_btn').show();
+              if(inp_json.keep_inp == 1)
+              {
+                $('#inp_btn_').show();
+                $('#inp_box_').show();
+              }
+            },
+            complete : function()
+            {
+              $('#loader').hide();
+              $('#body').show();
+            },
+            error: function(jqXHR, textStatus, errorThrown)
+            {
+              console.log(textStatus, errorThrown);
+            }
+          }
+        );
+      }
+      function resetCode()
+      {
+        $("#body").hide();
+        $("#loader").show();
+        location.reload();
+      }
+      function goToWebsite()
+      {
+        window.open("http://www.pes.edu/");
+      }
+    </script>
+  <div style = "position: relative; height : 100px;">
+    <img id = "p_logo" src = "../statics/cco_logo1.png" height = "65px" onclick = "resetCode()"></img>
+    <!-- -->
+    <div onclick = "goToWebsite()">
+      <!-- background : #0f1923; -->
+      <img id = "pes_logo" class = "btn" src = "../statics/pes_logo1.png"></img>
+    </div>
+  </div>
+
+
+  <div id = "IDE">
+    <div style = "position : absolute; display : block; top : 1.5%; width : 100%; height: 20%;">
+
+      <div id = "opt_menu_div" style = "position : absolute;  display : block; top : 18%; left : 1.5%; z-index : 2;">
+        <select id = "opt_menu" multiple data-placeholder="Choose Optimizations">
+          <option disabled id = 'LU' value = 'LU_'>Loop Unrolling</option>
+          <option id = 'CTI' value = 'CTI_'>Compile Time Initialization</option>
+          <option id = 'FI' value = 'FI_'>Function Inlining</option>
+          <option id = 'IS' value = 'IS_'>if - to - switch</option>
+          <option id = 'TRE' value = 'TRE_'>Tail Recursion Elimination</option>
+          <option id = 'LJ' value = 'LJ_'>Loop Jamming</option>
+        </select>
+        <label id = "opt_menu_label" style = "font-family : Arial; position : relative; top : 10px; left : 10px;"></label>
+      </div>
+
+      <button class="primary" type="button" onclick = "optimizeCode()">
+            <div class="label">
+              <span class="hover-effect"></span>
+              <span class="label-text">Optimize</span>
+            </div>
+      </button>
+      <button class="outline" type="button" onclick = "resetCode()">
+            <div class="label">
+              <span class="hover-effect"></span>
+              <span class="label-text">Reset</span>
+            </div>
+      </button>
+      <img id = "upload" title = "Upload Code" onmouseover = "mouseOver1()"  onmouseout = "mouseOut1()" onclick = "uploadCode()" style = "cursor : pointer; position : absolute; top : 26%; left : 47.5%; height : 30px; width : 30px;" src="https://img.icons8.com/pastel-glyph/64/ffffff/upload--v2.png"/>
+
+      <img id = "download" title = "Download Code" onmouseover = "mouseOver()"  onmouseout = "mouseOut()" onclick = "downloadCode()" style = "display : None; cursor : pointer; position : absolute; top : 26%; right : 2.5%; height : 30px; width : 30px;" src="https://img.icons8.com/pastel-glyph/64/ffffff/download--v2.png"/>
+      <!-- <img src="https://img.icons8.com/pastel-glyph/64/fa314a/download--v2.png"/> -->
+  </div>
+    <div ondrop = "dropHandler(event);" ondragleave = "dragLeave(event);" ondragover = "dragOver(event);" id="editor" style = 'float : left; width: 47.5%; font-size : 18px; top: 21%; left : 1.5%; z-index : 1;'>
+    </div>
+
+    <div id="output" style = 'float : right; width: 47.5%; font-size : 18px; top: 21%; right:1.5%'>
+    </div>
+  <script>
+    function dragOver(event)
+    {
+      event.preventDefault();
+      document.getElementById('editor').style.border = '5px solid white';
+      document.getElementById('editor').style.borderStyle = 'dashed';
+    }
+
+    function dragLeave(event)
+    {
+      document.getElementById('editor').style.border = '1.2px solid white';
+    }
+
+    function dropHandler(ev)
+    {
+      ev.preventDefault();
+      var fr=new FileReader();
+      if (ev.dataTransfer.items)
+      {
+        if (ev.dataTransfer.items[0].kind === 'file')
+        {
+          var file = ev.dataTransfer.items[0].getAsFile();
+          if(file.name.slice(-2) === ".c")
+          {
+            fr.readAsText(file);
+          }
+          console.log('dragged_file_name = ', file.name);
+        }
+      }
+      else
+      {
+        if(ev.dataTransfer.files[0].name.slice(-2) === ".c")
+        {
+          fr.readAsText(ev.dataTransfer.files[0]);
+        }
+        console.log('dragged_file_name = ' + ev.dataTransfer.files[0].name);
+      }
+      fr.onload=function()
+      {
+          console.log("Dragged file contents : ",fr.result);
+          var editor1 = document.getElementById("editor");
+          var editor2 = ace.edit(editor1);
+          editor2.session.setValue(fr.result);
+      }
+      document.getElementById('editor').style.border = '1.2px solid white';
+    }
+  </script>
+
+  <div id = "user_inp_label" style = "position : absolute; height : 40%; width : 100%; top : 95%; display : none;">
+
+      <div id = "run_btn" style = "position : absolute; width : 8%; top : 10% ; left : 2%;" onclick = "runCode()">
+        <div>
+          <button class="btn btn--light">
+            <span class="btn__inner">
+              <span class="btn__slide"></span>
+              <span class="btn__content">Run</span>
+            </span>
+          </button>
+        </div>
+      </div>
+      <button id = "inp_btn_" style = "display: None; left : 11%" class="primary" type="button" id="my-button" onclick="showInpBox()">
+            <div class="label">
+              <span class="hover-effect"></span>
+              <span class="label-text">Input</span>
+            </div>
+      </button>
+      <span id = "inp_box_" style = "display: None;" class="span111"><textarea class = "inp_t_area" line-height = 1.8 spellcheck = "false" autofocus placeholder = "> // type your input here..." id="my-input"></textarea></span>
+  </div>
+  <script src="../statics/ace.js" type="text/javascript" charset="utf-8"></script>
+  <script src="../statics/ext-language_tools.js" type="text/javascript" charset="utf-8"></script>
+  <script>
+      var editor = ace.edit("editor");
+      editor.setTheme("ace/theme/monokai");
+      editor.session.setMode("ace/mode/c_cpp");
+      editor.setOptions({
+      enableBasicAutocompletion: true,
+      enableLiveAutocompletion: true
+      });
+
+      var output = ace.edit("output");
+      output.setTheme("ace/theme/monokai");
+      output.session.setMode("ace/mode/c_cpp");
+      output.setOptions({
+      enableBasicAutocompletion: true,
+      enableLiveAutocompletion: true
+      });
+  </script>
+  </div>
+
+  <!-- <h2 id = "op_met"> Outputs and Metrics </h2> -->
+
+  <div id = "div_body" style = "position : absolute; background : #141411 ;position : absolute; top : 150%; display: none; width: 97%;  height : 80%; left : 1.5%;">
+  <div class="container22" style = "position : absolute; display: block; top : 10%; width: 100%;  height : 100%; left : 0;">
+	<div class="front side" style = "position : absolute; display: block; width: 100%;  height : 100%; left : 0;">
+		<div class="content" style = "position : absolute; top : 0; display: block; width: 100%;  height : 100%; left : 0;">
+      <img src = "../statics/op_met.png" id = op_met></img>
+      <div id = "op_terminal" style = "position : absolute; width : 100%; height : 83%; top : 12%; left : 0;">
+                   <div class="cmd" style = "display: block; float : left; width: 47.5%; left : 1.5%; height : 80%; top : 5%">
+                      <div class="title-bar" style = "font-family : Arial; font-size : 18px;">ubuntu@ubuntu: ~CCodeOptimizer (Non-Optimized Output)</div>
+                        <div class="tool-bar">
+                           <ul style = "font-family : Arial; font-size : 18px;">
+                             <li><a>File</a></li>
+                             <li><a>Edit</a></li>
+                             <li><a>View</a></li>
+                             <li><a>Search</a></li>
+                           </ul>
+                         </div>
+                            <textarea id = "left_op_term" spellcheck = "false" style = "font-family : Arial; font-size : 18px;" class="textarea"></textarea>
+                          </div>
+
+                          <div class="cmd" style = "display: block; float : right; width: 47.5%; right : 1.5%; height : 80%; top : 5%;">
+                            <div class="title-bar" style = "font-family : Arial; font-size : 18px;">ubuntu@ubuntu: ~CCodeOptimizer (Optimized Output)</div>
+                            <div class="tool-bar">
+                              <ul style = "font-family : Arial; font-size : 18px;">
+                                <li><a>File</a></li>
+                                <li><a>Edit</a></li>
+                                <li><a>View</a></li>
+                                <li><a>Search</a></li>
+                              </ul>
+                            </div>
+                            <textarea id = "right_op_term" spellcheck = "false" style = "font-family : Arial; font-size : 18px;" class="textarea"></textarea>
+                          </div>
+      </div>
+      <a class = "met_card"  onmouseover="this.style.color = 'white'" onmouseout="this.style.color = '#1488cc'" onclick = "rotateCard()" style = "color : #1488cc; position : absolute; bottom : 2%; left : 46.5%;">View Metrics</a>
+		</div>
+	</div>
+
+	<div class="back side" style = "position : absolute; display: block; width: 100%; height : 100%; left : 0;">
+		<div class="content" style = "position : absolute; display: block; width: 100%; height : 100%; left : 0;">
+      <!-- <label id = "back_lbl" style = "white-space : pre-line; position : absolute; width : 45%; height : 92%; top : 2%; left : 2%;"></label> -->
+      <div style = "position : absolute; width : 24%; height : 92%; top : 2%; left : 2%;">
+        <div style = "border-radius : 30px; position : absolute; height : 40%; right : 2%; top : 6%; left : 2%; background : rgba(255,7,58,.12549019607843137);">
+          <label style = "font-size: 35px; color : #ff073a; position : absolute; top:35%; left:10%;" id = "d1_top_1"></label>
+          <label style = "font-size: 22px; color : rgba(255,7,58,0.6); position : absolute; top : 55%; left:10%;" id = "d1_top_2"></label>
+        </div>
+        <div style = "border-radius : 30px; position : absolute; height : 40%; right : 2%; bottom : 6%; left : 2%; background : rgba(255,7,58,.12549019607843137);">
+          <label style = "font-size: 35px; color : #ff073a; position : absolute; top:35%; left:10%;" id = "d1_bot_1"></label>
+          <label style = "font-size: 22px; color : rgba(255,7,58,0.6); position : absolute; top : 55%; left:10%;" id = "d1_bot_2"></label>
+        </div>
+      </div>
+
+      <div style = "position : absolute; width : 24%; height : 92%; top : 2%; left : 26%;">
+        <div style = "border-radius: 30px; position : absolute; height : 40%; right : 2%; top : 6%; left : 2%; background : rgba(0,123,255,0.06274509803921569);">
+          <label style = "font-size: 35px; color: #007bff; position : absolute; top:35%; left:10%;" id = "d2_top_1"></label>
+          <label style = "font-size: 22px; color: rgba(0,123,255,0.6); position : absolute; top : 55%; left:10%;" id = "d2_top_2"></label>
+        </div>
+        <div style = "border-radius: 30px; position : absolute; height : 40%; right : 2%; bottom : 6%; left : 2%; background : rgba(0,123,255,0.06274509803921569);">
+          <label style = "font-size: 35px; color: #007bff; position : absolute; top:35%; left:10%;" id = "d2_bot_1"></label>
+          <label style = "font-size: 22px; color: rgba(0,123,255,0.6); position : absolute; top : 55%; left:10%;" id = "d2_bot_2"></label>
+        </div>
+      </div>
+
+      <div style = "position : absolute; width : 24%; height : 92%; top : 2%; left : 50%;">
+        <div style = "border-radius: 30px; position : absolute; height : 40%; right : 2%; top : 6%; left : 2%; background : rgba(32,26,162,.12549019607843137);">
+          <label style = "font-size: 35px; color: #9673b9!important; position : absolute; top : 35%; left:10%;" id = "d3_top_1"></label>
+          <label style = "font-size: 22px; color: rgba(150,115,185,0.7333333333333333)!important; position : absolute; top : 55%; left:10%;" id = "d3_top_2"></label>
+        </div>
+        <div style = "border-radius: 30px; position : absolute; height : 40%; right : 2%; bottom : 6%; left : 2%; background : rgba(32,26,162,.12549019607843137);">
+          <label style = "font-size: 35px; color: #9673b9!important; position : absolute; top : 35%; left:10%;" id = "d3_bot_1"></label>
+          <label style = "font-size: 22px; color: rgba(150,115,185,0.7333333333333333)!important; position : absolute; top : 55%; left:10%;" id = "d3_bot_2"></label>
+        </div>
+      </div>
+
+      <div id = "p_graph_div" style = "display : None; position : absolute; width : 24%; height : 92%; top : 2%; right : 2%;" class="flex-wrapper">
+        <div style = "border-radius: 30px; position : absolute; height : 40%; right : 2%; top : 6%; left : 2%;" class="single-chart">
+          <svg viewBox="0 0 36 36" class="circular-chart green">
+            <path class="circle-bg"
+              d="M18 2.0845
+                a 15.9155 15.9155 0 0 1 0 31.831
+                a 15.9155 15.9155 0 0 1 0 -31.831"
+            />
+            <path id = "stroke_t" class="circle"
+              stroke-dasharray="60,100"
+              d="M18 2.0845
+                a 15.9155 15.9155 0 0 1 0 31.831
+                a 15.9155 15.9155 0 0 1 0 -31.831"
+            />
+            <text id = "p_time" x="18" y="20.35" class="percentage">60%</text>
+          </svg>
+        </div>
+        <label style = "position: absolute; top : 46%; left : 22%; font-size : 18px; color : rgb(0,123,255);">better time</label>
+ <!-- background : rgba(219,85,129,.12549019607843137); -->
+        <div style = "border-radius: 30px; position : absolute; height : 40%; right : 2%; bottom : 6%; left : 2%;" class="single-chart">
+          <svg viewBox="0 0 36 36" class="circular-chart blue">
+            <path class="circle-bg"
+              d="M18 2.0845
+                a 15.9155 15.9155 0 0 1 0 31.831
+                a 15.9155 15.9155 0 0 1 0 -31.831"
+            />
+            <path id = "stroke_m" class="circle"
+              stroke-dasharray="90,100"
+              d="M18 2.0845
+                a 15.9155 15.9155 0 0 1 0 31.831
+                a 15.9155 15.9155 0 0 1 0 -31.831"
+            />
+            <text id = "p_mem" x="18" y="20.35" class="percentage">90%</text>
+          </svg>
+        </div>
+        <label style = "position: absolute; left : 22%; bottom : 3%; font-size : 18px; color : rgb(0,123,255);">better mem.</label>
+      </div>
+      <a class = "met_card" onmouseover="this.style.color = 'white'" onmouseout="this.style.color = '#1488cc'" onclick = "rotateCard1()" style = "color : #1488cc; position : absolute; bottom : 2%; left : 47.5%; ">Back</a>
+		</div>
+	</div>
+
+</div>
+</div>
+
+</body>
+</html>
