@@ -83,11 +83,25 @@ Optimizes input source code. Outputs processed source code to stdout and stores 
 Coptimizer ox <path to file>
 ```
 
-# GUI
+# Graphical User Interface
 
 Is a graphical user interface provided by the Coptimizer server
 
+## Server setup
+
+After ```apache``` & ```PHP``` setup use the url to access the interface.
+URL : [localhost/Coptimizer/ui/templates](localhost/Coptimizer/ui/templates)
+
+## Hosted interface
+
+```cpp
+cout << "Yet to Host! \n";
+```
+
+## Demonstration
+
 Find the link for the demonstration [here](https://www.youtube.com/watch?v=Oyf43YoXJuI)
+
 
 ![User Interface 1](https://github.com/sriram1999s/Coptimizer/blob/main/images/UI1.png)
 
