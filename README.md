@@ -35,10 +35,10 @@ Is a software tool with command line interface
 
 1. Clone the repository
 2. Run the install script (install.sh)
-3. add this to your shell config file : ```export PATH=$PATH":<enter-path-to-directory>/env```
-4. add this to your shell config file : ```export COPTIMIZER_PATH="<enter-path-to-directory>"```
+3. Add this to your shell config file : ```export PATH=$PATH":<enter-path-to-directory>/env```
+4. Add this to your shell config file : ```export COPTIMIZER_PATH="<enter-path-to-directory>"```
 
-To verify installation type:
+To verify installation :
 ```sh
 Coptimizer help
 ```
