@@ -45,10 +45,10 @@ def initialize_dict_num_chain_pos():
         dict_num_chain_pos[i1] = [0, 0]
 
 
- ''' Function to convert to switch case
- Starts with a new empty list. 
- Loops through the parse tree and adds elements from the old list to the new, replacing/adding elements for switch case(s) where necessary.
- '''
+''' Function to convert to switch case
+Starts with a new empty list. 
+Loops through the parse tree and adds elements from the old list to the new, replacing/adding elements for switch case(s) where necessary.
+'''
 def make_switch(OPTIMIZE, z):
     if not OPTIMIZE:
         return
