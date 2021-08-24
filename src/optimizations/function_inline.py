@@ -92,24 +92,31 @@ def create_defn_obj(parsed_list, inline_flag1):
     fn_defn_obj_list.append(obj)
 
 def call_helper(parsed_list,fn_name):
+    print("Call helper called ", fn_name)
     length = len(parsed_list)
     if(length == 6):
+        print("\n\n1\n\n")
         if(parsed_list[0] == 'return'):
+            print("\n\n1.1\n\n")
             l1 = copy.deepcopy(parsed_list)
             fn_call_list.append((fn_name , l1[1:] , "call" , "ret" , "ret" , "return"))
             create_call_obj(l1[1:] , fn_name)
         else :
+            print("\n\n1.2\n\n")
             l1 = copy.deepcopy(parsed_list[2:])
             fn_call_list.append((fn_name , l1 , "call" , parsed_list[0]))
             create_call_obj(l1,fn_name)
 
     elif(length == 8):
+        print("\n\n2\n\n")
         l1 = copy.deepcopy(parsed_list[3:])
         fn_call_list.append((fn_name , l1 , "call" , parsed_list[0] , parsed_list[1]))
         create_call_obj(l1,fn_name)
 
     elif(length == 5):
+        print("\n\n3\n\n")
         l1 = copy.deepcopy(parsed_list[0 : -1])
+        print("call_helper : ", (fn_name,l1, "call"))
         fn_call_list.append((fn_name,l1, "call"))
         create_call_obj(l1,fn_name)
     #print("fn_call_list : ", fn_call_list)
