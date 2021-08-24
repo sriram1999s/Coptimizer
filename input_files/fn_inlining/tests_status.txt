@@ -1,0 +1,10 @@
+Passing:
+*
+~t18.c
+~t30.c
+~t31.c
+
+Failing:
+t18.c
+t30.c
+t31.c
