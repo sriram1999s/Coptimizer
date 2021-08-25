@@ -1,3 +1,5 @@
+import re
+
 from lexer_file import *
 from ply.yacc import yacc
 from menu import *
@@ -7,6 +9,9 @@ from symboltable import *
 from compile_time_init import *
 from collections import defaultdict
 from pprint import pprint
+
+from sentinel_array import *
+aim = ''
 # --------------------------------parser------------------------------------ #
 
 # defining precedence of operators
@@ -74,6 +79,10 @@ def p_open(p):
         p[0] = [p[1], p[2], p[3]]
         #p[0] = [' ', p[1], p[2], '{', p[3], '}']
         sym_tab.lookahead(0, len(p[3]), p[3])
+
+        if p[1]=='while':
+            p[0] = handle_sentinel(p[0], aim)
+
     else:
         p[0] = [p[1], [p[2], p[3]], p[4], p[5]]
         #p[0] = [' ', p[1], [p[2], '{', p[3], '}'], p[4], ' ', '{', p[5], '}']
@@ -136,6 +145,12 @@ def p_closed(p):
             print("while detected\n")
             p[0] = [p[1], p[2], p[3]]
             sym_tab.lookahead(0, len(p[3]), p[3])
+
+            if p[1] == 'while':
+                # print('while in parser')
+                p[0] = handle_sentinel(p[0], aim)
+                print('p[0]', p[0])
+
     else:
         p[0] = [p[1],[p[2],p[3]],p[4],p[5]]
         #p[0] = [' ', p[1], [p[2], '{', p[3], '}'], p[4], ' ', '{', p[5], '}']
@@ -214,13 +229,21 @@ def p_multi_declaration(p):
         # else:
         p[0] = [p[1]] + [p[2], p[3], p[4]]
 
+        compare_and_set_alias(p[1], p[3])
+
     elif(len(p)==6):
         if(p[1] == '*'):
             p[0] = [p[1],p[2],p[3],p[4],p[5]]
         else:
             p[0]=p[1]+[p[2],p[3],p[4],p[5]]
+
+        compare_and_set_alias(p[2], p[4])
+
     elif(len(p)==7):
         p[0]=p[1]+[p[2],p[3],p[4],p[5],p[6]]
+
+        compare_and_set_alias(p[3], p[5])
+
     else:
         p[0]=[p[1],p[2],p[3],p[4]]
 
@@ -238,8 +261,13 @@ def p_stop(p):
          p[0] = [p[1], p[2], p[3]]
      elif(len(p)==5):
          p[0] = [p[1],p[2],p[3],p[4]]
+
+         compare_and_set_alias(p[1], p[3])
+
      else:
          p[0] = [p[1],p[2],p[3],p[4],p[5]]
+
+         compare_and_set_alias(p[2], p[4])
 
 def p_multi_expr(p):
     '''
@@ -362,6 +390,9 @@ def p_declaration(p):
         if(type(p[3])==list and p[3][0]=='['):
             #add_array([p[1], p[2], p[3][0],p[3][1],p[3][2],p[4]])
             com_init.add_array(menu.FLAG_COMPILE_INIT,p[0])
+
+            initialize_arr_obj(p[0], 5)
+
     if(len(p)==6):
         ''' deals with fn calls in declaration '''
         if(type(p[4]) is list and type(p[4][0]) is tuple and (menu.FLAG_INLINE or menu.FLAG_TAIL_RECURSION)):
@@ -374,6 +405,11 @@ def p_declaration(p):
 
     if(len(p)==7):
         p[0] = [p[1], p[2], p[3], p[4], p[5], p[6]]
+
+        initialize_arr_obj(p[0], 7)
+        if type(p[3]) == str:
+            compare_and_set_alias(p[3], p[5])
+
     if(len(p)==9):
         p[0] = [p[1], p[2], p[3], p[4], p[5], p[6] , p[7] , p[8]]
 
@@ -472,6 +508,12 @@ def p_simple(p):
             p[0] = [p[1], p[2], p[3]]
     else:
         p[0] = p[1]
+
+        if type(p[0])==str and p[0].startswith('/* sequential search'):
+            global aim
+            aim = p[0]
+        elif type(p[0])==str and re.compile(r'/\*.*?\*/').search(p[0]):
+            set_filled(p[0])
 
 def p_header(p):
     '''

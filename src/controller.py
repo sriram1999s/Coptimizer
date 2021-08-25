@@ -48,8 +48,8 @@ if(menu.FLAG_TAIL_RECURSION):
 if(menu.FLAG_INLINE):
     fn_inline_solve(0,len(z),z,cyc_chk,non_in_fn)
 
-# print("AST:")
-# print(z)
+print("AST:")
+print(z)
 print()
 print()
 output_prg = solve(0,len(z),z)
