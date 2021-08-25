@@ -4,6 +4,7 @@ import re
 
 temp_list2 = []
 
+''' flattens everything in an iterable except a list '''
 def flatten1(l):
     for el in l:
         if isinstance(el, list) and not isinstance(el, (str, bytes)):
@@ -11,6 +12,7 @@ def flatten1(l):
         else:
             yield el
 
+''' marks those tuples eligible for TRE operation '''
 def mark_tuples(i,n,z,num):
     if(i == n):
         return;
@@ -28,6 +30,7 @@ def mark_tuples(i,n,z,num):
 
     mark_tuples(i + 1,len(z),z,num);
 
+''' reverts the fn call tuples' states from the TRE state '''
 def revert_tuples(i,n,z):
     if(i == n):
         return;
@@ -43,6 +46,7 @@ def revert_tuples(i,n,z):
 
     revert_tuples(i + 1,len(z),z);
 
+''' check for '}' i.e the end of a fn_body '''
 def verify_end(ix):
     global temp_list2;
     bracket_count = 0;
@@ -56,6 +60,7 @@ def verify_end(ix):
                 return ix;
         ix += 1;
 
+''' see if the potential TR call is within a loop '''
 def lookback_for_loop(ix):
     global temp_list2;
     loop_list = ["while", "for", "do"];
@@ -79,6 +84,7 @@ def check_loop(ix):
                 return lookback_for_loop(ix - 1);
         ix -= 1;
 
+''' checks for TR calls within the given fn body '''
 def check_tail_rec(ix):
     global temp_list2;
     if(temp_list2[ix][-1] == "return"):
@@ -101,6 +107,7 @@ def check_tail_rec(ix):
         ix += 1;
     return 1;
 
+''' get the arg list of a fn body '''
 def get_arg_list(parsed_list):
     temp = []
     if(type(parsed_list[2]) is list):
@@ -118,12 +125,14 @@ def get_arg_list(parsed_list):
         temp.append(str(parsed_list[2]))
     return temp;
 
+''' converts the 'param_name' to 'param_name_64bit_hash' '''
 def converted(str, goto_hash, param_list1):
     len1 = len(param_list1);
     for ix in range(len1):
         str = re.sub('\\b' + param_list1[ix] + "\\b", "par_" + param_list1[ix] + "_" + goto_hash, str)
     return str;
 
+''' assigns the params of the TR fn to the appropriate args. before the 'goto' stmt.'''
 def assignArgPar(arg_list, param_list, goto_hash):
     param_list1 = list(map(lambda str : str.split()[-1], param_list))
     str = ""
@@ -136,11 +145,13 @@ def assignArgPar(arg_list, param_list, goto_hash):
         str += param_list1[ix] + " = " + converted(arg_list[ix], goto_hash, param_list1) + ";\n"
     return str;
 
+''' wrapper for tail_rec_handler '''
 def tail_rec_controller(i, n, z, fn_name, ll):
     global temp_list2
     temp_list2 = ll
     tail_rec_handler(i, n, z, fn_name)
 
+''' handler for performing the TRE operation  '''
 def tail_rec_handler(i,n,z,fn_name):
     global temp_list2
     if(i == n):

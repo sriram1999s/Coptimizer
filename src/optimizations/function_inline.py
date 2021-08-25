@@ -12,6 +12,7 @@ fn_call_list = []  # list of tuple of fn_call having parsed list and "call"
 fn_call_obj_list = []  # list of objects having function call details
 
 # new
+''' checks whether a function is non-recursive etc : inline-able '''
 def check_inline(l1, start, length, fn_name,l2):
     if start >= length:
         return
@@ -23,6 +24,7 @@ def check_inline(l1, start, length, fn_name,l2):
 
     check_inline(l1, start + 1, length, fn_name,l2)
 
+''' creates objects of for fn definitions to use them later for inlining, eliminating Tail Rec. etc '''
 def inline_defn_helper(parsed_list,fn_name):
     l3 = [1]
     check_inline(parsed_list[5][0], 0, len(parsed_list[5][0]), parsed_list[1], l3)
@@ -37,6 +39,7 @@ def inline_defn_helper(parsed_list,fn_name):
 
     return (fn_name,parsed_list,'definition')
 
+''' checks if a fn has a return value '''
 def check_return(l1, start, length,l2):
     if start >= length:
         return
@@ -47,6 +50,7 @@ def check_return(l1, start, length,l2):
 
     return check_return(l1, start + 1, length,l2)
 
+''' convert the fn params. or args. to string '''
 def change_to_string(l1):
     ret_list = []
     if len(l1) > 1:
@@ -72,12 +76,8 @@ def change_to_string(l1):
 
     return ret_list
 
+''' create and store fn defn objects '''
 def create_defn_obj(parsed_list, inline_flag1):
-
-    # l3 = [1]
-    # check_inline(parsed_list[5][0], 0, len(parsed_list[5][0]), parsed_list[1], l3)
-    # inline_flag = l3[0]
-
     inline_flag = inline_flag1;
 
     l2 = [0]
@@ -91,6 +91,7 @@ def create_defn_obj(parsed_list, inline_flag1):
     obj = fn_defn_class(parsed_list[1], str_params_list, parsed_list[5], inline_flag, return_id_or_val, str(parsed_list[0]))
     fn_defn_obj_list.append(obj)
 
+''' creates and stores the fn call tuples in the AST and memory '''
 def call_helper(parsed_list,fn_name):
     print("Call helper called ", fn_name)
     length = len(parsed_list)
@@ -119,18 +120,8 @@ def call_helper(parsed_list,fn_name):
         print("call_helper : ", (fn_name,l1, "call"))
         fn_call_list.append((fn_name,l1, "call"))
         create_call_obj(l1,fn_name)
-    #print("fn_call_list : ", fn_call_list)
 
-# def get_arg_expr(i,n,arg_list,arg):
-#     if(i == n):
-#         return
-#     elif(type(arg_list[i]) is list):
-#         get_arg_expr(0,len(arg_list[i]),arg_list[i],arg)
-#     elif(type(arg_list[i]) is str):
-#         arg[0] = arg[0] + arg_list[i]
-#     get_arg_expr(i+1,n,arg_list,arg)
-
-
+''' creates and stores fn call objects '''
 def create_call_obj(parsed_list,fn_name):
     temp = []
     if(type(parsed_list[2]) is list):
@@ -150,6 +141,7 @@ def create_call_obj(parsed_list,fn_name):
     obj1 = fn_call_class(fn_name, temp)
     fn_call_obj_list.append(obj1)
 
+''' fn_defn objects for the fn defns in the source code '''
 class fn_defn_class:
     def __init__(self, name, param_list, body, inline_flag, return_id_or_val, return_type):
         self.name = name
@@ -162,12 +154,13 @@ class fn_defn_class:
         # self.return_id_or_val = return_id_or_val
         self.return_type = return_type
 
-
+''' fn_call objects for the fn defns in the source code '''
 class fn_call_class:
     def __init__(self, name, arg_list):
         self.name = name
         self.arg_list = arg_list
 
+''' eliminates the nested nature of an iterable for convenient processing '''
 def flatten(l):
     for el in l:
         if isinstance(el, Iterable) and not isinstance(el, (str, bytes)):
@@ -178,12 +171,14 @@ def flatten(l):
 # g33/((g22+g33)*g22)
 # ------------functions from my_detector --------#
 
+''' gets the index of a fn_defn tuple in the list '''
 def get_defn_t_ix(fn_name):
     for ix in range(len(fn_defn_list)):
         if(fn_defn_list[ix][0] == fn_name):
             return ix
     return None
 
+''' to not inline when there's a fn call within a fn call '''
 def remove_nested_calls(i,n,z):
     if(i == n):
         return;
@@ -197,6 +192,7 @@ def remove_nested_calls(i,n,z):
 
     remove_nested_calls(i + 1,len(z),z)
 
+''' to remove return statement when the fn body is inlined '''
 def remove_return(i,n,fn_body, hash_val):
     if(i == n):
         return
@@ -225,6 +221,7 @@ def remove_return(i,n,fn_body, hash_val):
 
     remove_return(i+1,len(fn_body),fn_body, hash_val)
 
+''' a variant of earlier '''
 def remove_return1(i,n,fn_body, hash_val,goto_flag):
     if(i == n):
         return
@@ -236,11 +233,13 @@ def remove_return1(i,n,fn_body, hash_val,goto_flag):
 
     remove_return1(i+1,len(fn_body),fn_body,hash_val,goto_flag)
 
+''' append a 64bit unique hash to the param names to avoid name conflicts '''
 def add_param_hash(hash_val,parameter_list1):
     length = len(parameter_list1)
     for ix in range(length):
         parameter_list1[ix] += "_" + hash_val
 
+''' get the list of variable names in the fn param '''
 def get_param_vars(parameter_list1):
     var_list = []
     length = len(parameter_list1)
@@ -250,6 +249,7 @@ def get_param_vars(parameter_list1):
 
     return var_list
 
+''' replaces 'param_name' with 'param_name_64bit_hash' '''
 def replace_param(i,n,fn_body,parameter_list2,hash_val):
     if(i == n):
         return
@@ -260,6 +260,7 @@ def replace_param(i,n,fn_body,parameter_list2,hash_val):
 
     replace_param(i+1,n,fn_body,parameter_list2,hash_val)
 
+''' reverts the properties of fn defns that turned out non-inlineable '''
 def retrieve_defn(i,n,fn_body):
     if(i == n):
         return
