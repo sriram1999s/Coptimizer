@@ -5,6 +5,7 @@ from regenerator import *
 from optimizations.loop_unrolling import *
 from optimizations.symboltable import *
 from optimizations.compile_time_init import *
+from optimizations.function_inline import flatten as flatten_all
 from collections import defaultdict
 from pprint import pprint
 # --------------------------------parser------------------------------------ #
@@ -847,7 +848,8 @@ def p_brace(p):
     else:
         if(type(p[1]) is list and type(p[1][0]) is tuple):
             t = copy.deepcopy(p[1][0])
-            t = list(flatten(t))
+            t = list(flatten_all(t))
+            print("\n\n flattened t : " , t)
             print('\n\np[1] (1) in p_brace : ', p[1], '\n\n')
             if(t.count("call") > 1):
                 print('\n\np[1] (2) in p_brace : ', p[1], '\n\n')
