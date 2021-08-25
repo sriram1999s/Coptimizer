@@ -434,6 +434,7 @@ def p_simple(p):
     if(len(p)==3):
         p[0] = [p[1],p[2]]
     elif(len(p)==4):
+        print("\n\np[2] p_simple : ", p[2])
         if(type(p[2]) is list and type(p[2][0]) is tuple and (menu.FLAG_INLINE or menu.FLAG_TAIL_RECURSION)):
             t = p[2][0]
             p[0] = [p[1], t[0], '(',t[1][2], ')',';']
@@ -462,7 +463,7 @@ def p_function_call(p):
     function_call : ID L_PAREN call_params R_PAREN
     '''
     p[0] = [p[1], p[2], p[3], p[4], ";"]
-    print("\n\n\n", p[0], "\n\n\n")
+    print("\n\n\n in function call : ", p[0], "\n\n\n")
     if(menu.FLAG_INLINE or menu.FLAG_TAIL_RECURSION):
         call_helper(p[0],p[1])
         p[0] = [(p[1],p[0][0 : -1], 'call')]
