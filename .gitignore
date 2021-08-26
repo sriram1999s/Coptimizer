@@ -26,3 +26,5 @@ ui/*.txt
 ui/check_input
 ui/flags.json
 ui/statics/ace.js
+
+.DS_Store
