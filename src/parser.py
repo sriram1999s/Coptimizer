@@ -906,4 +906,4 @@ def p_linear_search(p):
     linear_search : LINEAR_SEARCH_BEGIN multiple_statements LINEAR_SEARCH_END
     '''
     sentinel.validate_linear_search(p[2])
-    p[0] = [p[1], p[2], p[3]]
+    p[0] = ["/*sentinel-search-begin*/", p[2], "/*sentinel-search-end*/"]

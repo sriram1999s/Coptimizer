@@ -1,5 +1,7 @@
 from parser import flatten
 from collections import defaultdict
+import secrets
+
 class Sentinel:
     def __init__(self):
        self.tagged_data_structures = defaultdict(lambda:None)
@@ -9,7 +11,7 @@ class Sentinel:
     def add_ds(self,name,statement,type_ds):
         print(f"adding....{name}---->{statement}---->{type_ds}")
         self.tagged_data_structures[name] = [statement,type_ds]
-        increase_size_array(statement,type_ds)
+        # increase_size_array(statement,type_ds)
 
 
     def disp(self):
@@ -31,8 +33,12 @@ class Sentinel:
             sub_tree[1] = ['(', '!', found_condition , ')']
             found_body_new = re.sub('break\s*?;', '', ''.join(flatten(found_body)))
             # print("fnjhkdv : ", found_body_new, " @ ", ''.join(flatten(found_body)))
-            sub_tree.append(['if', bounds_condition, found_body_new])
-            self.add_sentinel(found_condition)
+            insert_code, name, hash = self.add_sentinel(found_condition)
+            print("\n\ninsert code : ", insert_code)
+            bounds_condition.insert(-1, '-')
+            bounds_condition.insert(-1, '1')
+            sub_tree.append(['if(', bounds_condition, f'|| ({name}[n{hash} -1] == temp{hash}))', found_body_new])
+            sub_tree.insert(0, insert_code)
 
     # ['while', ['(', ['i', '<', 'n'], ')'], ['{', [['if', ['(', [['a', ['[', 'i', ']']], '==', 'elem'], ')'], ['{', [[['printf', '(', ['"%d.....found"', ',', 'elem'], ')'], ';'], ['break', ';']], '}']], [['i', '++'], ';']], '}']]
     ''' detects the relevant if condition and body '''
@@ -83,7 +89,12 @@ class Sentinel:
         if(m):
             sentinel = m.group(1)
 
-        print("name, sentinel : ", name, sentinel)
+        # print("name, sentinel : ", name, sentinel)
+        hash = secrets.token_hex(nbytes=4)
+        code = f"int n{hash} = sizeof({name}) / sizeof(int);"
+        code += f"int temp{hash} = {name}[n{hash} - 1];"
+        code += f" {name}[n{hash} - 1] = {sentinel};"
+        return code, name, hash
 
 def increase_size_array(statement,type_ds):
     if(type_ds == "array"):
