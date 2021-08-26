@@ -436,7 +436,8 @@ def p_simple(p):
 	       | RETURN expr SEMICOLON
            | RETURN SEMICOLON
 	       | MULTILINE_COMMENT
-    	       | tagged_ds
+    	   | tagged_ds
+           | linear_search
     '''
     if(len(p)==3):
         p[0] = [p[1],p[2]]
@@ -890,13 +891,19 @@ def flatten(L):
             yield from flatten(l)
         else:
             yield l
-    
+
 def p_tagged_ds(p):
     '''
-    tagged_ds : TAGGED_DS declaration 
+    tagged_ds : TAGGED_DS declaration
     '''
     m = re.search(r'/\*data-structure:(.*?)\*/',p[1])
     sentinel.add_ds(p[2][1],p[2],m.group(1))
     # print(p[1],p[2])
     p[0] = [p[1],p[2]]
-    
+
+def p_linear_search(p):
+    '''
+    linear_search : LINEAR_SEARCH_BEGIN multiple_statements LINEAR_SEARCH_END
+    '''
+    sentinel.validate_linear_search(p[2])
+    p[0] = [p[1], p[2], p[3]]
