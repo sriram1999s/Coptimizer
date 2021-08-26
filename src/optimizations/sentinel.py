@@ -32,6 +32,7 @@ class Sentinel:
             found_body_new = re.sub('break\s*?;', '', ''.join(flatten(found_body)))
             # print("fnjhkdv : ", found_body_new, " @ ", ''.join(flatten(found_body)))
             sub_tree.append(['if', bounds_condition, found_body_new])
+            self.add_sentinel(found_condition)
 
     # ['while', ['(', ['i', '<', 'n'], ')'], ['{', [['if', ['(', [['a', ['[', 'i', ']']], '==', 'elem'], ')'], ['{', [[['printf', '(', ['"%d.....found"', ',', 'elem'], ')'], ';'], ['break', ';']], '}']], [['i', '++'], ';']], '}']]
     ''' detects the relevant if condition and body '''
@@ -63,6 +64,26 @@ class Sentinel:
         body_list = []
         find(0, len(sub_tree), sub_tree, condition_list, body_list)
         return (condition_list[-1], body_list[-1])
+
+    ''' adds sentinel value to end of tagged ds '''
+    def add_sentinel(self, condition):
+        import re
+        flattened_condition = ''.join(flatten(condition))
+        flattened_condition = re.sub("\(", " ( ", flattened_condition)
+        flattened_condition = re.sub("\)", " ) ", flattened_condition)
+        pat = "\s([^()]*?)\["
+        m = re.search(pat, flattened_condition)
+        name = ''
+        if(m):
+            name = m.group(1)
+
+        pat = "==\s*(.*?)\s"
+        m = re.search(pat, flattened_condition)
+        sentinel = ''
+        if(m):
+            sentinel = m.group(1)
+
+        print("name, sentinel : ", name, sentinel)
 
 def increase_size_array(statement,type_ds):
     if(type_ds == "array"):
