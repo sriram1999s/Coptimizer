@@ -23,18 +23,23 @@ class Sentinel:
 
     ''' converts linear search to sentinel search '''
     def linear_to_sentinel(self, sub_tree):
+        import re
         if(sub_tree[0] == 'while'):
             bounds_condition = sub_tree[1]
             found_condition, found_body = self.detect_and_remove_if(sub_tree[2])
-            print(f"\n\n linear_to_sentinel : {found_condition}, {found_body}")
+            # print(f"\n\n linear_to_sentinel : {found_condition}, {found_body}")
+            sub_tree[1] = ['(', '!', found_condition , ')']
+            found_body_new = re.sub('break\s*?;', '', ''.join(flatten(found_body)))
+            # print("fnjhkdv : ", found_body_new, " @ ", ''.join(flatten(found_body)))
+            sub_tree.append(['if', bounds_condition, found_body_new])
 
     # ['while', ['(', ['i', '<', 'n'], ')'], ['{', [['if', ['(', [['a', ['[', 'i', ']']], '==', 'elem'], ')'], ['{', [[['printf', '(', ['"%d.....found"', ',', 'elem'], ')'], ';'], ['break', ';']], '}']], [['i', '++'], ';']], '}']]
-    ''' '''
+    ''' detects the relevant if condition and body '''
     def detect_and_remove_if(self, sub_tree):
         import re
         def check_break(sub_tree):
             flattened_tree = ''.join(flatten(sub_tree))
-            if(re.search("break\s*;", flattened_tree)):
+            if(re.search("break\s*?;", flattened_tree)):
                 return True
             return False
 
