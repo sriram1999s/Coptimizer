@@ -5,7 +5,9 @@ int main()
   int z = 1;
   int n;
   scanf("%d %d",&a,&n);
-  for(int i = a;i>n;i=i/2)
+  int i;
+  int u;
+  for(i = a, u = 0; i > n; i = i / 2)
   {
     ++z;
   }

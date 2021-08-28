@@ -18,6 +18,7 @@ P.S: Try to stick to a single convention
 
 
 
+
 ''' defining tokens '''
 
 numbers = ['INT_NUM', 'FLOAT_NUM']
@@ -38,7 +39,7 @@ unary = ['NOT']
 
 extra = ['ID', 'TYPE', 'STRING' , 'HASH', 'INCLUDE','HEADER_FILE','CHAR','TYPEDEF']
 
-comment = ['MULTILINE_COMMENT']
+comment = ['MULTILINE_COMMENT','TAGGED_DS','LINEAR_SEARCH_BEGIN', 'LINEAR_SEARCH_END']
 
 jump = ['RETURN']
 
@@ -177,7 +178,7 @@ def t_TYPE(t):
     else:
         m = re.match(r'(struct\s+[A-Za-z_][A-Za-z_0-9]*?\s)',t.value)
         res = m.group(1)
-        start_ind = m.span()[-1] + 1  
+        start_ind = m.span()[-1] + 1
         for i in range(start_ind,len(t.value)):
             if(t.value[i]!=' '):
                 res+=t.value[i]
@@ -193,8 +194,21 @@ def t_INCLUDE(t):
     r'include'
     return t
 
-# multiline comment
 
+
+def t_TAGGED_DS(t):
+    r'/\*data-structure:.*?\*/'
+    return t
+
+def t_LINEAR_SEARCH_BEGIN(t):
+    r'/\*linear-search-begin\*/'
+    return t
+
+def t_LINEAR_SEARCH_END(t):
+    r'/\*linear-search-end\*/'
+    return t
+
+# multiline comment
 def t_MULTILINE_COMMENT(t):
     r'/\*.*?\*/'
     return t
@@ -218,7 +232,6 @@ def t_CHAR(t):
 def t_TYPEDEF(t):
     'typedef'
     return t
-
 
 # error
 

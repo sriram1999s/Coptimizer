@@ -1,15 +1,17 @@
 from regenerator import *
 from math import *
-from symboltable import *
-from loop_jamming import *
+from optimizations.symboltable import *
+from optimizations.loop_jamming import *
 from collections import *
 import re
 import secrets
 import random
 
-list_looping_variables = defaultdict(lambda:0) # keeps track of loop variables along with nested info
+'''keeps track of loop variables along with nested info'''
+list_looping_variables = defaultdict(lambda:0) 
 
-loop_var_flags = {} # keeps track of loop variables along with nested info
+'''keeps track of loop variables along with nested info'''
+loop_var_flags = {} 
 
 # TODO
 
@@ -41,7 +43,6 @@ def for_unroll_validate(OPTIMIZE1, OPTIMIZE2, sub_tree, nested):
 
     loop_var = list(ids.keys())[0]
     ''' finding the loop dependant variable from for condition '''
-    # print("loop_var_flags: ",loop_var_flags,loop_var)
     if(loop_var not in loop_var_flags or not loop_var_flags[loop_var]):
         print("\n\nloop_var_flag problem\n\n")
         ''' if it is a nested loop , must unroll only inner most loop '''
@@ -65,7 +66,6 @@ def for_unroll_validate(OPTIMIZE1, OPTIMIZE2, sub_tree, nested):
     if(len(full_intersection)>=1 and full_loop_var_list.count(loop_var) > 1):
         DO_NOT_FULL_UNROLL = True
 
-    # print("Intersection ", intersection)
     if(len(intersection)>1):
         return sub_tree
 
@@ -84,13 +84,9 @@ def for_unroll_validate(OPTIMIZE1, OPTIMIZE2, sub_tree, nested):
     solve_substi_id(0,len(condition),condition,do_not_sub)
     solve_expr(0,len(condition),condition)
 
-    # print("condition: ", condition,"\n")
-
     ids=dict()
     find_id(0, len(condition), condition, ids)
-    #print("ids : ",ids)
     if(len(ids) > 1):# more than 1 loop variable in condition, short circuit return
-        # return sub_tree
         return for_variable_unroll(OPTIMIZE1,OPTIMIZE2,sub_tree,operators,ids,loop_var)
 
     if(DO_NOT_FULL_UNROLL): # temporary solution
@@ -114,13 +110,6 @@ def for_unroll_validate(OPTIMIZE1, OPTIMIZE2, sub_tree, nested):
         if(sub_tree[1][3] == ')'):
             return sub_tree
         return for_full_condition(sub_tree, operators, ids)
-# def substi_id(var):
-#
-#
-#     search_str = var + '_'.join(sym_tab.level_str)
-#     if(type(sym_tab.symbol_table[search_str]) == int):
-#         return sym_tab.symbol_table[search_str]
-#     return 'garbage'
 
 '''check whether type of variable is list (helper fxn)'''
 def check_type(l):
@@ -197,7 +186,6 @@ def for_full_condition(sub_tree, operators, ids):
 
     # LHS or RHS of bounds check is not an expression
     if(type(condition[2][0][0]) == list or type(condition[2][0][2]) == list):
-        # print("Here3-----")
         return sub_tree
 
     if(type(condition[2][0][2]) == str):
@@ -206,12 +194,10 @@ def for_full_condition(sub_tree, operators, ids):
             condition[2][0][2] = temp
         else:
             return sub_tree
-            # return sub_tree
 
     res = []
     find_int(0, len(condition), condition, res)
     total = abs(res[1][0]-res[0][0])
-    #print(res)
     if(type(condition[2][0][2]) == int):  # LHS of bounds check is an integer
         if(total <= 35):  # full unrolling
             # remove nesting in sub_tree[2]
@@ -229,10 +215,6 @@ def for_full_unroll(block, condition, operator, res):
     print("Unrolling full...\n")
     block.pop(0)
     block.pop()
-    # print('operator : ', operator)
-    #res = []
-    # to get start and end value of loop by scanning for integer
-    #find_int(0, len(condition), condition, res)
     increment_val = 1
     if(len(res) == 3):
         increment_val = res[-1][0]
@@ -250,11 +232,9 @@ def for_partial_unroll(block, condition, operator,res):
     print("Unrolling partial...\n")
     block.pop(0)
     block.pop()
-    # print(f"operator : {operator}")
-    #res = []
+    
     increment_val = 1
-    #find_int(0, len(condition), condition, res)
-    # print(res)
+    
     total = abs(res[0][0]-res[1][0])
     if(len(res) == 3):
         increment_val = res[-1][0]
@@ -289,13 +269,8 @@ def for_partial_unroll(block, condition, operator,res):
     return ['{']+block*unroll_count+['}'] + block*extra
 
 
-# to be changed
-# loop : 0 -> (n-(n%2))
-# if(n%2):
-#     unroll remaining
 '''for_variable_unroll() ------> when the limits are decided at runtime'''
 def for_variable_unroll(OPTIMIZE1,OPTIMIZE2,sub_tree,operator,ids,loop_var):
-    #print("\n\nhey\n\n")
     if(operator[0][0] in ['/=','*=','*','/']):
         return sub_tree
 
@@ -325,18 +300,15 @@ def for_variable_unroll(OPTIMIZE1,OPTIMIZE2,sub_tree,operator,ids,loop_var):
 
 
     increment_val = '1'
-    #print(''.join(increment_str))
     m2 = re.search('=(.*)',''.join(increment_str))
     if(m2):
-        # print(m2.groups())
         increment_val=m2.group(1)
 
-    #print("increment val:",increment_val)
     if(m1.group(1)=='>'):
         lower_limit,upper_limit = upper_limit,lower_limit
 
+    # flag for jamming
     if(OPTIMIZE2):
-        #print("\nOPtimize 2 baaro magan!\n")
         jam.add(lower_limit, upper_limit, increment_val, sym_tab.level_str.copy(), sub_tree)
         with open("check.c","w") as f:
             f.write(gen_check(jam._worst_case))
@@ -345,31 +317,24 @@ def for_variable_unroll(OPTIMIZE1,OPTIMIZE2,sub_tree,operator,ids,loop_var):
 
 
 
-    # print("lower_limit: ",lower_limit,type(lower_limit))
-    # print("upper_limit: ",upper_limit,type(upper_limit))
-
+    # code generation for for loop with modified limits
+    
     lower_limit = '(' + str(lower_limit) + ')'
-
     modified_upper_limit_1 = '('+'(' + str(upper_limit) + '-' + str(lower_limit) + ')' + '/' + str(increment_val) + ')'
     modified_upper_limit_2 = '(' + '('+'(' + str(upper_limit) + '-' + str(lower_limit) + ')' + '%' + str(increment_val) + ')' + '!=0' +')'
     modified_upper_limit = '(' + modified_upper_limit_1 + '+' + modified_upper_limit_2 + ')'
-    # print("modified_upper_limit: ",modified_upper_limit)
 
 
     tempesh_randesh_hashesh = 'temp_'+secrets.token_hex(nbytes=16)
-    #tempesh_randesh_hashesh = 'temp_'+ str(random.randint(1,100))
     temp_loop_var = 'temp_loop_'+secrets.token_hex(nbytes=16)
-    #temp_loop_var = 'temp_loop_'+ str(random.randint(1,100))
     sub_from_upper = '(' + tempesh_randesh_hashesh + '%' + '2' + ')'
 
     effective_upper_limit  = '(' + tempesh_randesh_hashesh + '-' + sub_from_upper + ')'+ '/' +'2'
-    # print("effective_upper_limit",effective_upper_limit)
 
     body = []
     body = solve(0,len(sub_tree[2]),sub_tree[2])
 
     body  = ''.join(body)
-    # print("body: ",body)
 
     declarations = f'int {tempesh_randesh_hashesh} = {modified_upper_limit};int {temp_loop_var};'
     temp_declaration  ='{' + f'{temp_loop_var} = {loop_var};' + '}'
@@ -377,6 +342,7 @@ def for_variable_unroll(OPTIMIZE1,OPTIMIZE2,sub_tree,operator,ids,loop_var):
     def rep_sub(m):
         return m.group(1) + temp_loop_var + m.group(2)
 
+    #remembering state of for loop and using that if nesting exists
     pat = '(\W)'+str(loop_var)+r'(\W)'
     body = re.sub(pat,rep_sub,body)
     remaining = f'if({sub_from_upper})' + '{' + body + '}'
@@ -439,13 +405,9 @@ def find_id(ind, end, lis, res=dict()):
 
 ''' reconstruct for condition from partial condition '''
 def reconstruct_for(sub_tree, loop_var):
-    # sub_tree[1][1]
-    # print(sub_tree[1][1])
-
     search_str = sym_tab.make_level_string(loop_var)
     if(sym_tab.symbol_table[search_str] != 'garbage'):
         sub_tree[1][1] = [[str(loop_var), '=', sym_tab.symbol_table[search_str]], ';']
-    # print("subtree", sub_tree)
 
 '''custom log fxn'''
 def my_log(start, end, factor):

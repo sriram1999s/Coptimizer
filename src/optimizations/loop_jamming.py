@@ -2,9 +2,8 @@ from collections import defaultdict
 import re
 import secrets
 import copy
-# [x1,y1) , [x2,y2)
 
-
+'''check intersect function in pyth for reference'''
 def check(x1,y1,x2,y2):
     if(x2<=x1<=y2 or x2<=y1<=y2):
         return 1
@@ -21,6 +20,7 @@ class Jamming:
         self._jam_table = defaultdict(lambda: defaultdict(lambda : 'garbage')) # stores all information of for loops (lower, upper , scope, body, ptr)
         self._count = 0
         self._worst_case = 0
+    '''adds loop to jam table given the loop revelant info'''
     def add(self, lower, upper, inc ,scope, sub_tree):
         body = sub_tree[2]
         self._flag = 0
@@ -82,7 +82,7 @@ class Jamming:
                         declare_max = 'int temp_'+ max_hash + ' = ' + ranges[1] + ';'
                         diff = '(' + 'temp_' + max_hash + '-' + 'temp_' + min_hash + ')'
                         declare_min_2 = 'int temp_' + min_hash_2 + ' = ' + f'{diff}<{upper}?{diff}:{upper}' + ';'
-                        
+
 
                         # eliminating
                         # print("dslkvnhioduhv ", sub_tree[1])
@@ -90,7 +90,7 @@ class Jamming:
                         # sub_tree[1][1][3] = 0
                         replace_string(0,len(sub_tree[1][2]),sub_tree[1][2],upper,'temp_'+min_hash_2)
                         replace_string(0,len(sub_tree[1][1]),sub_tree[1][1],lower,0)
-                        
+
                         if_block = ['if(' + str('temp_' + min_hash) + '==' + str(self._jam_table[loop]['lower']) + ')'] + ['{'] + body_og + ['}']
                         else_block = ['else' + '{'] + sub_tree[2] + ['}']
                         sub_tree[2] = ['{'] + if_block + else_block + ['}']
@@ -129,7 +129,7 @@ class Jamming:
                         # replacing second loop with remaining part of lower range
                         # sub_tree[1][2][0][2] = diff_lower
                         # sub_tree[1][1][3] = 0
-                        
+
                         if(greater_flag):
                             replace_string(0,len(sub_tree[1][2]),sub_tree[1][2],lower,diff_lower)
                             replace_string(0,len(sub_tree[1][1]),sub_tree[1][1],upper,0)
@@ -142,7 +142,7 @@ class Jamming:
                         else:
                             replace_string(0,len(sub_tree[1][2]),sub_tree[1][2],upper,diff_lower)
                             replace_string(0,len(sub_tree[1][1]),sub_tree[1][1],lower,0)
-                            
+
                         if_block = ['if(' + str('temp_' + min_lower_hash) + '==' + str(self._jam_table[loop]['lower']) + ')'] + ['{'] + body_og + ['}']
                         else_block = ['else' + '{'] + sub_tree_2_og + ['}']
                         sub_tree[2] = ['{'] + if_block + else_block + ['}']
@@ -277,7 +277,7 @@ class Jamming:
                     max_upper_upper_og = '(' + upper + '>' + upper_og +'?' + upper + ':' + upper_og + ')'
                 else:
                     if(greater_flag):
-                        upper = upper + 1 
+                        upper = upper + 1
                     min_upper_upper_og = str(min(upper,upper_og))
                     max_upper_upper_og = str(max(upper,upper_og))
 
@@ -293,19 +293,34 @@ class Jamming:
 
 ''' checks for intersection of variables between 2 bodies'''
 def check_intersect(body1, body2):
-    id1 = {}
-    id2 = {}
-    find_id(0, len(body1), body1, id1)
-    find_id(0, len(body2), body2, id2)
+    # id1 = {}
+    # id2 = {}
+    # find_id(0, len(body1), body1, id1)
+    # find_id(0, len(body2), body2, id2)
 
-    id1 = set(id1.keys())
-    id2 = set(id2.keys())
-    inter = id1&id2
-    # print(inter)
-    if len(inter):
+    # id1 = set(id1.keys())
+    # id2 = set(id2.keys())
+    # inter = id1&id2
+
+    left_side_body1 = find_lhs_id(0,len(body1),body1)
+    left_side_body2 = find_lhs_id(0,len(body2),body2)
+    right_side_body1 = find_rhs_id(0,len(body1),body1)
+    right_side_body2 = find_rhs_id(0,len(body2),body2)
+
+    print(f"left_side_body 1 : {left_side_body1}")
+    print(f"left_side_body 2 : {left_side_body2}")
+    print(f"right_side_body 1 : {right_side_body1}")
+    print(f"right_side_body 2 : {right_side_body2}")
+
+    inter1 = set(left_side_body1) & set(right_side_body2)
+    inter2 = set(left_side_body2) & set(right_side_body1)
+
+    print("Inter l1 - r2 : ",inter1)
+    print("Inter r1 - l2 : ",inter2)
+
+    if(inter1 or inter2):
         return 0
-    else:
-        return 1
+    return 1
 
 '''find_id()-----> scans for variables in loop condition'''
 def find_id(ind, end, lis, res=dict()):
@@ -318,12 +333,53 @@ def find_id(ind, end, lis, res=dict()):
         find_id(0, len(lis[ind]), lis[ind], res)
     find_id(ind+1, end, lis, res)
 
+'''find_lhs_id() ------> scans for variables on lhs of '=' '''
+def find_lhs_id(ind,end,lis):
+    if(ind==end):
+        return []
+    elif(type(lis[ind])==list and len(lis[ind])==3 and type(lis[ind][1])==str and re.search(r'=',lis[ind][1])):
+        return [''.join(lis[ind][0])]+find_lhs_id(ind+1,end,lis)
+    elif(type(lis[ind])==list and len(lis[ind])==5 and type(lis[ind][2])==str and re.search(r'=',lis[ind][2])):
+        return [''.join(lis[ind][1])]+find_lhs_id(ind+1,end,lis)
+    elif(type(lis[ind])==list and len(lis[ind])==2 and check_list(lis[ind])):
+        res = []
+        for var in lis[ind]:
+            if(var not in ['++','--']):
+                res.append(var)
+        return res + find_lhs_id(ind+1,end,lis)
+
+    elif(type(lis[ind])==list):
+        return find_lhs_id(0,len(lis[ind]),lis[ind]) + find_lhs_id(ind+1,end,lis)
+    else:
+        return find_lhs_id(ind+1,end,lis)
+
+
+'''find_lhs_id() ------> scans for variables on rhs of '=' '''
+def find_rhs_id(ind,end,lis):
+    if(ind==end):
+        return []
+    if(type(lis[ind])==list and len(lis[ind])==3 and re.search(r'=',lis[ind][1])):
+        res = []
+        for var in flatten(lis[ind][2]):
+            if(re.search('[A-Za-z_][A-Za-z_0-9]*',str(var))):
+                res.append(var)
+        lhs_var = ''.join(lis[ind][0])
+        if(lhs_var in res):
+            res.remove(lhs_var)
+        res = list(set(res))
+        return res+find_rhs_id(ind+1,end,lis)
+    elif(type(lis[ind])==list):
+        return find_rhs_id(0,len(lis[ind]),lis[ind]) + find_rhs_id(ind+1,end,lis)
+    else:
+        return find_rhs_id(ind+1,end,lis)
+
+
+
 ''' generate check_overlap_function '''
 def gen_check(worst_case):
     final_condition = ''
     if(worst_case):
         ''' have to change this later '''
-        # fn_hash = secrets.token_hex(nbytes=6
         fn_hash = ''
 
         fn_dec = 'int' + ' check_overlap' + fn_hash + '(int x1, int y1, int x2, int y2) {'
@@ -347,7 +403,7 @@ def replace_string(i,n,l,pat,target):
         return
     if(type(l[i])==list and check_list(l[i])):
         #print("louda",pat,''.join([str(j) for j in l[i]]).strip())
-        if(pat == ''.join([str(j) for j in l[i]]).strip()): 
+        if(pat == ''.join([str(j) for j in l[i]]).strip()):
             l[i]=target
     if(l[i]==pat):
         l[i] = target
@@ -362,6 +418,15 @@ def check_list(l):
         if(type(i) == list):
             return 0
     return 1
+
+'''flatten list'''
+def flatten(L):
+    for l in L:
+        if isinstance(l, list):
+            yield from flatten(l)
+        else:
+            yield l
+
 
 ''' Jamming object'''
 jam = Jamming()

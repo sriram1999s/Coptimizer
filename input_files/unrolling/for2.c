@@ -4,6 +4,6 @@ int main()
 	int i;
   for(i = 0; i < 5;i++)
   {
-    ++a;
+    a = a + i; /* a++; */
   }
 }

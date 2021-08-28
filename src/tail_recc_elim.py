@@ -1,4 +1,4 @@
-from function_inline import *
+from optimizations.function_inline import *
 import uuid
 import re
 

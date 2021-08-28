@@ -1,13 +1,27 @@
+''' This is the second part of if-to-switch. It deals with the actual conversion of the if-elif-else chains to switch cases, based on the details stored in the if_elif_else class in the part 1 file '''
+
 import optimizations.stack_match2 as stack_match2
 
 net_open = 0
-dict_num_chain_pos = dict()
+
+''' A list of two elements denoting which chain, and which object in that chain, is being handled at the moment '''
+dict_num_chain_pos = dict() 
+
 z_new = []
 dict_num_list_common_vars = dict()
 seen_at_num = []
 order = []  # need not actually be a list, can just be a var
 
 
+''' Stores all details for range cases 
+l - lower bound
+start - 
+op1 - the operator between range_var and the lower bound (<, <=, >, >=)
+op2 - the operator between range_var and the upper bound (<, <=, >, >=)
+u - upper bound 
+if1 - whether the object is has details of 'if' condition
+range_var - the variable used in the range case
+'''
 class range_if_elif:
     def __init__(self, lb, start, end, op1, op2, u, if1=False, range_var='yes'):
         self.l = lb
@@ -24,12 +38,17 @@ d_range = dict()
 range_j = -1
 
 
+''' Initially, we are looking the first object of the first chain at every nesting level '''
 def initialize_dict_num_chain_pos():
     global dict_num_chain_pos
     for i1 in stack_match2.dict_num_list_of_chains:
         dict_num_chain_pos[i1] = [0, 0]
 
 
+''' Function to convert to switch case
+Starts with a new empty list. 
+Loops through the parse tree and adds elements from the old list to the new, replacing/adding elements for switch case(s) where necessary.
+'''
 def make_switch(OPTIMIZE, z):
     if not OPTIMIZE:
         return
@@ -159,6 +178,7 @@ def make_switch(OPTIMIZE, z):
             i += 1
 
 
+''' Determines what is the switch variable '''            
 # needs to include a way to check for || and other cases where switch should not be done
 def check_change_to_switch(num):
     global dict_num_list_common_vars  # list of common variables for a chain
@@ -245,6 +265,7 @@ def check_change_to_switch(num):
     return None, None
 
 
+''' Any conditions of an 'if' or 'else if' case that cannot be handled as case labels of the switch case, are returned as 'if' conditions within the body of a case label ''' 
 def get_new_prebody(pos, z, var, cmp_with, range_case):
     indices = [i for i, x in enumerate(z) if x == '{']  # list of positions of { in z
     end_here = -1
@@ -337,6 +358,7 @@ def get_new_prebody(pos, z, var, cmp_with, range_case):
     return ret, end_here
 
 
+''' Insert 'break' statements within the switch case along with the necessary closing brackets '''
 def skip_extra_brackets(pos, z):
     global order
     global z_new
@@ -381,6 +403,7 @@ def skip_extra_brackets(pos, z):
             return pos
 
 
+''' For range cases '''
 def calculate_width(obj):
     if (obj.op1 == '<=' and obj.op2 == '<=') or (obj.op1 == '<' and obj.op2 == '<'):
         return obj.u - obj.l + 1
@@ -388,6 +411,7 @@ def calculate_width(obj):
         return obj.u - obj.l
 
 
+''' Determine the switch condition for conditions involving uniform, unbroken ranges '''
 def switch_range_condition(obj):
     condition = ''
     if obj.op1 == '<=' and obj.op2 == '<=':
@@ -412,6 +436,7 @@ def switch_range_condition(obj):
         return condition
 
 
+''' Returns the int to be used in the case label in range cases '''
 def get_case_no(obj, chosen_var, range_lower_bound):
     # if obj.condition_vars != []:
 
@@ -436,6 +461,7 @@ def get_case_no(obj, chosen_var, range_lower_bound):
             return str((obj.l + 1 - range_lower_bound) / (obj.u - obj.l - 1)).split('.')[0], True
 
 
+''' When uniform, unbroken range conditions used in if-elif-else chains are not in a naturally sorted order, they are reordered so that the correct case labels can be assigned to them '''
 def reorder():
     global net_open
     global d_range

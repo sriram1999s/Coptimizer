@@ -1,0 +1,164 @@
+
+#div_body
+{
+	display: -webkit-box;
+	display: -ms-flexbox;
+	display: flex;
+	/* -webkit-box-pack: center;
+	-ms-flex-pack: center;
+	justify-content: center;
+	-webkit-box-align: center;
+	-ms-flex-align: center;
+	align-items: center; */
+	-webkit-perspective: 1000px;
+	perspective: 1000px;
+	-webkit-transform-style: preserve-3d;
+	transform-style: preserve-3d;
+	position: relative;
+	background-color: #111;
+	font-family: "Arial";
+}
+
+.container22 {
+
+	border-radius: 20px;
+	position: relative;
+	-webkit-transition: 1.5s ease-in-out;
+	transition: 1.5s ease-in-out;
+	transform-style: preserve-3d;
+}
+
+.side {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	/* padding: 20px 50px; */
+	color: #fff;
+	transform-style: preserve-3d;
+	backface-visibility: hidden;
+	/* border-radius: 20px; */
+}
+.content {
+	transform: translatez(70px) scale(0.8);
+}
+.content  {
+  /* border : 1px solid #0f1923;
+  background : #0f1923; */
+  border : 4px solid #1b1b1b;
+  background : #1b1b1b;
+  border-radius : 30px;
+	position: relative;
+}
+.content p {
+	line-height: 2em;
+}
+
+.front {
+	background : #141411;
+	z-index: 2;
+	background-size: cover;
+}
+.back {
+	background-color: #141411;
+	transform: rotateY(180deg);
+	z-index: 0;
+}
+
+a
+{
+	cursor : pointer;
+}
+
+form {
+	text-align: left;
+}
+.back  {
+	margin: 0;
+}
+
+/*-----------------------------------*/
+
+.cmd{
+	position: relative;
+	display: block;
+
+	height: 300px;
+	width: 100%;
+	border: 1px solid #000000;
+	border-radius: 4px;
+	overflow: hidden;
+
+	box-shadow: 0px 8px 18px #4b1d3f;
+}
+
+/*
+ * 1. Set position
+ * 2. Set dimension
+ * 3. Style
+ */
+.title-bar{
+	/* 1 */
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	/* 2 */
+	width: 100%;
+	height: 40px;
+	/* 3 */
+	display: block;
+	color: #FFFFFF;
+	line-height: 40px;
+	font-weight: 600;
+	background-color: #242424;
+	text-align: center;
+}
+
+.tool-bar{
+	position: absolute;
+	top: 40px;
+	left: 0;
+	right: 0;
+	display: block;
+	width: 100%;
+	height: 30px;
+	line-height: 30px;
+	background-color: #242424;
+}
+
+.tool-bar ul{
+	list-style-type: none;
+	margin: 0px;
+	padding: 0px;
+}
+
+.tool-bar ul li{
+	display: inline-block;
+	margin: 0;
+	padding: 0;
+}
+
+.tool-bar ul li a{
+	padding: 0px 6px;
+	text-decoration: none;
+	color: #FFFFFF;
+}
+
+.tool-bar ul li a:hover{
+	text-decoration: underline;
+}
+
+.textarea{
+	position: relative;
+	top: 70px;
+	padding: 12px;
+
+	resize: none;
+	width: 100%;
+	height: calc(100% - 70px);
+	background-color: #4b1d3f;
+	border: none;
+	color: #FFFFFF;
+	margin: 0px;
+	font-size: 1.1rem;
+}

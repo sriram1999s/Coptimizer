@@ -1,6 +1,6 @@
 from regenerator import *
 from math import *
-from symboltable import *
+from optimizations.symboltable import *
 import re
 from collections import defaultdict
 from copy import deepcopy
@@ -9,7 +9,9 @@ from copy import deepcopy
 
 class CompileInit:
     def __init__(self):
+        ''' stores all array information '''
         self.array_hashmap = defaultdict(lambda:[])
+        ''' stores array range information '''
         self.array_value = defaultdict(lambda: defaultdict(lambda: 'garbage'))
 
     ''' adds array to hashmap '''
@@ -28,8 +30,8 @@ class CompileInit:
         if(self.condition[1] != ';' and self.condition[2] != ';' and len(self.condition) == 5):  # full for condition
             self.initialize(sub_tree)
 
+    ''' adds meta data for conpile time initialization at controller ''' 
     def initialize(self, sub_tree):
-        #print("\n\nwhat is up ? biatch!\n\n")
         self.condition = sub_tree[1]
         self.lower_limit_str = []
         self.upper_limit_str = []
@@ -47,10 +49,8 @@ class CompileInit:
             self.upper_limit = int(self.upper_limit)
 
         self.increment_val = '1'
-        #print(''.join(self.increment_str))
         self.m2 = re.search('=(.*)',''.join(self.increment_str))
         if(self.m2):
-            # print(m2.groups())
             self.increment_val= self.m2.group(1)
 
         self.op = ''
@@ -64,11 +64,9 @@ class CompileInit:
                 self.op = self.temp_m.group(3)
 
 
-        #print("increment val:",self.increment_val)
         self.series_lowerlimit,self.series_upperlimit = self.lower_limit,self.upper_limit
         if(self.m1.group(1)=='>'):
             self.lower_limit,self.upper_limit = self.upper_limit,self.lower_limit
-            # print(self.lower_limit,type(self.lower_limit))
             if(self.lower_limit != -1):
                 return
         else:
@@ -77,13 +75,10 @@ class CompileInit:
         self.ids = dict()
         find_id(0, len(self.condition[2:]), self.condition[2:], self.ids)
         self.loop_var = list(self.ids.keys())[0]
-        # print("self.loop_var", self.loop_var)
-        # print(sub_tree[2])
-        #print([type(self.lower_limit),type(self.upper_limit),self.op,self.increment_val])
         if(type(self.lower_limit)==type(self.upper_limit)==int and self.increment_val=='1' and self.op not in ['*','/']):
 
             self.find_array(0, len(sub_tree[2]), sub_tree[2], self.loop_var, self.series_lowerlimit , self.series_upperlimit ,self.op,self.increment_val)
-        # print(sub_tree[2])
+
     ''' to find array in body'''
     # [['b', '[', 'i', ']'], '=', 0]
     # [[['c', '[', 'i', ']'], '=', 1], ';']
@@ -92,8 +87,6 @@ class CompileInit:
         if(i == n):
             return
         if(type(l[i]) == list and len(l[i]) == 3 and type(l[i][0]) == list and len(l[i][0][1])==3 and l[i][1] == '=' and self.array_value[l[i][0][0]]['value']=='garbage'):
-            # print("l[i]",l[i])
-
             if(type(l[i][0][1])==list and l[i][0][1][1]==loop_var):
                 if(type(l[i][2]) == int):
                     self.array_value[l[i][0][0]]['value'] = l[i][2]
@@ -128,7 +121,6 @@ class CompileInit:
 
     ''' final substitutions done in this fn'''
     def make_compile_inits(self,OPTIMIZE,parse_tree):
-        # print(parse_tree)
         if(not OPTIMIZE):
             return parse_tree
         for array in self.array_value:
@@ -137,9 +129,6 @@ class CompileInit:
                     self.rhs = '{'+ (str(self.array_value[array]['value']) + ',')* (self.array_value[array]['upper']-1)+ str(self.array_value[array]['value']) + '}'
                 else:
                     self.rhs = self.array_value[array]['value']
-                # print("rhs", rhs)
-                # print(self.array_hashmap[array], rhs)
-                # print(parse_tree)
                 self.dec_string = []
                 self.dec_string = solve(0, len(self.array_hashmap[array]), self.array_hashmap[array])
                 self.dec_string = ''.join(self.dec_string)
@@ -173,9 +162,8 @@ def transform(x,val,variation):
     return variation[0]
 
 
-'''makes series'''
+'''generates the series for initializing '''
 def make_series(lower_limit,upper_limit,loop_var,increment_val,variation='i',lhs_variation='i'):
-    #print(f"Series!! {[lower_limit,upper_limit,increment_val,loop_var,variation,lhs_variation]}")
     increment_val = int(increment_val)
     mx=max(lower_limit,upper_limit)
     mi=min(lower_limit,upper_limit)
@@ -184,15 +172,12 @@ def make_series(lower_limit,upper_limit,loop_var,increment_val,variation='i',lhs
         ll = lower_limit + 1
 
     space = max(transform(loop_var,ll,deepcopy(lhs_variation))+1,transform(loop_var,ul,deepcopy(lhs_variation)))
-
-    #print("space: ",space)
     res = ['0' for i in range(space)]
     if(lower_limit<upper_limit):
         while(lower_limit<upper_limit):
             lhs,rhs = lhs_variation,variation
             lhs = transform(loop_var,lower_limit,deepcopy(lhs_variation))
             rhs = transform(loop_var,lower_limit,deepcopy(variation))
-            #print(f"lhs: {lhs},rhs: {rhs}")
             res[lhs]=str(rhs)
             lower_limit+=1
     else:
@@ -200,11 +185,9 @@ def make_series(lower_limit,upper_limit,loop_var,increment_val,variation='i',lhs
             lhs,rhs = lhs_variation,variation
             lhs = transform(loop_var,lower_limit,deepcopy(lhs_variation))
             rhs = transform(loop_var,lower_limit,deepcopy(variation))
-            #print(f"lhs: {lhs},rhs: {rhs}")
             res[lhs]=str(rhs)
             lower_limit-=1
 
-    #res = [str(i) for i in res]
     res = '{' + ','.join(res) + '}'
     return res
 
@@ -275,7 +258,7 @@ def find_id(ind, end, lis, res=dict()):
         find_id(0, len(lis[ind]), lis[ind], res)
     find_id(ind+1, end, lis, res)
 
-'''solve_expr'''
+'''a function to solve expressions '''
 def solve_expr(i,n,l):
     if(type(l)==list and len(l)==3 and type(l[0])==int and type(l[1])==str and type(l[2])==int):
         x,y,op=l[0],l[2],l[1]

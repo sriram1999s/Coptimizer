@@ -1,4 +1,0 @@
-1. bounds condition => RHS must be constant
-2. bounds condition => LHS cannot be expression
-3. initial declaration of iterator cannot be a variable or expression
-3. Currently, body cannot depend on iterator ==> Yet to take care of  
