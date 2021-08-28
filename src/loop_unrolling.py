@@ -1,7 +1,7 @@
 from regenerator import *
 from math import *
-from optimizations.symboltable import *
-from optimizations.loop_jamming import *
+from symboltable import *
+from loop_jamming import *
 from collections import *
 import re
 import secrets

@@ -96,6 +96,39 @@ class Sentinel:
         code += f" {name}[n{hash} - 1] = {sentinel};"
         return code, name, hash
 
+    def validate_overflow(self, sub_tree):
+        self.overflow_to_sentinel(sub_tree)
+
+    ''' converts overflow to sentinel '''
+    def overflow_to_sentinel(self, sub_tree):
+        import re
+        if (sub_tree[0] == 'while'):
+            bounds_condition = sub_tree[1]
+            found_condition, found_body = self.detect_and_remove_if(sub_tree[2])
+            sub_tree[1] = ['(', '!', found_condition, ')']
+            found_body_new = re.sub('break\s*?;', '', ''.join(flatten(found_body)))
+            insert_code, name, hash = self.add_overflow_sentinel(found_condition)
+            # print("\n\ninsert code : ", insert_code)
+            sub_tree.append(['if(', bounds_condition, ')', found_body_new])
+            sub_tree.insert(0, insert_code)
+
+    ''' adds oveflow sentinel values to end of tagged ds '''
+    def add_overflow_sentinel(self, condition):
+        flattened_condition = list(flatten(condition))
+        pos_of_symbol = flattened_condition.index('<')
+        pos_of_open_square = flattened_condition.index('[')
+        name = "".join(flattened_condition[pos_of_symbol+1: pos_of_open_square])
+        pos_of_open_paranthesis = flattened_condition.index('(')
+        accumulator = "".join(flattened_condition[pos_of_open_paranthesis+1:pos_of_symbol])
+
+        hash = secrets.token_hex(nbytes=4)
+        code = f"int n{hash} = sizeof({name}) / sizeof(int);"
+        code += f"#include <limits.h>\n"
+        code += f"{name}[n{hash}] = INT_MAX;"
+        code += f" {name}[n{hash} + 1] = 1;"
+        code += f"{accumulator}+= {name}[0];"
+        return code, name, hash
+
 def increase_size_array(statement,type_ds):
     if(type_ds == "array"):
         if(type(statement[2][1]) == int):

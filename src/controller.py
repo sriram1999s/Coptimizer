@@ -7,8 +7,8 @@ from parser_file import *
 # from stack_match2 import *
 # from switch import *
 
-from optimizations.stack_match2 import *
-from optimizations.switch import *
+from stack_match2 import *
+from switch import *
 
 ''' init lexxer and parser '''
 lexer = lex()

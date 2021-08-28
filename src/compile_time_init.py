@@ -1,6 +1,6 @@
 from regenerator import *
 from math import *
-from optimizations.symboltable import *
+from symboltable import *
 import re
 from collections import defaultdict
 from copy import deepcopy

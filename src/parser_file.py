@@ -6,7 +6,7 @@ from regenerator import *
 from optimizations.loop_unrolling import *
 from optimizations.symboltable import *
 from optimizations.compile_time_init import *
-from optimizations.sentinel import *
+from sentinel import *
 
 from collections import defaultdict
 from pprint import pprint
@@ -24,13 +24,13 @@ def p_start(p):
     '''
     start : multiple_statements
     '''
-    print('printing symbol table....')
-    sym_tab.disp()
-
-    print('printing array data stores...')
-    com_init.disp()
-    print('printing jam table....')
-    jam.disp()
+    # print('printing symbol table....')
+    # sym_tab.disp()
+    #
+    # print('printing array data stores...')
+    # com_init.disp()
+    # print('printing jam table....')
+    # jam.disp()
 
     print('printing tagged ds')
     sentinel.disp()
@@ -438,6 +438,7 @@ def p_simple(p):
 	       | MULTILINE_COMMENT
     	   | tagged_ds
            | linear_search
+           | overflow
     '''
     if(len(p)==3):
         p[0] = [p[1],p[2]]
@@ -907,3 +908,10 @@ def p_linear_search(p):
     '''
     sentinel.validate_linear_search(p[2])
     p[0] = ["/*sentinel-search-begin*/", p[2], "/*sentinel-search-end*/"]
+
+def p_overflow(p):
+    '''
+    overflow : OVERFLOW_BEGIN multiple_statements OVERFLOW_END
+    '''
+    sentinel.validate_overflow(p[2])
+    p[0] = ["/*overflow-begin*/", p[2], "/*oveflow-end*/"]

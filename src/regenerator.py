@@ -1,4 +1,4 @@
-from optimizations.tail_recc_elim import *
+from tail_recc_elim import *
 from multiprocessing import Pool
 import copy
 import secrets
