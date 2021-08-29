@@ -2,10 +2,12 @@ from lexer import *
 from ply.yacc import yacc
 from menu import *
 from regenerator import *
+
 from optimizations.loop_unrolling import *
 from optimizations.symboltable import *
 from optimizations.compile_time_init import *
 from optimizations.function_inline import flatten as flatten_all
+from optimizations.sentinel import *
 from collections import defaultdict
 from pprint import pprint
 # --------------------------------parser------------------------------------ #
