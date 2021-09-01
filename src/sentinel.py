@@ -50,10 +50,19 @@ class Sentinel:
                 return True
             return False
 
+        def check_instructions(sub_tree):
+            flattened_list = flatten(sub_tree)
+            for elem in flattened_list:
+                # print(elem)
+                if (re.search("[-+*/=]", str(elem))):
+                    return False
+            return True
+
         def find(i, n, sub_tree, condition, body):
+            # print(i, sub_tree[i])
             if(i == n):
                 return
-            if(type(sub_tree[i]) == list and sub_tree[i][0] == 'if' and check_break(sub_tree[i][2])):
+            if(type(sub_tree[i]) == list and sub_tree[i][0] == 'if' and check_break(sub_tree[i][2])  and check_instructions(sub_tree[i][2])):
                 condition.append(sub_tree[i][1])
                 body.append(sub_tree[i][2])
                 sub_tree[i] = []
@@ -62,8 +71,7 @@ class Sentinel:
             if(type(sub_tree[i]) == list):
                 find(0 , len(sub_tree[i]), sub_tree[i], condition, body)
 
-            if(type(sub_tree[i]) != list):
-                find(i+1 , n, sub_tree, condition, body)
+            find(i+1 , n, sub_tree, condition, body)
 
 
         condition_list = []

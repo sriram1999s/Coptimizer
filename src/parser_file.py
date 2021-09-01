@@ -3,10 +3,11 @@ from ply.yacc import yacc
 from menu import *
 from regenerator import *
 
-from optimizations.loop_unrolling import *
-from optimizations.symboltable import *
-from optimizations.compile_time_init import *
+from loop_unrolling import *
+from symboltable import *
+from compile_time_init import *
 from sentinel import *
+from bit_hacks import *
 
 from collections import defaultdict
 from pprint import pprint
@@ -73,6 +74,7 @@ def p_open(p):
         p[0] = [p[1], [p[2], p[3]], p[4], p[5]]
         sym_tab.lookahead(0, len(p[3]), p[3])
         sym_tab.lookahead(0, len(p[5]), p[5])
+        p[0] = validate_find_min(p[0])
 
 ''' keyword for '''
 def p_for(p):
@@ -133,6 +135,7 @@ def p_closed(p):
         p[0] = [p[1],[p[2],p[3]],p[4],p[5]]
         sym_tab.lookahead(0, len(p[3]), p[3])
         sym_tab.lookahead(0, len(p[5]), p[5])
+        p[0] = validate_find_min(p[0])
 
 
 
