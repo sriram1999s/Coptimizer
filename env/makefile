@@ -1,5 +1,5 @@
 default:
-	py C:\Users\KR\PycharmProjects\Coptimizer\src\controller.py "C:\Users\KR\PycharmProjects\Coptimizer\input_files\bit_hacks\t1.c"
+	py C:\Users\KR\PycharmProjects\Coptimizer\src\controller.py "C:\Users\KR\PycharmProjects\Coptimizer\input_files\bit_hacks\t2.c"
 	C:\GnuWin32\bin\indent -linux "C:\Users\KR\PycharmProjects\Coptimizer\env\temp.c"
 
 clean:
