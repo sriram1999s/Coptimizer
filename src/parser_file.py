@@ -642,10 +642,18 @@ def p_expr(p):
                 p[0] = [ ( t[0] , p[0][2:] , "call" , p[1])]
         else:
             p[0] = [p[1], p[2], p[3]]
+
     elif(len(p)==7):
         p[0] = [p[1], p[2], p[3], p[4], p[5], p[6]]
     else :
         p[0] = p[1]
+
+    try:
+        if type(p[0]) == list:
+            if '%' in list(flatten(p[0])):
+                p[0] = validate_compute_mod(p[0])
+    except e:
+        print('Not modulo')
 
 def p_assignment(p):
     '''

@@ -1,5 +1,5 @@
 
-1. INPUT: testing/t1
+1. INPUT: if_to_switch/t1.c
     INPUT DESCRIPTION:
     - 3 chains
     - 2 level nested
@@ -9,7 +9,7 @@
     - Outer chain switched and inner chains retained the same
 
 
-2. INPUT: testing/t2
+2. INPUT: if_to_switch/t2.c
     INPUT DESCRIPTION:
     - 4 chains
     - 1 level nested
@@ -21,7 +21,7 @@
     - All chains switched
 
 
-3. INPUT: testing/t3
+3. INPUT: if_to_switch/t3.c
     INPUT DESCRIPTION:
     - 5 chains
     - 1 level nested
@@ -33,7 +33,7 @@
     - All chains, but the single if, switched
 
 
-4. INPUT: testing/t4
+4. INPUT: if_to_switch/t4.c
     INPUT DESCRIPTION:
     - 6 chains
     - 3 level nested
@@ -46,7 +46,7 @@
     - All chains, but the single if, switched
 
 
-5. INPUT: testing/t5
+5. INPUT: if_to_switch/t5.c
     INPUT DESCRIPTION:
     - 2 chains
     - Not nested
@@ -58,7 +58,7 @@
     - First chain switched and second chain retained the same
 
 
-6. INPUT: testing/t6
+6. INPUT: if_to_switch/t6.c
     INPUT DESCRIPTION:
     - 3 chains
     - Not nested
@@ -68,7 +68,7 @@
     - First and second chains retained the same and third chain switched
 
 
-7. INPUT: testing/t7
+7. INPUT: if_to_switch/t7.c
     INPUT DESCRIPTION:
     - 1 chain
     - Not nested
@@ -81,7 +81,7 @@
     - Semantics of the conditions not violated
 
 
-8. INPUT: testing/t8
+8. INPUT: if_to_switch/t8.c
     INPUT DESCRIPTION:
     - 1 chain
     - Not nested
@@ -91,7 +91,7 @@
     - Chain switched
 
 
-9. INPUT: testing/t9
+9. INPUT: if_to_switch/t9.c
     INPUT DESCRIPTION:
     - 6 chain
     - 4 level nested
@@ -103,7 +103,7 @@
     - When the condition has || the chain must not be switched
 
 
-10. INPUT: testing/t10
+10. INPUT: if_to_switch/t10.c
     INPUT DESCRIPTION:
     - 1 chain
     - Not nested
@@ -114,7 +114,7 @@
     OUTPUT: chain will be switched if condition of form var==int or var==char. Should identify variable of type float and not switch?
 
 
-11. INPUT: testing/t11
+11. INPUT: if_to_switch/t11.c
     INPUT DESCRIPTION:
     - 1 chain
     - Not nested
@@ -124,7 +124,7 @@
     - Chain not switched for equality conditions of any type other than var==int and var==char
 
 
-12. INPUT: testing/t12
+12. INPUT: if_to_switch/t12.c
     INPUT DESCRIPTION:
     - 3 chains
     - Range cases specified using two relational operators- <= and <=
@@ -139,7 +139,7 @@
     OUTPUT: Negative numbers -1 to -9 get accepted in first switch case 0 //?
 
 
-13. INPUT: testing/t13
+13. INPUT: if_to_switch/t13.c
     INPUT DESCRIPTION:
     - 3 chains
     - Range cases specified using two relational operators- <= and <
@@ -154,7 +154,7 @@
     OUTPUT: Negative numbers -1 to -9 get accepted in first switch case 0 //?
 
 
-14. INPUT: testing/t14
+14. INPUT: if_to_switch/t14.c
     INPUT DESCRIPTION:
     - 3 chains
     - Range cases specified using two relational operators- < and <=
@@ -169,7 +169,7 @@
     OUTPUT: Negative numbers -1 to -9 get accepted in first switch case 0 //?
 
 
-15. INPUT: testing/t15
+15. INPUT: if_to_switch/t15.c
     INPUT DESCRIPTION:
     - 3 chains
     - Range cases specified using two relational operators- < and <
@@ -184,7 +184,7 @@
     OUTPUT: Negative numbers -1 to -9 get accepted in first switch case 0 //?
 
 
-16. INPUT: testing/t16
+16. INPUT: if_to_switch/t16.c
     INPUT DESCRIPTION:
     - Fist and third range can be switched, second cannot.
     EXPECTED OUTPUT:
@@ -194,7 +194,7 @@
     OUTPUT: Negative numbers get accepted in switch //?
 
 
-17. INPUT: testing/t17
+17. INPUT: if_to_switch/t17.c
     INPUT DESCRIPTION:
     - 4 chain
     - 2 level nested

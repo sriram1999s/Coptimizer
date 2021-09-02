@@ -1,0 +1,8 @@
+1. Find min of two integers or characters x and y
+    Bit Hack: r = y ^ ((x ^ y) & -(x < y));
+              or
+              r = x ^ ((x ^ y) & -(x < y));
+
+2. Compute (x+y)%n, assuming that 0<=x<n and 0<=y<n
+    Bit Hack: r = (x+y) - (n& -((x+y) >= n))
+
