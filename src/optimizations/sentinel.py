@@ -37,14 +37,17 @@ class Sentinel:
                 
             found_condition = ' || '.join(found_condition_formatted)
             # print(f"\n\n linear_to_sentinel : {found_condition}, {found_body}")
-            sub_tree[1] = ['!', '(',  found_condition, ')']
-            found_body_new = re.sub(r'break\s*?;', '', ''.join(flatten(found_body)))
+            sub_tree[1] = ['(', '!', '(', found_condition, ')', ')']
+
+            found_body_new = []
+            for body in found_body:
+                found_body_new.append(re.sub(r'break\s*?;', '', ''.join(flatten(body))))
             # print("fnjhkdv : ", found_body_new, " @ ", ''.join(flatten(found_body)))
             insert_code, name, hash = self.add_sentinel(found_condition_raw[0])
             print("\n\ninsert code : ", insert_code)
             bounds_condition.insert(-1, '-')
             bounds_condition.insert(-1, '1')
-            sub_tree.append(['if(', bounds_condition, f'|| ({name}[n{hash} -1] == temp{hash}))', found_body_new])
+            sub_tree.append(['if(', bounds_condition, f'|| ({name}[n{hash} -1] == temp{hash}))', ''.join(found_body_new)])
             sub_tree.insert(0, insert_code)
 
     # ['while', ['(', ['i', '<', 'n'], ')'], ['{', [['if', ['(', [['a', ['[', 'i', ']']], '==', 'elem'], ')'], ['{', [[['printf', '(', ['"%d.....found"', ',', 'elem'], ')'], ';'], ['break', ';']], '}']], [['i', '++'], ';']], '}']]
