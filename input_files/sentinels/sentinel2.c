@@ -21,6 +21,10 @@ int main()
       printf("%d...divisible by 11", elem);
       break;
     }
+
+    if (a[i] % 3 == 0) {
+      printf("%d..divisible by 3", elem);
+    }
     i++;
   }
   /*linear-search-end*/
