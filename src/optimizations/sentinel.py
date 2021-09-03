@@ -23,6 +23,16 @@ class Sentinel:
         print("In validate : ", sub_tree)
         self.linear_to_sentinel(sub_tree)
 
+    def find_loop_var(self,condition,name_ds):
+        import re
+        pat = f"{name_ds}" + r"\[(.*?)\]"
+        # print("asdasdasdas ", name_ds, ''.join(flatten(condition)))
+        
+        match_object = re.search(pat, ''.join(flatten(condition)))
+        if(match_object):
+            return match_object.groups(1)[0]
+        print("no match for loop variable!!")
+
     ''' converts linear search to sentinel search '''
     def linear_to_sentinel(self, sub_tree):
         import re
@@ -47,7 +57,15 @@ class Sentinel:
             print("\n\ninsert code : ", insert_code)
             bounds_condition.insert(-1, '-')
             bounds_condition.insert(-1, '1')
-            sub_tree.append(['if(', bounds_condition, f'|| ({name}[n{hash} -1] == temp{hash}))', ''.join(found_body_new)])
+            print("Cond: ", found_condition_raw)
+            print("Body: ", found_body)
+            loop_var = self.find_loop_var(found_condition_raw[0], name)
+            print("Loop_var: ", loop_var)
+            for idx in range(len(found_condition_raw)):
+                sub_condition = ''.join([str(j) for j in flatten(found_condition_raw[idx])])
+                sub_condition = re.sub(f"{loop_var}", f'n{hash} - 1', sub_condition)
+                sub_body = ''.join(found_body_new[idx])
+                sub_tree.append(['if(', bounds_condition, f'|| {sub_condition}', sub_body])
             sub_tree.insert(0, insert_code)
 
     # ['while', ['(', ['i', '<', 'n'], ')'], ['{', [['if', ['(', [['a', ['[', 'i', ']']], '==', 'elem'], ')'], ['{', [[['printf', '(', ['"%d.....found"', ',', 'elem'], ')'], ';'], ['break', ';']], '}']], [['i', '++'], ';']], '}']]
@@ -85,7 +103,7 @@ class Sentinel:
         condition_list = []
         body_list = []
         find(0, len(sub_tree), sub_tree, condition_list, body_list)
-        return (condition_list, body_list[-1])
+        return (condition_list, body_list)
 
     ''' adds sentinel value to end of tagged ds '''
     def add_sentinel(self, condition):
