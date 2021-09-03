@@ -438,6 +438,7 @@ def p_simple(p):
 	       | MULTILINE_COMMENT
     	   | tagged_ds
            | linear_search
+	   | predicate
     '''
     if(len(p)==3):
         p[0] = [p[1],p[2]]
@@ -470,8 +471,9 @@ def p_function_call(p):
     '''
     function_call : ID L_PAREN call_params R_PAREN
     '''
-    p[0] = [p[1], p[2], p[3], p[4], ";"]
-    print("\n\n\n in function call : ", p[0], "\n\n\n")
+    # p[0] = [p[1], p[2], p[3], p[4], ";"]
+    p[0] = [p[1], p[2], p[3], p[4]]
+    # print("\n\n\n in function call : ", p[0], "\n\n\n")
     if(menu.FLAG_INLINE or menu.FLAG_TAIL_RECURSION):
         call_helper(p[0],p[1])
         p[0] = [(p[1],p[0][0 : -1], 'call')]
@@ -913,3 +915,10 @@ def p_linear_search(p):
     '''
     sentinel.validate_linear_search(p[2])
     p[0] = ["/*sentinel-search-begin*/", p[2], "/*sentinel-search-end*/"]
+
+def p_predicate(p):
+    '''
+    predicate : PREDICATE_BEGIN function PREDICATE_END
+    '''
+    sentinel.add_predicate(p[2])
+    p[0] = [p[1],p[2],p[3]]

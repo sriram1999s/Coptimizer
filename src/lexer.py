@@ -39,7 +39,7 @@ unary = ['NOT']
 
 extra = ['ID', 'TYPE', 'STRING' , 'HASH', 'INCLUDE','HEADER_FILE','CHAR','TYPEDEF']
 
-comment = ['MULTILINE_COMMENT','TAGGED_DS','LINEAR_SEARCH_BEGIN', 'LINEAR_SEARCH_END']
+comment = ['MULTILINE_COMMENT','TAGGED_DS','LINEAR_SEARCH_BEGIN', 'LINEAR_SEARCH_END', 'PREDICATE_BEGIN', 'PREDICATE_END']
 
 jump = ['RETURN']
 
@@ -197,15 +197,24 @@ def t_INCLUDE(t):
 
 
 def t_TAGGED_DS(t):
-    r'/\*data-structure:.*?\*/'
+    r'/\*\s*data-structure:.*?\s*\*/'
     return t
 
 def t_LINEAR_SEARCH_BEGIN(t):
-    r'/\*linear-search-begin\*/'
+    r'/\*\s*linear-search-begin\s*\*/'
     return t
 
 def t_LINEAR_SEARCH_END(t):
-    r'/\*linear-search-end\*/'
+    r'/\*\s*linear-search-end\s*\*/'
+    return t
+
+def t_PREDICATE_BEGIN(t):
+    r'/\*\s*predicate-begin\s*\*/'
+    return t
+
+
+def t_PREDICATE_END(t):
+    r'/\*\s*predicate-end\s*\*/'
     return t
 
 # multiline comment
