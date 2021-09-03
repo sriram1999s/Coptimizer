@@ -15,10 +15,10 @@ int main()
     r = (x)+(y)%n;
     printf("%d\n", r);
 
-    r = (((x+y)))%n;    // needs to be changed to bit hack
+    r = (((x+y)))%n;
     printf("%d\n", r);
 
-    r = ((x)+y)%n;  // needs to be changed to bit hack?
+    r = ((x)+y)%n;  // won't be changed to bit hack
     printf("%d\n", r);
 
     return 0;

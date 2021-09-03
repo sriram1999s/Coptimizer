@@ -95,50 +95,39 @@ def is_min_body2(res_var, rhs, body):
         return False
 
 
+'''flattens and converts non-list elements to string'''
+def flatten1(L):
+    for l in L:
+        if isinstance(l, list):
+            yield from flatten1(l)
+        else:
+            yield str(l)
+
+
 '''change (x+y)%n to (x+y) - (n& -((x+y) >= n))'''
 def validate_compute_mod(sub_tree):
-    print('sub tree', sub_tree) # [['(', ['x', '+', 'y'], ')'], '%', 'n']
-    # flattened_sub_tree = list(flatten(sub_tree))
-    # flattened_sub_tree = [str(i) for i in flattened_sub_tree]
-    # modulo_op_pos = flattened_sub_tree.index('%')
-    #
-    # try:
-    #     plus_op_pos = flattened_sub_tree.index('+')
-    #     # indices = [i for i, x in enumerate(flattened_sub_tree[:plus_op_pos]) if x == "("]
-    #     # x = ''.join(flattened_sub_tree[indices[-1]+1:plus_op_pos])
-    #     # indices = [i for i, x in enumerate(flattened_sub_tree[plus_op_pos+1:modulo_op_pos]) if x == ")"]
-    #     # y = ''.join(flattened_sub_tree[plus_op_pos+1:indices[-1]-1])
-    #     # indices = [i for i, x in enumerate(flattened_sub_tree[modulo_op_pos+1:]) if x == "("]
-    #     # index1 = flattened_sub_tree[indices[-1]+ 1:].index(")")
-    #     # n = ''.join(flattened_sub_tree[indices[-1]+1: index1])
-    #
-    #     '''of the form x%(y+z) or so'''
-    #     if plus_op_pos>=modulo_op_pos:
-    #         return sub_tree
-    #
-    #     return sub_tree
-    # except ValueError:
-    #     return sub_tree
-
     import re
-    sub_tree_copy = [str(i) for i in sub_tree if type(i) in ['int', 'float']]
-    flattened_sub_tree = ''.join(flatten(sub_tree_copy))
-    pat = '^\(+[a-zA-Z_0-9]+\+[a-zA-Z_0-9]+\)+%[a-zA-Z_0-9]+$'
-    pat_sum = '^\(+[a-zA-Z_0-9]+\+[a-zA-Z_0-9]+\)+'
-    pat_n = '[a-zA-Z_0-9]+$'
+    flattened_sub_tree = ''.join(flatten1(sub_tree))
+    pat = '\(+[a-zA-Z_\-0-9]+\+[a-zA-Z_\-0-9]+\)+%[a-zA-Z_\-0-9]+$'
+    pat_sum = '^\(+[a-zA-Z_\-0-9]+\+[a-zA-Z_\-0-9]+\)+'
+    pat_n = '[a-zA-Z_\-0-9]+$'
     m = re.search(pat, flattened_sub_tree)
     if m:
         expression = m.group(0)
+        print('expression', expression)
         m = re.search(pat_sum, expression)
         if m:
             sum1 = m.group(0)
+            print('sum1', sum1)
             m = re.search(pat_n, expression)
             if m:
                 n = m.group(0)
+                print('n', n)
                 before_expression = flattened_sub_tree.find(expression)
                 if before_expression!=-1:
                     ret = flattened_sub_tree[:before_expression] + sum1 + '-' + '(' + n + '&' + '-' + '(' + sum1 + '>=' + n + '))'
                     return ret
     return sub_tree
+
 
 
