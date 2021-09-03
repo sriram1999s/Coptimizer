@@ -14,7 +14,11 @@ int main()
       break;
     }
     if (a[i] & 1) {
-      printf("%d....found", elem);
+      printf("%d....is odd", elem);
+      break;
+    }
+    if (a[i] % 11 == 0) {
+      printf("%d...divisible by 11", elem);
       break;
     }
     i++;
