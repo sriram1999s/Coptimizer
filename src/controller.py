@@ -9,6 +9,7 @@ from parser_file import *
 
 from stack_match2 import *
 from switch import *
+from bit_hacks import validate_find_abs
 
 ''' init lexxer and parser '''
 lexer = lex()
@@ -45,6 +46,7 @@ lines = pre_process(lines)
 ''' parsing '''
 z=parser.parse(lines)
 
+z = validate_find_abs(z)
 
 fn_defn_list.sort(key = lambda x:x[0])
 fn_defn_obj_list.sort(key = lambda x:x.name)

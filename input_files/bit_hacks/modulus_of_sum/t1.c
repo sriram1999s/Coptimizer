@@ -6,6 +6,9 @@ int main()
     int r = (x+y)%n;
     printf("%d\n", r);
 
+    r = (x+y)%(n);
+    printf("%d\n", r);
+
     r = (x)+y%n;
     printf("%d\n", r);
 

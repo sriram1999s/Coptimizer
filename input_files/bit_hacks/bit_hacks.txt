@@ -6,3 +6,37 @@
 2. Compute (x+y)%n, assuming that 0<=x<n and 0<=y<n
     Bit Hack: r = (x+y) - (n& -((x+y) >= n))
 
+3. Round up to the next highest power of two for an unsigned int v and a 64-bit architecture
+    Bit Hack: v--;
+              v |= v >> 1;
+              v |= v >> 2;
+              v |= v >> 4;
+              v |= v >> 8;
+              v |= v >> 16;
+              v |= v >> 32;
+              v++;
+
+4. Compute the index of the least significant 1
+    Bit Hack: x & (-x)
+
+5. Compute log2(x) where x is a power of 2
+    Bit Hack: Multiply by deBruijn number and lookup into De Bruijn sequence
+
+6. Count the number of 1 bits in a word x
+    Bit Hack: for(r=0; x!=0; ++r)
+                x &= x-1
+            (or)
+    Bit Hack: static const int count[256] = {0, 1, 1, 2, 1, 2, 2, 3, 1, ..., 8}
+                for(r=0; x!=0; x>>=8)
+                    r += count[x & 0xFF]
+            (or)
+    Bit Hack: Parallel divide and conquer method
+
+7. Find the absolute value of an integer x
+    Bit Hack: int const mask = x >> sizeof(int) * CHAR_BIT - 1;
+              r = (x + mask) ^ mask;
+            (or)
+              int const mask = x >> sizeof(int) * CHAR_BIT - 1;
+              r = (x ^ mask) - mask;
+
+
