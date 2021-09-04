@@ -20,7 +20,7 @@ class Sentinel:
     def add_predicate(self,function):
         # print("function: ", function)
         self.predicates[function[1]] = function
-        
+
     def disp(self):
         for ds in self.tagged_data_structures:
             print(f"{ds}---->{self.tagged_data_structures[ds]}")
@@ -34,14 +34,15 @@ class Sentinel:
         import re
         pat = f"{name_ds}" + r"\[(.*?)\]"
         # print("asdasdasdas ", name_ds, ''.join(flatten(condition)))
-        
+
         match_object = re.search(pat, ''.join(([str(j) for j in flatten(condition)])))
         if(match_object):
             return match_object.groups(1)[0]
         print("no match for loop variable!!")
 
     def check_predicate(self,element):
-        if(type(element[1]) == list and self.predicates[element[1][0]]):
+        print("element : ", element)
+        if(type(element[1]) == list and type(element[1][0]) != list and self.predicates[element[1][0]]):
             return True
         return False
 
@@ -55,9 +56,9 @@ class Sentinel:
             # chain multiple conditions using ||
             found_condition_formatted = []
             for condition in found_condition_raw:
-                found_condition_formatted.append(''.join([str(j) for j in flatten(condition)])) 
+                found_condition_formatted.append(''.join([str(j) for j in flatten(condition)]))
             found_condition = ' || '.join(found_condition_formatted)
-            
+
             # print(f"\n\n linear_to_sentinel : {found_condition}, {found_body}")
             sub_tree[1] = ['(', '!', '(', found_condition, ')', ')']
 
@@ -66,10 +67,18 @@ class Sentinel:
                 found_body_new.append(re.sub(r'break\s*?;', '', ''.join(flatten(body))))
             # print("fnjhkdv : ", found_body_new, " @ ", ''.join(flatten(found_body)))
             if(len(found_condition_raw) == 1 and self.check_predicate(found_condition_raw[0])):
-                insert_code, name, hash = self.add_sentinel_predicate(found_condition_raw[0])
+                insert_code, name, hash = self.add_sentinel_predicate(found_condition_raw[0], found_condition_raw[0][1][0])
                 print("\n\ninsert code predicate : ", insert_code)
                 bounds_condition.insert(-1, '-')
                 bounds_condition.insert(-1, '1')
+                loop_var = self.find_loop_var(found_condition_raw[0], name)
+                sub_condition = "".join(flatten(found_condition_raw[0]))
+                sub_condition = re.sub(f"\[{loop_var}\]", f'[n{hash} - 1]', sub_condition)
+
+                sub_body = ''.join(found_body_new[0])
+                sub_tree.append(f"{name}[n{hash} - 1] = temp{hash};")
+
+                sub_tree.append(['if(', bounds_condition, f'|| {sub_condition})', sub_body])
                 sub_tree.insert(0, insert_code)
             else:
                 insert_code, name, hash = self.add_sentinel(found_condition_raw[0])
@@ -78,12 +87,12 @@ class Sentinel:
                 bounds_condition.insert(-1, '1')
                 loop_var = self.find_loop_var(found_condition_raw[0], name)
                 print("Loop_var: ", loop_var)
-
+                sub_tree.append(f"{name}[n{hash} - 1] = temp{hash};")
                 for idx in range(len(found_condition_raw)):
                     sub_condition = ''.join([str(j) for j in flatten(found_condition_raw[idx])])
-                    sub_condition = re.sub(f"{loop_var}", f'n{hash} - 1', sub_condition)
+                    sub_condition = re.sub(f"\[{loop_var}\]", f'[n{hash} - 1]', sub_condition)
                     sub_body = ''.join(found_body_new[idx])
-                    sub_tree.append(['if(', bounds_condition, f'|| {sub_condition}', sub_body])
+                    sub_tree.append(['if(', bounds_condition, f'|| {sub_condition})', sub_body])
                 sub_tree.insert(0, insert_code)
 
     # ['while', ['(', ['i', '<', 'n'], ')'], ['{', [['if', ['(', [['a', ['[', 'i', ']']], '==', 'elem'], ')'], ['{', [[['printf', '(', ['"%d.....found"', ',', 'elem'], ')'], ';'], ['break', ';']], '}']], [['i', '++'], ';']], '}']]
@@ -148,10 +157,19 @@ class Sentinel:
         code += f" {name}[n{hash} - 1] = {sentinel};"
         return code, name, hash
 
-    def add_sentinel_predicate(self,condition):
+    def add_sentinel_predicate(self,condition, fn_name):
         import re
-        sentinel = -1
-        name = 'a'
+
+        flattened_condition = ''.join([str(j) for j in flatten(condition)])
+        flattened_condition = re.sub(r"\(", r" ( ", flattened_condition)
+        flattened_condition = re.sub(r"\)", r" ) ", flattened_condition)
+        pat = r"\s([^()]*?)\["
+        m = re.search(pat, flattened_condition)
+        name = ''
+        if(m):
+            name = m.group(1)
+
+        sentinel = self.find_sentinel(fn_name)
         # print("name, sentinel : ", name, sentinel)
         hash = secrets.token_hex(nbytes=4)
         code = f"int n{hash} = sizeof({name}) / sizeof(int);"
@@ -159,6 +177,23 @@ class Sentinel:
         code += f" {name}[n{hash} - 1] = {sentinel};"
         return code, name, hash
 
+    def find_sentinel(self, fn_name):
+        from regenerator import solve
+        import subprocess
+        # print("predicate name : ", fn_name)
+        headers = "#include<stdio.h>\n#include<stdlib.h>\n"
+        predicate = "".join(solve(0, len(self.predicates[fn_name]), self.predicates[fn_name]))
+        main = '\nint main() {\nFILE *fptr;\nfptr = fopen("sentinel_res.txt","w");\nif(fptr == NULL){\nprintf("Error!");\nexit(1);\n}\nfor(int i = -100; i < 101; ++i){\n' + f'if({fn_name}(i))'+ '{\nfprintf(fptr, "%d", i);\nbreak;\n}\n}fclose(fptr);\n}'
+        with open("find_sentinel.c", "w") as f:
+            f.write(headers + predicate + main)
+        subprocess.call(["gcc find_sentinel.c -o sentinel.out"], shell = True)
+        subprocess.call(["./sentinel.out"], shell = True)
+        with open("sentinel_res.txt", "r") as f:
+            sentinel = int("".join(f.readlines()))
+
+        subprocess.call(["rm find_sentinel.c sentinel_res.txt sentinel.out "], shell = True)
+
+        return sentinel
 
 def increase_size_array(statement,type_ds):
     if(type_ds == "array"):
