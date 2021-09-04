@@ -3,11 +3,7 @@
 /* predicate-begin */
 int predicate(int a)
 {
-  if (a & 1) {
-    printf("it is odd!\n");
-    return 1;
-  }
-  if (a % 11) {
+  if (!(a % 11)) {
     printf("divisible by 11\n");
     return 1;
   }
@@ -18,7 +14,7 @@ int predicate(int a)
 int main()
 {
   /*data-structure:array*/
-  int a[] = {5, 8, 3, 2, 12, 17, 19, 30};
+  int a[] = {5, 8, 3, 2, 12, 17, 19, 33};
   int n = sizeof(a) / sizeof(int);
   int elem = 2;
   int i = 0;
