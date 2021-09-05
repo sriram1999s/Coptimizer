@@ -9,6 +9,7 @@ def test_results():
     with open("../tester/profile_temp.c","w") as f:
         f.write(profile(sys.argv[1]))
 
+    subprocess.call(["touch profile.txt"], shell = True)
     subprocess.call(["gcc ../tester/profile_temp.c"], shell = True)
     subprocess.call(["./a.out < inp.txt > unop_output.txt"], shell = True)
 
@@ -42,7 +43,7 @@ memory_unoptimized = 0.0
 
 
 
-def parallel_shit():
+def parallel():
     processes = []
     with ThreadPoolExecutor(max_workers=10) as executor:
         for i in range(10):
@@ -51,13 +52,13 @@ def parallel_shit():
     return processes
 
 
-def normal_shit():
+def normal():
     processes = []
     for i in range(10):
         processes.append(test_results())
     return processes
 
-processes = normal_shit()
+processes = normal()
 ##print(processes)
 for task in processes:
     time_optimized += task[0]
