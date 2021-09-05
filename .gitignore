@@ -17,7 +17,7 @@ tester/*
 !tester/criterion_controller.py
 !tester/tester_controller.py
 !tester/backend_tester.py
-!tester/inp
+!tester/inp.txt
 
 env/flags.json
 env/output.c
