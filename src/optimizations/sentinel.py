@@ -6,6 +6,7 @@ class Sentinel:
     def __init__(self):
        self.tagged_data_structures = defaultdict(lambda:None)
        self.predicates = defaultdict(lambda:None)
+       self.salt = '_' + secrets.token_hex(nbytes=4)
        # self.linear_search_bodies = defaultdict(lambda:None)
 
     '''add data structure to tagged data structure'''
@@ -17,8 +18,20 @@ class Sentinel:
     '''
     ['int', 'predicate', '(', ['int', 'a'], ')', [['{', [[['if', ['(', ['a', '&', 1], ')'], ['{', [[['printf', '(', '"it is odd!\\n"', ')', ';'], ';'], ['return', 1, ';']], '}']], ['if', ['(', ['a', '%', 11], ')'], ['{', [[['printf', '(', '"divisible by 11\\n"', ')', ';'], ';'], ['return', 1, ';']], '}']]], ['return', 0, ';']], '}']]]
     '''
+    def get_function_without_io(self, function_name, function):
+        import re
+        from regenerator import solve
+        flattened_function = "".join([str(token) for token in solve(0,len(function),function)])
+        flattened_function = re.sub(r"printf\(.*?\);", "", flattened_function)
+
+        
+        flattened_function = re.sub(function_name, function_name + self.salt, flattened_function)
+        return flattened_function
+    
     def add_predicate(self,function):
-        # print("function: ", function)
+        import re
+        print("function: ", function)
+
         self.predicates[function[1]] = function
 
     def disp(self):
@@ -29,6 +42,10 @@ class Sentinel:
     def validate_linear_search(self,sub_tree):
         print("In validate : ", sub_tree)
         self.linear_to_sentinel(sub_tree)
+
+        for predicate in self.predicates:
+            predicate_without_print = self.get_function_without_io(predicate, self.predicates[predicate])
+            self.predicates[predicate].append([predicate_without_print])
 
     def find_loop_var(self,condition,name_ds):
         import re
@@ -75,6 +92,10 @@ class Sentinel:
                 sub_condition = "".join(flatten(found_condition_raw[0]))
                 sub_condition = re.sub(f"\[{loop_var}\]", f'[n{hash} - 1]', sub_condition)
 
+                # substituting all predicate calls with calls to modified predicates
+                for predicate_name in self.predicates:
+                    sub_condition = re.sub(predicate_name, predicate_name+self.salt, sub_condition)
+
                 sub_body = ''.join(found_body_new[0])
                 sub_tree.append(f"{name}[n{hash} - 1] = temp{hash};")
 
@@ -83,6 +104,8 @@ class Sentinel:
             else:
                 insert_code, name, hash = self.add_sentinel(found_condition_raw[0])
                 print("\n\ninsert code : ", insert_code)
+                if(not insert_code):
+                    return
                 bounds_condition.insert(-1, '-')
                 bounds_condition.insert(-1, '1')
                 loop_var = self.find_loop_var(found_condition_raw[0], name)
@@ -104,19 +127,11 @@ class Sentinel:
             if(re.search(r"break\s*?;", flattened_tree)):
                 return True
             return False
-
-        def check_instructions(sub_tree):
-            flattened_list = flatten(sub_tree)
-            for elem in flattened_list:
-                # print(elem)
-                if(re.search("[-+*/=]", str(elem))):
-                    return False
-            return True
-
+        
         def find(i, n, sub_tree, condition, body):
             if(i == n):
                 return
-            if(type(sub_tree[i]) == list and sub_tree[i][0] == 'if' and check_break(sub_tree[i][2]) and check_instructions(sub_tree[i][2])):
+            if(type(sub_tree[i]) == list and sub_tree[i][0] == 'if' and check_break(sub_tree[i][2])):
                 # print("asdasd ",sub_tree[i][1])
                 condition.append(sub_tree[i][1])
                 body.append(sub_tree[i][2])
@@ -152,9 +167,11 @@ class Sentinel:
 
         # print("name, sentinel : ", name, sentinel)
         hash = secrets.token_hex(nbytes=4)
-        code = f"int n{hash} = sizeof({name}) / sizeof(int);"
-        code += f"int temp{hash} = {name}[n{hash} - 1];"
-        code += f" {name}[n{hash} - 1] = {sentinel};"
+        code = ""
+        if(sentinel != ""):
+            code = f"int n{hash} = sizeof({name}) / sizeof(int);"
+            code += f"int temp{hash} = {name}[n{hash} - 1];"
+            code += f" {name}[n{hash} - 1] = {sentinel};"
         return code, name, hash
 
     def add_sentinel_predicate(self,condition, fn_name):
