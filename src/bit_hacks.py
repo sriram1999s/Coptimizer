@@ -1,6 +1,6 @@
 from parser_file import flatten
 
-
+# -----BEGIN: FIND MIN-----
 def validate_find_min(sub_tree):
     # print('sub tree0', sub_tree[0]) # if
     # print('sub tree1', sub_tree[1]) # [if_condition, if_body]
@@ -94,8 +94,10 @@ def is_min_body2(res_var, rhs, body):
         return False
     except ValueError:
         return False
+# -----END: FIND MIN-----
 
 
+# -----BEGIN: MODULUS OF SUM-----
 '''flattens and converts non-list elements to string'''
 def flatten1(L):
     for l in L:
@@ -127,8 +129,10 @@ def validate_compute_mod(sub_tree):
                           :before_expression] + sum1 + '-' + '(' + n + '&' + '-' + '(' + sum1 + '>=' + n + '))'
                     return ret
     return sub_tree
+# -----END: MODULUS OF SUM-----
 
 
+# -----BEGIN: FIND ABS-----
 '''converts any call to abs function to bit hack'''
 def validate_find_abs(tree):
     import secrets
@@ -178,6 +182,35 @@ def validate_find_abs(tree):
     if need_header:
         flattened_tree.insert(0, '#include<limits.h>\n')
     return flattened_tree
+# -----END: FIND ABS-----
+
+# -----BEGIN: POWER OF TWO-----
+'''converts the code for computation of power of 2 to bit hack'''
+def validate_power_of_2(sub_tree):
+    import re
+    flattened_sub_tree = list(flatten1(sub_tree))
+
+    open_paran_pos = flattened_sub_tree.index('(')
+    close_paran_pos = flattened_sub_tree.index(')')
+    if_condition = flattened_sub_tree[open_paran_pos+1: close_paran_pos]
+    if_condition = ''.join(flatten1(if_condition))
+    pat_variable = '[a-zA-Z0-9_]+'
+    m = re.search(pat_variable, if_condition)
+    if m:
+        x = m.group(0)
+        if 'return' in flattened_sub_tree:
+            sub_tree = f'return {x} && (!({x} & ({x}-1)));'
+            return sub_tree
+        else:
+            if_pos = flattened_sub_tree.index('if')
+            if_body_pos = flattened_sub_tree[if_pos:].index('{')
+            res_var = flattened_sub_tree[if_body_pos+1]
+            sub_tree = f'{res_var} = {x} && (!({x} & ({x}-1)));'
+    return sub_tree
+# -----END: POWER OF TWO-----
+
+
+
 
 
 

@@ -1,0 +1,31 @@
+1. INPUT: bit_hacks/power_of_two/t1.c
+    INPUT_DESCRIPTION:
+    - The code to compute power of two is tagged with power-of-2-begin and power-of-2-end
+    - Compute power of two using ceil and floor functions
+    - Result is returned
+    EXPECTED_OUTPUT:
+    - The code within the tags is replaced by return x && (!(x & (x-1)));
+
+2. INPUT: bit_hacks/power_of_two/t2.c
+    INPUT_DESCRIPTION:
+    - The code to compute power of two is tagged with power-of-2-begin and power-of-2-end
+    - Compute power of two iteratively
+    - Result is returned
+    EXPECTED_OUTPUT:
+    - The code within the tags is replaced by return x && (!(x & (x-1)));
+
+3. INPUT: bit_hacks/power_of_two/t3.c
+    INPUT_DESCRIPTION:
+    - The code to compute power of two is tagged with power-of-2-begin and power-of-2-end
+    - Compute power of two recursively
+    - Result is returned
+    EXPECTED_OUTPUT:
+    - The code within the tags is replaced by return x && (!(x & (x-1)));
+
+4. INPUT: bit_hacks/power_of_two/t4.c
+    INPUT_DESCRIPTION:
+    - The code to compute power of two is tagged with power-of-2-begin and power-of-2-end
+    - Compute power of two iteratively
+    - Result is stored
+    EXPECTED_OUTPUT:
+    - The code within the tags is replaced by result_var = x && (!(x & (x-1)));

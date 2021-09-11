@@ -1,4 +1,4 @@
-from parser_file import flatten
+from parser import flatten
 from collections import defaultdict
 import secrets
 

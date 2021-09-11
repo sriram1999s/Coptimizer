@@ -39,7 +39,7 @@ unary = ['NOT']
 
 extra = ['ID', 'TYPE', 'STRING' , 'HASH', 'INCLUDE','HEADER_FILE','CHAR','TYPEDEF']
 
-comment = ['MULTILINE_COMMENT','TAGGED_DS','LINEAR_SEARCH_BEGIN', 'LINEAR_SEARCH_END', 'OVERFLOW_BEGIN', 'OVERFLOW_END']
+comment = ['MULTILINE_COMMENT','TAGGED_DS','LINEAR_SEARCH_BEGIN', 'LINEAR_SEARCH_END', 'POWER_OF_2_BEGIN', 'POWER_OF_2_END']
 
 jump = ['RETURN']
 
@@ -208,12 +208,12 @@ def t_LINEAR_SEARCH_END(t):
     r'/\*linear-search-end\*/'
     return t
 
-def t_OVERFLOW_BEGIN(t):
-    r'/\*overflow-begin\*/'
+def t_POWER_OF_2_BEGIN(t):
+    r'/\*power-of-2-begin\*/'
     return t
 
-def t_OVERFLOW_END(t):
-    r'/\*overflow-end\*/'
+def t_POWER_OF_2_END(t):
+    r'/\*power-of-2-end\*/'
     return t
 
 # multiline comment

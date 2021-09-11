@@ -6,6 +6,7 @@ from regenerator import *
 from loop_unrolling import *
 from symboltable import *
 from compile_time_init import *
+from function_inline import flatten as flatten_all
 from sentinel import *
 from bit_hacks import *
 
@@ -136,7 +137,6 @@ def p_closed(p):
         sym_tab.lookahead(0, len(p[3]), p[3])
         sym_tab.lookahead(0, len(p[5]), p[5])
         p[0] = validate_find_min(p[0])
-
 
 
 ''' conditional '''
@@ -441,11 +441,12 @@ def p_simple(p):
 	       | MULTILINE_COMMENT
     	   | tagged_ds
            | linear_search
-           | overflow
+           | power_of_2
     '''
     if(len(p)==3):
         p[0] = [p[1],p[2]]
     elif(len(p)==4):
+        print("\n\np[2] p_simple : ", p[2])
         if(type(p[2]) is list and type(p[2][0]) is tuple and (menu.FLAG_INLINE or menu.FLAG_TAIL_RECURSION)):
             t = p[2][0]
             p[0] = [p[1], t[0], '(',t[1][2], ')',';']
@@ -473,7 +474,8 @@ def p_function_call(p):
     '''
     function_call : ID L_PAREN call_params R_PAREN
     '''
-    p[0] = [p[1], p[2], p[3], p[4]]
+    p[0] = [p[1], p[2], p[3], p[4], ";"]
+    # print("\n\n\n in function call : ", p[0], "\n\n\n")
     if(menu.FLAG_INLINE or menu.FLAG_TAIL_RECURSION):
         call_helper(p[0],p[1])
         p[0] = [(p[1],p[0][0 : -1], 'call')]
@@ -642,7 +644,6 @@ def p_expr(p):
                 p[0] = [ ( t[0] , p[0][2:] , "call" , p[1])]
         else:
             p[0] = [p[1], p[2], p[3]]
-
     elif(len(p)==7):
         p[0] = [p[1], p[2], p[3], p[4], p[5], p[6]]
     else :
@@ -865,9 +866,13 @@ def p_brace(p):
     else:
         if(type(p[1]) is list and type(p[1][0]) is tuple):
             t = copy.deepcopy(p[1][0])
-            t = list(flatten(t))
+            t = list(flatten_all(t))
+            # print("\n\n flattened t : " , t)
+            # print('\n\np[1] (1) in p_brace : ', p[1], '\n\n')
             if(t.count("call") > 1):
+                # print('\n\np[1] (2) in p_brace : ', p[1], '\n\n')
                 remove_nested_calls(0,len(p[1]),p[1])
+                # print('\np[1] (3) in p_brace : ', p[1], '\n\n')
             del(t)
         p[0] = p[1]
 
@@ -920,9 +925,10 @@ def p_linear_search(p):
     sentinel.validate_linear_search(p[2])
     p[0] = ["/*sentinel-search-begin*/", p[2], "/*sentinel-search-end*/"]
 
-def p_overflow(p):
+def p_power_of_2(p):
     '''
-    overflow : OVERFLOW_BEGIN multiple_statements OVERFLOW_END
+    power_of_2 : POWER_OF_2_BEGIN multiple_statements POWER_OF_2_END
     '''
-    sentinel.validate_overflow(p[2])
-    p[0] = ["/*overflow-begin*/", p[2], "/*oveflow-end*/"]
+    new_sub_tree = validate_power_of_2(p[2])
+    p[0] = ["/*power-of-2-begin*/", new_sub_tree, "/*power-of-2-end*/"]
+

@@ -39,4 +39,5 @@
               int const mask = x >> sizeof(int) * CHAR_BIT - 1;
               r = (x ^ mask) - mask;
 
-
+8. Determine if integer is a power of two
+    Bit Hack: x && (!(x & (x-1)));
