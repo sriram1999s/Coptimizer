@@ -2,7 +2,9 @@
 
 int main()
 {
-    int x = 6, y = 5, n = 10;
+    int x = 6;
+    int y = 5;
+    int n = 10;
     int r = (x+y)%n;
     printf("%d\n", r);
 
