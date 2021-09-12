@@ -1,5 +1,7 @@
 import subprocess
 import functools
+from tqdm import tqdm
+
 from backend_tester import *
 
 def compile():
@@ -39,16 +41,16 @@ def warmup():
         total_mem_op += mem
         total_time_op += time
 
-    print(f"After warmup...\n\nAverage memory usage for unoptimized code : {total_mem_unop/3} KB\n")
-    print(f"Average time usage for unoptimized code : {total_time_unop/3} s\n")
-    print(f"Average memory usage for optimized code : {total_mem_op/3} KB\n")
-    print(f"Average time usage for optimized code : {total_time_op/3} s\n")
+    print(f"After warmup...\n\n\tAverage memory usage for unoptimized code : {total_mem_unop/3} KB\n")
+    print(f"\tAverage time usage for unoptimized code : {total_time_unop/3} s\n")
+    print(f"\tAverage memory usage for optimized code : {total_mem_op/3} KB\n")
+    print(f"\tAverage time usage for optimized code : {total_time_op/3} s\n")
 
     precedent = (max(total_time_unop, total_time_op))/3
     return precedent
 
 def execute(runs):
-    print("executing...")
+    # print("executing...")
     total_time_unop = 0
     total_time_op = 0
     total_mem_unop = 0
@@ -64,7 +66,7 @@ def execute(runs):
     min_mem_unop = 100000000
     min_mem_op = 100000000
 
-    for run in range(runs):
+    for run in tqdm(range(runs), desc = "Executing..."):
         subprocess.call(["./unop.out < inp.txt > unop_output.txt"], shell = True)
         mem, time = read_profile()
         total_mem_unop += mem
@@ -93,10 +95,10 @@ def execute(runs):
         elif mem < min_mem_op:
             min_mem_op = mem
 
-    print(f"After execution...\n\nMemory usage for unoptimized code => Average : {total_mem_unop/runs} KB, Max : {max_mem_unop} KB, Min : {min_mem_unop} KB\n")
-    print(f"Run time for unoptimized code => Average : {total_time_unop/runs} KB, Max : {max_time_unop} s, Min : {min_time_unop} s\n")
-    print(f"Memory usage for optimized code => Average : {total_mem_op/runs} KB, Max : {max_mem_op} KB, Min : {min_mem_op} KB\n")
-    print(f"Run time for optimized code => Average : {total_time_op/runs} KB, Max : {max_time_op} s, Min : {min_time_op} s\n")
+    print(f"After execution...\n\n\tMemory usage for unoptimized code => Average : {total_mem_unop/runs} KB, Max : {max_mem_unop} KB, Min : {min_mem_unop} KB\n")
+    print(f"\tRun time for unoptimized code => Average : {total_time_unop/runs} KB, Max : {max_time_unop} s, Min : {min_time_unop} s\n")
+    print(f"\tMemory usage for optimized code => Average : {total_mem_op/runs} KB, Max : {max_mem_op} KB, Min : {min_mem_op} KB\n")
+    print(f"\tRun time for optimized code => Average : {total_time_op/runs} KB, Max : {max_time_op} s, Min : {min_time_op} s\n")
 
 def validate():
     PYTHON_FACTOR = 5
