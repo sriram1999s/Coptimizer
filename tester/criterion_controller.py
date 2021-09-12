@@ -53,23 +53,53 @@ def execute(runs):
     total_time_op = 0
     total_mem_unop = 0
     total_mem_op = 0
+
+    max_time_unop = 0
+    max_time_op = 0
+    max_mem_unop = 0
+    max_mem_op = 0
+
+    min_time_unop = 100000000
+    min_time_op = 100000000
+    min_mem_unop = 100000000
+    min_mem_op = 100000000
+
     for run in range(runs):
         subprocess.call(["./unop.out < inp.txt > unop_output.txt"], shell = True)
         mem, time = read_profile()
         total_mem_unop += mem
         total_time_unop += time
+        if time > max_time_unop:
+            max_time_unop = time
+        elif time < min_time_unop:
+            min_time_unop = time
+
+        if mem > max_mem_unop:
+            max_mem_unop = mem
+        elif mem < min_mem_unop:
+            min_mem_unop = mem
 
         subprocess.call(["./op.out < inp.txt > unop_output.txt"], shell = True)
         mem, time = read_profile()
         total_mem_op += mem
         total_time_op += time
+        if time > max_time_op:
+            max_time_op = time
+        elif time < min_time_op:
+            min_time_op = time
 
-    print(f"After execution...\n\nAverage memory usage for unoptimized code : {total_mem_unop/runs} KB\n")
-    print(f"Average time usage for unoptimized code : {total_time_unop/runs} s\n")
-    print(f"Average memory usage for optimized code : {total_mem_op/runs} KB\n")
-    print(f"Average time usage for optimized code : {total_time_op/runs} s\n")
+        if mem > max_mem_op:
+            max_mem_op = mem
+        elif mem < min_mem_op:
+            min_mem_op = mem
+
+    print(f"After execution...\n\nMemory usage for unoptimized code => Average : {total_mem_unop/runs} KB, Max : {max_mem_unop} KB, Min : {min_mem_unop} KB\n")
+    print(f"Run time for unoptimized code => Average : {total_time_unop/runs} KB, Max : {max_time_unop} s, Min : {min_time_unop} s\n")
+    print(f"Memory usage for optimized code => Average : {total_mem_op/runs} KB, Max : {max_mem_op} KB, Min : {min_mem_op} KB\n")
+    print(f"Run time for optimized code => Average : {total_time_op/runs} KB, Max : {max_time_op} s, Min : {min_time_op} s\n")
 
 def validate():
+    PYTHON_FACTOR = 5
     precedent = warmup()
     # deciding no of runs
     runs = 0
@@ -81,7 +111,7 @@ def validate():
         runs = 100
     else:
         runs = 10
-    print(f"Trying {runs} runs. Estimated completion time : {runs * precedent}. Do you wish to continue?[Y/n]")
+    print(f"Trying {runs} runs. Estimated completion time : {runs * precedent * PYTHON_FACTOR} s. Do you wish to continue?[Y/n]")
     choice = input().lower()
     if(choice == "y" or choice == ''):
         execute(runs)
