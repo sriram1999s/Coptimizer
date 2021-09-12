@@ -1,6 +1,7 @@
 import subprocess
 import functools
 from tqdm import tqdm
+import statistics
 
 from backend_tester import *
 
@@ -66,6 +67,11 @@ def execute(runs):
     min_mem_unop = 100000000
     min_mem_op = 100000000
 
+    list_time_unop = []
+    list_mem_unop = []
+    list_time_op = []
+    list_mem_op = []
+
     for run in tqdm(range(runs), desc = "Executing..."):
         subprocess.call(["./unop.out < inp.txt > unop_output.txt"], shell = True)
         mem, time = read_profile()
@@ -81,6 +87,9 @@ def execute(runs):
         elif mem < min_mem_unop:
             min_mem_unop = mem
 
+        list_time_unop.append(time)
+        list_mem_unop.append(mem)
+
         subprocess.call(["./op.out < inp.txt > unop_output.txt"], shell = True)
         mem, time = read_profile()
         total_mem_op += mem
@@ -95,10 +104,14 @@ def execute(runs):
         elif mem < min_mem_op:
             min_mem_op = mem
 
-    print(f"After execution...\n\n\tMemory usage for unoptimized code => Average : {total_mem_unop/runs} KB, Max : {max_mem_unop} KB, Min : {min_mem_unop} KB\n")
-    print(f"\tRun time for unoptimized code => Average : {total_time_unop/runs} KB, Max : {max_time_unop} s, Min : {min_time_unop} s\n")
-    print(f"\tMemory usage for optimized code => Average : {total_mem_op/runs} KB, Max : {max_mem_op} KB, Min : {min_mem_op} KB\n")
-    print(f"\tRun time for optimized code => Average : {total_time_op/runs} KB, Max : {max_time_op} s, Min : {min_time_op} s\n")
+        list_time_op.append(time)
+        list_mem_op.append(mem)
+
+
+    print(f"After execution...\n\n\tMemory usage for unoptimized code => Average : {total_mem_unop/runs} KB, Max : {max_mem_unop} KB, Min : {min_mem_unop} KB, Std Dev : {statistics.stdev(list_mem_unop)} KB\n")
+    print(f"\tRun time for unoptimized code => Average : {total_time_unop/runs} KB, Max : {max_time_unop} s, Min : {min_time_unop} s, Std Dev : {statistics.stdev(list_time_unop)} s\n")
+    print(f"\tMemory usage for optimized code => Average : {total_mem_op/runs} KB, Max : {max_mem_op} KB, Min : {min_mem_op} KB, Std Dev : {statistics.stdev(list_mem_op)} KB\n")
+    print(f"\tRun time for optimized code => Average : {total_time_op/runs} KB, Max : {max_time_op} s, Min : {min_time_op} s, Std Dev : {statistics.stdev(list_time_op)} s\n")
 
 def validate():
     PYTHON_FACTOR = 5
