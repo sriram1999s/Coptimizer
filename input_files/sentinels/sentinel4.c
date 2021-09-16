@@ -3,11 +3,7 @@
 /* predicate-begin */
 int predicate(int a)
 {
-  if (!(a % 11)) {
-    printf("divisible by 11\n");
-    return 1;
-  }
-  return 0;
+  return (a - 1) == 7;
 }
 /* predicate-end */
 
