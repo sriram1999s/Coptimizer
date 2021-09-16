@@ -1,5 +1,6 @@
 from parser import flatten
 from collections import defaultdict
+from optimizations.equation_solver import equation_solve
 import secrets
 
 class Sentinel:
@@ -194,21 +195,36 @@ class Sentinel:
         code += f" {name}[n{hash} - 1] = {sentinel};"
         return code, name, hash
 
+    def check_canonical_form(self, predicate):
+        """Check canonical form."""
+        import re
+        return_string = "return (.*?);"
+        m = re.findall(return_string, predicate)
+        if(m and len(m) == 1):
+            # print("asdasdsad ", m)
+            return m[0]
+        return None
+
     def find_sentinel(self, fn_name):
+        """Find Sentinel."""
         from regenerator import solve
         import subprocess
-        # print("predicate name : ", fn_name)
+        print("predicate name : ", self.predicates[fn_name])
         headers = "#include<stdio.h>\n#include<stdlib.h>\n"
         predicate = "".join(solve(0, len(self.predicates[fn_name]), self.predicates[fn_name]))
-        main = '\nint main() {\nFILE *fptr;\nfptr = fopen("sentinel_res.txt","w");\nif(fptr == NULL){\nprintf("Error!");\nexit(1);\n}\nfor(int i = -100; i < 101; ++i){\n' + f'if({fn_name}(i))'+ '{\nfprintf(fptr, "%d", i);\nbreak;\n}\n}fclose(fptr);\n}'
-        with open("find_sentinel.c", "w") as f:
-            f.write(headers + predicate + main)
-        subprocess.call(["gcc find_sentinel.c -o sentinel.out"], shell = True)
-        subprocess.call(["./sentinel.out"], shell = True)
-        with open("sentinel_res.txt", "r") as f:
-            sentinel = int("".join(f.readlines()))
+        expression = self.check_canonical_form(predicate)
+        if(expression):
+            sentinel = equation_solve(expression)
+        else:
+            main = '\nint main() {\nFILE *fptr;\nfptr = fopen("sentinel_res.txt","w");\nif(fptr == NULL){\nprintf("Error!");\nexit(1);\n}\nfor(int i = -100; i < 101; ++i){\n' + f'if({fn_name}(i))'+ '{\nfprintf(fptr, "%d", i);\nbreak;\n}\n}fclose(fptr);\n}'
+            with open("find_sentinel.c", "w") as f:
+                f.write(headers + predicate + main)
+            subprocess.call(["gcc find_sentinel.c -o sentinel.out"], shell = True)
+            subprocess.call(["./sentinel.out"], shell = True)
+            with open("sentinel_res.txt", "r") as f:
+                sentinel = int("".join(f.readlines()))
 
-        subprocess.call(["rm find_sentinel.c sentinel_res.txt sentinel.out "], shell = True)
+            subprocess.call(["rm find_sentinel.c sentinel_res.txt sentinel.out "], shell = True)
 
         return sentinel
 
