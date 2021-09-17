@@ -3,9 +3,9 @@
 /* predicate-begin */
 int predicate(int a)
 {
-  return (a - 1) == 7;
-  //return (a - 1) <= 7;
-  //return (a - 1) >= 7;
+  // return (a - 1) < 7;
+  // return (a - 1) > 7;
+  return (a - 1) != 7;
 }
 /* predicate-end */
 
