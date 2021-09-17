@@ -19,8 +19,8 @@ def equation_solve(expression):
 
     # finds feasible point satisfying expression and inequality
     def satisfy(crit_point):
-        point_1 =  str(crit_point) + "- 1"
-        point_2 =  str(crit_point) + "+ 1"
+        point_1 =  "(" + str(crit_point) + "- 1)"
+        point_2 =  "(" + str(crit_point) + "+ 1)"
         modified_expression = re.sub("[A-Za-z_][A-Za-z0-9_]*", point_1, expression)
         if(parse_expr(modified_expression, evaluate=True)):
             return point_1
