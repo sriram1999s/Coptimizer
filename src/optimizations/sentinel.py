@@ -25,10 +25,10 @@ class Sentinel:
         flattened_function = "".join([str(token) for token in solve(0,len(function),function)])
         flattened_function = re.sub(r"printf\(.*?\);", "", flattened_function)
 
-        
+
         flattened_function = re.sub(function_name, function_name + self.salt, flattened_function)
         return flattened_function
-    
+
     def add_predicate(self,function):
         import re
         print("function: ", function)
@@ -128,7 +128,7 @@ class Sentinel:
             if(re.search(r"break\s*?;", flattened_tree)):
                 return True
             return False
-        
+
         def find(i, n, sub_tree, condition, body):
             if(i == n):
                 return
@@ -198,8 +198,9 @@ class Sentinel:
     def check_canonical_form(self, predicate):
         """Check canonical form."""
         import re
+        mod_predicate = re.sub("/\*.*?\*/", "", predicate)
         return_string = "return (.*?);"
-        m = re.findall(return_string, predicate)
+        m = re.findall(return_string, mod_predicate)
         if(m and len(m) == 1):
             # print("asdasdsad ", m)
             return m[0]
@@ -213,6 +214,7 @@ class Sentinel:
         headers = "#include<stdio.h>\n#include<stdlib.h>\n"
         predicate = "".join(solve(0, len(self.predicates[fn_name]), self.predicates[fn_name]))
         expression = self.check_canonical_form(predicate)
+        print("\n\nexpression\n\n", expression)
         if(expression):
             sentinel = equation_solve(expression)
         else:
