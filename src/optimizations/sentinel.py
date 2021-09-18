@@ -8,6 +8,7 @@ class Sentinel:
        self.tagged_data_structures = defaultdict(lambda:None)
        self.predicates = defaultdict(lambda:None)
        self.salt = '_' + secrets.token_hex(nbytes=4)
+       self.change_pred = True
        # self.linear_search_bodies = defaultdict(lambda:None)
 
     '''add data structure to tagged data structure'''
@@ -23,16 +24,17 @@ class Sentinel:
         import re
         from regenerator import solve
         flattened_function = "".join([str(token) for token in solve(0,len(function),function)])
-        flattened_function = re.sub(r"printf\(.*?\);", "", flattened_function)
-
-
-        flattened_function = re.sub(function_name, function_name + self.salt, flattened_function)
-        return flattened_function
+        mod_function = re.sub(r"printf\(.*?\);", "", flattened_function)
+        if mod_function == flattened_function:
+            self.change_pred = False
+            return ''
+        self.change_pred = True
+        mod_function = re.sub(function_name, function_name + self.salt, mod_function)
+        return mod_function
 
     def add_predicate(self,function):
         import re
         print("function: ", function)
-
         self.predicates[function[1]] = function
 
     def disp(self):
@@ -41,12 +43,11 @@ class Sentinel:
 
     ''' checks if sentinel search is possible '''
     def validate_linear_search(self,sub_tree):
-        print("In validate : ", sub_tree)
-        self.linear_to_sentinel(sub_tree)
-
+        # print("In validate : ", sub_tree)
         for predicate in self.predicates:
             predicate_without_print = self.get_function_without_io(predicate, self.predicates[predicate])
             self.predicates[predicate].append([predicate_without_print])
+        self.linear_to_sentinel(sub_tree)
 
     def find_loop_var(self,condition,name_ds):
         import re
@@ -94,8 +95,10 @@ class Sentinel:
                 sub_condition = re.sub(f"\[{loop_var}\]", f'[n{hash} - 1]', sub_condition)
 
                 # substituting all predicate calls with calls to modified predicates
-                for predicate_name in self.predicates:
-                    sub_condition = re.sub(predicate_name, predicate_name+self.salt, sub_condition)
+
+                if self.change_pred:
+                    for predicate_name in self.predicates:
+                        sub_condition = re.sub(predicate_name, predicate_name+self.salt, sub_condition)
 
                 sub_body = ''.join(found_body_new[0])
                 sub_tree.append(f"{name}[n{hash} - 1] = temp{hash};")
