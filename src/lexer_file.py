@@ -39,7 +39,7 @@ unary = ['NOT']
 
 extra = ['ID', 'TYPE', 'STRING' , 'HASH', 'INCLUDE','HEADER_FILE','CHAR','TYPEDEF']
 
-comment = ['MULTILINE_COMMENT','TAGGED_DS','LINEAR_SEARCH_BEGIN', 'LINEAR_SEARCH_END', 'POWER_OF_2_BEGIN', 'POWER_OF_2_END']
+comment = ['MULTILINE_COMMENT','TAGGED_DS','LINEAR_SEARCH_BEGIN', 'LINEAR_SEARCH_END', 'POWER_OF_2_BEGIN', 'POWER_OF_2_END', 'COUNT_SET_BITS_BEGIN', 'COUNT_SET_BITS_END']
 
 jump = ['RETURN']
 
@@ -214,6 +214,14 @@ def t_POWER_OF_2_BEGIN(t):
 
 def t_POWER_OF_2_END(t):
     r'/\*power-of-2-end\*/'
+    return t
+
+def t_COUNT_SET_BITS_BEGIN(t):
+    r'/\*count-set-bits-begin\*/'
+    return t
+
+def t_COUNT_SET_BITS_END(t):
+    r'/\*count-set-bits-end\*/'
     return t
 
 # multiline comment

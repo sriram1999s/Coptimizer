@@ -40,4 +40,21 @@
               r = (x ^ mask) - mask;
 
 8. Determine if integer is a power of two
-    Bit Hack: x && (!(x & (x-1)));
+    Bit Hack: x && (!(x & (x-1)))
+
+9. Detect if two integers have opposite signs
+    Bit Hack: (x ^ y) < 0
+
+10. Counting bits set by lookup table
+    Bit Hack:
+    int BitsSetTable256[256];
+    BitsSetTable256[0] = 0;
+    for (int i = 0; i < 256; i++)
+    {
+        BitsSetTable256[i] = (i & 1) +
+        BitsSetTable256[i / 2];
+    }
+    return (BitsSetTable256[n & 0xff] +
+            BitsSetTable256[(n >> 8) & 0xff] +
+            BitsSetTable256[(n >> 16) & 0xff] +
+            BitsSetTable256[n >> 24]);

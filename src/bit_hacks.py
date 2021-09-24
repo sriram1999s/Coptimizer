@@ -190,11 +190,12 @@ def validate_power_of_2(sub_tree):
     import re
     flattened_sub_tree = list(flatten1(sub_tree))
 
+    ''' get variable from if condition '''
     open_paran_pos = flattened_sub_tree.index('(')
     close_paran_pos = flattened_sub_tree.index(')')
     if_condition = flattened_sub_tree[open_paran_pos+1: close_paran_pos]
     if_condition = ''.join(flatten1(if_condition))
-    pat_variable = '[a-zA-Z0-9_]+'
+    pat_variable = '[a-zA-Z_]{1}[a-zA-Z0-9_]*'
     m = re.search(pat_variable, if_condition)
     if m:
         x = m.group(0)
@@ -208,6 +209,57 @@ def validate_power_of_2(sub_tree):
             sub_tree = f'{res_var} = {x} && (!({x} & ({x}-1)));'
     return sub_tree
 # -----END: POWER OF TWO-----
+
+
+def validate_count_set_bits(sub_tree):
+    import secrets
+    import re
+
+    flattened_sub_tree = list(flatten1(sub_tree))
+    try:
+        pos_of_return = flattened_sub_tree.index('return')
+
+        ''' source code uses a recursive logic to find number of set bits '''
+        if flattened_sub_tree[0] == 'if':
+            if_body_pos = flattened_sub_tree.index('{')
+
+            ''' find variable whose bits are checked '''
+            if_condition = flattened_sub_tree[2:if_body_pos-1]
+            pat_variable = '[a-zA-Z_]{1}[a-zA-Z0-9_]*'
+            m = re.search(pat_variable, ''.join(if_condition))
+            if m:
+                x = m.group(0)
+
+                ''' if body should have only one statement of the form return x; '''
+                if_body_end = if_body_pos + flattened_sub_tree[if_body_pos:].index('}')
+                if_body = flattened_sub_tree[if_body_pos+1: if_body_end]
+                if if_body[0] == 'return':
+                    indices = [i for i, x in enumerate(if_body) if x == ";"]
+                    if len(indices) == 1:
+                        hash = secrets.token_hex(nbytes=4)
+                        hash1 = secrets.token_hex(nbytes=4)
+                        repl = f'\n/* count set bits by table lookup */\nint BitsSetTable{hash}[256];\nBitsSetTable{hash}[0] = 0;\nfor (int i{hash1} = 0; i{hash1} < 256; i{hash1}++)' + '{\n' + f'BitsSetTable{hash}[i{hash1}] = (i{hash1} & 1)+BitsSetTable{hash}[i{hash1} / 2];' + '}' + f'return (BitsSetTable{hash}[{x} & 0xff] + BitsSetTable{hash}[({x} >> 8) & 0xff] + BitsSetTable{hash}[({x} >> 16) & 0xff] + BitsSetTable{hash}[{x} >> 24]);'
+                        return repl
+
+        else:
+            ''' source code uses an iterative logic to find number of set bits '''
+            while_pos = flattened_sub_tree.index('while')
+            while_body_pos = while_pos + flattened_sub_tree[while_pos:].index('{')
+            while_condition = flattened_sub_tree[while_pos+2: while_body_pos-1]
+            pat_variable = '[a-zA-Z_]{1}[a-zA-Z0-9_]*'
+            m = re.search(pat_variable, ''.join(while_condition))
+            if m:
+                x = m.group(0)
+
+                ''' a value is being returned '''
+                if flattened_sub_tree[pos_of_return+1] != ';':
+                    hash = secrets.token_hex(nbytes=4)
+                    hash1 = secrets.token_hex(nbytes=4)
+                    repl = f'\n/* count set bits by table lookup */\nint BitsSetTable{hash}[256];\nBitsSetTable{hash}[0] = 0;\nfor (int i{hash1} = 0; i{hash1} < 256; i{hash1}++)' + '{\n' + f'BitsSetTable{hash}[i{hash1}] = (i{hash1} & 1)+BitsSetTable{hash}[i{hash1} / 2];' + '}' + f'return (BitsSetTable{hash}[{x} & 0xff] + BitsSetTable{hash}[({x} >> 8) & 0xff] + BitsSetTable{hash}[({x} >> 16) & 0xff] + BitsSetTable{hash}[{x} >> 24]);'
+                    return repl
+        return sub_tree
+    except :
+        return sub_tree
 
 
 

@@ -442,6 +442,7 @@ def p_simple(p):
     	   | tagged_ds
            | linear_search
            | power_of_2
+           | count_set_bits
     '''
     if(len(p)==3):
         p[0] = [p[1],p[2]]
@@ -932,3 +933,10 @@ def p_power_of_2(p):
     '''
     new_sub_tree = validate_power_of_2(p[2])
     p[0] = ["/*power-of-2-begin*/", new_sub_tree, "/*power-of-2-end*/"]
+
+def p_count_set_bits(p):
+    '''
+    count_set_bits : COUNT_SET_BITS_BEGIN multiple_statements COUNT_SET_BITS_END
+    '''
+    new_sub_tree = validate_count_set_bits(p[2])
+    p[0] = ["/*count-set-bits-begin*/", new_sub_tree, "/*count-set-bits-end*/"]
