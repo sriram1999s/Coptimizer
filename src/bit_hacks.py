@@ -211,6 +211,7 @@ def validate_power_of_2(sub_tree):
 # -----END: POWER OF TWO-----
 
 
+# -----BEGIN: COUNT SET BITS-----
 def validate_count_set_bits(sub_tree):
     import secrets
     import re
@@ -244,15 +245,18 @@ def validate_count_set_bits(sub_tree):
         else:
             ''' source code uses an iterative logic to find number of set bits '''
             while_pos = flattened_sub_tree.index('while')
-            while_body_pos = while_pos + flattened_sub_tree[while_pos:].index('{')
-            while_condition = flattened_sub_tree[while_pos+2: while_body_pos-1]
-            pat_variable = '[a-zA-Z_]{1}[a-zA-Z0-9_]*'
-            m = re.search(pat_variable, ''.join(while_condition))
-            if m:
-                x = m.group(0)
+            bitwise_and_pos = -1
+            try:
+                bitwise_and_pos = flattened_sub_tree.index('&')
+            except :
+                bitwise_and_pos = flattened_sub_tree.index('&=')
 
+            ''' find variable whose bits are checked. It is the variable before & operator '''
+            x = flattened_sub_tree[bitwise_and_pos-1]
+            pat_variable = r'[a-zA-Z_]{1}[a-zA-Z0-9_]*'
+            if re.match(pat_variable, x) and bitwise_and_pos>while_pos:
                 ''' a value is being returned '''
-                if flattened_sub_tree[pos_of_return+1] != ';':
+                if flattened_sub_tree[pos_of_return + 1] != ';':
                     hash = secrets.token_hex(nbytes=4)
                     hash1 = secrets.token_hex(nbytes=4)
                     repl = f'\n/* count set bits by table lookup */\nint BitsSetTable{hash}[256];\nBitsSetTable{hash}[0] = 0;\nfor (int i{hash1} = 0; i{hash1} < 256; i{hash1}++)' + '{\n' + f'BitsSetTable{hash}[i{hash1}] = (i{hash1} & 1)+BitsSetTable{hash}[i{hash1} / 2];' + '}' + f'return (BitsSetTable{hash}[{x} & 0xff] + BitsSetTable{hash}[({x} >> 8) & 0xff] + BitsSetTable{hash}[({x} >> 16) & 0xff] + BitsSetTable{hash}[{x} >> 24]);'
@@ -260,7 +264,7 @@ def validate_count_set_bits(sub_tree):
         return sub_tree
     except :
         return sub_tree
-
+# -----END: COUNT SET BITS-----
 
 
 

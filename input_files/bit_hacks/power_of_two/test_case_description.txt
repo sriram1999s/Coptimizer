@@ -3,6 +3,7 @@
     - The code to compute power of two is tagged with power-of-2-begin and power-of-2-end
     - Compute power of two using ceil and floor functions
     - Result is returned
+    - Tagged within /*power-of-2-begin*/ and /*power-of-2-end*/
     EXPECTED_OUTPUT:
     - The code within the tags is replaced by return x && (!(x & (x-1)));
 
@@ -11,6 +12,7 @@
     - The code to compute power of two is tagged with power-of-2-begin and power-of-2-end
     - Compute power of two iteratively
     - Result is returned
+    - Tagged within /*power-of-2-begin*/ and /*power-of-2-end*/
     EXPECTED_OUTPUT:
     - The code within the tags is replaced by return x && (!(x & (x-1)));
 
@@ -19,6 +21,7 @@
     - The code to compute power of two is tagged with power-of-2-begin and power-of-2-end
     - Compute power of two recursively
     - Result is returned
+    - Tagged within /*power-of-2-begin*/ and /*power-of-2-end*/
     EXPECTED_OUTPUT:
     - The code within the tags is replaced by return x && (!(x & (x-1)));
 
@@ -27,5 +30,6 @@
     - The code to compute power of two is tagged with power-of-2-begin and power-of-2-end
     - Compute power of two iteratively
     - Result is stored
+    - Tagged within /*power-of-2-begin*/ and /*power-of-2-end*/
     EXPECTED_OUTPUT:
     - The code within the tags is replaced by result_var = x && (!(x & (x-1)));
