@@ -47,6 +47,7 @@ def equation_solve(expression):
         if(m):
             print("Going in")
             lhs, rhs = m.group(1), m.group(2)
+            print("lhs rhs", lhs, rhs)
             new_expression = lhs + '-' + '(' + rhs + ')'
             critical_point = solve(parse_expr(new_expression, evaluate=True))[0]
             return parse_expr(satisfy(critical_point))
