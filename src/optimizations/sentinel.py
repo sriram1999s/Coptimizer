@@ -213,12 +213,15 @@ class Sentinel:
         """Find Sentinel."""
         from regenerator import solve
         import subprocess
+        import re
+        
         print("predicate name : ", self.predicates[fn_name])
         headers = "#include<stdio.h>\n#include<stdlib.h>\n"
         predicate = "".join(solve(0, len(self.predicates[fn_name]), self.predicates[fn_name]))
         expression = self.check_canonical_form(predicate)
         print("\n\nexpression\n\n", expression)
-        if(expression):
+        bitwise_match = re.search("(?:[^&]+?(?:[&|^~])[^&]+?)|.+?(?:(?:<<)|(?:>>)).+?", expression)
+        if(expression and not bitwise_match):
             sentinel = equation_solve(expression)
         else:
             main = '\nint main() {\nFILE *fptr;\nfptr = fopen("sentinel_res.txt","w");\nif(fptr == NULL){\nprintf("Error!");\nexit(1);\n}\nfor(int i = -100; i < 101; ++i){\n' + f'if({fn_name}(i))'+ '{\nfprintf(fptr, "%d", i);\nbreak;\n}\n}fclose(fptr);\n}'
