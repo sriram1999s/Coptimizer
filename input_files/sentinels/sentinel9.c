@@ -3,7 +3,7 @@
 /* predicate-begin */
 int predicate(int a)
 {
-  return (a >> 1) & 1;
+  return ((2 * a < 7) && (a > 3));
 }
 /* predicate-end */
 
