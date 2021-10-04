@@ -215,7 +215,7 @@ class Sentinel:
         import subprocess
         import re
         
-        print("predicate name : ", self.predicates[fn_name])
+        print("predicate name : ", self.predicates[fn_name][5][0][1][1])
         headers = "#include<stdio.h>\n#include<stdlib.h>\n"
         predicate = "".join(solve(0, len(self.predicates[fn_name]), self.predicates[fn_name]))
         expression = self.check_canonical_form(predicate)
