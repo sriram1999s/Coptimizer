@@ -6,11 +6,6 @@ from parser import *
 import re
 import sys
 
-# expr = "2*x < 7"
-
-# parsed_range = reduce_inequalities(expr,[])
-# print(str(parsed_range))
-
 def flatten(l):
     """Eliminates the nested nature of an iterable for convenient processing."""
     for el in l:
@@ -75,36 +70,48 @@ def convert_inequality_to_interval(i,n,l):
 
 
 def check_overlap(x1, y1, x2, y2):
-    print(x1,y1,x2,y2)
-    if(x2<=x1<=y2 or x2<=y1<=y2):
+    # print(x1, y1, x2, y2)
+    if(x2 <= x1 <= y2 or x2 <= y1 <= y2):
         return 1
-                    # [1,3] , [0,4]
-    elif(min(x1,y1) > min(x2,y2) and max(x1,y1) < max(x2,y2)):
+    elif(min(x1, y1) > min(x2, y2) and max(x1, y1) < max(x2, y2)):
         return 1
 
-    elif(min(x1,y1) < min(x2,y2) and max(x1,y1) > max(x2,y2)):
+    elif(min(x1, y1) < min(x2, y2) and max(x1, y1) > max(x2, y2)):
         return 1
     return 0
 
     
 def union(range1,range2):
-    x1,y1,x2,y2 = range1[0],range1[1],range2[0],range2[1]
     res_range = []
-    if(check_overlap(x1, y1, x2, y2)):
-        res_range += [min(x1,x2),max(y1,y2)]
-        print("res range: ", res_range)
-    else:
-        res_range += [range1, range2]
+    if(check_not_nested(range1)):
+        range1 = [range1]
+    if(check_not_nested(range2)):
+        range2 = [range2]
+    print(f"ranges---->\n{range1}\n{range2}")
+    for range_i in range1:
+        for range_j in range2:
+            x1, y1, x2, y2 = range_i[0], range_i[1], range_j[0], range_j[1]
+            if(check_overlap(x1, y1, x2, y2)):
+                res_range += [[min(x1, x2), max(y1, y2)]]
+                # print("res range: ", res_range)
+            else:
+                # [] + [[x1,y1],[x2,y2]]
+                res_range += [range_i, range_j]
     return res_range
 
 def intersection(range1, range2):
-    x1,y1,x2,y2 = range1[0],range1[1],range2[0],range2[1]
     res_range = []
-    if(check_overlap(x1, y1, x2, y2)):
-        res_range += [max(x1,x2),min(y1,y2)]
-        print("res_range: ",res_range,range1,range2)
-        return res_range
-    return None
+    if(check_not_nested(range1)):
+        range1 = [range1]
+    if(check_not_nested(range2)):
+        range2 = [range2]
+    print(f"ranges---->\n{range1}\n{range2}")
+    for range_i in range1:
+        for range_j in range2:
+            x1, y1, x2, y2 = range_i[0], range_i[1], range_j[0], range_j[1]
+            if(check_overlap(x1, y1, x2, y2)):
+                res_range += [[max(x1, x2), min(y1, y2)]]
+    return res_range
 
 def check_not_nested(l):
     for i in l:
@@ -112,51 +119,70 @@ def check_not_nested(l):
             return False
     return True
 
+def max_one_level_nest(l):
+
+    flattened = list(flatten(l))
+    print("flattened", flattened)
+    if(flattened.count('||') > 0 or flattened.count('&&') > 0):
+        print("logical op found ")
+        return False
+
+    for i in l:
+        if(type(i) == list):
+            for j in i:
+                if(type(j) == list):
+                    return False
+    return True
+
 def find_ultimate(i,n,l):
     """Finds the solution space."""
     if(i == n):
         return []
 
-    #print("l", l)
+    # print("l", l)
+    #[1,2]
     if(type(l) == list and len(l) == 2 and check_not_nested(l)):
         print("base case 1: ", l)
         return l
 
-    if(type(l) == list and len(l) == 3 and len(l[0]) == 2 and len(l[2]) == 2):
-        print("base case 2: ", l)
+    #[[[a1, b1], [a2, b2]],'||',[[c1, d1], [c2, d2]]
+    if(type(l) == list and len(l) == 3 and max_one_level_nest(l[0]) and max_one_level_nest(l[2])):
+        print("base case 2.1: ", l)
         if(l[1] == "&&"):
             return intersection(l[0], l[2])
         elif(l[1] == "||"):
             return union(l[0], l[2])
     
-    
+    #[1,2]
     if(type(l[i]) == list and len(l[i]) == 2 and check_not_nested(l[i])):
-        print("base case 1: ",l[i])
+        print("base case 1: ", l[i])
         return l[i]
-    
-    if(type(l[i]) == list and len(l[i]) == 3 and len(l[i][0]) == 2 and len(l[i][2]) == 2):
-        print("base case 2: ", l[i])
-        if(l[i][1] == "&&"):
-            return intersection(l[i][0], l[i][2])
-        elif(l[i][1] == "||"):
-            # print("union: ",l[i])
-            return union(l[i][0], l[i][2])
 
-    if(type(l[i]) == list and len(l[i]) == 3 and type(l[i][1])==str):
-        #print("before", l[i])
-        left = find_ultimate(0, len(l[i][0]), l[i][0])
-        right = find_ultimate(0, len(l[i][2]), l[i][2])
-        l[i][0],l[i][2] = left,right
+    #[[[a1, b1], [a2, b2]],'||',[[c1, d1], [c2, d2]]
+    if(type(l[i]) == list and len(l[i]) == 3 and max_one_level_nest(l[i][0]) and max_one_level_nest(l[i][2])):
+        print("base case 2: ", l[i])
         if(l[i][1] == "&&"):
             l[i] = intersection(l[i][0], l[i][2])
         elif(l[i][1] == "||"):
             # print("union: ",l[i])
             l[i] = union(l[i][0], l[i][2])
-        #print("after", l[i])
+        return l[i]
+
+    if(type(l[i]) == list and len(l[i]) == 3 and type(l[i][1])==str):
+        print("before", l[i])
+        left = find_ultimate(0, len(l[i][0]), l[i][0])
+        right = find_ultimate(0, len(l[i][2]), l[i][2])
+        l[i][0], l[i][2] = left, right
+        print("intermediate ", l[i])
+        if(l[i][1] == "&&"):
+            l[i] = intersection(l[i][0], l[i][2])
+        elif(l[i][1] == "||"):
+            # print("union: ",l[i])
+            l[i] = union(l[i][0], l[i][2])
+        print("after", l[i])
         
     return find_ultimate(i+1, n, l)
 
-''' init lexxer and parser '''
 lexer = lex()
 parser = yacc()
 
@@ -164,12 +190,13 @@ parser = yacc()
 
 
     
-expr = "(2*x>9) || ((x<7) && (x>1));"
-l = parser.parse(expr)
+expr1 = "(2*x>9) || ((x<7) && (x>1));"
+expr2 = "(((x<-3) || (x>3)) && (x>4)) || (x<-2);"
+l = parser.parse(expr2)
 
 print("l before", l)
 convert_inequality_to_interval(0, len(l), l)
 print("l after", l)
 print("\n\n\n")
 res = find_ultimate(0, len(l), l)
-print(res,l)
+print(l)
