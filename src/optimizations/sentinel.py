@@ -2,6 +2,7 @@ from parser import flatten
 from collections import defaultdict
 from optimizations.equation_solver import equation_solve
 import secrets
+import copy
 
 class Sentinel:
     def __init__(self):
@@ -214,15 +215,15 @@ class Sentinel:
         from regenerator import solve
         import subprocess
         import re
-        
+
         print("predicate name : ", self.predicates[fn_name][5][0][1][1])
         headers = "#include<stdio.h>\n#include<stdlib.h>\n"
         predicate = "".join(solve(0, len(self.predicates[fn_name]), self.predicates[fn_name]))
         expression = self.check_canonical_form(predicate)
         print("\n\nexpression\n\n", expression)
-        bitwise_match = re.search("(?:[^&]+?(?:[&|^~])[^&]+?)|.+?(?:(?:<<)|(?:>>)).+?", expression)
+        bitwise_match = re.search("(?:[^&|^~]+?(?:[&|^~])[^&|^~]+?)|.+?(?:(?:<<)|(?:>>)).+?", expression)
         if(expression and not bitwise_match):
-            sentinel = equation_solve(expression)
+            sentinel = equation_solve(expression, [copy.deepcopy(self.predicates[fn_name][5][0][1][1][1])])
         else:
             main = '\nint main() {\nFILE *fptr;\nfptr = fopen("sentinel_res.txt","w");\nif(fptr == NULL){\nprintf("Error!");\nexit(1);\n}\nfor(int i = -100; i < 101; ++i){\n' + f'if({fn_name}(i))'+ '{\nfprintf(fptr, "%d", i);\nbreak;\n}\n}fclose(fptr);\n}'
             with open("find_sentinel.c", "w") as f:
