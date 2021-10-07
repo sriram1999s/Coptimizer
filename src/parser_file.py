@@ -443,6 +443,7 @@ def p_simple(p):
            | linear_search
            | power_of_2
            | count_set_bits
+           | unique_characters
     '''
     if(len(p)==3):
         p[0] = [p[1],p[2]]
@@ -940,3 +941,10 @@ def p_count_set_bits(p):
     '''
     new_sub_tree = validate_count_set_bits(p[2])
     p[0] = ["/*count-set-bits-begin*/", new_sub_tree, "/*count-set-bits-end*/"]
+
+def p_unique_characters(p):
+    '''
+    unique_characters : UNIQUE_CHARACTERS_BEGIN multiple_statements UNIQUE_CHARACTERS_END
+    '''
+    new_sub_tree = application_unique_characters(p[2])
+    p[0] = ["/*unique-characters-begin*/", new_sub_tree, "/*unique-characters-end*/"]

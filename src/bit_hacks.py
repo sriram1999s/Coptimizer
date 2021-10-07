@@ -267,7 +267,27 @@ def validate_count_set_bits(sub_tree):
 # -----END: COUNT SET BITS-----
 
 
+def application_unique_characters(sub_tree):
+    import secrets
+    # print('application', sub_tree)
+    # return sub_tree
 
+    flattened_sub_tree = list(flatten1(sub_tree))
+    try:
+        array_name = flattened_sub_tree[flattened_sub_tree.index('[')-1]
+        hash_checker = secrets.token_hex(nbytes=4)
+        hash_i = secrets.token_hex(nbytes=4)
+        hash_bitAtIndex = secrets.token_hex(nbytes=4)
 
-
-
+        repl = '#include<string.h>\n'
+        repl += f'int checker{hash_checker} = 0;'
+        repl += f'for (int i{hash_i} = 0; i{hash_i} < strlen({array_name}); i{hash_i}++) '
+        repl += '{\n'
+        repl += f'int bitAtIndex{hash_bitAtIndex} = {array_name}[i{hash_i}] - \'a\';'
+        repl += f'\nif ((checker{hash_checker} & (1 << bitAtIndex{hash_bitAtIndex})) > 0)'
+        repl += '{ return 0; }'
+        repl += f'checker{hash_checker} = checker{hash_checker} | (1 << bitAtIndex{hash_bitAtIndex});'
+        repl += '}\nreturn 1;'
+        return repl
+    except :
+        return sub_tree
