@@ -1,10 +1,11 @@
 from sympy import reduce_inequalities
 from sympy.abc import x
 from collections.abc import Iterable
-from lexer import *
-from parser import *
+# from lexer import *
+# from parser import *
 import re
 import sys
+import ctypes
 
 def flatten(l):
     """Eliminates the nested nature of an iterable for convenient processing."""
@@ -55,12 +56,12 @@ def convert_inequality_to_interval(i,n,l):
     """Recursive function to convert."""
     if(i == n):
         return
-    
+
     if(type(l[i]) == list and len(l[i]) == 3 and type(l[i][1])==list and (l[i][1][1] == '<' or l[i][1][1] == '>')):
         temp = [str(tok) for tok in flatten(l[i])]
         solution = reduce_inequalities("".join(temp), [])
         l[i] = construct_interval(str(solution))
-        
+
     if(type(l[i]) == list):
         l[i] = [tok for tok in l[i] if tok not in ['(', ')']]
         if(len(l[i]) == 1 and type(l[i][0]) == list):
@@ -80,7 +81,7 @@ def check_overlap(x1, y1, x2, y2):
         return 1
     return 0
 
-    
+
 def union(range1,range2):
     res_range = []
     if(check_not_nested(range1)):
@@ -152,7 +153,7 @@ def find_ultimate(i,n,l):
             return intersection(l[0], l[2])
         elif(l[1] == "||"):
             return union(l[0], l[2])
-    
+
     #[1,2]
     if(type(l[i]) == list and len(l[i]) == 2 and check_not_nested(l[i])):
         print("base case 1: ", l[i])
@@ -180,23 +181,24 @@ def find_ultimate(i,n,l):
             # print("union: ",l[i])
             l[i] = union(l[i][0], l[i][2])
         print("after", l[i])
-        
+
     return find_ultimate(i+1, n, l)
-
-lexer = lex()
-parser = yacc()
-
-
+#
+# lexer = lex()
+# parser = yacc()
 
 
-    
-expr1 = "(2*x>9) || ((x<7) && (x>1));"
-expr2 = "(((x<-3) || (x>3)) && (x>4)) || (x<-2);"
-l = parser.parse(expr2)
 
-print("l before", l)
-convert_inequality_to_interval(0, len(l), l)
-print("l after", l)
-print("\n\n\n")
-res = find_ultimate(0, len(l), l)
-print(l)
+
+
+# expr1 = "(2*x>9) || ((x<7) && (x>1));"
+# expr2 = "(((x<-3) || (x>3)) && (x>4)) || (x<-2);"
+# l = parser.parse(expr1)
+# print("in log sent find", l)
+#
+# print("l before", l)
+# convert_inequality_to_interval(0, len(l), l)
+# print("l after", l)
+# print("\n\n\n")
+# res = find_ultimate(0, len(l), l)
+# print(l)
