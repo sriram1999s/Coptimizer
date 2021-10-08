@@ -1,0 +1,36 @@
+1. INPUT: bit_hacks/application_examples/t1.c
+    INPUT_DESCRIPTION:
+    - Check if a string (character array) has all unique characters or not
+    - User is prompted to enter a string
+    - Assumption: String consists of lowercase alphabets
+    - Assumption: String is not space separated
+    - Logic is tagged within /*unique-characters-begin*/ and /*unique-characters-end*/
+    EXPECTED_OUTPUT:
+    - The code within the tags is replaced by a O(n) code.
+    - Instead of maintaining a boolean array, we maintain an integer value called checker(32 bits).
+    - As we iterate over the string, we find the int value of the character with respect to ‘a’
+    - Then the bit at that int value is set to 1 with the statement 1 << bitAtIndex
+    - Now, if this bit is already set in the checker, the bit AND operation would make checker > 0, return false in this case
+    - Else update checker to make the bit 1 at that index with the statement checker = checker | (1 <<bitAtIndex)
+
+2. INPUT: bit_hacks/application_examples/t2.c
+    INPUT_DESCRIPTION:
+    - Count sort on an array of integers
+    - Assumption: Array of unique integers
+    - Logic is tagged within /*unique-characters-begin*/ and /*unique-characters-end*/
+    - A tag of the form /*(array_name,size)*/ immediately after the opening tag specifies the required parameters
+    EXPECTED_OUTPUT:
+    - The code within the tags is replaced
+    - First for loop computes the min and max (or the range) of the elements of the array using bit hacks
+        - r = y ^ ((x ^ y) & -(x < y)) to find the min,
+        - r = x ^ ((x ^ y) & -(x < y)) to find the max
+    - A bit vector of the range size is created
+    - A temporary output vector with size same as the input vector is created
+    - A loop to set a bit in the bit vector for every input array element.
+        - Logic to set the bit at the k-th position in A[i]: A[k/32] |= 1 << (k%32)
+    - A loop through the bit vector to check the set bits.
+        - If the bit is set, copy the element to the output array.
+        - Logic to test bit at the kth position: ( A[(k/32)] & (1 << (k%32)) )
+    - A loop to copy from the temporary output array to the input array
+
+
