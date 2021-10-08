@@ -8,6 +8,8 @@ from optimizations.symboltable import *
 from optimizations.compile_time_init import *
 from optimizations.function_inline import flatten as flatten_all
 from optimizations.sentinel import *
+from optimizations.cache import *
+
 from collections import defaultdict
 from pprint import pprint
 # --------------------------------parser------------------------------------ #
@@ -102,7 +104,10 @@ def p_closed(p):
     elif(len(p)==4):
         if(p[1] == 'for'):
             print(f"for detected {count_for} {prev_count_for}\n")
-            if(True):
+            if(menu.FLAG_CACHE):
+                p[0] = [p[1], p[2], p[3]]
+                cache.validate(p[0])
+            elif(True):
                 if(count_for==1 and prev_count_for==0):
                     ''' check if comile time initialization is possible '''
                     com_init.compile_init_validate(menu.FLAG_COMPILE_INIT,[p[1], p[2], p[3]])
