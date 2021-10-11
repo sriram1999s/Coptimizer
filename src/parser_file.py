@@ -444,7 +444,7 @@ def p_simple(p):
            | power_of_2
            | count_set_bits
            | unique_characters
-           | count_sort_unique
+           | sort_unique
     '''
     if(len(p)==3):
         p[0] = [p[1],p[2]]
@@ -952,7 +952,7 @@ def p_unique_characters(p):
 
 def p_count_sort_unique(p):
     '''
-    count_sort_unique : COUNT_SORT_UNIQUE_BEGIN multiple_statements COUNT_SORT_UNIQUE_END
+    sort_unique : SORT_UNIQUE_BEGIN multiple_statements SORT_UNIQUE_END
     '''
-    new_sub_tree = application_count_sort_unique(p[2])
-    p[0] = ["/*count-sort-unique-begin*/", new_sub_tree, "/*count-sort-unique-end*/"]
+    new_sub_tree = application_sort_unique(p[2])
+    p[0] = ["/*sort-unique-begin*/", new_sub_tree, "/*sort-unique-end*/"]

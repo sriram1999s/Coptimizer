@@ -39,7 +39,7 @@ unary = ['NOT']
 
 extra = ['ID', 'TYPE', 'STRING' , 'HASH', 'INCLUDE','HEADER_FILE','CHAR','TYPEDEF']
 
-comment = ['MULTILINE_COMMENT','TAGGED_DS','LINEAR_SEARCH_BEGIN', 'LINEAR_SEARCH_END', 'POWER_OF_2_BEGIN', 'POWER_OF_2_END', 'COUNT_SET_BITS_BEGIN', 'COUNT_SET_BITS_END', 'UNIQUE_CHARACTERS_BEGIN', 'UNIQUE_CHARACTERS_END', 'COUNT_SORT_UNIQUE_BEGIN', 'COUNT_SORT_UNIQUE_END']
+comment = ['MULTILINE_COMMENT','TAGGED_DS','LINEAR_SEARCH_BEGIN', 'LINEAR_SEARCH_END', 'POWER_OF_2_BEGIN', 'POWER_OF_2_END', 'COUNT_SET_BITS_BEGIN', 'COUNT_SET_BITS_END', 'UNIQUE_CHARACTERS_BEGIN', 'UNIQUE_CHARACTERS_END', 'SORT_UNIQUE_BEGIN', 'SORT_UNIQUE_END']
 
 jump = ['RETURN']
 
@@ -232,12 +232,12 @@ def t_UNIQUE_CHARACTERS_END(t):
     r'/\*unique-characters-end\*/'
     return t
 
-def t_COUNT_SORT_UNIQUE_BEGIN(t):
-    r'/\*count-sort-unique-begin\*/'
+def t_SORT_UNIQUE_BEGIN(t):
+    r'/\*sort-unique-begin\*/'
     return t
 
-def t_COUNT_SORT_UNIQUE_END(t):
-    r'/\*count-sort-unique-end\*/'
+def t_SORT_UNIQUE_END(t):
+    r'/\*sort-unique-end\*/'
     return t
 
 # multiline comment

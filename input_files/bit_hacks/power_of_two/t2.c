@@ -1,6 +1,6 @@
 #include<stdio.h>
 
-bool isPowerOfTwo(int n)
+int isPowerOfTwo(int n)
 {
     /*power-of-2-begin*/
 	if (n == 0)

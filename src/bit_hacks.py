@@ -292,48 +292,79 @@ def application_unique_characters(sub_tree):
         return sub_tree
 # -----END: UNIQUE CHARACTERS-----
 
-def application_count_sort_unique(sub_tree):
+def application_sort_unique(sub_tree):
     import secrets
 
     flattened_sub_tree = list(flatten1(sub_tree))
+    # try:
+    #     params = flattened_sub_tree[0]
+    #     array_name = params[3:params.index(',')]
+    #     n = params[params.index(',')+1:-3]
+    #
+    #     hash_min = secrets.token_hex(nbytes=2)
+    #     hash_max = secrets.token_hex(nbytes=2)
+    #     hash_i = secrets.token_hex(nbytes=2)
+    #     hash_j = secrets.token_hex(nbytes=2)
+    #     hash_outputpos = secrets.token_hex(nbytes=2)
+    #     hash_BitVec = secrets.token_hex(nbytes=2)
+    #     hash_output = secrets.token_hex(nbytes=2)
+    #
+    #     repl = f'int min{hash_min} = {array_name}[0], max{hash_max} = {array_name}[0], output_pos{hash_outputpos} = 0;\n'\
+    #            f'for(int i{hash_i}=1; i{hash_i}<{n}; ++i{hash_i})'\
+    #            '{\n'\
+    #            f'min{hash_min} = min{hash_min} ^ (({array_name}[i{hash_i}] ^ min{hash_min}) & -({array_name}[i{hash_i}] < min{hash_min}));'\
+    #            f'max{hash_max} = {array_name}[i{hash_i}] ^ (({array_name}[i{hash_i}] ^ max{hash_max}) & -({array_name}[i{hash_i}] < max{hash_max}));'\
+    #            '}\n'\
+    #            f'int BitVec{hash_BitVec}[max{hash_max}-min{hash_min}+1];\nint output{hash_output}[n];\n'\
+    #            f'for(int i{hash_i}=0; i{hash_i}<{n}; ++i{hash_i})'\
+    #            '{'\
+    #            f'BitVec{hash_BitVec}[({array_name}[i{hash_i}]-min{hash_min})/32] |= 1 << (({array_name}[i{hash_i}]-min{hash_min})%32); '\
+    #            '}\n'\
+    #            f'for(int i{hash_i}=0; i{hash_i}<max{hash_max}-min{hash_min}+1; ++i{hash_i})'\
+    #            '{\n'\
+    #            f'int j{hash_j}=0;\nwhile(j{hash_j}<32)'\
+    #            '{\n'\
+    #            f'if(BitVec{hash_BitVec}[i{hash_i}] & (1 << j{hash_j}))'\
+    #            '{\n' \
+    #            f'output{hash_output}[output_pos{hash_outputpos}++] = j{hash_j}+min{hash_min};'\
+    #            '}\n'\
+    #            f'++j{hash_j};'\
+    #            '}\n}\n'\
+    #            f'for(int i{hash_i}=0; i{hash_i}<{n}; ++i{hash_i})'\
+    #            '{\n'\
+    #            f'{array_name}[i{hash_i}] = output{hash_output}[i{hash_i}];'\
+    #            '}\n'
+    #     return repl
+    # except:
+    #     return sub_tree
+
     try:
         params = flattened_sub_tree[0]
         array_name = params[3:params.index(',')]
         n = params[params.index(',')+1:-3]
-
-        hash_min = secrets.token_hex(nbytes=2)
-        hash_max = secrets.token_hex(nbytes=2)
-        hash_i = secrets.token_hex(nbytes=2)
-        hash_j = secrets.token_hex(nbytes=2)
-        hash_outputpos = secrets.token_hex(nbytes=2)
-        hash_BitVec = secrets.token_hex(nbytes=2)
-        hash_output = secrets.token_hex(nbytes=2)
-
-        repl = f'int min{hash_min} = {array_name}[0], max{hash_max} = {array_name}[0], output_pos{hash_outputpos} = 0;\n'\
-               f'for(int i{hash_i}=1; i{hash_i}<{n}; ++i{hash_i})'\
-               '{\n'\
-               f'min{hash_min} = min{hash_min} ^ (({array_name}[i{hash_i}] ^ min{hash_min}) & -({array_name}[i{hash_i}] < min{hash_min}));'\
-               f'max{hash_max} = {array_name}[i{hash_i}] ^ (({array_name}[i{hash_i}] ^ max{hash_max}) & -({array_name}[i{hash_i}] < max{hash_max}));'\
-               '}\n'\
-               f'int BitVec{hash_BitVec}[max{hash_max}-min{hash_min}+1];\nint output{hash_output}[n];\n'\
-               f'for(int i{hash_i}=0; i{hash_i}<{n}; ++i{hash_i})'\
-               '{'\
-               f'BitVec{hash_BitVec}[({array_name}[i{hash_i}]-min{hash_min})/32] |= 1 << (({array_name}[i{hash_i}]-min{hash_min})%32); '\
-               '}\n'\
-               f'for(int i{hash_i}=0; i{hash_i}<max{hash_max}-min{hash_min}+1; ++i{hash_i})'\
-               '{\n'\
-               f'int j{hash_j}=0;\nwhile(j{hash_j}<32)'\
-               '{\n'\
-               f'if(BitVec{hash_BitVec}[i{hash_i}] & (1 << j{hash_j}))'\
+        repl = f'#include<limits.h>\n' \
+               f'int BitVec[1000];\n' \
+               f'int output[{n}];\n' \
+               f'int k=0;\n' \
+               f'for(int i=0; i<1000; ++i)' \
+               '{' \
+               f'BitVec[i] = 0;\n' \
+               '}\n' \
+               f'for(int i=0; i<{n}; ++i)' \
                '{\n' \
-               f'output{hash_output}[output_pos{hash_outputpos}++] = j{hash_j}+min{hash_min};'\
-               '}\n'\
-               f'++j{hash_j};'\
-               '}\n}\n'\
-               f'for(int i{hash_i}=0; i{hash_i}<{n}; ++i{hash_i})'\
-               '{\n'\
-               f'{array_name}[i{hash_i}] = output{hash_output}[i{hash_i}];'\
-               '}\n'
+               f'BitVec[{array_name}[i]/32] |= 1 << ({array_name}[i]%32);\n' \
+               '}\n' \
+               f'for(int i=0; i<4000; ++i)' \
+               '{\n' \
+               f'if( BitVec[i/ 32] & (1 << (i%32)) )' \
+               '{\n' \
+               f'output[k++] = i;\n' \
+               '}\n' \
+               '}\n' \
+               f'for(int i=0; i<{n}; ++i)' \
+               '{\n' \
+               f'{array_name}[i] = output[i];\n' \
+               '}'
         return repl
-    except:
+    except :
         return sub_tree

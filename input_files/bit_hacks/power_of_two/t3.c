@@ -1,4 +1,5 @@
 #include<stdio.h>
+#include<stdbool.h>
 
 bool powerOf2(int n)
 {
