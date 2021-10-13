@@ -1,9 +1,9 @@
 // sort an array of unique positive integers
 #include<stdio.h>
 
-void sortUniquePositiveIntegers(int *array, int n)
+void counting_sort(int *array, int n)
 {
-    /*sort-unique-positive-begin*/
+    /*sort-positive-begin*/
     /*(array,n)*/
     int output[n];
 
@@ -35,7 +35,7 @@ void sortUniquePositiveIntegers(int *array, int n)
     for (int i = 0; i < n; i++) {
         array[i] = output[i];
     }
-    /*sort-unique-positive-end*/
+    /*sort-positive-end*/
 }
 
 void display(int* arr, int n)
@@ -48,9 +48,9 @@ void display(int* arr, int n)
 
 int main()
 {
-    int arr[] = {3, 6, 1, 2, 7, 9, 5, 8, 0, 4};
+    int arr[] = {2, 1, 3, 3, 2, 3};
     int n = sizeof(arr)/sizeof(int);
-    sortUniquePositiveIntegers(arr, n);
+    counting_sort(arr, n);
     display(arr, n);
     return 0;
 }

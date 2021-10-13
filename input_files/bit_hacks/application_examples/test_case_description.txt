@@ -15,17 +15,16 @@
 
 2. INPUT: bit_hacks/application_examples/t2.c
     INPUT_DESCRIPTION:
-    - Count sort on an array of integers
-    - Assumption: Array of unique integers
-    - Logic is tagged within /*unique-characters-begin*/ and /*unique-characters-end*/
+    - Sort an array of integers
+    - Assumption: Array of unique positive integers
+    - Logic is tagged within /*sort-unique-positive-begin*/ and /*sort-unique-positive-end*/
     - A tag of the form /*(array_name,size)*/ immediately after the opening tag specifies the required parameters
     EXPECTED_OUTPUT:
-    - The code within the tags is replaced
-    - First for loop computes the min and max (or the range) of the elements of the array using bit hacks
-        - r = y ^ ((x ^ y) & -(x < y)) to find the min,
-        - r = x ^ ((x ^ y) & -(x < y)) to find the max
+    - Sort is changed to a O(n) logic
+    - The code within the tags is replaced to a bucket-sort like logic
     - A bit vector of the range size is created
     - A temporary output vector with size same as the input vector is created
+    - First for loop initialises the bit vector to 0
     - A loop to set a bit in the bit vector for every input array element.
         - Logic to set the bit at the k-th position in A[i]: A[k/32] |= 1 << (k%32)
     - A loop through the bit vector to check the set bits.
@@ -33,4 +32,21 @@
         - Logic to test bit at the kth position: ( A[(k/32)] & (1 << (k%32)) )
     - A loop to copy from the temporary output array to the input array
 
-
+3. INPUT: bit_hacks/application_examples/t3.c
+    INPUT_DESCRIPTION:
+    - Sort an array of integers
+    - Assumption: Array of unique positive integers
+    - Assumption: Maximum number of repetitions of an element is 3
+    - Logic is tagged within /*sort-positive-begin*/ and /*sort-positive-end*/
+    - A tag of the form /*(array_name,size)*/ immediately after the opening tag specifies the required parameters
+    EXPECTED_OUTPUT:
+    - Sort is changed to a O(n) logic
+    - The code within the tags is replaced to a bucket-sort like logic
+    - A bit vector of the range size is created
+    - A temporary output vector with size same as the input vector is created
+    - First for loop initialises the bit vector to 0
+    - Two bits are used to store the count of occurrences of an element, these bits are set in the second for loop
+    - The third for loop iterates through the bit vector and checks the count of the element
+        - The element is added to the output array either 0 or 1 or 2 or 3 times depending on its count
+        - Logic to clear the kth bit: A[k/32] &= ~(1 << (k%32))
+    - The fourth loop is to copy from the temporary output array to the input array
