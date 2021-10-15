@@ -15,6 +15,7 @@ docs/
 
 tester/*
 !tester/criterion_controller.py
+!tester/criterion_controller_gui.py
 !tester/tester_controller.py
 !tester/backend_tester.py
 !tester/inp.txt
