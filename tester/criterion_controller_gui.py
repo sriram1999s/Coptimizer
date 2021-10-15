@@ -17,6 +17,8 @@ def compile():
     with open("../tester/profile_temp.c","w") as f:
         f.write(profile(sys.argv[2]))
     subprocess.call(["gcc ../tester/profile_temp.c -o op.out"], shell = True)
+    precedent = warmup()
+    
 
 def read_profile():
     with open("../tester/profile.txt","r") as prof:
@@ -126,7 +128,6 @@ def execute(runs):
     print(f"\tRun time for optimized code => Average : {total_time_op/runs} KB, Max : {max_time_op} s, Min : {min_time_op} s, Std Dev : {statistics.stdev(list_time_op)} s\n")
 
 def validate(runs):
-    precedent = warmup()
     # deciding no of runs
     execute(runs)
 
