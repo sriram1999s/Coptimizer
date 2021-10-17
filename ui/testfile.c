@@ -1,16 +1,20 @@
-#include<stdio.h>
+#include <stdio.h>
+
+void sum(int size, double sum1)
+{
+    if (size == 0)
+    {
+        printf("sum : %f\n",sum1);
+    }
+    else { sum(size - 1, sum1 + size);
+}
+}
 
 int main()
 {
-    int a = 1;
-    for(int i = 1; i <= 6; ++i)
-    {
-        a++;
-    }
-    printf("a : %d\n", a);
+    int size;
+    scanf("%d", &size);
+    sum(size, 0);
     return 0;
 }
 
-
-
-    

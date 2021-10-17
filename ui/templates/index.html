@@ -2,10 +2,13 @@
 <html lang="en">
 <head>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-  <link rel="stylesheet" href="../statics/style.css">
-  <link rel = "stylesheet" href = "../statics/dropdown.css">
-  <link rel = "stylesheet" href = "../statics/flip_card.css">
-  <link rel = "stylesheet" href = "../statics/p_graph.css">
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  
+  <link rel="stylesheet" href="../static/style.css">
+  <link rel = "stylesheet" href = "../static/dropdown.css">
+  <link rel = "stylesheet" href = "../static/flip_card.css">
+  <link rel = "stylesheet" href = "../static/p_graph.css">
   <a href="https://icons8.com/icon/WpGZDK8WoTej/file-download"></a>
 
 <title>C Source Code Optimization</title>
@@ -153,7 +156,7 @@
 </style>
 </head>
 <body style = "background : #141411; font-family : Arial; overflow : scroll;">
-  <script src="../statics/dropdown1.js"></script>
+  <script src="../static/dropdown1.js"></script>
 
   <script>
     function showInpBox()
@@ -180,16 +183,16 @@
   </script>
 
   <script>
-    function runCode()
+    function runCode(runc)
     {
       var inp_box_contents = document.querySelector(".inp_t_area").value;
       console.log("inp_box_contents : ",inp_box_contents);
       $.ajax
       (
         {
-          url : "../metrics.php",
+          url : "/metrics",
           method : 'POST',
-          data : {inp_code : inp_box_contents},
+          data : {inp_code : inp_box_contents, runc_ : runc},
           beforeSend : function()
           {
             $('#body').hide();
@@ -197,16 +200,14 @@
           },
           success : function(res)
           {
-            console.log("metrics.php > success > res : ", res);
-            res = JSON.parse(res);
-            console.log("res JSON : ",res);
+            // res : already json
             console.log("res.unop_output : ",res.unop_output);
             $('#div_body').show();
             document.querySelector('#left_op_term').value = res.unop_output;
             document.querySelector('#right_op_term').value = res.op_output;
-            // document.querySelector('#back_lbl').textContent = res.met_op;
-            console.log("met_json : ", res);
-            met_json = JSON.parse(res.met_op);
+
+            // met_json : already json
+            met_json = res.met_op
             document.getElementById('d1_top_1').innerHTML = parseFloat(met_json.unop_time.split(' ')[0]).toFixed(5);
             document.getElementById('d1_top_2').innerHTML = "Non-Opt. Time in " + met_json.unop_time.split(' ')[1].bold();
             document.getElementById('d1_bot_1').innerHTML = parseFloat(met_json.unop_mem.split(' ')[0]).toFixed(2);
@@ -379,7 +380,7 @@
         $.ajax
         (
           {
-            url : "../index.php",
+            url : "/optimize_code",
             method : 'POST',
             data : {code : code1, menu_opt_json_str : menu_opt_json_str1},
             beforeSend : function()
@@ -389,19 +390,48 @@
             },
             success : function(res)
             {
-              console.log(res);
-              res = JSON.parse(res);
-              console.log(res);
+              // res : comes back as json
+
+              // update suggestions in modal
+              var modal_div = document.querySelector('#modal_div')
+
+              if(modal_div.children.length == 0)
+              {
+                li1 = document.createElement('li'); li1.innerHTML = res.avg_list[0]
+                li2 = document.createElement('li'); li2.innerHTML = res.avg_list[1]
+                li3 = document.createElement('li'); li3.innerHTML = res.avg_list[2]
+                li4 = document.createElement('li'); li4.innerHTML = res.avg_list[3]
+
+                modal_div.append(li1)
+                modal_div.append(li2)
+                modal_div.append(li3)
+                modal_div.append(li4)
+              }
+              else
+              {
+                modal_div.children[0].innerHTML = res.avg_list[0]
+                modal_div.children[1].innerHTML = res.avg_list[1]
+                modal_div.children[2].innerHTML = res.avg_list[2]
+                modal_div.children[3].innerHTML = res.avg_list[3]
+              }
+
+              var sug_inp = document.querySelector('#sug_inp')
+              sug_inp.placeholder = 'Default suggested no. of runs = ' + res.suggested_runc + ' in ' + res.completion_time + 's'
+              var sugg = document.createElement('label')
+              sugg.innerHTML = res.suggested_runc
+              sugg.style.display = 'None'
+              sugg.id = 'hidden_sugg'
+              document.body.append(sugg)
+
               var op_ele = document.getElementById("output");
               var op_editor = ace.edit(op_ele);
               var res1 = '// optimized code\n\n' + res.op;
               op_editor.session.setValue(res1);
-              inp_json = JSON.parse(res.inp_json);
 
               $('#user_inp_label').show();
               $('#download').show();
               $('#run_btn').show();
-              if(inp_json.keep_inp == 1)
+              if(res.inp_json == "1")
               {
                 $('#inp_btn_').show();
                 $('#inp_box_').show();
@@ -431,11 +461,11 @@
       }
     </script>
   <div style = "position: relative; height : 100px;">
-    <img id = "p_logo" src = "../statics/cco_logo1.png" height = "65px" onclick = "resetCode()"></img>
+    <img id = "p_logo" src = "../static/cco_logo1.png" height = "65px" onclick = "resetCode()"></img>
     <!-- -->
     <div onclick = "goToWebsite()">
       <!-- background : #0f1923; -->
-      <img id = "pes_logo" class = "btn" src = "../statics/pes_logo1.png"></img>
+      <img id = "pes_logo" class = "btn" src = "../static/pes_logo1.png"></img>
     </div>
   </div>
 
@@ -455,18 +485,24 @@
         <label id = "opt_menu_label" style = "font-family : Arial; position : relative; top : 10px; left : 10px;"></label>
       </div>
 
-      <button class="primary" type="button" onclick = "optimizeCode()">
+      <!-- <button class="primary" type="button" onclick = "optimizeCode()">
             <div class="label">
               <span class="hover-effect"></span>
               <span class="label-text">Optimize</span>
             </div>
-      </button>
-      <button class="outline" type="button" onclick = "resetCode()">
+      </button> -->
+      
+      <button onclick = "optimizeCode()" type="button" class="btn btn-danger">Optimize</button>
+
+      <!-- <button class="outline" type="button" onclick = "resetCode()">
             <div class="label">
               <span class="hover-effect"></span>
               <span class="label-text">Reset</span>
             </div>
-      </button>
+      </button> -->
+
+      <button onclick = "resetCode()" type="button" class="btn btn-outline-danger">Reset</button>
+
       <img id = "upload" title = "Upload Code" onmouseover = "mouseOver1()"  onmouseout = "mouseOut1()" onclick = "uploadCode()" style = "cursor : pointer; position : absolute; top : 26%; left : 47.5%; height : 30px; width : 30px;" src="https://img.icons8.com/pastel-glyph/64/ffffff/upload--v2.png"/>
 
       <img id = "download" title = "Download Code" onmouseover = "mouseOver()"  onmouseout = "mouseOut()" onclick = "downloadCode()" style = "display : None; cursor : pointer; position : absolute; top : 26%; right : 2.5%; height : 30px; width : 30px;" src="https://img.icons8.com/pastel-glyph/64/ffffff/download--v2.png"/>
@@ -525,9 +561,83 @@
     }
   </script>
 
+  <div class="modal fade" id = "warmUpModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 style = 'color:#141411' class="modal-title" id="exampleModalLabel">Warm Up Tests</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+
+        <div class="modal-body">
+          <div id = 'modal_div' style = 'color: black; font-style: italic;'>
+          </div>
+
+          <br>
+
+          <form id = 'warm_up_form'>
+            <div class="form-group">
+              <label style = 'color:black' for="sug_inp" class="col-form-label">Enter the no. of runs to get the metrics</label>
+              <input id = 'sug_inp' type = "number" inputmode = "numeric" pattern = "[0-9]*" style = 'color:black' class="form-control">
+            </div>
+          </form>  
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button id = 'run2' form = 'warm_up_form' type="submit" class="btn btn-primary">Run</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    var run_btn = document.querySelector('#run2')
+    run_btn.addEventListener('click', function(event)
+    {
+      event.preventDefault()
+      $('#warmUpModal').modal('toggle');
+      var my_inp_ta = document.querySelector('#my-input')
+      
+      var runc = document.querySelector('#sug_inp').value
+
+      if(parseInt(runc) <= 0)
+      {
+        alert("Please enter a positive number of runs!")
+        return;
+      }
+      if(runc == "")
+      {
+        runc = parseInt(document.querySelector('#hidden_sugg').innerHTML)
+      }
+
+      if($('#inp_btn_').is(":visible"))
+      {
+        console.log("came in 1");
+        if(my_inp_ta.value != '')
+        {
+          console.log("came in 11");
+          runCode(runc);
+        }
+        else
+        {
+          console.log("came in 12");
+          alert('Please type in your input!');
+        }
+      }
+      else
+      {
+        console.log("came in 2");
+        runCode(runc);
+      }
+    })
+  </script>
+
   <div id = "user_inp_label" style = "position : absolute; height : 40%; width : 100%; top : 95%; display : none;">
 
-      <div id = "run_btn" style = "position : absolute; width : 8%; top : 10% ; left : 2%;" onclick = "runCode()">
+      <!-- <div id = "run_btn" style = "position : absolute; width : 8%; top : 10% ; left : 2%;" onclick = "runCode()">
         <div>
           <button class="btn btn--light">
             <span class="btn__inner">
@@ -536,17 +646,25 @@
             </span>
           </button>
         </div>
-      </div>
-      <button id = "inp_btn_" style = "display: None; left : 11%" class="primary" type="button" id="my-button" onclick="showInpBox()">
+      </div> -->
+      
+      <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#warmUpModal">
+        Run Code
+      </button>
+
+      <!-- <button id = "inp_btn_" style = "display: None; left : 11%" class="primary" type="button" id="my-button" onclick="showInpBox()">
             <div class="label">
               <span class="hover-effect"></span>
               <span class="label-text">Input</span>
             </div>
-      </button>
+      </button> -->
+
+      <button id = 'inp_btn_' onclick="showInpBox()" type="button" class="btn btn-outline-primary">Input</button>
+
       <span id = "inp_box_" style = "display: None;" class="span111"><textarea class = "inp_t_area" line-height = 1.8 spellcheck = "false" autofocus placeholder = "> // type your input here..." id="my-input"></textarea></span>
   </div>
-  <script src="../statics/ace.js" type="text/javascript" charset="utf-8"></script>
-  <script src="../statics/ext-language_tools.js" type="text/javascript" charset="utf-8"></script>
+  <script src="../static/ace.js" type="text/javascript" charset="utf-8"></script>
+  <script src="../static/ext-language_tools.js" type="text/javascript" charset="utf-8"></script>
   <script>
       var editor = ace.edit("editor");
       editor.setTheme("ace/theme/monokai");
@@ -572,7 +690,7 @@
   <div class="container22" style = "position : absolute; display: block; top : 10%; width: 100%;  height : 100%; left : 0;">
 	<div class="front side" style = "position : absolute; display: block; width: 100%;  height : 100%; left : 0;">
 		<div class="content" style = "position : absolute; top : 0; display: block; width: 100%;  height : 100%; left : 0;">
-      <img src = "../statics/op_met.png" id = op_met></img>
+      <img src = "../static/op_met.png" id = op_met></img>
       <div id = "op_terminal" style = "position : absolute; width : 100%; height : 83%; top : 12%; left : 0;">
                    <div class="cmd" style = "display: block; float : left; width: 47.5%; left : 1.5%; height : 80%; top : 5%">
                       <div class="title-bar" style = "font-family : Arial; font-size : 18px;">ubuntu@ubuntu: ~CCodeOptimizer (Non-Optimized Output)</div>

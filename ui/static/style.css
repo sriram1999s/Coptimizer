@@ -47,9 +47,8 @@ body {
 .box {
   width: 50%;
 }
-button
+/* button
 {
-  /* width: 100%; */
   margin-bottom: 3%;
   position: relative;
   display: inline-block;
@@ -59,7 +58,6 @@ button
   text-transform: uppercase;
   background-color: transparent;
   cursor: pointer;
-  /* color: var(--v-white); */
   color: #ff4655;
 }
 button::before,
@@ -86,7 +84,8 @@ button::after {
 
 button:hover {
   color: var(--v-white);
-}
+} */
+
 .label {
   position: relative;
   overflow: hidden;
@@ -117,9 +116,9 @@ button:hover {
   transition: transform 0.3s ease-out;
 }
 
-button:hover .hover-effect {
+/* button:hover .hover-effect {
   transform: translateX(0) skew(-10deg);
-}
+} */
 .label-text {
   position: relative;
   display: block;
@@ -138,9 +137,8 @@ button:hover .hover-effect {
   bottom: 0;
   transition: background-color 0.2s ease-in;
 }
-.primary {
+/* .primary {
   color: var(--v-black);
-  /* color: #ff4655; */
 }
 
 .primary .label::before {
@@ -152,11 +150,9 @@ button:hover .hover-effect {
 
 .outline .label::before,
 .outline .label::after {
-  /* border: 1px solid var(--v-outline); */
   border: 1.5px solid #ff4655;
 }
 
-/* OUTLINE RED BUTTON */
 .outline-red {
   color: var(--v-red);
 }
@@ -168,7 +164,7 @@ button:hover .hover-effect {
 .outline-red .label::before,
 .outline-red .label::after {
   border-color: var(--v-red);
-}
+} */
 /* Loader CSS */
 .nfLoader {
   position: absolute;
@@ -212,8 +208,7 @@ button:hover .hover-effect {
   /* --background-color: black; */
 }
 
-.btn {
-  /* Clean style */
+/* .btn {
   -moz-appearance: none;
   -webkit-appearance: none;
   appearance: none;
@@ -222,13 +217,12 @@ button:hover .hover-effect {
   padding: 0;
   color: var(--button-text-color);
   cursor: pointer;
-  /* Clean style */
-
+  
   --button-text-color: var(--background-color);
   --button-text-color-hover: var(--button-background-color);
   --border-color: #7D8082;
   --button-background-color: #ece8e1;
-  /* --button-background-color: black; */
+  
   --highlight-color: #ff4655;
   --button-inner-border-color: transparent;
   --button-bits-color: var(--background-color);
@@ -345,7 +339,7 @@ button:hover .hover-effect {
   --button-inner-border-color: var(--highlight-color);
   --button-text-color-hover: #ece8e1;
   --button-bits-color-hover: #ece8e1;
-}
+} */
 
 /*-------------*/
 
