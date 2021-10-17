@@ -19,15 +19,14 @@ def help():
     print(f"\nWelcome to the command line Coptimizer....{emoji.emojize(':fire:')}\n")
     print(f"Usage sf ➡️  Coptimizer sf [FLAGS]")
     print(f"Usage ox ➡️  Coptimizer ox [PATH]")
-    print(f"sf [options] ➡️  setflags in from this pool [UNROLL,COMPILE_INIT,INLINE,IF_TO_SWITCH,TAIL_RECURSION,JAMMING]")
+    print(f"sf [options] ➡️  setflags in from this pool [UNROLL,COMPILE_INIT,INLINE,IF_TO_SWITCH,TAIL_RECURSION,JAMMING,SENTINEL]")
     print(f"ox [PATH] ➡️  optimize file in given path and create output.c file in same path")
 
 '''to set flags'''
 def sf(*args):
     flags = {}
-    for key in ["FLAG_UNROLL","FLAG_COMPILE_INIT","FLAG_INLINE","FLAG_IF_TO_SWITCH","FLAG_TAIL_RECURSION","FLAG_JAMMING"]:
+    for key in ["FLAG_UNROLL","FLAG_COMPILE_INIT","FLAG_INLINE","FLAG_IF_TO_SWITCH","FLAG_TAIL_RECURSION","FLAG_JAMMING","FLAG_SENTINEL"]:
         flags[key] = False
-
     for op in args:
         flags["FLAG_"+op] = True
 

@@ -913,9 +913,12 @@ def p_linear_search(p):
     '''
     linear_search : LINEAR_SEARCH_BEGIN multiple_statements LINEAR_SEARCH_END
     '''
-    sentinel.validate_linear_search(p[2])
-    p[0] = ["/*sentinel-search-begin*/", p[2], "/*sentinel-search-end*/"]
-
+    if menu.FLAG_SENTINEL:
+        sentinel.validate_linear_search(p[2])
+        p[0] = ["/*sentinel-search-begin*/", p[2], "/*sentinel-search-end*/"]
+    else:
+        p[0] = [p[1], p[2], p[3]]
+        
 def p_predicate(p):
     '''
     predicate : PREDICATE_BEGIN function PREDICATE_END
