@@ -4,7 +4,7 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-  
+
   <link rel="stylesheet" href="../static/style.css">
   <link rel = "stylesheet" href = "../static/dropdown.css">
   <link rel = "stylesheet" href = "../static/flip_card.css">
@@ -354,7 +354,8 @@
           FLAG_INLINE : false,
           FLAG_IF_TO_SWITCH : false,
           FLAG_TAIL_RECURSION : false,
-          FLAG_JAMMING : false
+          FLAG_JAMMING : false,
+          FLAG_SENTINEL : false
         };
         for(var i = 0;i < select.length; ++i)
         {
@@ -364,6 +365,7 @@
           else if(opt_name == "Function Inlining") menu_obj.FLAG_INLINE = true;
           else if(opt_name == "if - to - switch") menu_obj.FLAG_IF_TO_SWITCH = true;
           else if(opt_name == "Tail Recursion Elimination") menu_obj.FLAG_TAIL_RECURSION = true;
+          else if(opt_name == "Sentinel Techniques") menu_obj.FLAG_SENTINEL = true;
           else menu_obj.FLAG_JAMMING = true;
         }
         // console.log("menu_obj : ",menu_obj);
@@ -481,6 +483,7 @@
           <option id = 'IS' value = 'IS_'>if - to - switch</option>
           <option id = 'TRE' value = 'TRE_'>Tail Recursion Elimination</option>
           <option id = 'LJ' value = 'LJ_'>Loop Jamming</option>
+          <option id = 'SE' value = 'SE_'>Sentinel Techniques</option>
         </select>
         <label id = "opt_menu_label" style = "font-family : Arial; position : relative; top : 10px; left : 10px;"></label>
       </div>
@@ -491,7 +494,7 @@
               <span class="label-text">Optimize</span>
             </div>
       </button> -->
-      
+
       <button onclick = "optimizeCode()" type="button" class="btn btn-danger">Optimize</button>
 
       <!-- <button class="outline" type="button" onclick = "resetCode()">
@@ -582,7 +585,7 @@
               <label style = 'color:black' for="sug_inp" class="col-form-label">Enter the no. of runs to get the metrics</label>
               <input id = 'sug_inp' type = "number" inputmode = "numeric" pattern = "[0-9]*" style = 'color:black' class="form-control">
             </div>
-          </form>  
+          </form>
         </div>
 
         <div class="modal-footer">
@@ -600,7 +603,7 @@
       event.preventDefault()
       $('#warmUpModal').modal('toggle');
       var my_inp_ta = document.querySelector('#my-input')
-      
+
       var runc = document.querySelector('#sug_inp').value
 
       if(parseInt(runc) <= 0)
@@ -647,7 +650,7 @@
           </button>
         </div>
       </div> -->
-      
+
       <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#warmUpModal">
         Run Code
       </button>

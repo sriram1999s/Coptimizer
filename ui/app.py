@@ -32,7 +32,7 @@ def optimize_code():
     menu_opt_json_str = json.loads(menu_opt_json_str)
     flag_command = 'Coptimizer sf'
 
-    # set GUI flags : UNROLL,COMPILE_INIT,INLINE,IF_TO_SWITCH,TAIL_RECURSION,JAMMING
+    # set GUI flags : UNROLL,COMPILE_INIT,INLINE,IF_TO_SWITCH,TAIL_RECURSION,JAMMING,SENTINEL
     for flag in menu_opt_json_str:
         if menu_opt_json_str[flag]:
             flag_command += ' ' + flag[5:]
@@ -77,7 +77,7 @@ def metrics():
         ret_arr['unop_output'] = f.read()
     with open('op_output.txt', 'r') as f:
         ret_arr['op_output'] = f.read()
-    
+
     # merge two dictionaries : outputs + avg. metrics
     ret_arr['met_op'] = met_dict
     return jsonify(ret_arr)
@@ -103,6 +103,6 @@ def metrics():
         ret_arr['op_output'] = f.read()
     with open('met_op.txt', 'r') as f:
         ret_arr['met_op'] = f.read()
-    
+
     return jsonify(ret_arr)
 '''
