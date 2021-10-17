@@ -25,6 +25,7 @@ dir_path = os.environ['COPTIMIZER_PATH']
 ''' reading optimizer flags '''
 with open(f"{dir_path}/env/flags.json", "r") as inp:
     flags = json.load(inp)
+    print("flags ", flags)
     menu.set(flags)
 print("flags ", flags)
 #------------------------------------IO handling --------------------------------------------------------------------------
