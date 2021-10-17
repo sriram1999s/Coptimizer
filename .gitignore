@@ -24,11 +24,11 @@ env/flags.json
 env/output.c
 env/check_input
 
+ui/testfile.c
 ui/*.txt
 ui/check_input
 ui/flags.json
 ui/statics/ace.js
-ui/testfile.c
 ui/output.c
 
 .DS_Store
