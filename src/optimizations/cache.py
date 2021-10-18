@@ -11,7 +11,7 @@ class Cache:
         self.for_loops["for" + str(self.for_count)] = sub_tree
         self.for_count += 1
 
-    def restructure_for(self):
+    def retain_outer_loop(self):
         """keeps only the outer most loop in the for loops dictionary so that cache optimziations is no called on each sub for loop"""
         to_remove_keys = set()
         for key1 in self.for_loops:
@@ -33,5 +33,10 @@ class Cache:
                         
         for key in to_remove_keys:
             del self.for_loops[key]
+
+
             
+# TODO
+# 1) frequency of loop variables
+# 2) swap for loops accordingly
 cache = Cache()
