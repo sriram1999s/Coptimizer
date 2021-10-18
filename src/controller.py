@@ -77,7 +77,7 @@ output_prg = com_init.make_compile_inits(menu.FLAG_COMPILE_INIT,output_prg)
 if(menu.FLAG_CACHE):
     cache.restructure_for()
     for key in cache.for_loops:
-        print(f"{key}---->{cache.for_loops[key]}")
+        print(f"{key}---->{''.join(solve(0, len(cache.for_loops[key]), cache.for_loops[key]))}")
         
 ''' post processing '''
 output_prg = post_process(output_prg)
