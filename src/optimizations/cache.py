@@ -1,3 +1,6 @@
+from regenerator import solve
+import re
+
 class Cache:
     def __init__(self):
         self.for_loops = {}
@@ -9,13 +12,25 @@ class Cache:
         self.for_count += 1
 
     def restructure_for(self):
-
-        to_remove_keys = []
+        """keeps only the outer most loop in the for loops dictionary so that cache optimziations is no called on each sub for loop"""
+        to_remove_keys = set()
         for key1 in self.for_loops:
             for key2 in self.for_loops:
-                if self.for_loops[key1] in self.for_loops[key2][2]:
-                        to_remove_keys.append(key1)
-                        break
+                if(key1 != key2):
+                    # print("sadasdasd ",self.for_loops[key1],"\n||\n",self.for_loops[key2][2])
+
+
+                    def repl(x):
+                        # print("grps ",x.group(1))
+                        return '\\' + str(x.group(1))
+
+                    pat = "".join(solve(0, len(self.for_loops[key1]),self.for_loops[key1]))
+                    pat = re.sub("([+*.?^{}()\[\]])", repl , pat)
+
+                    text = "".join(solve(0, len(self.for_loops[key2]),self.for_loops[key2]))
+                    if(re.search(pat, text)):
+                        to_remove_keys.add(key1)
+                        
         for key in to_remove_keys:
             del self.for_loops[key]
             
