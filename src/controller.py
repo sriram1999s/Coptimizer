@@ -76,10 +76,9 @@ output_prg = com_init.make_compile_inits(menu.FLAG_COMPILE_INIT,output_prg)
 ''' cache algos '''
 if(menu.FLAG_CACHE):
     cache.retain_outer_loop()
+    cache.find_frequency_index()
     for key in cache.for_loops:
         print(f"{key}---->{''.join(solve(0, len(cache.for_loops[key]), cache.for_loops[key]))}")
-
-    cache.find_frequency_index()
 
 ''' post processing '''
 output_prg = post_process(output_prg)
