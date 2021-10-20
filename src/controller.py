@@ -78,7 +78,9 @@ if(menu.FLAG_CACHE):
     cache.retain_outer_loop()
     for key in cache.for_loops:
         print(f"{key}---->{''.join(solve(0, len(cache.for_loops[key]), cache.for_loops[key]))}")
-        
+
+    cache.find_frequency_index()
+
 ''' post processing '''
 output_prg = post_process(output_prg)
 

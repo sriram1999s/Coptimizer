@@ -1,5 +1,6 @@
 from regenerator import solve
 import re
+from collections import defaultdict
 
 class Cache:
     def __init__(self):
@@ -30,11 +31,33 @@ class Cache:
                     text = "".join(solve(0, len(self.for_loops[key2]),self.for_loops[key2]))
                     if(re.search(pat, text)):
                         to_remove_keys.add(key1)
-                        
+
         for key in to_remove_keys:
             del self.for_loops[key]
 
-
+    def find_frequency_index(self):
+        for loop in self.for_loops:
+            for_str = "".join(solve(0, len(self.for_loops[loop]), self.for_loops[loop]))
+            count = len(re.findall("for", for_str))
+            curr = self.for_loops[loop]
+            # pattern to find the inner most for loop's body
+            pat = "for.*?"*(count-1)
+            pat += "for.*?\{(.*?)\}"
+            m = re.search(pat, for_str)
+            inner_body = m.group(1)
+            # find all "last" indices of data structures
+            pat_data_structs = "([_a-zA-Z][_a-zA-Z0-9]*?)(?:\[(.*?)\])+"
+            data_structs = re.findall(pat_data_structs, inner_body)
+            # finding frequency of "last" indices
+            ix_dict = defaultdict(lambda:0)
+            for data in data_structs:
+                _, ix = data
+                ix_dict[ix] += 1
+            # finding all for conditions
+            for_cndts_pat = "for\(.*?\)"
+            for_cndts = re.findall(for_cndts_pat, for_str)
+            # sorting indices based on frequency
+            temp_list = sorted(ix_dict.items(), key = lambda x:-x[1])
             
 # TODO
 # 1) frequency of loop variables
