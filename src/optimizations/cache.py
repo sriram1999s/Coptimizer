@@ -36,7 +36,7 @@ class Cache:
             del self.for_loops[key]
 
     def find_frequency_index(self):
-        for loop in self.for_loops:
+        for loop in self.for_loops.copy():
             for_str = "".join(solve(0, len(self.for_loops[loop]), self.for_loops[loop]))
             count = len(re.findall("for", for_str))
             curr = self.for_loops[loop]
@@ -57,9 +57,35 @@ class Cache:
             for_cndts_pat = "for\(.*?\)"
             for_cndts = re.findall(for_cndts_pat, for_str)
             # sorting indices based on frequency
-            temp_list = sorted(ix_dict.items(), key = lambda x:-x[1])
+            temp_list = sorted(ix_dict.items(), key = lambda x:x[1])
+
+            #generating new for_order
+            new_for_order = ""
+            for tup_ix in temp_list:
+                for candidate_for_ix in range(len(for_cndts)):
+                    candidate_for = for_cndts[candidate_for_ix]
+                    pat = tup_ix[0] + ".*?="                    
+                    if(re.search(pat, candidate_for)):
+                        new_for_order += "{" + candidate_for
+                        for_cndts[candidate_for_ix] = None
+                        break
+
+            print("for_cndts after: ",for_cndts)
+
+            for remaining_candidate in for_cndts:
+                if(remaining_candidate!=None):
+                    new_for_order = remaining_candidate + new_for_order
+
+            #attaching body
+            new_for_order = new_for_order + "{" + inner_body + ("}"*count)
+            self.for_loops[loop].pop()
+            self.for_loops[loop].pop()
+            self.for_loops[loop][0] = new_for_order
+
+            
+
+            
             
 # TODO
-# 1) frequency of loop variables
-# 2) swap for loops accordingly
+# 1) reflect the changes in the original subtree
 cache = Cache()
