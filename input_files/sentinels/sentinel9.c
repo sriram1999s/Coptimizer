@@ -1,9 +1,9 @@
 #include <stdio.h>
 
 /* predicate-begin */
-int predicate(int a)
+int predicate(int x)
 {
-  return ((2 * a < 7) && (a > 3));
+  return ((2 * x < 7) && (x > 3));
 }
 /* predicate-end */
 

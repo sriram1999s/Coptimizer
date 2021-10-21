@@ -5,7 +5,7 @@ int predicate(int x)
 {
   // return (2*x>9) || ((x<7) && (x>1));
   // return (2*x>3) && (x<7);
-  return (((x<-3) || (x>3)) && (x>4)) || (x<-2);
+  return (((x < -3) || (x > 3)) && (x > 4)) || (x < -2);
 }
 /* predicate-end */
 
