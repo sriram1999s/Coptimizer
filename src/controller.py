@@ -56,6 +56,14 @@ if(menu.FLAG_TAIL_RECURSION):
 if(menu.FLAG_INLINE):
     fn_inline_solve(0,len(z),z,cyc_chk,non_in_fn)
 
+''' cache algos '''
+if(menu.FLAG_CACHE):
+    cache.retain_outer_loop()
+    cache.find_frequency_index()
+    for key in cache.for_loops:
+        print(f"{key}---->{''.join(solve(0, len(cache.for_loops[key]), cache.for_loops[key]))}")
+
+
 print("AST:")
 print(z)
 print()
@@ -73,7 +81,6 @@ else:
 
 ''' compile time inits '''
 output_prg = com_init.make_compile_inits(menu.FLAG_COMPILE_INIT,output_prg)
-
 ''' post processing '''
 output_prg = post_process(output_prg)
 

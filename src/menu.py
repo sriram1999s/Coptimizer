@@ -8,6 +8,7 @@ class Menu:
         self.FLAG_TAIL_RECURSION = True
         self.FLAG_JAMMING = True
         self.FLAG_SENTINEL = True
+        self.FLAG_CACHE = True
 
     def set(self, flags):
         self.FLAG_UNROLL = flags["FLAG_UNROLL"]
@@ -17,6 +18,7 @@ class Menu:
         self.FLAG_TAIL_RECURSION = flags["FLAG_TAIL_RECURSION"]
         self.FLAG_JAMMING = flags["FLAG_JAMMING"]
         self.FLAG_SENTINEL = flags["FLAG_SENTINEL"]
+        self.FLAG_CACHE = flags["FLAG_CACHE"]
 
 ''' instantiation '''
 menu = Menu()
