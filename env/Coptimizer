@@ -1,4 +1,4 @@
-#!/usr/bin/env python3 
+#!/usr/bin/env python3
 
 import fire
 import json
@@ -19,15 +19,14 @@ def help():
     print(f"\nWelcome to the command line Coptimizer....{emoji.emojize(':fire:')}\n")
     print(f"Usage sf ➡️  Coptimizer sf [FLAGS]")
     print(f"Usage ox ➡️  Coptimizer ox [PATH]")
-    print(f"sf [options] ➡️  setflags in from this pool [UNROLL,COMPILE_INIT,INLINE,IF_TO_SWITCH,TAIL_RECURSION,JAMMING]")
+    print(f"sf [options] ➡️  setflags in from this pool [UNROLL,COMPILE_INIT,INLINE,IF_TO_SWITCH,TAIL_RECURSION,JAMMING,SENTINEL,CACHE]")
     print(f"ox [PATH] ➡️  optimize file in given path and create output.c file in same path")
 
 '''to set flags'''
 def sf(*args):
     flags = {}
-    for key in ["FLAG_UNROLL","FLAG_COMPILE_INIT","FLAG_INLINE","FLAG_IF_TO_SWITCH","FLAG_TAIL_RECURSION","FLAG_JAMMING"]:
+    for key in ["FLAG_UNROLL","FLAG_COMPILE_INIT","FLAG_INLINE","FLAG_IF_TO_SWITCH","FLAG_TAIL_RECURSION","FLAG_JAMMING","FLAG_SENTINEL","FLAG_CACHE"]:
         flags[key] = False
-
     for op in args:
         flags["FLAG_"+op] = True
 
@@ -40,9 +39,19 @@ def sf(*args):
 '''optimize'''
 
 def ox(path):
+    import platform
+    running_os = platform.system()
+
     subprocess.call([f'clang-tidy {path} -fix -checks="readability-braces-around-statements,readability-isolate-declaration" -- COMPILE_OPTIONS > /dev/null 2> /dev/null'],shell=True)
     subprocess.call([f"python3 {dir_path}/src/controller.py {path} > /dev/null"],shell=True)
-    subprocess.call([f"gindent -linux temp.c -o output.c"],shell=True)
+    
+    if running_os == 'Darwin':
+        # MAC users
+        subprocess.call([f"gindent -linux temp.c -o output.c"],shell=True)
+    else:
+        # Linux and other users
+        subprocess.call([f"indent -linux temp.c -o output.c"],shell=True)
+    
     subprocess.call([f"rm {dir_path}/src/parser.out {dir_path}/src/parsetab.py temp.c;rm -r {dir_path}/src/__pycache__;"],shell=True)
     subprocess.call([f"cat output.c"],shell=True)
 
