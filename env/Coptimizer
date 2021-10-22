@@ -39,9 +39,19 @@ def sf(*args):
 '''optimize'''
 
 def ox(path):
+    import platform
+    running_os = platform.system()
+
     subprocess.call([f'clang-tidy {path} -fix -checks="readability-braces-around-statements,readability-isolate-declaration" -- COMPILE_OPTIONS > /dev/null 2> /dev/null'],shell=True)
     subprocess.call([f"python3 {dir_path}/src/controller.py {path} > /dev/null"],shell=True)
-    subprocess.call([f"indent -linux temp.c -o output.c"],shell=True)
+    
+    if running_os == 'Darwin':
+        # MAC users
+        subprocess.call([f"gindent -linux temp.c -o output.c"],shell=True)
+    else:
+        # Linux and other users
+        subprocess.call([f"indent -linux temp.c -o output.c"],shell=True)
+    
     subprocess.call([f"rm {dir_path}/src/parser.out {dir_path}/src/parsetab.py temp.c;rm -r {dir_path}/src/__pycache__;"],shell=True)
     subprocess.call([f"cat output.c"],shell=True)
 

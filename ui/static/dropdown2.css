@@ -6,6 +6,10 @@
 	 --tick: #fff;
 	 position: relative;
 }
+.shown
+{
+	color : black;
+}
  .checkbox input, .checkbox svg {
 	 width: 21px;
 	 height: 21px;

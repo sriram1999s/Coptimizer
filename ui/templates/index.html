@@ -135,12 +135,26 @@
 
     #upload
     {
+      cursor : pointer; 
+      position : absolute; 
+      top : 27%; 
+      right : 9.5%; 
+      height : 30px; 
+      width : 30px;
       border : 1px solid #ff4655;
       border-radius : 50px;
       padding : 5px;
     }
+
     #download
     {
+      display : None; 
+      cursor : pointer; 
+      position : absolute; 
+      top : 26%; 
+      right : 13%; 
+      height : 30px;
+      width : 30px;
       border : 1px solid #ff4655;
       border-radius : 50px;
       padding : 5px;
@@ -151,6 +165,41 @@
       top : 3%;
       left : 2%;
       height : 10%;
+    }
+
+    #opt_menu_div
+    {
+      position: absolute;
+      width: 17%;
+      /* overflow: hidden; */
+    }
+
+    #opt_btn
+    {
+      position: absolute;
+      left: 20%;
+      top: 23%;
+    }
+
+    #reset_btn
+    {
+      position: absolute;
+      right: 3%;
+      top: 23%;
+    }
+
+    #run_button
+    {
+      position: absolute;
+      top: 5%;
+      left: 1%;
+    }
+
+    #inp_btn_
+    {
+      position: absolute;
+      top: 5%;
+      left: 9%;
     }
 
 </style>
@@ -355,7 +404,8 @@
           FLAG_IF_TO_SWITCH : false,
           FLAG_TAIL_RECURSION : false,
           FLAG_JAMMING : false,
-          FLAG_SENTINEL : false
+          FLAG_SENTINEL : false,
+          FLAG_CACHE : false
         };
         for(var i = 0;i < select.length; ++i)
         {
@@ -366,6 +416,7 @@
           else if(opt_name == "if - to - switch") menu_obj.FLAG_IF_TO_SWITCH = true;
           else if(opt_name == "Tail Recursion Elimination") menu_obj.FLAG_TAIL_RECURSION = true;
           else if(opt_name == "Sentinel Techniques") menu_obj.FLAG_SENTINEL = true;
+          else if(opt_name == "Cache Optimizations") menu_obj.FLAG_CACHE = true;
           else menu_obj.FLAG_JAMMING = true;
         }
         // console.log("menu_obj : ",menu_obj);
@@ -484,6 +535,7 @@
           <option id = 'TRE' value = 'TRE_'>Tail Recursion Elimination</option>
           <option id = 'LJ' value = 'LJ_'>Loop Jamming</option>
           <option id = 'SE' value = 'SE_'>Sentinel Techniques</option>
+          <option id = 'CA' value = 'CA_'>Cache Optimizations</option>
         </select>
         <label id = "opt_menu_label" style = "font-family : Arial; position : relative; top : 10px; left : 10px;"></label>
       </div>
@@ -495,7 +547,7 @@
             </div>
       </button> -->
 
-      <button onclick = "optimizeCode()" type="button" class="btn btn-danger">Optimize</button>
+      <button id = 'opt_btn' onclick = "optimizeCode()" type="button" class="btn btn-danger">Optimize</button>
 
       <!-- <button class="outline" type="button" onclick = "resetCode()">
             <div class="label">
@@ -504,14 +556,14 @@
             </div>
       </button> -->
 
-      <button onclick = "resetCode()" type="button" class="btn btn-outline-danger">Reset</button>
+      <button id = 'reset_btn' onclick = "resetCode()" type="button" class="btn btn-outline-danger">Reset</button>
 
-      <img id = "upload" title = "Upload Code" onmouseover = "mouseOver1()"  onmouseout = "mouseOut1()" onclick = "uploadCode()" style = "cursor : pointer; position : absolute; top : 26%; left : 47.5%; height : 30px; width : 30px;" src="https://img.icons8.com/pastel-glyph/64/ffffff/upload--v2.png"/>
+      <img id = "upload" title = "Upload Code" onmouseover = "mouseOver1()"  onmouseout = "mouseOut1()" src="https://img.icons8.com/pastel-glyph/64/ffffff/upload--v2.png" onclick = "uploadCode()"/>
 
-      <img id = "download" title = "Download Code" onmouseover = "mouseOver()"  onmouseout = "mouseOut()" onclick = "downloadCode()" style = "display : None; cursor : pointer; position : absolute; top : 26%; right : 2.5%; height : 30px; width : 30px;" src="https://img.icons8.com/pastel-glyph/64/ffffff/download--v2.png"/>
+      <img id = "download" title = "Download Code" onmouseover = "mouseOver()"  onmouseout = "mouseOut()" onclick = "downloadCode()" src="https://img.icons8.com/pastel-glyph/64/ffffff/download--v2.png"/>
       <!-- <img src="https://img.icons8.com/pastel-glyph/64/fa314a/download--v2.png"/> -->
   </div>
-    <div ondrop = "dropHandler(event);" ondragleave = "dragLeave(event);" ondragover = "dragOver(event);" id="editor" style = 'float : left; width: 47.5%; font-size : 18px; top: 21%; left : 1.5%; z-index : 1;'>
+    <div ondrop = "dropHandler(event);" ondragleave = "dragLeave(event);" ondragover = "dragOver(event);" id="editor" style = 'float : left; width: 47.5%; font-size : 18px; top: 21%; left : 1.5%; z-index : 1;'>/* Click on upload or drag and drop the input code here */
     </div>
 
     <div id="output" style = 'float : right; width: 47.5%; font-size : 18px; top: 21%; right:1.5%'>
@@ -651,7 +703,7 @@
         </div>
       </div> -->
 
-      <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#warmUpModal">
+      <button id = 'run_button' type="button" class="btn btn-primary" data-toggle="modal" data-target="#warmUpModal">
         Run Code
       </button>
 
