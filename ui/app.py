@@ -30,7 +30,7 @@ def optimize_code():
         f.write(menu_opt_json_str)
 
     menu_opt_json_str = json.loads(menu_opt_json_str)
-    flag_command = 'Coptimizer sf'
+    flag_command = '../env/Coptimizer sf'
 
     # set GUI flags : UNROLL,COMPILE_INIT,INLINE,IF_TO_SWITCH,TAIL_RECURSION,JAMMING,SENTINEL
     for flag in menu_opt_json_str:
@@ -39,7 +39,7 @@ def optimize_code():
 
     subprocess.run(flag_command, shell = True)
 
-    run_command = 'Coptimizer ox testfile.c'
+    run_command = '../env/Coptimizer ox testfile.c'
     subprocess.run(run_command, shell = True)
 
     ret_arr = {}
