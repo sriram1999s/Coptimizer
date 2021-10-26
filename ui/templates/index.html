@@ -135,11 +135,11 @@
 
     #upload
     {
-      cursor : pointer; 
-      position : absolute; 
-      top : 27%; 
-      right : 9.5%; 
-      height : 30px; 
+      cursor : pointer;
+      position : absolute;
+      top : 27%;
+      right : 9.5%;
+      height : 30px;
       width : 30px;
       border : 1px solid #ff4655;
       border-radius : 50px;
@@ -148,11 +148,11 @@
 
     #download
     {
-      display : None; 
-      cursor : pointer; 
-      position : absolute; 
-      top : 26%; 
-      right : 13%; 
+      display : None;
+      cursor : pointer;
+      position : absolute;
+      top : 26%;
+      right : 13%;
       height : 30px;
       width : 30px;
       border : 1px solid #ff4655;
@@ -405,7 +405,8 @@
           FLAG_TAIL_RECURSION : false,
           FLAG_JAMMING : false,
           FLAG_SENTINEL : false,
-          FLAG_CACHE : false
+          FLAG_CACHE : false,
+          FLAG_BIT_HACKS : false
         };
         for(var i = 0;i < select.length; ++i)
         {
@@ -417,6 +418,7 @@
           else if(opt_name == "Tail Recursion Elimination") menu_obj.FLAG_TAIL_RECURSION = true;
           else if(opt_name == "Sentinel Techniques") menu_obj.FLAG_SENTINEL = true;
           else if(opt_name == "Cache Optimizations") menu_obj.FLAG_CACHE = true;
+          else if(opt_name == "Bit Hacks") menu_obj.FLAG_BIT_HACKS = true;
           else menu_obj.FLAG_JAMMING = true;
         }
         // console.log("menu_obj : ",menu_obj);
@@ -536,6 +538,7 @@
           <option id = 'LJ' value = 'LJ_'>Loop Jamming</option>
           <option id = 'SE' value = 'SE_'>Sentinel Techniques</option>
           <option id = 'CA' value = 'CA_'>Cache Optimizations</option>
+          <option id = 'BH' value = 'BH_'>Bit Hacks</option>
         </select>
         <label id = "opt_menu_label" style = "font-family : Arial; position : relative; top : 10px; left : 10px;"></label>
       </div>
