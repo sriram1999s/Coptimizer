@@ -9,6 +9,7 @@ from optimizations.compile_time_init import *
 from optimizations.function_inline import flatten as flatten_all
 from optimizations.sentinel import *
 from optimizations.cache import *
+from optimizations.bit_hacks import *
 
 from collections import defaultdict
 from pprint import pprint
@@ -75,6 +76,7 @@ def p_open(p):
         p[0] = [p[1], [p[2], p[3]], p[4], p[5]]
         sym_tab.lookahead(0, len(p[3]), p[3])
         sym_tab.lookahead(0, len(p[5]), p[5])
+        p[0] = validate_find_min(p[0])
 
 ''' keyword for '''
 def p_for(p):
@@ -138,6 +140,7 @@ def p_closed(p):
         p[0] = [p[1],[p[2],p[3]],p[4],p[5]]
         sym_tab.lookahead(0, len(p[3]), p[3])
         sym_tab.lookahead(0, len(p[5]), p[5])
+        p[0] = validate_find_min(p[0])
 
 
 
@@ -443,7 +446,13 @@ def p_simple(p):
 	       | MULTILINE_COMMENT
     	   | tagged_ds
            | linear_search
-	   | predicate
+	       | predicate
+           | power_of_2
+           | count_set_bits
+           | unique_characters
+           | sort_unique_positive
+           | sort_positive
+
     '''
     if(len(p)==3):
         p[0] = [p[1],p[2]]
@@ -651,6 +660,13 @@ def p_expr(p):
         p[0] = [p[1], p[2], p[3], p[4], p[5], p[6]]
     else :
         p[0] = p[1]
+
+    try:
+        if type(p[0]) == list:
+            if '%' in list(flatten(p[0])):
+                p[0] = validate_compute_mod(p[0])
+    except e:
+        print('Not modulo')
 
 def p_assignment(p):
     '''
@@ -923,10 +939,45 @@ def p_linear_search(p):
         p[0] = ["/*sentinel-search-begin*/", p[2], "/*sentinel-search-end*/"]
     else:
         p[0] = [p[1], p[2], p[3]]
-        
+
 def p_predicate(p):
     '''
     predicate : PREDICATE_BEGIN function PREDICATE_END
     '''
     sentinel.add_predicate(p[2])
     p[0] = [p[1],p[2],p[3]]
+
+def p_power_of_2(p):
+    '''
+    power_of_2 : POWER_OF_2_BEGIN multiple_statements POWER_OF_2_END
+    '''
+    new_sub_tree = validate_power_of_2(p[2])
+    p[0] = ["/*power-of-2-begin*/", new_sub_tree, "/*power-of-2-end*/"]
+
+def p_count_set_bits(p):
+    '''
+    count_set_bits : COUNT_SET_BITS_BEGIN multiple_statements COUNT_SET_BITS_END
+    '''
+    new_sub_tree = validate_count_set_bits(p[2])
+    p[0] = ["/*count-set-bits-begin*/", new_sub_tree, "/*count-set-bits-end*/"]
+
+def p_unique_characters(p):
+    '''
+    unique_characters : UNIQUE_CHARACTERS_BEGIN multiple_statements UNIQUE_CHARACTERS_END
+    '''
+    new_sub_tree = application_unique_characters(p[2])
+    p[0] = ["/*unique-characters-begin*/", new_sub_tree, "/*unique-characters-end*/"]
+
+def p_sort_unique_positive(p):
+    '''
+    sort_unique_positive : SORT_UNIQUE_POSITIVE_BEGIN multiple_statements SORT_UNIQUE_POSITIVE_END
+    '''
+    new_sub_tree = application_sort_unique_positive(p[2])
+    p[0] = ["/*sort-unique-positive-begin*/", new_sub_tree, "/*sort-unique-positive-end*/"]
+
+def p_sort_positive(p):
+    '''
+    sort_positive : SORT_POSITIVE_BEGIN multiple_statements SORT_POSITIVE_END
+    '''
+    new_sub_tree = application_sort_positive(p[2])
+    p[0] = ["/*sort-positive-begin*/", new_sub_tree, "/*sort-positive-end*/"]

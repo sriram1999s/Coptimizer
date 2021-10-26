@@ -39,7 +39,7 @@ unary = ['NOT']
 
 extra = ['ID', 'TYPE', 'STRING' , 'HASH', 'INCLUDE','HEADER_FILE','CHAR','TYPEDEF']
 
-comment = ['MULTILINE_COMMENT','TAGGED_DS','LINEAR_SEARCH_BEGIN', 'LINEAR_SEARCH_END', 'PREDICATE_BEGIN', 'PREDICATE_END']
+comment = ['MULTILINE_COMMENT','TAGGED_DS','LINEAR_SEARCH_BEGIN', 'LINEAR_SEARCH_END', 'PREDICATE_BEGIN', 'PREDICATE_END', 'POWER_OF_2_BEGIN', 'POWER_OF_2_END', 'COUNT_SET_BITS_BEGIN', 'COUNT_SET_BITS_END', 'UNIQUE_CHARACTERS_BEGIN', 'UNIQUE_CHARACTERS_END', 'SORT_UNIQUE_POSITIVE_BEGIN', 'SORT_UNIQUE_POSITIVE_END', 'SORT_POSITIVE_BEGIN', 'SORT_POSITIVE_END']
 
 jump = ['RETURN']
 
@@ -195,7 +195,7 @@ def t_INCLUDE(t):
     return t
 
 
-
+# sentinel tagging begins
 def t_TAGGED_DS(t):
     r'/\*\s*data-structure:.*?\s*\*/'
     return t
@@ -212,10 +212,53 @@ def t_PREDICATE_BEGIN(t):
     r'/\*\s*predicate-begin\s*\*/'
     return t
 
-
 def t_PREDICATE_END(t):
     r'/\*\s*predicate-end\s*\*/'
     return t
+# sentinel tagging ends
+
+
+# bit hacks tagging begin
+def t_POWER_OF_2_BEGIN(t):
+    r'/\*power-of-2-begin\*/'
+    return t
+
+def t_POWER_OF_2_END(t):
+    r'/\*power-of-2-end\*/'
+    return t
+
+def t_COUNT_SET_BITS_BEGIN(t):
+    r'/\*count-set-bits-begin\*/'
+    return t
+
+def t_COUNT_SET_BITS_END(t):
+    r'/\*count-set-bits-end\*/'
+    return t
+
+def t_UNIQUE_CHARACTERS_BEGIN(t):
+    r'/\*unique-characters-begin\*/'
+    return t
+
+def t_UNIQUE_CHARACTERS_END(t):
+    r'/\*unique-characters-end\*/'
+    return t
+
+def t_SORT_UNIQUE_POSITIVE_BEGIN(t):
+    r'/\*sort-unique-positive-begin\*/'
+    return t
+
+def t_SORT_UNIQUE_POSITIVE_END(t):
+    r'/\*sort-unique-positive-end\*/'
+    return t
+
+def t_SORT_POSITIVE_BEGIN(t):
+    r'/\*sort-positive-begin\*/'
+    return t
+
+def t_SORT_POSITIVE_END(t):
+    r'/\*sort-positive-end\*/'
+    return t
+# bit hacks tagging end
 
 # multiline comment
 def t_MULTILINE_COMMENT(t):
