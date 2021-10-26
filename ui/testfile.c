@@ -2,12 +2,8 @@
 double sum(int n);
 
 int main() {
-    int number;
-    double result;
-
-    printf("Enter a positive integer : ");
-    scanf("%d", &number);
-
+    int number = 1000000;
+    double result;   
     result = sum(number);
 
     printf("sum = %f\n", result);
@@ -22,6 +18,4 @@ double sum(int n) {
         return n;
 }
 }
-
-
 
