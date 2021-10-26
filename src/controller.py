@@ -43,8 +43,8 @@ lines = pre_process(lines)
 ''' parsing '''
 z=parser.parse(lines)
 
-
-z = validate_find_abs(z)
+if(menu.FLAG_BIT_HACKS):
+    z = validate_find_abs(z)
 
 
 fn_defn_list.sort(key = lambda x:x[0])

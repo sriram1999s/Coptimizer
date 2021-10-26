@@ -76,7 +76,8 @@ def p_open(p):
         p[0] = [p[1], [p[2], p[3]], p[4], p[5]]
         sym_tab.lookahead(0, len(p[3]), p[3])
         sym_tab.lookahead(0, len(p[5]), p[5])
-        p[0] = validate_find_min(p[0])
+        if(menu.FLAG_BIT_HACKS):
+            p[0] = validate_find_min(p[0])
 
 ''' keyword for '''
 def p_for(p):
@@ -140,7 +141,8 @@ def p_closed(p):
         p[0] = [p[1],[p[2],p[3]],p[4],p[5]]
         sym_tab.lookahead(0, len(p[3]), p[3])
         sym_tab.lookahead(0, len(p[5]), p[5])
-        p[0] = validate_find_min(p[0])
+        if(menu.FLAG_BIT_HACKS):
+            p[0] = validate_find_min(p[0])
 
 
 
@@ -661,12 +663,13 @@ def p_expr(p):
     else :
         p[0] = p[1]
 
-    try:
-        if type(p[0]) == list:
-            if '%' in list(flatten(p[0])):
-                p[0] = validate_compute_mod(p[0])
-    except e:
-        print('Not modulo')
+    if(menu.FLAG_BIT_HACKS):
+        try:
+            if type(p[0]) == list:
+                if '%' in list(flatten(p[0])):
+                    p[0] = validate_compute_mod(p[0])
+        except e:
+            print('Not modulo')
 
 def p_assignment(p):
     '''

@@ -9,6 +9,7 @@ class Menu:
         self.FLAG_JAMMING = True
         self.FLAG_SENTINEL = True
         self.FLAG_CACHE = True
+        self.FLAG_BIT_HACKS = True
 
     def set(self, flags):
         self.FLAG_UNROLL = flags["FLAG_UNROLL"]
@@ -19,6 +20,7 @@ class Menu:
         self.FLAG_JAMMING = flags["FLAG_JAMMING"]
         self.FLAG_SENTINEL = flags["FLAG_SENTINEL"]
         self.FLAG_CACHE = flags["FLAG_CACHE"]
+        self.FLAG_BIT_HACKS = flags["FLAG_BIT_HACKS"]
 
 ''' instantiation '''
 menu = Menu()
