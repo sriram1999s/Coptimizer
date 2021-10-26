@@ -1,20 +1,27 @@
 #include <stdio.h>
+double sum(int n);
 
-void sum(int size, double sum1)
-{
-    if (size == 0)
-    {
-        printf("sum : %f\n",sum1);
-    }
-    else { sum(size - 1, sum1 + size);
-}
-}
+int main() {
+    int number;
+    double result;
 
-int main()
-{
-    int size;
-    scanf("%d", &size);
-    sum(size, 0);
+    printf("Enter a positive integer : ");
+    scanf("%d", &number);
+
+    result = sum(number);
+
+    printf("sum = %f\n", result);
     return 0;
 }
+
+double sum(int n) {
+    if (n != 0) {
+        // sum() function calls itself
+        return n + sum(n-1); 
+    } else {
+        return n;
+}
+}
+
+
 

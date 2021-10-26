@@ -405,7 +405,8 @@
           FLAG_TAIL_RECURSION : false,
           FLAG_JAMMING : false,
           FLAG_SENTINEL : false,
-          FLAG_CACHE : false
+          FLAG_CACHE : false,
+          FLAG_COARSE : false
         };
         for(var i = 0;i < select.length; ++i)
         {
@@ -417,6 +418,7 @@
           else if(opt_name == "Tail Recursion Elimination") menu_obj.FLAG_TAIL_RECURSION = true;
           else if(opt_name == "Sentinel Techniques") menu_obj.FLAG_SENTINEL = true;
           else if(opt_name == "Cache Optimizations") menu_obj.FLAG_CACHE = true;
+          else if(opt_name == "Coarsening Recursion") menu_obj.FLAG_COARSE = true;
           else menu_obj.FLAG_JAMMING = true;
         }
         // console.log("menu_obj : ",menu_obj);
@@ -534,8 +536,9 @@
           <option id = 'IS' value = 'IS_'>if - to - switch</option>
           <option id = 'TRE' value = 'TRE_'>Tail Recursion Elimination</option>
           <option id = 'LJ' value = 'LJ_'>Loop Jamming</option>
-          <!-- <option id = 'SE' value = 'SE_'>Sentinel Techniques</option>
-          <option id = 'CA' value = 'CA_'>Cache Optimizations</option> -->
+          <option id = 'SE' value = 'SE_'>Sentinel Techniques</option>
+          <option id = 'CA' value = 'CA_'>Cache Optimizations</option>
+          <option id = 'CO' value = 'CO_'>Coarsening Recursion</option>
         </select>
         <label id = "opt_menu_label" style = "font-family : Arial; position : relative; top : 10px; left : 10px;"></label>
       </div>

@@ -9,6 +9,7 @@ from parser import *
 
 from optimizations.stack_match2 import *
 from optimizations.switch import *
+from optimizations.coarse_rec import coarse_rec_handler
 
 ''' init lexxer and parser '''
 lexer = lex()
@@ -26,7 +27,6 @@ dir_path = os.environ['COPTIMIZER_PATH']
 with open(f"{dir_path}/env/flags.json", "r") as inp:
     flags = json.load(inp)
     menu.set(flags)
-print("flags ", flags)
 #------------------------------------IO handling --------------------------------------------------------------------------
 
 ''' reading input file '''
@@ -59,6 +59,15 @@ print("AST:")
 print(z)
 print()
 print()
+
+''' coarsening recursion '''
+if menu.FLAG_COARSE:
+    '''
+        fn_defn_list[i] tuple = one in AST (exact same tuple in both)
+        fn_call_list[i] tuple != one in AST (matching tuples but different copies)
+    '''
+    coarse_rec_handler(z)
+
 output_prg = solve(0,len(z),z)
 # output_prg = solve_multithread(0,len(z),z)
 ''' if to switch '''

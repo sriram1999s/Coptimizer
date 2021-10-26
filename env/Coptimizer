@@ -25,7 +25,7 @@ def help():
 '''to set flags'''
 def sf(*args):
     flags = {}
-    for key in ["FLAG_UNROLL","FLAG_COMPILE_INIT","FLAG_INLINE","FLAG_IF_TO_SWITCH","FLAG_TAIL_RECURSION","FLAG_JAMMING","FLAG_SENTINEL","FLAG_CACHE"]:
+    for key in ["FLAG_UNROLL","FLAG_COMPILE_INIT","FLAG_INLINE","FLAG_IF_TO_SWITCH","FLAG_TAIL_RECURSION","FLAG_JAMMING","FLAG_SENTINEL","FLAG_CACHE", "FLAG_COARSE"]:
         flags[key] = False
     for op in args:
         flags["FLAG_"+op] = True
@@ -43,8 +43,9 @@ def ox(path):
     running_os = platform.system()
 
     subprocess.call([f'clang-tidy {path} -fix -checks="readability-braces-around-statements,readability-isolate-declaration" -- COMPILE_OPTIONS > /dev/null 2> /dev/null'],shell=True)
-    subprocess.call([f"python3 {dir_path}/src/controller.py {path} > /dev/null"],shell=True)
-    
+    # subprocess.call([f"python3 {dir_path}/src/controller.py {path} > /dev/null"],shell=True)
+    subprocess.call([f"python3 {dir_path}/src/controller.py {path} "],shell=True)
+
     if running_os == 'Darwin':
         # MAC users
         subprocess.call([f"gindent -linux temp.c -o output.c"],shell=True)

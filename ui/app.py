@@ -32,7 +32,7 @@ def optimize_code():
     menu_opt_json_str = json.loads(menu_opt_json_str)
     flag_command = 'Coptimizer sf'
 
-    # set GUI flags : UNROLL,COMPILE_INIT,INLINE,IF_TO_SWITCH,TAIL_RECURSION,JAMMING
+    # set GUI flags : UNROLL,COMPILE_INIT,INLINE,IF_TO_SWITCH,TAIL_RECURSION,JAMMING,SENTINEL,CACHE,COARSE
     for flag in menu_opt_json_str:
         if menu_opt_json_str[flag]:
             flag_command += ' ' + flag[5:]
