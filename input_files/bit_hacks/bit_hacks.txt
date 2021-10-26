@@ -1,0 +1,60 @@
+1. Find min of two integers or characters x and y
+    Bit Hack: r = y ^ ((x ^ y) & -(x < y));
+              or
+              r = x ^ ((x ^ y) & -(x < y));
+
+2. Compute (x+y)%n, assuming that 0<=x<n and 0<=y<n
+    Bit Hack: r = (x+y) - (n& -((x+y) >= n))
+
+3. Round up to the next highest power of two for an unsigned int v and a 64-bit architecture
+    Bit Hack: v--;
+              v |= v >> 1;
+              v |= v >> 2;
+              v |= v >> 4;
+              v |= v >> 8;
+              v |= v >> 16;
+              v |= v >> 32;
+              v++;
+
+4. Compute the index of the least significant 1
+    Bit Hack: x & (-x)
+
+5. Compute log2(x) where x is a power of 2
+    Bit Hack: Multiply by deBruijn number and lookup into De Bruijn sequence
+
+6. Count the number of 1 bits in a word x
+    Bit Hack: for(r=0; x!=0; ++r)
+                x &= x-1
+            (or)
+    Bit Hack: static const int count[256] = {0, 1, 1, 2, 1, 2, 2, 3, 1, ..., 8}
+                for(r=0; x!=0; x>>=8)
+                    r += count[x & 0xFF]
+            (or)
+    Bit Hack: Parallel divide and conquer method
+
+7. Find the absolute value of an integer x
+    Bit Hack: int const mask = x >> sizeof(int) * CHAR_BIT - 1;
+              r = (x + mask) ^ mask;
+            (or)
+              int const mask = x >> sizeof(int) * CHAR_BIT - 1;
+              r = (x ^ mask) - mask;
+
+8. Determine if integer is a power of two
+    Bit Hack: x && (!(x & (x-1)))
+
+9. Detect if two integers have opposite signs
+    Bit Hack: (x ^ y) < 0
+
+10. Counting bits set by lookup table
+    Bit Hack:
+    int BitsSetTable256[256];
+    BitsSetTable256[0] = 0;
+    for (int i = 0; i < 256; i++)
+    {
+        BitsSetTable256[i] = (i & 1) +
+        BitsSetTable256[i / 2];
+    }
+    return (BitsSetTable256[n & 0xff] +
+            BitsSetTable256[(n >> 8) & 0xff] +
+            BitsSetTable256[(n >> 16) & 0xff] +
+            BitsSetTable256[n >> 24]);

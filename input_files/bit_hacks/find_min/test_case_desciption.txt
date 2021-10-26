@@ -1,0 +1,58 @@
+1. INPUT: bit_hacks/find_min/t1.c
+    INPUT_DESCRIPTION:
+    - Find min of two integers
+    - Using operator < or <=
+    - Using if-else
+    EXPECTED_OUTPUT:
+    - The if-else used to find the min for two numbers x and y must be replaced by r = y ^ ((x ^ y) & -(x < y));
+
+2. INPUT: bit_hacks/find_min/t2.c
+    INPUT_DESCRIPTION:
+    - Find min of two integers
+    - Using operator > or >=
+    - Using if-else
+    EXPECTED_OUTPUT:
+    - The if-else used to find the min for two numbers x and y must be replaced by r = x ^ ((y ^ x) & -(y < x));
+
+3. INPUT: bit_hacks/find_min/t3.c
+    INPUT_DESCRIPTION:
+    - Find min of two floating point numbers
+    EXPECTED_OUTPUT:
+    - No change to the input
+
+4. INPUT: bit_hacks/find_min/t4.c
+    INPUT_DESCRIPTION:
+    - Find min of two variables of type float
+    EXPECTED_OUTPUT:
+    - No change to the input
+    OUTPUT:
+    - Getting changed to bit hack
+
+5. INPUT: bit_hacks/find_min/t5.c
+    INPUT_DESCRIPTION:
+    - Find min of two chars
+    - Using operator <
+    - Using if-else
+    EXPECTED_OUTPUT:
+    - The if-else used to find the min for two chars x and y must be replaced by r = y ^ ((x ^ y) & -(x < y));
+
+6. INPUT: bit_hacks/find_min/t6.c
+    INPUT_DESCRIPTION:
+    - Perform some other operation in if-else based on min of two integers instead of directly assigning the min value to another variable
+    EXPECTED_OUTPUT:
+    - //?
+    OUTPUT:
+    - No change to input
+
+7. INPUT: bit_hacks/find_min/t7.c
+    INPUT_DESCRIPTION:
+    - Find min of every pair of consecutive integers in an array
+    - Finding min using array indices in a for loop
+    EXPECTED_OUTPUT:
+    - The if-else used to find the min for two integers x and y must be replaced by r = y ^ ((x ^ y) & -(x < y));
+
+8. INPUT: bit_hacks/find_min/t8.c
+    INPUT_DESCRIPTION:
+    - Find min of integers using pointers to them
+    EXPECTED_OUTPUT:
+    - The if-else used to find the min for two integers x and y must be replaced by r = y ^ ((x ^ y) & -(x < y));

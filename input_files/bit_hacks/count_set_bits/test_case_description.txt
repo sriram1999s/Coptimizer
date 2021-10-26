@@ -1,0 +1,56 @@
+Bit hack:
+int BitsSetTable256[256];
+BitsSetTable256[0] = 0;
+for (int i = 0; i < 256; i++)
+{
+    BitsSetTable256[i] = (i & 1) +
+    BitsSetTable256[i / 2];
+}
+return (BitsSetTable256[n & 0xff] +
+        BitsSetTable256[(n >> 8) & 0xff] +
+        BitsSetTable256[(n >> 16) & 0xff] +
+        BitsSetTable256[n >> 24]);
+
+1. INPUT: bit_hacks/count_set_bits/t1.c
+    INPUT_DESCRIPTION:
+    - Count and return the number of ones in the binary representation of the integer variable
+    - Recursive logic with right shift
+    - Tagged within /*count-set-bits-begin*/ and /*count-set-bits-end*/
+    EXPECTED_OUTPUT:
+    - The code within the tags must be replaced by the bit hack. The variable in consideration is n.
+
+2. INPUT: bit_hacks/count_set_bits/t2.c
+    INPUT_DESCRIPTION:
+    - Count and return the number of ones in the binary representation of the integer variable
+    - Iterative logic
+    - Brian Kernighan's method
+    - Tagged within /*count-set-bits-begin*/ and /*count-set-bits-end*/
+    EXPECTED_OUTPUT:
+    - The code within the tags must be replaced by the bit hack. The variable in consideration is n.
+
+3. INPUT: bit_hacks/count_set_bits/t3.c
+    INPUT_DESCRIPTION:
+    - Count and return the number of ones in the binary representation of the integer variable
+    - Recursive logic with bitwise and
+    - Tagged within /*count-set-bits-begin*/ and /*count-set-bits-end*/
+    EXPECTED_OUTPUT:
+    - The code within the tags must be replaced by the bit hack. The variable in consideration is n.
+
+4. INPUT: bit_hacks/count_set_bits/t4.c
+    INPUT_DESCRIPTION:
+    - Count and return the number of ones in the binary representation of the integer variable
+    - Recursive logic with nibble
+    - Tagged within /*count-set-bits-begin*/ and /*count-set-bits-end*/
+    EXPECTED_OUTPUT:
+    - The code within the tags must be replaced by the bit hack. The variable in consideration is n.
+
+5. INPUT: bit_hacks/count_set_bits/t5.c
+    INPUT_DESCRIPTION:
+    - Count and return the number of ones in the binary representation of the integer variable
+    - Iterative logic
+    - Tagged within /*count-set-bits-begin*/ and /*count-set-bits-end*/
+    - Application program: Program to count number of bits to flip to convert int A to int B
+    EXPECTED_OUTPUT:
+    - The code within the tags must be replaced by the bit hack. The variable in consideration is n.
+
+

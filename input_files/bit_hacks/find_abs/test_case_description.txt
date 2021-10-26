@@ -1,0 +1,25 @@
+1. INPUT: bit_hacks/find_abs/t1.c
+    INPUT_DESCRIPTION:
+    - Find the absolute value of an integer or integer variable
+    EXPECTED_OUTPUT:
+    - Add the header limits.h
+    - Create a mask as int const mask = x >> sizeof(int) * CHAR_BIT - 1;
+    - abs(x) must be replaced by (x + mask) ^ mask;
+
+2. INPUT: bit_hacks/find_abs/t2.c
+    INPUT_DESCRIPTION:
+    - Call to abs function within if-else
+    EXPECTED_OUTPUT:
+    - Add the header limits.h
+    - Create a mask as int const mask = x >> sizeof(int) * CHAR_BIT - 1;
+    - abs(x) must be replaced by (x + mask) ^ mask;
+
+3. INPUT: bit_hacks/find_abs/t3.c
+    INPUT_DESCRIPTION:
+    - Call to abs function within for loop
+    EXPECTED_OUTPUT:
+    - Add the header limits.h
+    - Create a mask as int const mask = x >> sizeof(int) * CHAR_BIT - 1;
+    - abs(x) must be replaced by (x + mask) ^ mask;
+
+
