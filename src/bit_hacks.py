@@ -292,7 +292,7 @@ def application_unique_characters(sub_tree):
         return sub_tree
 # -----END: UNIQUE CHARACTERS-----
 
-# -----BEGIN: SORT UNIQUE-----
+# -----BEGIN: SORT UNIQUE POSITIVE-----
 def application_sort_unique_positive(sub_tree):
     import secrets
 
@@ -302,7 +302,6 @@ def application_sort_unique_positive(sub_tree):
         array_name = params[3:params.index(',')]
         n = params[params.index(',')+1:-3]
         repl = f'int BitVec[1000];\n' \
-               f'int output[{n}];\n' \
                f'int k=0;\n' \
                f'for(int i=0; i<1000; ++i)' \
                '{' \
@@ -316,19 +315,15 @@ def application_sort_unique_positive(sub_tree):
                '{\n' \
                f'if( BitVec[i/ 32] & (1 << (i%32)) )' \
                '{\n' \
-               f'output[k++] = i;\n' \
+               f'{array_name}[k++] = i;\n' \
                '}\n' \
-               '}\n' \
-               f'for(int i=0; i<{n}; ++i)' \
-               '{\n' \
-               f'{array_name}[i] = output[i];\n' \
-               '}'
+               '}\n'
         return repl
     except :
         return sub_tree
-# -----END: SORT UNIQUE-----
+# -----END: SORT UNIQUE POSITIVE-----
 
-
+# -----BEGIN: SORT POSITIVE-----
 def application_sort_positive(sub_tree):
     flattened_sub_tree = list(flatten1(sub_tree))
     try:
@@ -336,52 +331,42 @@ def application_sort_positive(sub_tree):
         array_name = params[3:params.index(',')]
         n = params[params.index(',') + 1:-3]
         repl = f'int BitVec[1000];\n' \
-               f'int output[{n}];\n' \
                f'int k=0;\n' \
                f'for(int i=0; i<1000; ++i)' \
                '{' \
                f'BitVec[i] = 0;\n' \
                '}\n' \
                f'for(int i=0; i<{n}; ++i)' \
+               '{\n'\
+               f'int hash = 2*{array_name}[i] / 32;\n' \
+               f'int lsb = 2*{array_name}[i] % 32 + 1;\n' \
+               f'while( BitVec[hash] & 1 << lsb )' \
                '{\n' \
-               f'if(!(BitVec[2*{array_name}[i]/32] & (1 << (2*{array_name}[i]%32))))' \
-               '{\n' \
-               f'if(!(BitVec[2*{array_name}[i]/32] & (1 << ((2*{array_name}[i]%32)+1))) )' \
-               '{\n' \
-               f'BitVec[2*{array_name}[i]/32] |= 1 << ((2*{array_name}[i]%32) + 1);\n' \
+               f'BitVec[hash] &= ~(1 << lsb);\n' \
+               f'--lsb;\n' \
                '}\n' \
-               'else' \
+               f'if(lsb >= 0) ' \
                '{\n' \
-               f'BitVec[2*{array_name}[i]/32] |= 1 << (2*{array_name}[i]%32);\n' \
-               f'BitVec[2*{array_name}[i]/32] &= ~(1 << ((2*{array_name}[i]%32) + 1));\n' \
-               '}\n}\n' \
-               'else' \
-               '{\n' \
-               f'if(!(BitVec[2*{array_name}[i]/32] & (1 << ((2*{array_name}[i]%32)+1))) )' \
-               '{\n' \
-               f'BitVec[2*{array_name}[i]/32] |= 1 << ((2*{array_name}[i]%32) + 1);\n' \
-               '}\n}\n}\n' \
+               f'BitVec[hash] |= 1 << lsb;\n' \
+               '}\n}\n'\
                f'for(int i=0; i<4000; i+=2)' \
                '{\n' \
                f'if( !(BitVec[i/ 32] & (1 << (i%32))) &&  (BitVec[i/ 32] & (1 << ((i%32)+1))))' \
                '{\n' \
-               f'output[k++] = i/2;\n' \
+               f'{array_name}[k++] = i/2;\n' \
                '}\n' \
                f'else if(BitVec[i/ 32] & (1 << (i%32)))' \
                '{\n' \
                'if(!(BitVec[i/ 32] & (1 << ((i%32)+1))))' \
                '{\n' \
-               'output[k++] = i/2;\noutput[k++] = i/2;\n' \
+               f'{array_name}[k++] = i/2;\n{array_name}[k++] = i/2;\n' \
                '}\n' \
                'else' \
                '{\n' \
-               'output[k++] = i/2;\noutput[k++] = i/2;\noutput[k++] = i/2;\n' \
+               f'{array_name}[k++] = i/2;\n{array_name}[k++] = i/2;\n{array_name}[k++] = i/2;\n' \
                '}\n}\n' \
-               '}\n' \
-               f'for(int i=0; i<{n}; ++i)' \
-               '{\n' \
-               f'{array_name}[i] = output[i];\n' \
-               '}'
+               '}\n'
         return repl
     except:
         return sub_tree
+# -----END: SORT POSITIVE-----
