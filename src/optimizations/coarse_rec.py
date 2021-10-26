@@ -24,11 +24,14 @@ def check_CR(fn_defn_t):
     # fn_defn_t[1] : the given fn in parsed list format
     temp_flat = flatten_except_t(fn_defn_t[1])
     
-    ''' return 1 if there's >= 1 recursive call and no call to other fns [--Might change later--]'''
+    ''' return 1 if there's >= 1 recursive call and no call to other fns '''
+    ''' Must be refined later '''
     num_rec_calls = 0
     for ele in temp_flat:
         if isinstance(ele, tuple):
             # dealing with a fn_call tuple
+            if ele[0] == "printf" or ele[0] == "scanf":
+                continue
             if ele[0] != given_fn_name:
                 return 0
             num_rec_calls += 1
@@ -142,9 +145,10 @@ def add_constructs(fn_defn_t, z):
     same_par_list = f"{'' if not actual_param_list else (', '.join(ptrTOblockOf0_par_names) + ', ')}" + "FRAME_COUNT, FRAME_LIMIT, head_, ptr_block"
 
     node_par = ""
-    for ele in par_name_list:
-        # node_par += f"ptr_block[*head_].{ele}, "
-        node_par += f"ptr_block[ix].{ele}, "
+    node_par = ", ".join(f"ptr_block[ix].{ele}" for ele in par_name_list)
+    if ret_type != 'void':
+        # placeholder var exists only when there's a return result
+        node_par += ', '
 
     par_name_list2 = new_par_list.split(', ')[:-4]
     save_state_inits = "\t".join(f"ptr_block[0].{par} = {par};\n" for par in par_name_list2)
@@ -169,12 +173,12 @@ def add_constructs(fn_defn_t, z):
         {ret_type + " result_ = " if ret_type != "void" else ""}{fn_name}_{hash}({same_par_list});
         
         // computation
-        {ret_type} pvar_{hash};
-        {ret_type} finalRes_{hash};
+        {ret_type  + ' pvar_' + hash + ';' if ret_type != "void" else ""}
+        {ret_type  + ' finalRes_' + hash + ';' if ret_type != "void" else ""}
         int ix = *head_;
         while(ix)
         {{
-            {'finalRes_' + hash + ' =' if ret_type != 'void' else ''} placeholder_{hash}({node_par}pvar_{hash});
+            {'finalRes_' + hash + ' =' if ret_type != 'void' else ''} placeholder_{hash}({node_par}{'pvar_' + hash if ret_type != 'void' else ''} );
             {'pvar_' + hash + ' = finalRes_' + hash + ';' if ret_type != 'void' else ''}
             ix -= 1;
         }}
@@ -232,8 +236,18 @@ def add_constructs(fn_defn_t, z):
     '''
      
     ''' generate a placeholder fn '''
-    fn_proto = f"placeholder_{hash} ({', '.join(actual_param_list) + ', ' if actual_param_list else ''}" + f"{ret_type} placeholder)"
+    # fn_proto = f"placeholder_{hash} ({', '.join(actual_param_list) + ', ' if actual_param_list else ''}" + f"{ret_type} placeholder)"
+
+    fn_proto = ""
+    if ret_type != "void":
+        fn_proto = f"placeholder_{hash} ({', '.join(actual_param_list) + ', ' if actual_param_list else ''}" + f"{ret_type} placeholder)"
+    else:
+        # for void ret_types
+        fn_proto = f"placeholder_{hash} ({', '.join(actual_param_list) if actual_param_list else ''}" + ")"
+
     defn_str_placeholder = defn_str_placeholder.replace('placeholder', fn_proto, 1)
+    if ret_type == "void":
+        defn_str_placeholder = re.sub(r"placeholder\s*[;\s]+?", "", defn_str_placeholder)
 
     global num_rule_applied
     if num_rule_applied == 0:
@@ -262,8 +276,10 @@ def coarse_rec_handler(z):
         if not cr_flag:
             # can't apply rule
             ''' get this fn_defn out of it's tuple '''
+            print("\n Didn't perform on : ", fn_defn_t[0])
             continue
 
+        print("\n Did perform on : ", fn_defn_t[0])
         # can apply rule by adding some constructs
         add_constructs(fn_defn_t, z)
         num_rule_applied += 1
