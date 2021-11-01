@@ -10,11 +10,11 @@ def pre_process(text):
     '''regex to detect single line commaents and convert to multiline comments'''
     pat3 = r'//(.*?)\n'
     text = re.sub(pat3, change_to_multiline, text)
-    
+
     '''regex to detect newline and remove it'''
     pat4 = r'\n'
     text = re.sub(pat4, '', text)
-   
+
     print("Printing preprocessed text...\n")
     print(text,"\n\n")
 
@@ -37,7 +37,7 @@ def remove_rel_assign(m):
             new_val = str(int(m.group(3))+1)
     if(m.group(2)=='>'):
         if(re.search('\w+',m.group(3))):
-            new_val = m.group(3)+'+1'
+            new_val = m.group(3)+'-1'
         else:
             new_val = str(int(m.group(3))+1)
     return m.group(1) + m.group(2)  + new_val  + m.group(4)
