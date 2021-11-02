@@ -31,6 +31,7 @@ class Jamming:
             print("sub_tree ",sub_tree)
             greater_flag = '>' in sub_tree[1][2][0]
             roger_that_jam, ranges, case = self.get_range(loop, lower, upper, inc, scope,greater_flag)
+            print("verdict: ",roger_that_jam,ranges,case)
             if(roger_that_jam):
                 lower_og = self.container[loop]['lower']
                 upper_og = self.container[loop]['upper']
@@ -44,7 +45,10 @@ class Jamming:
                         sub_tree[1] = []
                         sub_tree[2] = []
                         # print("sub_tree : ", sub_tree)
-                        self._jam_table[loop]['sub_tree'][2] = ['{'] + self._jam_table[loop]['body'] + ['}']
+                        print("before: ",self._jam_table[loop]['sub_tree'], "\t|||||||\t", self._jam_table[loop]['body'])
+                        ix = self._jam_table[loop]['sub_tree'].index("for") + 2
+                        self._jam_table[loop]['sub_tree'][ix] = ['{'] + self._jam_table[loop]['body'] + ['}']
+                        print("after: ",self._jam_table[loop]['sub_tree'])
                         return
 
                 elif(case == 1): # upper_og != upper else all identical
@@ -56,19 +60,22 @@ class Jamming:
                         declare_min = 'int temp_'+ min_hash + ' = ' + ranges[0] + ';'
                         declare_max = 'int temp_'+ max_hash + ' = ' + ranges[1] + ';'
                         diff = '(' + 'temp_' + max_hash + '-' + 'temp_' + min_hash + ')'
-                        declare_min_2 = 'int temp_' + min_hash_2 + ' = ' + f'{diff}<0?{diff}:0' + ';'
+                        declare_min_2 = 'int temp_' + min_hash_2 + ' = ' + f'{diff}>0?{diff}:0' + ';'
                         # eliminating
-                        # print(sub_tree[1])
+                        print("sub_tree[1]", sub_tree[1])
                         #sub_tree[1][2][0][2] = diff
                         replace_string(0,len(sub_tree[1][2]),sub_tree[1][2],upper,'temp_'+min_hash_2)
                         replace_string(0,len(sub_tree[1][1]),sub_tree[1][1],lower,0)
+                        print("sub_tree[1]", sub_tree[1])
                         #sub_tree[1][1][3] = 0
                         if_block = ['if(' + str('temp_' + max_hash) + '==' + str(self._jam_table[loop]['upper']) + ')'] + ['{'] + body_og + ['}']
                         else_block = ['else' + '{'] + sub_tree[2] + ['}']
                         sub_tree[2] = ['{'] + if_block + else_block + ['}']
+                        print("\n\nbefore: ",self._jam_table[loop]['sub_tree'])
                         # changing first loop
                         self._jam_table[loop]['sub_tree'][1][2][0][2] = 'temp_' + min_hash
                         self._jam_table[loop]['sub_tree'][2] = ['{'] + self._jam_table[loop]['body'] + ['}']
+                        print("\n\nafter: ",self._jam_table[loop]['sub_tree'])
                         # adding declare statements at beginning of first loop
                         self._jam_table[loop]['sub_tree'].insert(0,[declare_min] + [declare_max] + [declare_min_2])
 
@@ -81,7 +88,7 @@ class Jamming:
                         declare_min = 'int temp_'+ min_hash + ' = ' + ranges[0] + ';'
                         declare_max = 'int temp_'+ max_hash + ' = ' + ranges[1] + ';'
                         diff = '(' + 'temp_' + max_hash + '-' + 'temp_' + min_hash + ')'
-                        declare_min_2 = 'int temp_' + min_hash_2 + ' = ' + f'{diff}<{upper}?{diff}:{upper}' + ';'
+                        declare_min_2 = 'int temp_' + min_hash_2 + ' = ' + f'{diff}>{upper}?{diff}:{upper}' + ';'
 
 
                         # eliminating
@@ -148,11 +155,13 @@ class Jamming:
                         sub_tree[2] = ['{'] + if_block + else_block + ['}']
 
                         # changing first loop ------> intersected loop [common range]
+                        print("before: ",self._jam_table[loop]['sub_tree'])
                         self._jam_table[loop]['sub_tree'][1][1][3] = 'temp_' + max_lower_hash
                         self._jam_table[loop]['sub_tree'][1][2][0][2] = 'temp_' + min_upper_hash
                         self._jam_table[loop]['sub_tree'][2] = ['{'] + self._jam_table[loop]['body'] + ['}']
                         # adding declare statements at beginning of first loop
                         self._jam_table[loop]['sub_tree'].insert(0,[declare_min] + [declare_max])
+                        print("after: ",self._jam_table[loop]['sub_tree'])
 
                         # creating another loop to cover remaining part of upper range
                         if_block = ['if(' + str('temp_' + max_upper_hash) + '==' + str(self._jam_table[loop]['upper']) + ')'] + ['{'] + body_og + ['}']
@@ -201,6 +210,7 @@ class Jamming:
     ''' jams two loops if possible '''
     def jam(self, loop, body_to_jam):
         self.possible = self.check_jam(loop, body_to_jam)
+        print("possible flag: ",self.possible)
         if(not self.possible):
             return 0
 
@@ -224,6 +234,8 @@ class Jamming:
         upper_og = self.container[loop]['upper']
         inc_og = self.container[loop]['inc']
         scope_og = self.container[loop]['scope']
+
+        print("\n\nranges:",lower,lower_og,upper,upper_og,"\n\n")
 
         if(abs(int(inc_og)) == abs(int(inc)) and scope_og == scope):
             min_range, max_range = 0, 0
