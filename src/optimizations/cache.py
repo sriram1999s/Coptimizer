@@ -35,12 +35,24 @@ class Cache:
         for key in to_remove_keys:
             del self.for_loops[key]
 
+    def dependancy_present(self, for_str, for_count):
+        pat = "for\(.*?\)\{"*(for_count)
+        print("\n\nfor_str, pat :", for_str, pat)
+
+        if (re.search(pat, for_str)):
+            return False
+        return True
+
     def find_frequency_index(self):
         for loop in self.for_loops.copy():
             for_str = "".join(solve(0, len(self.for_loops[loop]), self.for_loops[loop]))
+
             count = len(re.findall("for", for_str))
             curr = self.for_loops[loop]
             # pattern to find the inner most for loop's body
+            if(self.dependancy_present(for_str, count)):
+                continue
+
             pat = "for.*?"*(count-1)
             pat += "for.*?\{(.*?)\}"
             m = re.search(pat, for_str)
@@ -64,7 +76,7 @@ class Cache:
             for tup_ix in temp_list:
                 for candidate_for_ix in range(len(for_cndts)):
                     candidate_for = for_cndts[candidate_for_ix]
-                    pat = tup_ix[0] + ".*?="                    
+                    pat = tup_ix[0] + ".*?="
                     if(re.search(pat, candidate_for)):
                         new_for_order += "{" + candidate_for
                         for_cndts[candidate_for_ix] = None
@@ -82,10 +94,10 @@ class Cache:
             self.for_loops[loop].pop()
             self.for_loops[loop][0] = new_for_order
 
-            
 
-            
-            
+
+
+
 # TODO
 # 1) reflect the changes in the original subtree
 cache = Cache()
