@@ -71,16 +71,17 @@ class Cache:
             # sorting indices based on frequency
             temp_list = sorted(ix_dict.items(), key = lambda x:x[1])
 
+            
+
             #generating new for_order
             new_for_order = ""
             for tup_ix in temp_list:
                 for candidate_for_ix in range(len(for_cndts)):
                     candidate_for = for_cndts[candidate_for_ix]
                     pat = tup_ix[0] + ".*?="
-                    if(re.search(pat, candidate_for)):
+                    if(candidate_for and re.search(pat, candidate_for)):
                         new_for_order += "{" + candidate_for
                         for_cndts[candidate_for_ix] = None
-                        break
 
             print("for_cndts after: ",for_cndts)
 
