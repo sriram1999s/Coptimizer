@@ -65,7 +65,7 @@ if(menu.FLAG_CACHE):
     cache.retain_outer_loop()
     cache.find_frequency_index()
     for key in cache.for_loops:
-        print(f"{key}---->{''.join(solve(0, len(cache.for_loops[key]), cache.for_loops[key]))}")
+        print(f"2 {key}---->{''.join(solve(0, len(cache.for_loops[key]), cache.for_loops[key]))}")
 
 
 print("AST:")

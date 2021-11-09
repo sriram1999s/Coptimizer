@@ -5,12 +5,7 @@ void printMatrix(int nV, int matrix[][nV])
   int INF = 9999;
   for (int i = 0; i < nV; i++) {
     for (int j = 0; j < nV; j++) {
-      if (matrix[i][j] == INF) {
-        printf("%4s", "INF");
-      }
-      else {
-        printf("%4d", matrix[i][j]);
-      }
+      printf("%4d", matrix[i][j]);
     }
     printf("\n");
   }
@@ -34,7 +29,7 @@ void floydWarshall(int nV, int graph[][nV])
       for (int j = 0; j < nV; j++) {
         if (matrix[i][k] + matrix[k][j] < matrix[i][j]) {
           matrix[i][j] = matrix[i][k] + matrix[k][j];
-}
+        }
       }
     }
   }
