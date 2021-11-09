@@ -56,7 +56,18 @@ class Cache:
             pat = "for.*?"*(count-1)
             pat += "for.*?\{(.*?)\}"
             m = re.search(pat, for_str)
-            inner_body = m.group(1)
+            inner_body = ""
+
+            # new logic for inner body
+            level = 0
+            for token in for_str:
+                if(token == '}'):
+                    level -= 1
+                if(level >= count):
+                    inner_body += token
+                if(token == '{'):
+                    level += 1
+
             # find all "last" indices of data structures
             pat_data_structs = "([_a-zA-Z][_a-zA-Z0-9]*?)(?:\[(.*?)\])+"
             data_structs = re.findall(pat_data_structs, inner_body)
@@ -71,14 +82,16 @@ class Cache:
             # sorting indices based on frequency
             temp_list = sorted(ix_dict.items(), key = lambda x:x[1])
 
-            
+            print("for_str:------------>  ",for_str)
 
             #generating new for_order
             new_for_order = ""
+            print("temp_list: ",temp_list)
             for tup_ix in temp_list:
                 for candidate_for_ix in range(len(for_cndts)):
                     candidate_for = for_cndts[candidate_for_ix]
-                    pat = tup_ix[0] + ".*?="
+                    pat = "\s" + tup_ix[0] + "\s*?="
+                    print("canidate_for:  ",candidate_for, pat)
                     if(candidate_for and re.search(pat, candidate_for)):
                         new_for_order += "{" + candidate_for
                         for_cndts[candidate_for_ix] = None
@@ -89,6 +102,7 @@ class Cache:
                 if(remaining_candidate!=None):
                     new_for_order = remaining_candidate + new_for_order
 
+            print("count | innerbody----->",count, inner_body)
             #attaching body
             new_for_order = new_for_order + "{" + inner_body + ("}"*count)
             self.for_loops[loop].pop()
