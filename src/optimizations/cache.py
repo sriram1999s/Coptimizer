@@ -58,15 +58,53 @@ class Cache:
             m = re.search(pat, for_str)
             inner_body = ""
 
-            # new logic for inner body
-            level = 0
-            for token in for_str:
-                if(token == '}'):
-                    level -= 1
-                if(level >= count):
-                    inner_body += token
-                if(token == '{'):
-                    level += 1
+            # find body at level count
+            def find_inner_body(count,for_str):
+                level = 0
+                body = ""
+                for token in for_str:
+                    if(token == '}'):
+                        level -= 1
+                    if(level >= count):
+                        body += token
+                    if(token == '{'):
+                        level += 1
+                return body
+
+            def find_body(count,for_str):
+                """Logic: we mantain a data structure called keyword_stack which keeps appending for or if keywords as the string is parsed once we encounter a opening brace if the most recently encountered keyword is for then we increment/decrement the level variable, we capture tokens when level == count and the size of the keyword stack == count"""
+                level = 0
+                body = ""
+                n = len(for_str)
+                keyword_stack = []
+                for i in range(n):
+                    # print("stack!!!! --->  ", keyword_stack)
+                    token = for_str[i]
+                    if(i+3<n and for_str[i:i+3] == "for"):
+                        keyword_stack.append(for_str[i:i+3])
+                        i += 3
+                        pass
+                    if(i+2<n and for_str[i:i+2] == "if"):
+                        keyword_stack.append(for_str[i:i+2])
+                        i += 2
+                        pass
+                    if(level==count and len(keyword_stack) == count):
+                        body += token
+                    if(token == '}'):
+                        if(keyword_stack[-1] == "for"):
+                            level -= 1
+                        keyword_stack.pop()
+                    if(token == '{'):
+                        if(keyword_stack[-1] == "for"):
+                            level += 1
+                return body
+
+            inner_body = find_inner_body(count,for_str)
+            bodies = {}
+            for i in range(1,count):
+                bodies[i] = find_body(i,for_str)
+
+            print("bodies: ", bodies)
 
             # find all "last" indices of data structures
             pat_data_structs = "([_a-zA-Z][_a-zA-Z0-9]*?)(?:\[(.*?)\])+"
@@ -98,13 +136,18 @@ class Cache:
 
             print("for_cndts after: ",for_cndts)
 
-            for remaining_candidate in for_cndts:
+            for i in range(len(for_cndts)):
+                remaining_candidate = for_cndts[i]
                 if(remaining_candidate!=None):
                     new_for_order = remaining_candidate + new_for_order
 
             print("count | innerbody----->",count, inner_body)
             #attaching body
-            new_for_order = new_for_order + "{" + inner_body + ("}"*count)
+            new_for_order = new_for_order + "{" + inner_body + "}"
+            level = count-1
+            for i in range(level, 0, -1):
+                new_for_order += bodies[i]
+            print("new: --- > ",new_for_order)
             self.for_loops[loop].pop()
             self.for_loops[loop].pop()
             self.for_loops[loop][0] = new_for_order
