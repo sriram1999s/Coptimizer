@@ -364,6 +364,75 @@ def p_declaration(p):
     if(len(p)==9):
         p[0] = [p[1], p[2], p[3], p[4], p[5], p[6] , p[7] , p[8]]
 
+    # except last two rules
+    if p[0][0]!='typedef':
+        # wherever p[1]==ID => for first and second rules
+        if p[0][1]!='{' and type(p[0][1])==str:
+            # not array declaration
+            if type(p[0][2])!=list:
+                id = p[0][1]
+                # the identifier is encountered for the first time
+                if id not in variable_type:
+                    Dobj = Datatype()
+                    Dobj.type_set.add(p[0][0])
+                    variable_type[id] = Dobj
+                # the identifier is encountered again
+                else:
+                    variable_type[id].type_set.add(p[0][0])
+            # array declaration
+            else:
+                id = p[0][1]
+                # the identifier is encountered for the first time
+                if id not in variable_type:
+                    Dobj = Datatype()
+                    Dobj.type_set.add(p[0][0]+'ARR')
+                    variable_type[id] = Dobj
+                # the identifier is encountered again
+                else:
+                    variable_type[id].type_set.add(p[0][0]+'ARR')
+        # whenever p[0][1:] is multi-declaration
+        elif type(p[0][1])==list:
+            multi_decl_list = p[0][1:]
+            for ele in multi_decl_list:
+                # multi-declaration like int x=1, y=2;
+                if '=' in ele:
+                    try:
+                        id = ele[ele.index('=')-1]
+                        if id not in variable_type:
+                            Dobj = Datatype()
+                            Dobj.type_set.add(p[0][0])
+                            variable_type[id] = Dobj
+                        # the identifier is encountered again
+                        else:
+                            variable_type[id].type_set.add(p[0][0])
+                    except :
+                        print('no identifier before =')
+                else:   # multi-initialisation like int x, y;
+                    # for every identifier of the multi-declaration except the last
+                    try:
+                        id = ele[ele.index(',')-1]
+                        if id not in variable_type:
+                            Dobj = Datatype()
+                            Dobj.type_set.add(p[0][0])
+                            variable_type[id] = Dobj
+                        # the identifier is encountered again
+                        else:
+                            variable_type[id].type_set.add(p[0][0])
+                    except :
+                        print('no identifier before ,')
+                        # for the last identifier of the multi-declaration
+                        try:
+                            id = ele[ele.index(';') - 1]
+                            if id not in variable_type:
+                                Dobj = Datatype()
+                                Dobj.type_set.add(p[0][0])
+                                variable_type[id] = Dobj
+                            # the identifier is encountered again
+                            else:
+                                variable_type[id].type_set.add(p[0][0])
+                        except :
+                            print('no identifier before ;')
+
 
 ''' array initialization '''
 def p_init(p):

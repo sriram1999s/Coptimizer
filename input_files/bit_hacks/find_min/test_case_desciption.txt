@@ -25,8 +25,6 @@
     - Find min of two variables of type float
     EXPECTED_OUTPUT:
     - No change to the input
-    OUTPUT:
-    - Getting changed to bit hack
 
 5. INPUT: bit_hacks/find_min/t5.c
     INPUT_DESCRIPTION:
@@ -40,8 +38,6 @@
     INPUT_DESCRIPTION:
     - Perform some other operation in if-else based on min of two integers instead of directly assigning the min value to another variable
     EXPECTED_OUTPUT:
-    - //?
-    OUTPUT:
     - No change to input
 
 7. INPUT: bit_hacks/find_min/t7.c
