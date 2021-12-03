@@ -89,8 +89,8 @@ Is a graphical user interface provided by the Coptimizer server
 
 ## Server setup
 
-After ```apache``` & ```PHP``` setup use the url to access the interface.
-URL : [https://localhost/Coptimizer/ui/templates](https://localhost/Coptimizer/ui/templates)
+* After ```python``` & ```flask``` setup, go to the ui directory and run ```python3 app.py```
+* Open your browser and access http://localhost:5000 to use the graphical interface.
 
 ## Hosted interface
 
