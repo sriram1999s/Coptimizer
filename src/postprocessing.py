@@ -24,5 +24,12 @@ def post_process(output_program):
         return check_prg + m.group(0)
     output_program = re.sub('(int\s*main\(.*?\))',nuke,output_program)
 
+    ''' remove semicolon inside function call '''
+    def rem_semi_fn(m):
+        m.group(1) + m.group(2)
+
+    # sub = 1
+    # while sub:
+    #     output_program, sub = re.subn("([A-Za-z_][_A-Za-z0-9]*\s*\(.*?);(.*?\))", rem_semi_fn, output_program)
 
     return output_program
