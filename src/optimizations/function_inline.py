@@ -186,6 +186,9 @@ def remove_nested_calls(i,n,z):
         remove_nested_calls(0,len(z[i]),z[i])
     elif(type(z[i]) is tuple):
         l = copy.deepcopy(z[i][1])
+        for k in range(len(l)):
+            if l[k] == ';':
+                l[k] = ''
         z.insert(i,l)
         z.pop(i+1)
         remove_nested_calls(0,len(z[i]),z[i])

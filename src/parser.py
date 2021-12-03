@@ -487,8 +487,10 @@ def p_function_call(p):
     '''
     function_call : ID L_PAREN call_params R_PAREN
     '''
-    # p[0] = [p[1], p[2], p[3], p[4], ";"]
-    p[0] = [p[1], p[2], p[3], p[4]]
+    if(menu.FLAG_INLINE or menu.FLAG_TAIL_RECURSION):
+        p[0] = [p[1], p[2], p[3], p[4], ";"]
+    else:
+        p[0] = [p[1], p[2], p[3], p[4]]
     # print("\n\n\n in function call : ", p[0], "\n\n\n")
     if(menu.FLAG_INLINE or menu.FLAG_TAIL_RECURSION):
         call_helper(p[0],p[1])
@@ -924,6 +926,8 @@ def flatten(L):
         else:
             yield l
 
+
+# sentinel parse functions
 def p_tagged_ds(p):
     '''
     tagged_ds : TAGGED_DS declaration
