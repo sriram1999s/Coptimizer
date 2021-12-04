@@ -385,11 +385,11 @@ def p_declaration(p):
                 # the identifier is encountered for the first time
                 if id not in variable_type:
                     Dobj = Datatype()
-                    Dobj.type_set.add(p[0][0]+'ARR')
+                    Dobj.type_set.add(p[0][0])
                     variable_type[id] = Dobj
                 # the identifier is encountered again
                 else:
-                    variable_type[id].type_set.add(p[0][0]+'ARR')
+                    variable_type[id].type_set.add(p[0][0])
         # whenever p[0][1:] is multi-declaration
         elif type(p[0][1])==list:
             multi_decl_list = p[0][1:]

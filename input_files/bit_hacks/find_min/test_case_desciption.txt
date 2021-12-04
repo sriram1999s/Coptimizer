@@ -51,4 +51,4 @@
     INPUT_DESCRIPTION:
     - Find min of integers using pointers to them
     EXPECTED_OUTPUT:
-    - The if-else used to find the min for two integers x and y must be replaced by r = y ^ ((x ^ y) & -(x < y));
+    - The tool does not handle switching of integer pointer types yet

@@ -1,40 +1,32 @@
-1. INPUT: bit_hacks/find_min/t1.c
+1. INPUT: bit_hacks/modulus_of_sum/t1.c
     INPUT_DESCRIPTION:
     - Find modulus of sum of two integer variables with another integer variable
     EXPECTED_OUTPUT:
     - The expression (x+y)%n must be replaced by (x+y) - (n& -((x+y) >= n))
 
-2. INPUT: bit_hacks/find_min/t2.c
+2. INPUT: bit_hacks/modulus_of_sum/t2.c
     INPUT_DESCRIPTION:
     - Find modulus of sum of two integers with another integer
     EXPECTED_OUTPUT:
     - The expression (x+y)%n must be replaced by (x+y) - (n& -((x+y) >= n))
 
-3. INPUT: bit_hacks/find_min/t3.c
+3. INPUT: bit_hacks/modulus_of_sum/t3.c
     INPUT_DESCRIPTION:
     - Find modulus of sum of an integer variable and an integer with another integer variable
     EXPECTED_OUTPUT:
     - The expression (x+y)%n must be replaced by (x+y) - (n& -((x+y) >= n))
 
-4. INPUT: bit_hacks/find_min/t4.c
+4. INPUT: bit_hacks/modulus_of_sum/t4.c
     INPUT_DESCRIPTION:
     - Modulus expression within another expression
     EXPECTED_OUTPUT:
     - The expression (x+y)%n must be replaced by (x+y) - (n& -((x+y) >= n))
 
-5. INPUT: bit_hacks/find_min/t5.c
+5. INPUT: bit_hacks/modulus_of_sum/t5.c
     INPUT_DESCRIPTION:
     - Nested case of modulus expression
     EXPECTED_OUTPUT:
     - No change to the input
-
-6. INPUT: bit_hacks/find_min/t6.c
-    INPUT_DESCRIPTION:
-    - Decrement operator in modulus expression
-    EXPECTED_OUTPUT:
-    - The expression (x+y)%n must be replaced by (x+y) - (n& -((x+y) >= n)) //?
-    OUTPUT:
-    - There is a difference in output at runtime
 
 
 

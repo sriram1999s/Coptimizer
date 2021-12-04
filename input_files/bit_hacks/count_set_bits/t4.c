@@ -10,8 +10,8 @@ int countSetBits(int num)
 	if (0 == num){
 	    return num_to_bits[0];
 	}
-    nibble = num & 2;
-    return num_to_bits[nibble] + countSetBitsRec(num >> 4);
+    nibble = num & 15;
+    return num_to_bits[nibble] + countSetBits(num >> 4);
     /*count-set-bits-end*/
 }
 
