@@ -1,12 +1,21 @@
 from parser import flatten
 
+
+"""
+ In this approach of maintaining a dictionary of variables and their type, scope is not considered.
+Key=var_name, value=set of types wherever the variable is defined in the program.
+The set must have only 'int' or 'char' for the logic to be switched to find_min bit hack
+"""
+class Datatype:
+    def __init__(self):
+        self.type_set = set()
+
+
+variable_type = dict()
+
+
 # -----BEGIN: FIND MIN-----
 def validate_find_min(sub_tree):
-    # print('sub tree0', sub_tree[0]) # if
-    # print('sub tree1', sub_tree[1]) # [if_condition, if_body]
-    # print('sub tree2', sub_tree[2]) # else
-    # print('sub tree3', sub_tree[3]) # else_body
-
     if_condition = [str(i) for i in list(flatten(sub_tree[1][0]))]
     lhs, op, rhs = is_min_condition(if_condition)
     if lhs is not None:
@@ -14,8 +23,18 @@ def validate_find_min(sub_tree):
         res_var = is_min_body1(lhs, if_body)
         if res_var:
             else_body = [str(i) for i in list(flatten(sub_tree[3]))]
-            if is_min_body2(res_var, rhs, else_body):
-                sub_tree = [res_var, '=', rhs, '^', '((', lhs, '^', rhs, ')', '&', '-', '(', lhs, '<', rhs, '))', ';']
+
+            # variables of type int and char to be converted to bit hack
+            temp_set_int = set()
+            temp_set_int.add('int')
+            temp_set_char = set()
+            temp_set_char.add('char')
+            if res_var in variable_type and (temp_set_int == variable_type[res_var].type_set or temp_set_char == variable_type[res_var].type_set) \
+                    and rhs in variable_type and (temp_set_int == variable_type[rhs].type_set or temp_set_char == variable_type[rhs].type_set) \
+                    and lhs in variable_type and (temp_set_int == variable_type[lhs].type_set or temp_set_char == variable_type[lhs].type_set):
+
+                if is_min_body2(res_var, rhs, else_body):
+                    sub_tree = [res_var, '=', rhs, '^', '((', lhs, '^', rhs, ')', '&', '-', '(', lhs, '<', rhs, '))', ';']
     return sub_tree
 
 
@@ -183,6 +202,7 @@ def validate_find_abs(tree):
         flattened_tree.insert(0, '#include<limits.h>\n')
     return flattened_tree
 # -----END: FIND ABS-----
+
 
 # -----BEGIN: POWER OF TWO-----
 '''converts the code for computation of power of 2 to bit hack'''
