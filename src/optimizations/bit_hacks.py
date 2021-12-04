@@ -14,8 +14,19 @@ class Datatype:
 variable_type = dict()
 
 
+def represents_int(s):
+    try:
+        int(s)
+        return True
+    except ValueError:
+        return False
+
 # -----BEGIN: FIND MIN-----
 def validate_find_min(sub_tree):
+    print('in validate find min')
+    for i in variable_type.keys():
+        print(i, '---', variable_type[i].type_set)
+
     if_condition = [str(i) for i in list(flatten(sub_tree[1][0]))]
     lhs, op, rhs = is_min_condition(if_condition)
     if lhs is not None:
@@ -29,12 +40,31 @@ def validate_find_min(sub_tree):
             temp_set_int.add('int')
             temp_set_char = set()
             temp_set_char.add('char')
-            if res_var in variable_type and (temp_set_int == variable_type[res_var].type_set or temp_set_char == variable_type[res_var].type_set) \
-                    and rhs in variable_type and (temp_set_int == variable_type[rhs].type_set or temp_set_char == variable_type[rhs].type_set) \
-                    and lhs in variable_type and (temp_set_int == variable_type[lhs].type_set or temp_set_char == variable_type[lhs].type_set):
+
+            # to handle array names, the _comparison variables are created and used in the if condition
+            res_var_for_comparison = res_var
+            rhs_for_comparison = rhs
+            lhs_for_comparison = lhs
+            if '[' in res_var:
+                res_var_for_comparison = res_var[:res_var.find('[')]
+            if '[' in rhs:
+                rhs_for_comparison = rhs[:rhs.find('[')]
+            if ']' in lhs:
+                lhs_for_comparison = lhs[:lhs.find('[')]
+            if res_var_for_comparison in variable_type and (temp_set_int == variable_type[res_var_for_comparison].type_set or temp_set_char == variable_type[res_var_for_comparison].type_set) \
+                    and rhs_for_comparison in variable_type and (temp_set_int == variable_type[rhs_for_comparison].type_set or temp_set_char == variable_type[rhs_for_comparison].type_set) \
+                    and lhs_for_comparison in variable_type and (temp_set_int == variable_type[lhs_for_comparison].type_set or temp_set_char == variable_type[lhs_for_comparison].type_set):
 
                 if is_min_body2(res_var, rhs, else_body):
                     sub_tree = [res_var, '=', rhs, '^', '((', lhs, '^', rhs, ')', '&', '-', '(', lhs, '<', rhs, '))', ';']
+
+            elif res_var_for_comparison in variable_type and (temp_set_int == variable_type[res_var_for_comparison].type_set or temp_set_char == variable_type[res_var_for_comparison].type_set) \
+                and ((represents_int(rhs_for_comparison) and represents_int(rhs_for_comparison)) \
+                    or (represents_int(rhs_for_comparison) and lhs_for_comparison in variable_type and (temp_set_int == variable_type[lhs_for_comparison].type_set or temp_set_char == variable_type[lhs_for_comparison].type_set)) \
+                    or rhs_for_comparison in variable_type and (temp_set_int == variable_type[rhs_for_comparison].type_set or temp_set_char == variable_type[rhs_for_comparison].type_set) and represents_int(lhs_for_comparison)):
+                if is_min_body2(res_var, rhs, else_body):
+                    sub_tree = [res_var, '=', rhs, '^', '((', lhs, '^', rhs, ')', '&', '-', '(', lhs, '<', rhs, '))',
+                                ';']
     return sub_tree
 
 
