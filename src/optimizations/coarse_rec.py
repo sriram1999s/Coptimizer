@@ -115,6 +115,7 @@ def add_constructs(fn_defn_t, z):
     fn_name = fn_defn_t[0]
     hash = secrets.token_hex(nbytes = 4)
     MAX_SIZE = 100000000
+    # MAX_SIZE = 50010
     # MAX_SIZE = "INT_MAX"
 
     ''' getting the param_declarations for the given fn_defn '''
@@ -161,6 +162,7 @@ def add_constructs(fn_defn_t, z):
         int* head_ = (int*) malloc(sizeof(int));
         *head_ = 0;
         int FRAME_COUNT = 0;
+        // int FRAME_LIMIT = 1000;
         int FRAME_LIMIT = 1000;
 
         {save_state_inits}

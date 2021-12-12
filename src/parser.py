@@ -115,7 +115,7 @@ def p_closed(p):
                     ''' check if comile time initialization is possible '''
                     com_init.compile_init_validate(menu.FLAG_COMPILE_INIT,[p[1], p[2], p[3]])
                     
-                    if not (menu.FLAG_INLINE or menu.FLAG_TAIL_RECURSION):
+                    if not (menu.FLAG_INLINE or menu.FLAG_TAIL_RECURSION or menu.FLAG_COARSE):
                         temp = list(set(list(flatten(p[3]))))
                         if(temp.count('{')==1 and temp.count('}')==1 and temp.count(';') and len(temp)==3):
                             p[1] = [None]

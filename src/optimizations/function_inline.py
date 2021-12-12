@@ -63,6 +63,10 @@ def change_to_string(l1):
                     str_temp = ""
                     i += 1;
                     continue;
+
+                print("\n l1 : ", l1, '\n')
+                print("\n l1[0] : ", l1[0], '\n')
+
                 str_temp += l1[0][i] + ' '
                 i += 1;
             str_temp = ' '.join(l1[1])
