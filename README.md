@@ -3,7 +3,7 @@
 >**NOTE :** Combinations of optimizations do not work currently due to implementation issues.
 
 ## Optimizations
-> The optimizations are goverened by Jon Bentley's rules for optimizing work.
+> The optimizations are governed by Jon Bentley's rules for optimizing work.
 
 Find the link to a pdf explaining the rules [here](http://progforperf.github.io/Bentley_Rules.pdf)
 
@@ -15,16 +15,27 @@ Find the link to a pdf explaining the rules [here](http://progforperf.github.io/
   - Loop Jamming
 
 # Interfaces
+ * can be accessed through CLI or GUI
+ * The CLI is installed directly on the host.
+ * GUI is run in a docker container.
   - [Command Line Utility](#Command-Line-Utility)
   - [Online Graphical User Interface](#GUI)
 
 # Command Line Utility
-Is a software tool with command line interface
+Is a software tool with a command line interface
 
 ## Dependancies
 
   - Python3.6+
   - linux
+  - flask
+  - indent
+  - tqdm
+  - fire
+  - ply
+  - uuid
+  - emoji 
+  - sympy
 
 ## Functionalities
   - [help](#Help)
@@ -85,13 +96,23 @@ Coptimizer ox <path to file>
 
 # Graphical User Interface
 
-Is a graphical user interface provided by the Coptimizer server
+Instructions to run the server and access the GUI.
 
-## Server setup
+## Build
+ 
+ * while in the main directory
+ 
+``` sh
+docker build -t coptimizer-server:1.0 .
+```
+## Run 
 
-* After ```python``` & ```flask``` setup, go to the ui directory and run ```python3 app.py```
-* Open your browser and access http://localhost:5000 to use the graphical interface.
+``` sh
+docker run -p 5000:5000 coptimizer-server:1.0 
+```
 
+ * can be accessed at http://localhost:5000/
+ 
 ## Hosted interface
 
 ```cpp
