@@ -1,5 +1,6 @@
 FROM python:3.6
 
+# install all dependancies
 ENV PATH="/app/env:$PATH"
 ENV COPTIMIZER_PATH="/app"
 RUN apt-get update
