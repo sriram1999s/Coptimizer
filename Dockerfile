@@ -10,4 +10,4 @@ COPY . /app/
 
 WORKDIR /app/ui
 
-CMD flask run -h 0.0.0.0 -p 5000
+CMD ["python", "app.py"]
