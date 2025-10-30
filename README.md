@@ -13,7 +13,7 @@ Find the link to a pdf explaining the rules [here](http://progforperf.github.io/
   - Compile Time Initialization
   - Tail End Recursion Elimination
   - Loop Jamming
-  - bit hacking
+  - Bit hacking
 
 # Interfaces
  * can be accessed through CLI or GUI
